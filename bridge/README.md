@@ -132,14 +132,49 @@ dango-gitsea-bridge/
 │   ├── sutable_append.py          — CLI: append event to su-table
 │   ├── sutable_query.py           — CLI: query su-table events
 │   ├── negotiation_event.py       — CLI: structured negotiation events
-│   └── reality_feedback_append.py — CLI: reality feedback events
-└── sutable/                       — Live JSONL event logs
-    ├── claims.jsonl
-    ├── negotiations.jsonl
-    ├── contributions.jsonl
-    ├── executions.jsonl
-    └── reality_feedback.jsonl
+│   ├── reality_feedback_append.py — CLI: reality feedback events
+│   ├── negotiation_graph.py       — Graph builder (nodes + edges from su-table)
+│   └── graph_export.py            — CLI: export graph as mermaid or text
+├── sutable/                       — Live JSONL event logs
+│   ├── claims.jsonl
+│   ├── negotiations.jsonl
+│   ├── contributions.jsonl
+│   ├── executions.jsonl
+│   └── reality_feedback.jsonl
+└── examples/
+    ├── sutable_events/            — Example event JSON files
+    └── housing-001.graph.mmd     — Rendered negotiation graph (Mermaid)
 ```
+
+---
+
+## Negotiation Graph
+
+Su-table events can be rendered as a negotiation graph.
+
+This graph does not prove truth.
+It visualizes the path from Claim to Reality Feedback.
+
+```bash
+# Text output (terminal)
+python runtime/graph_export.py --claim-id housing-001 --format text
+
+# Mermaid output (GitHub / mermaid.live)
+python runtime/graph_export.py --claim-id housing-001 --format mermaid
+
+# Save Mermaid to file
+python runtime/graph_export.py --claim-id housing-001 --format mermaid \
+  > examples/housing-001.graph.mmd
+
+# List all claim_ids in the su-table
+python runtime/graph_export.py --list
+```
+
+Correction events appear as dashed edges — the original is preserved,
+the correction is appended. Dignity violations render as dark-red nodes
+with automated processing halted.
+
+See `NEGOTIATION_GRAPH_SPEC.md` for the full specification.
 
 ---
 

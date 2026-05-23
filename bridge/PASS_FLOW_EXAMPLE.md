@@ -233,15 +233,71 @@ If the story owner withdraws consent at any point:
 
 ---
 
+## Negotiation Graph
+
+The full flow above — from BLOCK to REALITY FEEDBACK —
+is recorded in the su-table and can be rendered as a graph:
+
+```bash
+python runtime/graph_export.py --claim-id housing-001 --format text
+python runtime/graph_export.py --claim-id housing-001 --format mermaid
+```
+
+Mermaid output (render at mermaid.live or embed in GitHub markdown):
+
+```mermaid
+flowchart TD
+  classDef claim          fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  classDef objection      fill:#ffedd5,stroke:#ea580c,color:#431407
+  classDef amendment      fill:#ede9fe,stroke:#7c3aed,color:#2e1065
+  classDef support        fill:#dcfce7,stroke:#16a34a,color:#14532d
+  classDef contrib        fill:#f5f3ff,stroke:#8b5cf6,color:#2e1065
+  classDef correction     fill:#f3f4f6,stroke:#6b7280,color:#111827
+  classDef execution      fill:#ede7f6,stroke:#7c3aed,color:#2e1065
+  classDef feedbackPartial fill:#fef9c3,stroke:#ca8a04,color:#422006
+
+  n0["Claim: A vacant house can become a shared…"]:::claim
+  n1{"Objection: Legal ownership unresolved"}:::objection
+  n2("Amendment: Require owner consent"):::amendment
+  n3["Support: Amendment accepted ✓"]:::support
+  n4[/"Offer: legal_review"/]:::contrib
+  n5[/"Accepted: legal_review"/]:::contrib
+  n6(["Execution Started"]):::execution
+  n7(["Feedback: Partial Success"]):::feedbackPartial
+  n8[>"↩ Correction: Wrong statute cited"]:::correction
+
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n1 -.-> |corrects| n8
+```
+
+Key visual conventions:
+- `{"…"}` hex nodes = objection / escalation (conflict)
+- `("…")` round nodes = amendment (modification)
+- `[/"…"/]` parallelogram = contribution (input flow)
+- `(["…"])` stadium = execution / feedback (action)
+- `-.->` dashed edge = correction (original preserved, not deleted)
+
+---
+
 ## Files Used in This Example
 
 | File | Purpose |
 |---|---|
 | `examples/refugee-story-consented.claim.json` | Claim with consent established |
 | `examples/contribution-stream-consented.json` | Active stream with dignity-cleared contributors |
+| `examples/housing-001.graph.mmd` | Negotiation graph in Mermaid format |
 | `runtime/dignity_guard.py` | Runs all 7 dignity checks |
 | `runtime/claim_to_asset.py` | Transforms Claim to repo asset |
 | `runtime/stream_preview.py` | Preview stream eligibility and contributions |
+| `runtime/negotiation_graph.py` | Builds graph dict from su-table |
+| `runtime/graph_export.py` | Exports graph as mermaid or text |
 
 ---
 
