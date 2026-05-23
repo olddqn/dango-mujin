@@ -47,11 +47,28 @@ def dignity_quick_check(claim: dict) -> tuple[str, str]:
     return "pass", "Dignity pre-check passed"
 
 
+def derive_trust_mode(claim: dict, dignity_status: str) -> str:
+    """Determine trust mode from dignity constraints and consent state."""
+    observed = claim.get("observed_state", [])
+    constraints = claim.get("dignity_constraints", [])
+    if dignity_status == "block":
+        return "blocked"
+    if "explicit_consent_established" in observed and "revocable_consent" in constraints:
+        if "anonymization_complete" in observed or "fair_revenue_share" in constraints:
+            return "dignity-first"
+    if constraints:
+        return "guarded"
+    return "open"
+
+
 def transform(claim: dict, dignity_status: str, dignity_reason: str) -> dict:
     decision = claim.get("decision", "negotiate")
     asset_status = DECISION_TO_STATUS.get(decision, "pending")
     if dignity_status == "block":
         asset_status = "under_review"
+
+    stream_eligible = dignity_status == "pass" and asset_status in ("pending", "active")
+    trust_mode = derive_trust_mode(claim, dignity_status)
 
     return {
         "asset_id": claim.get("claim_id", "unknown"),
@@ -63,9 +80,10 @@ def transform(claim: dict, dignity_status: str, dignity_reason: str) -> dict:
         "open_conditions": claim.get("missing_conditions", []),
         "eligible_stream_types": claim.get("possible_contributions", []),
         "dignity_guard_flags": claim.get("dignity_constraints", []),
-        "dignity_guard_status": dignity_status,
+        "dignity_review": dignity_status,
         "dignity_guard_reason": dignity_reason,
-        "stream_eligible": dignity_status == "pass" and asset_status in ("pending", "active"),
+        "trust_mode": trust_mode,
+        "stream_eligible": stream_eligible,
         "created_at": claim.get("created_at", datetime.now(timezone.utc).isoformat()),
         "source_claim_id": claim.get("claim_id", "unknown"),
     }

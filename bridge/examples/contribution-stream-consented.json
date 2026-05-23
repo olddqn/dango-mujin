@@ -1,0 +1,78 @@
+{
+  "stream_id": "stream-refugee-story-001-v2",
+  "claim_id": "refugee-story-001-v2",
+  "asset_id": "refugee-story-001-v2",
+  "entries": [
+    {
+      "contributor_id": "anon-translator-jp",
+      "contribution_type": "translation",
+      "addresses_condition": "translation",
+      "volume": "2 sessions, 1200 words",
+      "verifiable": true,
+      "verification_method": "Translated document submitted to claim owner for review",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "completed"
+    },
+    {
+      "contributor_id": "did:key:z6MkLegalReviewer",
+      "contribution_type": "legal_review",
+      "addresses_condition": "risk_review",
+      "volume": "1 legal review document",
+      "verifiable": true,
+      "verification_method": "Review document publicly available (anonymized)",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "flowing"
+    },
+    {
+      "contributor_id": "anon-safety-reviewer",
+      "contribution_type": "safety_review",
+      "addresses_condition": "risk_review",
+      "volume": "1 safety assessment",
+      "verifiable": false,
+      "verification_method": "Self-reported — safety reviewer identity not disclosed for their protection",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "flowing"
+    },
+    {
+      "contributor_id": "anon-distributor-01",
+      "contribution_type": "distribution",
+      "addresses_condition": "support_distribution",
+      "volume": "1 distribution network agreement",
+      "verifiable": true,
+      "verification_method": "Distribution agreement submitted — recipient identity anonymized",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "flowing"
+    },
+    {
+      "contributor_id": "anon-funder-01",
+      "contribution_type": "funding",
+      "addresses_condition": "support_distribution",
+      "volume": "fair_revenue_share tier — amount undisclosed",
+      "verifiable": true,
+      "verification_method": "Escrow confirmed. Revenue share agreement signed.",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "flowing"
+    },
+    {
+      "contributor_id": "external-editor-anon",
+      "contribution_type": "story_editing",
+      "addresses_condition": null,
+      "volume": "1 editorial session",
+      "verifiable": false,
+      "verification_method": "Not verifiable — editor identity protected",
+      "dignity_cleared": false,
+      "dignity_block_reason": "story_editing requires explicit consent confirmation from story owner before each session",
+      "timestamp": "2026-05-24T00:00:00Z",
+      "status": "paused"
+    }
+  ],
+  "stream_status": "active",
+  "stream_block_reason": null,
+  "dignity_guard_decision": "pass",
+  "created_at": "2026-05-24T00:00:00Z"
+}

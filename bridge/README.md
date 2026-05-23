@@ -87,6 +87,45 @@ dango-gitsea-bridge/
 
 ---
 
+## Quick Start — Consent-Established (PASS) Flow
+
+```bash
+# Run dignity guard on a consent-established claim
+python runtime/dignity_guard.py examples/refugee-story-consented.claim.json
+
+# Transform claim to repo asset — expect trust_mode: dignity-first, stream_eligible: true
+python runtime/claim_to_asset.py examples/refugee-story-consented.claim.json
+
+# Preview the active contribution stream
+python runtime/stream_preview.py \
+  examples/refugee-story-consented.claim.json \
+  examples/contribution-stream-consented.json
+```
+
+See `PASS_FLOW_EXAMPLE.md` for the full annotated walkthrough.
+
+---
+
+## Dignity-first execution
+
+Dan-Go does not ask: "Can this be monetized?"
+Dan-Go asks: "Can this become real without violating dignity?"
+
+A stream is allowed only after:
+
+- explicit, informed, revocable consent
+- anonymization complete (identity not exposed)
+- risk review passed
+- fair participation and revenue share guaranteed
+- every condition acknowledged — not assumed
+
+When consent is unknown → stream is **blocked**. No exceptions.
+When consent is established → stream enters `dignity-first` trust mode.
+
+`dignity-first` is not a reward. It is the minimum required to proceed.
+
+---
+
 ## Principles
 
 1. No financial product. No investment solicitation.
