@@ -196,13 +196,82 @@ python runtime/graph_export.py --claim-id housing-001 --format text
 # Mermaid output (GitHub / mermaid.live)
 python runtime/graph_export.py --claim-id housing-001 --format mermaid
 
-# Save to file
+# Save Mermaid to file
 python runtime/graph_export.py --claim-id housing-001 --format mermaid \
   > examples/housing-001.graph.mmd
+
+# HTML preview — local browser, no external dependencies
+python runtime/graph_export.py --claim-id housing-001 --format html \
+  --output examples/housing-001.graph.html
 
 # List all available claim_ids
 python runtime/graph_export.py --list
 ```
+
+---
+
+## HTML Output
+
+The HTML preview is a **fully self-contained local file**.
+
+### Absolute prohibitions
+
+- No `<script src="...">` pointing to external URLs
+- No `<link rel="stylesheet" href="...">` pointing to external URLs
+- No CDN references (jsdelivr, unpkg, cloudflare, googleapis, etc.)
+- No `fetch()` or `XMLHttpRequest` to external hosts
+- No inline `import` from external modules
+
+### What the HTML contains
+
+| Section | Content |
+|---|---|
+| Summary | Total events, final result, correction count, contribution count, dignity violation count |
+| Event Timeline | Human-readable numbered list with badges, actors, timestamps, and edge annotations |
+| Mermaid Source | Raw Mermaid code in a `<pre>` block with copy-to-clipboard button |
+| Event Table | Index, table, event_type, speaker/contributor, timestamp, summary, hash, prev_hash, corrects reference |
+| Integrity Notes | Chain link count, correction count, dignity violation flag, no-network confirmation |
+
+### Mermaid rendering
+
+The HTML does **not** render Mermaid graphs inline.
+
+Rendering requires JavaScript execution of mermaid.js, which would require
+loading an external script (CDN) or bundling a large JS file.
+Neither is acceptable under Dan-Go's local-only HTML policy.
+
+Instead:
+1. The Mermaid source is displayed in a `<pre><code>` block
+2. A **Copy** button copies the code to clipboard
+3. The user pastes it into [mermaid.live](https://mermaid.live) for rendering
+4. The HTML clearly states this is the intended workflow
+
+This is the correct tradeoff: the user controls rendering, not the file.
+
+### Fallback for clipboard API
+
+If `navigator.clipboard.writeText()` is unavailable:
+- `document.execCommand('copy')` is attempted
+- If that also fails, the button text changes to "Select & copy manually"
+- The code block remains visible and fully selectable
+- The page never breaks or throws an uncaught error
+
+### CSS theme
+
+Dark background (`#0d0d0d`) with cyberpunk accent palette:
+
+| Element | Color |
+|---|---|
+| Background | `#0d0d0d` |
+| Surface | `#141414` |
+| Accent (badge, links) | `#7c3aed` (violet) |
+| Contribution | `#22d3ee` (cyan) |
+| Execution | `#4ade80` (green) |
+| Feedback/partial | `#fbbf24` (amber) |
+| Dignity violation | `#f87171` (red) |
+| Correction | `#c084fc` (violet) |
+
+All CSS is inline `<style>` — no external stylesheet.
 
 ---
 

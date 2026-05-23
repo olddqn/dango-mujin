@@ -143,7 +143,8 @@ dango-gitsea-bridge/
 │   └── reality_feedback.jsonl
 └── examples/
     ├── sutable_events/            — Example event JSON files
-    └── housing-001.graph.mmd     — Rendered negotiation graph (Mermaid)
+    ├── housing-001.graph.mmd     — Rendered negotiation graph (Mermaid)
+    └── housing-001.graph.html    — Local HTML preview (no external deps)
 ```
 
 ---
@@ -166,6 +167,10 @@ python runtime/graph_export.py --claim-id housing-001 --format mermaid
 python runtime/graph_export.py --claim-id housing-001 --format mermaid \
   > examples/housing-001.graph.mmd
 
+# HTML preview — open in browser, no external dependencies
+python runtime/graph_export.py --claim-id housing-001 --format html \
+  --output examples/housing-001.graph.html
+
 # List all claim_ids in the su-table
 python runtime/graph_export.py --list
 ```
@@ -175,6 +180,29 @@ the correction is appended. Dignity violations render as dark-red nodes
 with automated processing halted.
 
 See `NEGOTIATION_GRAPH_SPEC.md` for the full specification.
+
+---
+
+## Graph HTML Preview
+
+HTML preview is local-only and does not load external scripts or stylesheets.
+
+The HTML file includes:
+- Summary statistics (events, result, corrections, dignity violations)
+- Full event timeline with speaker/contributor and edge annotations
+- Mermaid source code with copy-to-clipboard button
+- Event table (hash, prev_hash, corrects reference)
+- Integrity notes (chain links, violations, no-network confirmation)
+
+```bash
+python runtime/graph_export.py \
+  --claim-id housing-001 \
+  --format html \
+  --output examples/housing-001.graph.html
+```
+
+Open with `open examples/housing-001.graph.html` (macOS) or your browser.
+The Mermaid code block has a **Copy** button — paste into mermaid.live to render the graph visually.
 
 ---
 

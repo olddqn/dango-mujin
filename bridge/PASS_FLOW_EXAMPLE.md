@@ -239,9 +239,21 @@ The full flow above — from BLOCK to REALITY FEEDBACK —
 is recorded in the su-table and can be rendered as a graph:
 
 ```bash
+# Text (terminal)
 python runtime/graph_export.py --claim-id housing-001 --format text
+
+# Mermaid (paste into mermaid.live)
 python runtime/graph_export.py --claim-id housing-001 --format mermaid
+
+# HTML preview (open in browser — no external dependencies)
+python runtime/graph_export.py --claim-id housing-001 \
+  --format html --output examples/housing-001.graph.html
+open examples/housing-001.graph.html
 ```
+
+The HTML preview includes a **Copy** button for the Mermaid source.
+Paste it into [mermaid.live](https://mermaid.live) to see the rendered graph.
+The HTML itself loads no external scripts — it is fully local.
 
 Mermaid output (render at mermaid.live or embed in GitHub markdown):
 
