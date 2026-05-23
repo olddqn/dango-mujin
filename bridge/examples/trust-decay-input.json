@@ -1,0 +1,11 @@
+{
+  "event_type": "contribution_accepted",
+  "claim_id": "housing-001",
+  "contributor": "did:key:mock-translator-agent",
+  "contribution_type": "translation",
+  "timestamp": "2026-02-01T00:00:00Z",
+  "verification_status": "verified",
+  "dignity_review": "pass",
+  "_reference_date_for_example": "2026-05-24T00:00:00Z",
+  "_note": "reference_date is fixed so output is deterministic regardless of run date"
+}

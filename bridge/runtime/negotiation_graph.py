@@ -46,6 +46,15 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).parent))
 from sutable_log import read_all, VALID_TABLES
+from temporal_trust_decay import (
+    compute_trust_weight,
+    compute_days_since,
+    trust_level,
+    CONTRIBUTION_EVENT_TYPES,
+)
+
+# Event types that count toward continuity multiplier
+_TRUST_ACCEPTED_TYPES = frozenset({"contribution_accepted", "contribution_completed"})
 
 # ── Table ordering (tiebreaker when timestamps are equal) ─────
 TABLE_ORDER = {t: i for i, t in enumerate(
@@ -210,6 +219,11 @@ _META_KEYS = {
     # DID signature fields
     "signature_status",
     "signature",
+    # Temporal trust fields (computed post-load, not in JSONL)
+    "trust_weight",
+    "trust_level",
+    "decay_factor",
+    "trust_detail",
 }
 
 def _meta_for(event: dict) -> dict:
@@ -270,6 +284,45 @@ def build_graph(claim_id: str) -> dict[str, Any]:
             "meta":       _meta_for(event),
         })
 
+    # ── Trust weight computation ──────────────────────────────
+    # For each contribution node, compute temporal trust weight.
+    # Continuity multiplier uses the contributor's total accepted count
+    # up to and including this event (in chronological order).
+    from datetime import datetime, timezone
+    ref_now = datetime.now(timezone.utc)
+
+    # Count accepted contributions per contributor (in order)
+    contrib_seen: dict[str, int] = {}
+    for _, event in raw:
+        et  = event.get("event_type", "")
+        did = event.get("contributor") or event.get("contributor_id", "")
+        if et in _TRUST_ACCEPTED_TYPES and did:
+            contrib_seen[did] = contrib_seen.get(did, 0) + 1
+
+    # Now attach trust_weight to contribution node meta
+    contrib_running: dict[str, int] = {}
+    for node in nodes:
+        et  = node["event_type"]
+        did = node["meta"].get("contributor") or node["meta"].get("contributor_id", "")
+        if et not in CONTRIBUTION_EVENT_TYPES:
+            continue
+        # Find the raw event for this node to get full fields
+        # (nodes are indexed the same as raw)
+        idx = int(node["id"][1:])  # "n3" → 3
+        _, event = raw[idx]
+        if et in _TRUST_ACCEPTED_TYPES and did:
+            contrib_running[did] = contrib_running.get(did, 0) + 1
+        count = contrib_running.get(did, 1)
+        tw = compute_trust_weight(
+            event,
+            reference_date=ref_now,
+            contribution_count=count,
+        )
+        node["meta"]["trust_weight"]  = tw["trust_weight"]
+        node["meta"]["trust_level"]   = trust_level(tw["trust_weight"])
+        node["meta"]["decay_factor"]  = tw["decay_factor"]
+        node["meta"]["trust_detail"]  = tw
+
     # Build edges
     edges: list[dict] = []
 
@@ -315,6 +368,13 @@ def build_graph(claim_id: str) -> dict[str, Any]:
     feedback_nodes = [n for n in nodes if n["event_type"] == "reality_feedback"]
     final_result = feedback_nodes[-1]["meta"].get("result", "") if feedback_nodes else ""
 
+    # Trust summary across contribution nodes
+    contrib_nodes = [n for n in nodes if n.get("meta", {}).get("trust_weight") is not None]
+    trust_counts = {"high": 0, "medium": 0, "low": 0, "blocked": 0}
+    for cn in contrib_nodes:
+        lvl = cn["meta"].get("trust_level", "low")
+        trust_counts[lvl] = trust_counts.get(lvl, 0) + 1
+
     meta = {
         "total_events":          len(nodes),
         "tables_involved":       sorted({t for t, _ in raw}),
@@ -323,6 +383,7 @@ def build_graph(claim_id: str) -> dict[str, Any]:
         "final_result":          final_result,
         "first_timestamp":       nodes[0]["timestamp"] if nodes else "",
         "last_timestamp":        nodes[-1]["timestamp"] if nodes else "",
+        "trust_summary":         trust_counts,
     }
 
     return {

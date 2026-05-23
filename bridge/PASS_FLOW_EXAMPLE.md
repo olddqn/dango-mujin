@@ -214,6 +214,52 @@ A previous PASS does not carry forward to new interaction types.
 
 ---
 
+## Trust Weight After Time Passes
+
+Contributions in the active stream carry **temporal trust weights**.
+These weights decay as time passes. The contributions are not deleted —
+but their coordination signal weakens.
+
+Example: `anon-translator-jp` contributed 90 days ago.
+
+At contribution time (day 0):
+```
+trust_weight = 1.0 × 1.0 × 1.0 × 1.0 × 1.0 = 1.00
+trust_level  = high
+```
+
+After 90 days (one half-life):
+```
+decay_factor = 0.5 ^ (90/90) = 0.5
+trust_weight = 1.0 × 0.5 × 1.0 × 1.0 × 1.0 = 0.50
+trust_level  = medium
+```
+
+After 180 days (two half-lives):
+```
+decay_factor = 0.5 ^ (180/90) = 0.25
+trust_weight = 1.0 × 0.25 × 1.0 × 1.0 × 1.0 = 0.25
+trust_level  = low
+```
+
+The contribution is still in the record. The translator still participated.
+Their coordination signal is simply quieter as time passes.
+
+If they return with a new contribution, the signal refreshes.
+
+```bash
+# View current trust weights for a claim
+python runtime/trust_snapshot.py --claim-id housing-001
+
+# See trust in the negotiation graph text output
+python runtime/graph_export.py --claim-id housing-001 --format text
+```
+
+Trust is never a reason to remove a contribution from memory.
+It is only a signal weight for coordination decisions.
+
+---
+
 ## What This Flow Does Not Do
 
 - It does not move money.

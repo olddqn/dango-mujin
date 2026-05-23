@@ -112,12 +112,31 @@ These concepts require translation and may not be a perfect fit:
 
 Dan-Go does not assign trust scores.
 It records trust mode per claim (dignity-first / guarded / open / blocked).
+It *does* compute **temporal trust weights** per contribution event.
 
 OGI agent economies may use trust scores for routing decisions.
 
 **Resolution:** Credit signals (from contribution history) serve as trust inputs
 without becoming a gate. An agent with no history can still participate;
 history increases the weight of their credit signals, not their access rights.
+
+The temporal trust weight (`runtime/temporal_trust_decay.py`) provides
+a coordination signal that can feed OGI routing decisions:
+
+```
+Dan-Go trust_weight         OGI coordination signal weight
+────────────────────        ──────────────────────────────
+≥ 0.7 (high)            →   strong_signal
+0.3–0.7 (medium)        →   standard_signal
+< 0.3 (low)             →   weak_signal
+0.0 (blocked)           →   no_signal (dignity gate)
+```
+
+Key properties:
+- Decays with time (half-life 90 days by default)
+- Boosted by `verified` status (+20%)
+- Continuity bonus for returning contributors (capped at 1.5×)
+- Dignity block sets to 0.0 exactly — no minimum floor applies
 
 ### Monetary Contribution
 
@@ -148,7 +167,7 @@ These Dan-Go concepts have no clear OGI equivalent in this bridge:
 | Stream eligibility | Not mapped | GITSEA-specific; OGI may have equivalent |
 | Repo asset | Not mapped | GITSEA-specific |
 | Negotiation graph | Partially mapped | OGI may have visualization layer |
-| Temporal trust decay | Not implemented | Would strengthen credit signals over time |
+| Temporal trust decay | **Implemented** | `runtime/temporal_trust_decay.py` — 90-day half-life, dignity-block zero |
 | Claim federation | Not implemented | Cross-claim dependencies not yet modeled |
 
 ---

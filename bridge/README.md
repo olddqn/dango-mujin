@@ -122,6 +122,7 @@ dango-gitsea-bridge/
 ├── RISK_ASSESSMENT.md             — Known risks and limitations
 ├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
 ├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
+├── TEMPORAL_TRUST_DECAY_SPEC.md   — Temporal trust decay specification
 ├── examples/                      — Sample JSON files
 │   └── sutable_events/            — Example su-table event files
 ├── runtime/                       — Minimum viable Python implementation
@@ -138,7 +139,10 @@ dango-gitsea-bridge/
 │   ├── graph_export.py            — CLI: export graph as mermaid, text, or HTML
 │   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
 │   ├── sign_event.py              — CLI: attach mock signature to event JSON
-│   └── verify_event_signature.py  — CLI: verify mock signature on event JSON
+│   ├── verify_event_signature.py  — CLI: verify mock signature on event JSON
+│   ├── temporal_trust_decay.py    — Trust decay library (deterministic, no I/O)
+│   ├── contribution_weight.py     — CLI: compute trust weight for single event
+│   └── trust_snapshot.py          — CLI: contributor trust snapshot from su-table
 ├── sutable/                       — Live JSONL event logs
 │   ├── claims.jsonl
 │   ├── negotiations.jsonl
@@ -149,6 +153,9 @@ dango-gitsea-bridge/
     ├── sutable_events/            — Example event JSON files
     ├── signed-claim-event.json    — Valid mock-signed claim event
     ├── invalid-signed-event.json  — Corrupted signature (always rejected)
+    ├── trust-decay-input.json     — Contribution event for trust weight example
+    ├── trust-decay-output.json    — Computed trust weight (reference_date fixed)
+    ├── contributor-history.json   — Multi-contributor trust decay example
     ├── housing-001.graph.mmd      — Rendered negotiation graph (Mermaid)
     └── housing-001.graph.html     — Local HTML preview (no external deps)
 ```
@@ -209,6 +216,48 @@ python runtime/graph_export.py \
 
 Open with `open examples/housing-001.graph.html` (macOS) or your browser.
 The Mermaid code block has a **Copy** button — paste into mermaid.live to render the graph visually.
+
+---
+
+## Temporal Trust Decay
+
+Dan-Go su-table contribution events carry a **time-decaying trust weight**.
+
+Trust is not a fixed score. Trust is coordination memory that fades with time.
+Ancient contributions are still recorded. Their coordination signal weakens.
+
+```
+trust_weight = base_weight × decay_factor × verification_multiplier
+             × dignity_multiplier × continuity_multiplier
+
+decay_factor = max(0.05, 0.5 ^ (days_since / half_life_days))
+```
+
+Defaults: half-life = 90 days, minimum = 0.05 (ancient contributions never fully vanish).
+Dignity block is the only hard zero: trust_weight = 0.0 exactly.
+
+```bash
+# Compute trust weight for a single contribution event
+python runtime/contribution_weight.py examples/trust-decay-input.json
+
+# Contributor trust snapshot from su-table (by claim)
+python runtime/trust_snapshot.py --claim-id housing-001
+
+# With fixed reference date (for deterministic output)
+python runtime/trust_snapshot.py --claim-id housing-001 --reference-date 2026-05-24
+```
+
+Trust appears in all graph export formats:
+- Text: `↑ trust=0.99  decay=0.99  level=high`
+- Mermaid: `↑trust=0.99` in contribution node labels
+- HTML: colored badge (cyan=high / amber=medium / gray=low / red=blocked) with hover tooltip
+
+Multipliers:
+- `verified` → 1.2 | `self_reported` → 1.0 | `disputed` → 0.6
+- continuity bonus: min(1.5, 1.0 + 0.1 × (count − 1)) — anti-cartel capped
+- `dignity: pass` → 1.0 | `escalate` → 0.8 | `block` → 0.0
+
+See `TEMPORAL_TRUST_DECAY_SPEC.md` for the full specification.
 
 ---
 

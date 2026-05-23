@@ -213,6 +213,44 @@ python runtime/graph_export.py --list
 
 ---
 
+## Trust Weight in the Graph
+
+Every contribution node has a `trust_weight` computed by `temporal_trust_decay.py`.
+
+Trust weight reflects the coordination signal strength of a contribution
+at the time the graph is queried. It is computed live — not stored in the JSONL.
+
+The formula:
+```
+trust_weight = base_weight × decay_factor × verification_multiplier
+             × dignity_multiplier × continuity_multiplier
+
+decay_factor = max(0.05, 0.5 ^ (days_since / half_life_days))
+```
+
+Trust levels:
+| trust_weight | level |
+|---|---|
+| ≥ 0.7 | `high` |
+| ≥ 0.3 | `medium` |
+| > 0.0 | `low` |
+| = 0.0 | `blocked` |
+
+Rendering per format:
+- **Mermaid**: `↑trust=0.99` appended to contribution node label
+- **Text**: `↑ trust=0.99  decay=0.99  level=high  [verified]`
+- **HTML**: colored badge with hover tooltip (cyan=high / amber=medium / gray=low / red=blocked)
+
+An AI agent reading the graph can:
+- Check `node.meta.trust_weight` for each contribution node
+- Check `node.meta.trust_level` for the tier string
+- Check `meta.trust_summary` for the graph-level count by tier
+- Identify dignity-blocked contributions: `trust_weight == 0.0`
+
+See `TEMPORAL_TRUST_DECAY_SPEC.md` for the full specification.
+
+---
+
 ## Signature Status in the Graph
 
 Every event node exposes `meta.signature_status` and `meta.signer_did`.

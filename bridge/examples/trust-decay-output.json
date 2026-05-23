@@ -1,0 +1,19 @@
+{
+  "event_type": "contribution_accepted",
+  "contributor": "did:key:mock-translator-agent",
+  "contribution_type": "translation",
+  "timestamp": "2026-02-01T00:00:00Z",
+  "reference_date": "2026-05-24",
+  "trust_level": "medium",
+  "trust_weight": 0.5065,
+  "base_weight": 1.0,
+  "decay_factor": 0.4221,
+  "verification_multiplier": 1.2,
+  "dignity_multiplier": 1.0,
+  "continuity_multiplier": 1.0,
+  "days_since_event": 112.0,
+  "half_life_days": 90.0,
+  "verification_status": "verified",
+  "dignity_review": "pass",
+  "contribution_count": 1
+}

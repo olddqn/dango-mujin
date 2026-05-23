@@ -1,0 +1,121 @@
+{
+  "_note": "Multi-contributor history example showing trust decay across time and verification levels.",
+  "_reference_date": "2026-05-24T00:00:00Z",
+  "claim_id": "housing-002",
+  "events": [
+    {
+      "event_type": "contribution_accepted",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-translator-A",
+      "contribution_type": "translation",
+      "timestamp": "2026-03-15T00:00:00Z",
+      "verification_status": "self_reported",
+      "dignity_review": "pass",
+      "_days_since": 70,
+      "_trust_note": "First contribution — no continuity bonus. self_reported → 1.0 verif."
+    },
+    {
+      "event_type": "contribution_accepted",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-translator-A",
+      "contribution_type": "translation",
+      "timestamp": "2026-04-15T00:00:00Z",
+      "verification_status": "self_reported",
+      "dignity_review": "pass",
+      "_days_since": 39,
+      "_trust_note": "Second contribution — continuity_multiplier=1.1"
+    },
+    {
+      "event_type": "contribution_accepted",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-translator-A",
+      "contribution_type": "translation",
+      "timestamp": "2026-05-10T00:00:00Z",
+      "verification_status": "self_reported",
+      "dignity_review": "pass",
+      "_days_since": 14,
+      "_trust_note": "Latest — count=3, continuity=1.2. High trust from recency."
+    },
+    {
+      "event_type": "contribution_accepted",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-legal-reviewer-B",
+      "contribution_type": "legal_review",
+      "timestamp": "2026-01-10T00:00:00Z",
+      "verification_status": "verified",
+      "dignity_review": "pass",
+      "_days_since": 134,
+      "_trust_note": "Single old contribution. verified → 1.2 but decayed strongly."
+    },
+    {
+      "event_type": "contribution_accepted",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-disputed-agent-C",
+      "contribution_type": "verification",
+      "timestamp": "2026-05-01T00:00:00Z",
+      "verification_status": "disputed",
+      "dignity_review": "escalate",
+      "_days_since": 23,
+      "_trust_note": "Disputed + escalate → low trust despite recent timestamp."
+    },
+    {
+      "event_type": "contribution_offer",
+      "claim_id": "housing-002",
+      "contributor": "did:key:mock-blocked-agent-D",
+      "contribution_type": "story_editing",
+      "timestamp": "2026-05-20T00:00:00Z",
+      "verification_status": "self_reported",
+      "dignity_review": "block",
+      "dignity_block_reason": "story_editing requires fresh consent confirmation",
+      "_days_since": 4,
+      "_trust_note": "Dignity block → trust_weight=0.0 regardless of recency."
+    }
+  ],
+  "computed_trust_weights": {
+    "_note": "Computed with reference_date=2026-05-24, half_life=90 days.",
+    "did:key:mock-translator-A": {
+      "latest_event_days_ago": 14,
+      "contribution_count": 3,
+      "continuity_multiplier": 1.2,
+      "decay_factor_of_latest": 0.8977,
+      "verification_multiplier": 1.0,
+      "dignity_multiplier": 1.0,
+      "trust_weight": 1.0773,
+      "trust_level": "high",
+      "_formula": "1.0 × 0.8977 × 1.0 × 1.0 × 1.2 = 1.0773"
+    },
+    "did:key:mock-legal-reviewer-B": {
+      "latest_event_days_ago": 134,
+      "contribution_count": 1,
+      "continuity_multiplier": 1.0,
+      "decay_factor_of_latest": 0.3551,
+      "verification_multiplier": 1.2,
+      "dignity_multiplier": 1.0,
+      "trust_weight": 0.4261,
+      "trust_level": "medium",
+      "_formula": "1.0 × 0.3551 × 1.2 × 1.0 × 1.0 = 0.4261"
+    },
+    "did:key:mock-disputed-agent-C": {
+      "latest_event_days_ago": 23,
+      "contribution_count": 1,
+      "continuity_multiplier": 1.0,
+      "decay_factor_of_latest": 0.8405,
+      "verification_multiplier": 0.6,
+      "dignity_multiplier": 0.8,
+      "trust_weight": 0.4034,
+      "trust_level": "medium",
+      "_formula": "1.0 × 0.8405 × 0.6 × 0.8 × 1.0 = 0.4034"
+    },
+    "did:key:mock-blocked-agent-D": {
+      "latest_event_days_ago": 4,
+      "contribution_count": 0,
+      "continuity_multiplier": 1.0,
+      "decay_factor_of_latest": 0.9699,
+      "verification_multiplier": 1.0,
+      "dignity_multiplier": 0.0,
+      "trust_weight": 0.0,
+      "trust_level": "blocked",
+      "_formula": "dignity_block → 0.0 exactly (minimum floor does not apply)"
+    }
+  }
+}

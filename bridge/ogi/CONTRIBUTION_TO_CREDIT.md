@@ -141,6 +141,70 @@ non-monetary contributions as first-class values.
 
 ---
 
+## Temporal Trust Decay: Credit Signals Are Not Fixed
+
+Credit signals are records of what was done. They are permanent.
+
+But the **coordination weight** of those signals changes with time.
+
+`temporal_trust_decay.py` implements a time-decaying trust weight for each
+contribution event. This weight is separate from the credit signal itself —
+it is a coordination utility, not a judgment of value.
+
+```
+trust_weight = base_weight × decay_factor × verification_mult
+             × dignity_mult × continuity_mult
+
+decay_factor = max(0.05, 0.5 ^ (days_since / half_life_days))
+```
+
+### What This Means for Credit Signals
+
+A credit signal issued 2 years ago is still in the su-table.
+The contribution happened. It is remembered.
+
+But when an OGI coordination system queries *how much weight to give it today*,
+the answer reflects the time since the contribution:
+
+| days since contribution | trust_weight (verified, no bonus) |
+|---|---|
+| 0 (today) | 1.2 |
+| 30 | 0.95 |
+| 90 (one half-life) | 0.60 |
+| 180 | 0.30 |
+| 365 | 0.091 |
+| 730+ | 0.05 (floor) |
+
+### The Anti-Cartel Property
+
+Without decay, early contributors accumulate permanent coordination advantage.
+The first agent to appear in a claim would always outweight newcomers.
+
+Decay prevents this:
+- Old high-quality contributions still count (floor = 0.05)
+- But they do not permanently block new contributors
+- Continuity bonus rewards regular return (up to 1.5×, capped)
+- No agent becomes untouchable through history alone
+
+### Dignity Block Is the Only Zero
+
+`dignity_cleared: false` → trust_weight = 0.0 exactly.
+
+The minimum floor (0.05) does NOT apply to dignity-blocked contributions.
+The credit record remains. The coordination weight is zero.
+
+```bash
+# Compute trust weight for a single contribution event
+python runtime/contribution_weight.py examples/trust-decay-input.json
+
+# View contributor trust snapshot for a claim
+python runtime/trust_snapshot.py --claim-id housing-001
+```
+
+See `TEMPORAL_TRUST_DECAY_SPEC.md` in the bridge root for the full specification.
+
+---
+
 ## What Credit Is Not
 
 Credit signals are not:
@@ -149,6 +213,7 @@ Credit signals are not:
 - A basis for discrimination or ranking agents against each other
 - A replacement for dignity constraints
 - A reputation score that gates participation
+- A fixed value that never changes (trust weights decay with time)
 
 An agent with no credit history can still participate in Dan-Go negotiations.
 Credit signals are **additional information** about the economy's coordination history.

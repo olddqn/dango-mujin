@@ -83,10 +83,21 @@ def _sig_suffix(node: dict) -> str:
     return ""
 
 
+def _trust_suffix(node: dict) -> str:
+    """Return trust info string for contribution nodes, else ''."""
+    m  = node.get("meta", {})
+    tw = m.get("trust_weight")
+    if tw is None:
+        return ""
+    lvl = m.get("trust_level", "low")
+    icon = {"high": "↑", "medium": "→", "low": "↓", "blocked": "🛑"}.get(lvl, "")
+    return f" {icon}trust={tw}"
+
+
 def _mermaid_node_line(node: dict) -> str:
     shape = node.get("shape", "rect")
     op, cl = MERMAID_SHAPE.get(shape, ("[", "]"))
-    label  = _sanitize_label(node["label"]) + _sig_suffix(node)
+    label  = _sanitize_label(node["label"]) + _sig_suffix(node) + _trust_suffix(node)
     nid    = node["id"]
     cls    = node.get("style", "default")
     ts     = node["timestamp"][:16].replace("T", " ")
@@ -183,6 +194,15 @@ def export_text(graph: dict) -> str:
     lines.append(f"Final result:  {meta.get('final_result', 'in progress') or 'in progress'}")
     if meta.get("has_dignity_violation"):
         lines.append("⚠ DIGNITY VIOLATION DETECTED")
+    ts_meta = meta.get("trust_summary", {})
+    if any(ts_meta.values()):
+        parts = []
+        for lvl in ("high", "medium", "low", "blocked"):
+            n = ts_meta.get(lvl, 0)
+            if n:
+                icon = {"high":"↑","medium":"→","low":"↓","blocked":"🛑"}.get(lvl,"")
+                parts.append(f"{icon}{lvl}:{n}")
+        lines.append(f"Trust:         {' '.join(parts)}")
     lines.append("")
 
     correction_edges: dict[str, list] = {}
@@ -225,6 +245,19 @@ def export_text(graph: dict) -> str:
             if signer and sig_status == "mock_valid":
                 sig_line += f"  signer: {signer}"
             lines.append(f"       {sig_line}")
+
+        # Trust weight line (contribution events only)
+        tw = meta_n.get("trust_weight")
+        if tw is not None:
+            lvl = meta_n.get("trust_level", "low")
+            decay = meta_n.get("decay_factor", "")
+            td = meta_n.get("trust_detail", {})
+            verif = td.get("verification_status", "")
+            trust_icon = {"high":"↑","medium":"→","low":"↓","blocked":"🛑"}.get(lvl, "?")
+            trust_line = f"       {trust_icon} trust={tw}  decay={decay}  level={lvl}"
+            if verif:
+                trust_line += f"  [{verif}]"
+            lines.append(trust_line)
 
         if meta_n.get("dignity_violation"):
             lines.append("       ⚠ DIGNITY VIOLATION — automated processing halted")
@@ -584,6 +617,23 @@ tr:hover td { background: var(--surface); }
 .integrity-block .err  { color: var(--red); }
 .integrity-item { margin-bottom: 0.4rem; }
 
+/* ── Trust badges ───────────────────────────────── */
+.trust-badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.67rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  cursor: help;
+}
+.trust-high    { background:#164e4e; color:var(--cyan); }
+.trust-medium  { background:#451a03; color:var(--amber); }
+.trust-low     { background:#1c1c1c; color:#6b7280; border:1px solid #2a2a2a; }
+.trust-blocked { background:#450a0a; color:var(--red); }
+
 /* ── Signature badges ───────────────────────────── */
 .sig-badge {
   display: inline-block;
@@ -704,6 +754,9 @@ def export_html(graph: dict) -> str:
     corr_edges    = [e for e in edges if e["kind"] == "correction"]
     chain_edges   = [e for e in edges if e["kind"] == "hash_chain"]
     signed_preview= sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_valid")
+    trust_summary = meta.get("trust_summary", {})
+    high_trust    = trust_summary.get("high", 0)
+    blocked_trust = trust_summary.get("blocked", 0)
 
     # outgoing correction/chain edges per node
     out_special: dict[str, list] = {}
@@ -738,13 +791,38 @@ def export_html(graph: dict) -> str:
         elif sig_status == "unsupported_signature_type":
             sig_badge_html = '<span class="sig-badge sig-unsup" title="unsupported signature type">? sig</span>'
 
+        # Trust badge (contribution events only)
+        tw  = m.get("trust_weight")
+        lvl = m.get("trust_level", "")
+        td  = m.get("trust_detail", {})
+        trust_badge_html = ""
+        if tw is not None:
+            decay   = td.get("decay_factor", "")
+            verif   = td.get("verification_status", "")
+            days    = td.get("days_since_event", "")
+            tooltip = (f"trust={tw} decay={decay} "
+                       f"days={days} verif={verif}")
+            css_lvl = {"high":"trust-high","medium":"trust-medium",
+                       "low":"trust-low","blocked":"trust-blocked"}.get(lvl,"trust-low")
+            icon    = {"high":"↑","medium":"→","low":"↓","blocked":"🛑"}.get(lvl,"")
+            trust_badge_html = (
+                f'<span class="trust-badge {css_lvl}" title="{_h(tooltip)}">'
+                f'{icon} {tw}'
+                f'</span>'
+            )
+
         parts = [
             f'<li class="tl-item {_h(css)}">',
             f'  <span class="tl-index">{i}</span>',
             f'  <div class="tl-body">',
             f'    <span class="tl-badge" style="{_h(badge)}">{_h(et)}</span>',
             f'    <span class="tl-label">{label}</span>',
-            f'    {sig_badge_html}' if sig_badge_html else "",
+        ]
+        if sig_badge_html:
+            parts.append(f'    {sig_badge_html}')
+        if trust_badge_html:
+            parts.append(f'    {trust_badge_html}')
+        parts += [
             f'    <div class="tl-meta">',
             f'      <span>🗄 {table}</span>',
         ]
@@ -782,6 +860,27 @@ def export_html(graph: dict) -> str:
         "unsupported_signature_type":'<span class="sig-badge sig-unsup">? unsupported</span>',
     }
 
+    # Trust cell helper
+    def _trust_cell(node: dict) -> str:
+        m   = node.get("meta", {})
+        tw  = m.get("trust_weight")
+        lvl = m.get("trust_level", "")
+        td  = m.get("trust_detail", {})
+        if tw is None:
+            return ""
+        css_lvl = {"high":"trust-high","medium":"trust-medium",
+                   "low":"trust-low","blocked":"trust-blocked"}.get(lvl,"trust-low")
+        icon    = {"high":"↑","medium":"→","low":"↓","blocked":"🛑"}.get(lvl,"")
+        decay   = td.get("decay_factor","")
+        days    = td.get("days_since_event","")
+        verif   = td.get("verification_status","")
+        tooltip = f"trust={tw} decay={decay} days={days} verif={verif}"
+        return (
+            f'<span class="trust-badge {css_lvl}" title="{_h(tooltip)}">'
+            f'{icon} {tw}'
+            f'</span>'
+        )
+
     # ── Helper: event table rows ─────────────────────────────
     def table_row(i: int, node: dict) -> str:
         style   = node.get("style", "default")
@@ -801,6 +900,7 @@ def export_html(graph: dict) -> str:
         signer_did = m.get("signer_did", "")
         sig_cell   = _SIG_CELL.get(sig_status, "")
         did_short  = (signer_did[:20] + "…") if len(signer_did) > 20 else signer_did
+        tc         = _trust_cell(node)
 
         return (
             f'<tr class="{row_cls}">'
@@ -810,6 +910,7 @@ def export_html(graph: dict) -> str:
             f'<td>{_h(_actor(node))}</td>'
             f'<td class="td-hash">{_h(node["timestamp"][:19].replace("T"," "))}</td>'
             f'<td>{summary}</td>'
+            f'<td>{tc}</td>'
             f'<td>{sig_cell}</td>'
             f'<td class="td-hash" title="{_h(signer_did)}">{_h(did_short)}</td>'
             f'<td class="td-hash">{_h(_short_hash(eh))}</td>'
@@ -822,6 +923,9 @@ def export_html(graph: dict) -> str:
     signed_count   = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_valid")
     unsigned_count = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "unsigned")
     invalid_count  = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_invalid")
+    tw_nodes = [n for n in nodes if n.get("meta",{}).get("trust_weight") is not None]
+    high_tw_count  = sum(1 for n in tw_nodes if n["meta"]["trust_level"] == "high")
+    blk_tw_count   = sum(1 for n in tw_nodes if n["meta"]["trust_level"] == "blocked")
 
     def integrity_html() -> str:
         items = []
@@ -843,6 +947,13 @@ def export_html(graph: dict) -> str:
             items.append(f'<div class="integrity-item warn">○ {unsigned_count} event(s) unsigned (allowed)</div>')
         if invalid_count:
             items.append(f'<div class="integrity-item err">✗ {invalid_count} event(s) with INVALID signature — possible tampering</div>')
+        # Trust integrity
+        if tw_nodes:
+            items.append(f'<div class="integrity-item ok">↻ {len(tw_nodes)} contribution event(s) with temporal trust weight</div>')
+        if high_tw_count:
+            items.append(f'<div class="integrity-item ok">↑ {high_tw_count} high-trust contribution(s) (≥ 0.7)</div>')
+        if blk_tw_count:
+            items.append(f'<div class="integrity-item err">🛑 {blk_tw_count} dignity-blocked contribution(s) — trust=0.0</div>')
         items.append(f'<div class="integrity-item ok">✓ No external scripts or stylesheets loaded</div>')
         items.append(f'<div class="integrity-item ok">✓ No network communication performed</div>')
         return "\n".join(items)
@@ -920,6 +1031,14 @@ def export_html(graph: dict) -> str:
       <div class="val">{signed_preview}</div>
       <div class="lbl">Signed Events</div>
     </div>
+    <div class="stat-card {'good' if high_trust else ''}">
+      <div class="val">{high_trust}</div>
+      <div class="lbl">High Trust</div>
+    </div>
+    <div class="stat-card {'danger' if blocked_trust else ''}">
+      <div class="val">{blocked_trust}</div>
+      <div class="lbl">Trust Blocked</div>
+    </div>
   </div>
 </section>
 
@@ -960,6 +1079,7 @@ def export_html(graph: dict) -> str:
           <th>speaker / contributor</th>
           <th>timestamp</th>
           <th>summary</th>
+          <th>trust</th>
           <th>signature</th>
           <th>signer did</th>
           <th>event_hash</th>
