@@ -70,19 +70,75 @@ python runtime/stream_preview.py examples/refugee-story.claim.json examples/cont
 
 ---
 
+## Su-table
+
+Dan-Go uses a fully open, append-only state table called the **su-table** (素テーブル).
+
+Nothing is deleted.
+Corrections are appended.
+Negotiation history is part of the protocol itself.
+
+The goal is not immutable truth.
+The goal is transparent state transition.
+
+```bash
+# Append a claim event
+python runtime/sutable_append.py --table claims --event examples/sutable_events/claim_event.json
+
+# Append a negotiation objection
+python runtime/negotiation_event.py objection \
+  --claim-id housing-001 \
+  --speaker did:key:critic \
+  --reason "Legal ownership unresolved."
+
+# Append reality feedback
+python runtime/reality_feedback_append.py \
+  --claim-id housing-001 \
+  --result partial_success \
+  --notes "Internet established. Space not yet legally cleared."
+
+# Query: full timeline for a claim
+python runtime/sutable_query.py --timeline housing-001
+
+# Verify chain integrity
+python runtime/sutable_query.py --verify
+```
+
+See `SUTABLE_APPEND_ONLY_SPEC.md` for the full specification.
+
+---
+
 ## Structure
 
 ```
 dango-gitsea-bridge/
-├── README.md                    — This file
-├── DANGO_GITSEA_THESIS.md       — Why this bridge exists
-├── CLAIM_TO_REPO_ASSET.md       — How Claims become repo assets
-├── CONTRIBUTION_STREAM_SPEC.md  — How contributions become streams
+├── README.md                      — This file
+├── DANGO_GITSEA_THESIS.md         — Why this bridge exists
+├── CLAIM_TO_REPO_ASSET.md         — How Claims become repo assets
+├── CONTRIBUTION_STREAM_SPEC.md    — How contributions become streams
 ├── REFUGEE_STORY_STREAM_ETHICS.md — Ethics of story-based streams
-├── DIGNITY_GUARD.md             — The guard layer
-├── RISK_ASSESSMENT.md           — Known risks and limitations
-├── examples/                    — Sample JSON files
-└── runtime/                     — Minimum viable Python implementation
+├── DIGNITY_GUARD.md               — The guard layer
+├── PASS_FLOW_EXAMPLE.md           — Consent-established PASS flow walkthrough
+├── RISK_ASSESSMENT.md             — Known risks and limitations
+├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
+├── examples/                      — Sample JSON files
+│   └── sutable_events/            — Example su-table event files
+├── runtime/                       — Minimum viable Python implementation
+│   ├── claim_to_asset.py          — Claim → repo asset
+│   ├── dignity_guard.py           — 7-rule dignity guard
+│   ├── stream_preview.py          — Stream eligibility preview
+│   ├── contribution_ledger.py     — Contribution stream ledger
+│   ├── sutable_log.py             — JSONL append helper + hash chain
+│   ├── sutable_append.py          — CLI: append event to su-table
+│   ├── sutable_query.py           — CLI: query su-table events
+│   ├── negotiation_event.py       — CLI: structured negotiation events
+│   └── reality_feedback_append.py — CLI: reality feedback events
+└── sutable/                       — Live JSONL event logs
+    ├── claims.jsonl
+    ├── negotiations.jsonl
+    ├── contributions.jsonl
+    ├── executions.jsonl
+    └── reality_feedback.jsonl
 ```
 
 ---

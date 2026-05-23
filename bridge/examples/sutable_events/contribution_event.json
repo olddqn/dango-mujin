@@ -1,0 +1,10 @@
+{
+  "event_type": "contribution_offer",
+  "claim_id": "housing-001",
+  "contributor": "did:key:z6MklawAgent001",
+  "contribution_type": "legal_review",
+  "addresses_condition": "legal_ownership_confirmed",
+  "volume": "1 legal review session",
+  "dignity_cleared": false,
+  "dignity_block_reason": "legal_ownership_confirmed not yet in observed_state — cannot proceed"
+}

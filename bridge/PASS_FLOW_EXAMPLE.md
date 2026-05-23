@@ -2,6 +2,45 @@
 
 > A worked example of the dignity guard moving from BLOCK to PASS.
 
+## Full State Transition (Su-table Events)
+
+```
+BLOCK                   ← dignity_guard: consent_unknown
+↓
+  [claim_created]       → claims.jsonl
+  [objection]           → negotiations.jsonl  (legal ownership unresolved)
+↓
+NEGOTIATE
+↓
+  [amendment]           → negotiations.jsonl  (add ownership requirement)
+  [support]             → negotiations.jsonl  (amendment accepted)
+  [contribution_offer]  → contributions.jsonl
+  [contribution_accepted] → contributions.jsonl
+↓
+AMENDMENT EVENT ✓ → observed_state updated: explicit_consent_established
+↓
+CONTRIBUTION EVENT ✓ → legal_ownership_confirmed met
+↓
+PASS                    ← dignity_guard: all 7 checks pass
+↓
+  [execution_started]   → executions.jsonl
+↓
+EXECUTION
+↓
+  [reality_feedback]    → reality_feedback.jsonl  (result: partial_success)
+↓
+REALITY FEEDBACK ◑
+```
+
+Every arrow in this diagram is a permanent record in the su-table.
+Nothing is deleted. Everything is queryable.
+
+```bash
+python runtime/sutable_query.py --timeline housing-001
+```
+
+---
+
 ---
 
 ## Why the Dignity Guard Exists

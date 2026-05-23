@@ -1,0 +1,20 @@
+{
+  "event_type": "claim_created",
+  "claim_id": "housing-001",
+  "speaker": "did:key:z6MkproposerHousing",
+  "statement": "A vacant house can become a shared creative base for displaced artists.",
+  "decision": "negotiate",
+  "dignity_constraints": [
+    "no_identity_exposure",
+    "revocable_consent"
+  ],
+  "observed_state": [
+    "vacant_building_exists",
+    "community_need_documented"
+  ],
+  "missing_conditions": [
+    "legal_ownership_confirmed",
+    "safety_review",
+    "participant_consent"
+  ]
+}

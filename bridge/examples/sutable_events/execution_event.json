@@ -1,0 +1,12 @@
+{
+  "event_type": "execution_started",
+  "claim_id": "housing-001",
+  "speaker": "did:key:z6MkproposerHousing",
+  "conditions_met": [
+    "legal_ownership_confirmed",
+    "safety_review",
+    "participant_consent"
+  ],
+  "stream_id": "stream-housing-001-a",
+  "note": "All required conditions established. Execution phase begins."
+}
