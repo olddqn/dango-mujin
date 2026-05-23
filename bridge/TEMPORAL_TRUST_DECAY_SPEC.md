@@ -386,7 +386,8 @@ Badge colors:
 - Credit ratings
 - Identity verification
 - Real-time trust updates (trust is computed at query time, not stored)
-- Cross-claim trust aggregation (each claim's snapshot is independent)
+- Cross-claim trust aggregation (each claim's snapshot is independent;
+  see `CLAIM_FEDERATION_SPEC.md` for cross-claim relationships)
 - Social trust transitivity ("trusted by X therefore trusted by Y")
 
 Trust decay is a coordination tool. It is not a social credit system.

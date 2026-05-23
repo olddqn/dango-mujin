@@ -303,6 +303,59 @@ See `DID_SIGNATURE_SPEC.md` for the full specification.
 
 ---
 
+## Claim Federation
+
+Claims are not isolated — they depend on, enable, block, counterclaim, and
+derive from each other. The federation layer records these cross-claim
+relationships in `sutable/federation.jsonl` and makes them queryable.
+
+**Relationship types:**
+
+| Type              | Meaning |
+|-------------------|---------|
+| `depends_on`      | A cannot proceed without B |
+| `enables`         | B (upstream) makes A (downstream) possible |
+| `blocks`          | B prevents A from proceeding |
+| `counterclaim`    | A publicly disputes B — both preserved |
+| `amendment_of`    | A modifies B; B still exists |
+| `derived_from`    | A is derived from B's content or outcome |
+| `federation_link` | Symmetric association (stored both ways) |
+| `dignity_override`| B overrides dignity constraints for A |
+
+**Circular detection:** `depends_on`, `blocks`, and `dignity_override` edges
+are checked for cycles. Counterclaims are never circular-detected.
+
+```bash
+# Validate a federation event (exit 0 = valid, exit 1 = invalid)
+python runtime/claim_dependency.py examples/claim-dependency.json
+
+# Validate and append to su-table
+python runtime/claim_dependency.py examples/claim-dependency.json --append
+
+# Build federation map from su-table
+python runtime/claim_federation.py
+
+# Single claim summary
+python runtime/claim_federation.py --claim-id housing-001
+
+# Federation snapshot (compact)
+python runtime/federation_snapshot.py --claim-id housing-001
+python runtime/federation_snapshot.py --all-claims --verbose
+
+# Export federation graph
+python runtime/federation_graph.py --format text
+python runtime/federation_graph.py --format mermaid --output examples/federation.graph.mmd
+```
+
+Federation context appears in the negotiation graph export:
+- **Text:** `── CLAIM FEDERATION ──` section with depth + all relationships
+- **Mermaid:** `%%` comment header with federation depth and linked claims
+- **HTML:** "Claim Federation" panel with colored tags + depth stat card
+
+See `CLAIM_FEDERATION_SPEC.md` for the full specification.
+
+---
+
 ## OGI Compatibility Layer
 
 Dan-Go can serve as the negotiation protocol for OGI-style post-scarcity agent economies.

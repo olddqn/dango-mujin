@@ -384,3 +384,30 @@ The graph is ephemeral. The su-table is permanent.
 >  What was recorded cannot be unrecorded.
 >  The graph shows you the path.
 >  The su-table holds the memory."
+
+---
+
+## Federation Context
+
+The negotiation graph shows events **within** a single claim. The federation
+layer shows relationships **between** claims.
+
+`graph_export.py` automatically loads the federation map and appends
+a federation context panel to the negotiation graph output:
+
+- **Text export** — `── CLAIM FEDERATION ──` section with federation depth,
+  all outgoing and incoming relationships by type.
+- **Mermaid export** — `%%` comment header lines with depth and linked claims.
+- **HTML export** — "Claim Federation" section with a colored panel showing
+  linked claim tags, depth as a stat card, and integrity notes for
+  counterclaims and cross-claim depth.
+
+The federation context is loaded from `sutable/federation.jsonl`. If the
+table is empty or the claim has no federation relationships, the panel shows
+a graceful empty state.
+
+Federation does not affect graph node/edge structure. It is supplementary
+context appended to the same export — the negotiation graph and the federation
+view are separate concerns in the same output document.
+
+**See:** `CLAIM_FEDERATION_SPEC.md` for the full federation specification.

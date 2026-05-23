@@ -1,0 +1,42 @@
+[
+  {
+    "event_type": "claim_dependency",
+    "claim_id": "housing-002",
+    "depends_on_claim_id": "housing-001",
+    "dependency_type": "depends_on",
+    "reason": "Remote collaboration layer requires the shared creative base. Internet infrastructure must be established before distributed contributors can join.",
+    "timestamp": "2026-05-24T00:00:00Z"
+  },
+  {
+    "event_type": "claim_dependency",
+    "claim_id": "housing-004",
+    "depends_on_claim_id": "housing-001",
+    "dependency_type": "enables",
+    "reason": "The shared creative base enables the community kitchen claim to proceed: shared space governance and participant consent transfer to the kitchen project.",
+    "timestamp": "2026-05-24T01:00:00Z"
+  },
+  {
+    "event_type": "counterclaim",
+    "claim_id": "housing-003",
+    "counterclaim_to": "housing-001",
+    "reason": "Building safety review is incomplete. Structural assessment has not been conducted. Proceeding risks harm to participants.",
+    "speaker": "did:key:mock-safety-reviewer",
+    "timestamp": "2026-05-24T02:00:00Z"
+  },
+  {
+    "event_type": "claim_dependency",
+    "claim_id": "housing-004",
+    "depends_on_claim_id": "housing-002",
+    "dependency_type": "federation_link",
+    "reason": "Community kitchen and remote collaboration are co-located projects that share participant coordination.",
+    "timestamp": "2026-05-24T03:00:00Z"
+  },
+  {
+    "event_type": "claim_dependency",
+    "claim_id": "housing-005",
+    "depends_on_claim_id": "housing-003",
+    "dependency_type": "derived_from",
+    "reason": "Safety remediation claim derived from the safety counterclaim. Resolving housing-003's concern unlocks housing-005.",
+    "timestamp": "2026-05-24T04:00:00Z"
+  }
+]

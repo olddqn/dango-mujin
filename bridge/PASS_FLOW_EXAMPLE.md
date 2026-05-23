@@ -362,5 +362,67 @@ Key visual conventions:
 
 ---
 
+---
+
+## Claim Dependency Chain Example
+
+The housing-001 claim participates in a federation of five claims:
+
+```
+housing-001 (shared creative space)
+  │
+  ├── enables ──────────────────────── housing-004 (community kitchen)
+  │                                         │
+  │                                         ⟷ federation_link ──── housing-002 (remote collab)
+  │                                                                        │
+  ←─ depends_on ──────────────────────────────────────────────────────────┘
+  │
+  ⚡ counterclaimed_by ──────────────── housing-003 (safety counterclaim)
+                                              │
+                                              ⬡ derived_from ──────────── housing-005 (safety remediation)
+```
+
+**Federation depth from housing-002:**
+- housing-002 → depends_on → housing-001 → enables → housing-004 → (leaf) = depth 3
+
+```bash
+# Validate before appending
+python runtime/claim_dependency.py examples/claim-dependency.json
+
+# See the full federation map
+python runtime/claim_federation.py examples/claim-federation.json
+
+# Export the federation graph
+python runtime/federation_graph.py examples/claim-federation.json --format text
+python runtime/federation_graph.py examples/claim-federation.json \
+  --format mermaid --output examples/federation.graph.mmd
+
+# Negotiation graph with federation context
+python runtime/graph_export.py --claim-id housing-001 --format text
+```
+
+The `graph_export.py` text output for housing-001 includes a federation panel:
+```
+── CLAIM FEDERATION ──
+  Federation depth:  2
+  Enables:          housing-004
+  Countercl. by:    housing-003
+  Depended on by:   housing-002
+```
+
+| File | Purpose |
+|---|---|
+| `examples/claim-dependency.json` | Single depends_on event (housing-002 → housing-001) |
+| `examples/claim-counterclaim.json` | Counterclaim event (housing-003 contests housing-001) |
+| `examples/claim-federation.json` | Five-event federation network |
+| `examples/federation.graph.mmd` | Generated Mermaid federation graph |
+| `sutable/federation.jsonl` | Append-only federation event log |
+| `runtime/claim_dependency.py` | Validate + append federation events |
+| `runtime/claim_federation.py` | Build federation map from events |
+| `runtime/federation_graph.py` | Export federation graph |
+| `runtime/federation_snapshot.py` | Per-claim snapshot |
+
+---
+
 > "A is A because A is not A."
 > The claim that cannot proceed is the one that teaches us what must change first.

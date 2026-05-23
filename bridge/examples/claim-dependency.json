@@ -1,0 +1,8 @@
+{
+  "event_type": "claim_dependency",
+  "claim_id": "housing-002",
+  "depends_on_claim_id": "housing-001",
+  "dependency_type": "depends_on",
+  "reason": "Remote collaboration layer requires the shared creative base to be active first. Internet infrastructure must be established before distributed contributors can join.",
+  "timestamp": "2026-05-24T00:00:00Z"
+}

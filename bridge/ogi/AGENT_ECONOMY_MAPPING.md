@@ -193,3 +193,40 @@ Human or AI intent
 Dan-Go provides the structure at every layer.
 OGI provides the economic environment at every layer.
 This bridge translates between them.
+
+---
+
+## Cross-Claim Coordination (Claim Federation)
+
+In OGI-style agent economies, tasks rarely exist in isolation. The claim
+federation layer records the dependency network between tasks:
+
+| Federation Relationship | OGI Equivalent |
+|-------------------------|----------------|
+| `depends_on`            | Task prerequisite — agent economy must fulfill B before A |
+| `enables`               | Resource unlocking — completing B frees resources for A |
+| `blocks`                | Execution hold — agent economy cannot proceed with A until B is resolved |
+| `counterclaim`          | Agent dispute — one agent publicly contests another's task framing |
+| `derived_from`          | Task derivation — A's scope is derived from B's outcome |
+| `federation_link`       | Co-located tasks — shared participant/resource pools |
+| `dignity_override`      | Governance override — B's dignity constraints supersede A's defaults |
+
+**Federation depth** in the Dan-Go context maps to **dependency chain length**
+in OGI task planning: how many prerequisite tasks must complete before an
+agent can begin its assigned task.
+
+A claim with `federation_depth=3` requires at least two upstream task
+completions before its own execution can be responsibly started.
+
+```bash
+# Check what housing-001 depends on and what it enables
+python runtime/federation_snapshot.py --claim-id housing-001 --verbose
+
+# See the full cross-claim dependency network
+python runtime/federation_graph.py --format text
+```
+
+Counterclaims in the federation map signal **contested task framing** —
+the agent economy should surface these for human review rather than
+resolving them algorithmically. Both the claim and its counterclaim
+are preserved; resolution is a negotiation outcome, not a federation outcome.

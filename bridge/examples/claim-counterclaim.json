@@ -1,0 +1,8 @@
+{
+  "event_type": "counterclaim",
+  "claim_id": "housing-003",
+  "counterclaim_to": "housing-001",
+  "reason": "Building safety review is incomplete. The structural assessment of the vacant building has not been conducted. Proceeding with occupation risks harm to participants.",
+  "speaker": "did:key:mock-safety-reviewer",
+  "timestamp": "2026-05-24T02:00:00Z"
+}
