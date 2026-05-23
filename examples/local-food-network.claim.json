@@ -1,0 +1,49 @@
+{
+  "claim_id": "claim-food-001",
+  "title": "Three restaurants, one urban farm, and two food banks can form a zero-waste loop",
+  "speaker": "human-or-agent-id",
+  "claim_type": "declarative",
+  "statement": "Surplus food from three restaurants can be routed to two food banks and composted via one urban farm, eliminating waste and feeding an additional 40 people per week, through coordination that does not currently exist.",
+  "observed_state": [
+    "three_restaurants_generate_daily_surplus",
+    "two_food_banks_have_capacity_for_more_intake",
+    "urban_farm_accepts_organic_waste_for_composting",
+    "no_coordination_system_connects_these_parties",
+    "transport_logistics_unresolved"
+  ],
+  "required_state": [
+    "coordination_system_established",
+    "transport_schedule_agreed",
+    "food_safety_compliance_confirmed",
+    "participant_agreement_signed",
+    "feedback_loop_for_surplus_prediction"
+  ],
+  "missing_conditions": [
+    "coordination_system_established",
+    "transport_schedule_agreed",
+    "feedback_loop_for_surplus_prediction"
+  ],
+  "possible_contributions": [
+    "code",
+    "coordination",
+    "legal",
+    "knowledge",
+    "funding",
+    "social_reach"
+  ],
+  "risks": [
+    "food_safety_regulations_vary_by_jurisdiction",
+    "restaurant_participation_may_be_irregular",
+    "transport_cost_may_exceed_value_of_surplus",
+    "volunteer_coordinator_burnout"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "All parties participate voluntarily. No restaurant is obligated to donate. Food bank recipients are not tracked or identified."
+  },
+  "created_at": "2026-05-23T00:00:00Z",
+  "updated_at": "2026-05-23T00:00:00Z",
+  "version": 1
+}

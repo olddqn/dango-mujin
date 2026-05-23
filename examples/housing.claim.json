@@ -1,0 +1,44 @@
+{
+  "claim_id": "claim-housing-001",
+  "title": "A vacant house can become a shared creative base",
+  "speaker": "human-or-agent-id",
+  "claim_type": "declarative",
+  "statement": "This vacant house can become a shared creative base through mutual aid.",
+  "observed_state": [
+    "vacant_house_exists",
+    "owner_contact_unknown"
+  ],
+  "required_state": [
+    "owner_permission",
+    "cleaning_team",
+    "internet_connection",
+    "monthly_support",
+    "legal_agreement"
+  ],
+  "missing_conditions": [
+    "owner_permission",
+    "monthly_support"
+  ],
+  "possible_contributions": [
+    "legal_review",
+    "cleaning",
+    "funding",
+    "local_coordination",
+    "translation",
+    "promotion"
+  ],
+  "risks": [
+    "legal_uncertainty",
+    "maintenance_cost",
+    "participant_conflict"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "Participation is voluntary. Owner permission is required before any use."
+  },
+  "created_at": "2026-05-23T00:00:00Z",
+  "updated_at": "2026-05-23T00:00:00Z",
+  "version": 1
+}

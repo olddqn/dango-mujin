@@ -1,0 +1,49 @@
+{
+  "claim_id": "claim-ai-film-001",
+  "title": "A stateless AI agent can co-direct a short film with a human director",
+  "speaker": "agent:did:key:z6Mkexample",
+  "claim_type": "declarative",
+  "statement": "A short film (10–20 minutes) can be co-created by a human director and an AI agent with no persistent memory, using only a shared written protocol between sessions.",
+  "observed_state": [
+    "human_director_available",
+    "ai_agent_accessible_via_api",
+    "protocol_for_session_handoff_does_not_exist_yet"
+  ],
+  "required_state": [
+    "session_handoff_protocol_written",
+    "script_draft_agreed",
+    "visual_style_agreed",
+    "production_schedule_agreed",
+    "post_production_workflow_agreed",
+    "distribution_channel_identified"
+  ],
+  "missing_conditions": [
+    "session_handoff_protocol_written",
+    "script_draft_agreed",
+    "visual_style_agreed",
+    "distribution_channel_identified"
+  ],
+  "possible_contributions": [
+    "knowledge",
+    "code",
+    "translation",
+    "social_reach",
+    "legal",
+    "coordination"
+  ],
+  "risks": [
+    "ai_memory_discontinuity_affects_creative_coherence",
+    "copyright_ownership_ambiguity",
+    "human_director_burnout_from_protocol_overhead",
+    "distribution_platform_rejection_of_ai_content"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "No performer is required to work with AI. All human participants opt in explicitly."
+  },
+  "created_at": "2026-05-23T00:00:00Z",
+  "updated_at": "2026-05-23T00:00:00Z",
+  "version": 1
+}

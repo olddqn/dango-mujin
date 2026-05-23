@@ -1,0 +1,48 @@
+{
+  "claim_id": "claim-refugee-001",
+  "title": "A newly arrived refugee family can access legal aid within 72 hours",
+  "speaker": "human-coordinator-id",
+  "claim_type": "imperative",
+  "statement": "A refugee family that arrived 3 days ago with no local contacts can be connected to legal aid, temporary housing, and language support within 72 hours through existing networks that are not yet connected to each other.",
+  "observed_state": [
+    "family_has_arrived",
+    "family_has_no_local_contacts",
+    "legal_aid_organizations_exist_in_city",
+    "temporary_housing_units_available_in_network",
+    "volunteer_translators_available",
+    "organizations_are_not_connected_to_each_other"
+  ],
+  "required_state": [
+    "family_connected_to_legal_aid_within_72h",
+    "family_has_temporary_housing",
+    "family_has_language_support",
+    "coordination_channel_established_between_orgs"
+  ],
+  "missing_conditions": [
+    "coordination_channel_established_between_orgs",
+    "family_connected_to_legal_aid_within_72h"
+  ],
+  "possible_contributions": [
+    "coordination",
+    "translation",
+    "legal",
+    "housing",
+    "care",
+    "social_reach"
+  ],
+  "risks": [
+    "legal_aid_capacity_overloaded",
+    "language_barrier_delays_intake",
+    "housing_availability_changes",
+    "bureaucratic_requirements_not_met_in_time"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "All participation is voluntary. Family privacy is protected throughout. No data shared without explicit consent."
+  },
+  "created_at": "2026-05-23T00:00:00Z",
+  "updated_at": "2026-05-23T00:00:00Z",
+  "version": 1
+}
