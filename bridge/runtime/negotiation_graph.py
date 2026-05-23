@@ -207,10 +207,19 @@ _META_KEYS = {
     "conditions_met", "conditions_unmet",
     "dignity_cleared", "dignity_block_reason",
     "stream_id",
+    # DID signature fields
+    "signature_status",
+    "signature",
 }
 
 def _meta_for(event: dict) -> dict:
-    return {k: v for k, v in event.items() if k in _META_KEYS}
+    meta = {k: v for k, v in event.items() if k in _META_KEYS}
+    # Flatten signer DID for quick access in exporters
+    sig = event.get("signature")
+    if isinstance(sig, dict):
+        meta["signer_did"] = sig.get("did", "")
+        meta["signature_key_id"] = sig.get("key_id", "")
+    return meta
 
 
 # ── Core graph builder ────────────────────────────────────────

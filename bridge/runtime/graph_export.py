@@ -75,10 +75,18 @@ def _sanitize_label(label: str) -> str:
     return label.replace('"', "'").replace("\n", "<br/>")
 
 
+def _sig_suffix(node: dict) -> str:
+    """Return ' ✓sig' if the node has a valid mock signature, else ''."""
+    sig_status = node.get("meta", {}).get("signature_status", "")
+    if sig_status == "mock_valid":
+        return " ✓sig"
+    return ""
+
+
 def _mermaid_node_line(node: dict) -> str:
     shape = node.get("shape", "rect")
     op, cl = MERMAID_SHAPE.get(shape, ("[", "]"))
-    label  = _sanitize_label(node["label"])
+    label  = _sanitize_label(node["label"]) + _sig_suffix(node)
     nid    = node["id"]
     cls    = node.get("style", "default")
     ts     = node["timestamp"][:16].replace("T", " ")
@@ -202,6 +210,21 @@ def export_text(graph: dict) -> str:
         actor = meta_n.get("speaker") or meta_n.get("contributor") or meta_n.get("contributor_id")
         if actor:
             lines.append(f"       speaker: {actor}")
+
+        # Signature status line
+        sig_status = meta_n.get("signature_status", "")
+        if sig_status:
+            sig_icons = {
+                "mock_valid":                "✓ [signature: mock_valid]",
+                "unsigned":                  "○ [signature: unsigned]",
+                "mock_invalid":              "✗ [signature: mock_invalid]",
+                "unsupported_signature_type":"? [signature: unsupported]",
+            }
+            signer = meta_n.get("signer_did", "")
+            sig_line = sig_icons.get(sig_status, f"? [signature: {sig_status}]")
+            if signer and sig_status == "mock_valid":
+                sig_line += f"  signer: {signer}"
+            lines.append(f"       {sig_line}")
 
         if meta_n.get("dignity_violation"):
             lines.append("       ⚠ DIGNITY VIOLATION — automated processing halted")
@@ -561,6 +584,23 @@ tr:hover td { background: var(--surface); }
 .integrity-block .err  { color: var(--red); }
 .integrity-item { margin-bottom: 0.4rem; }
 
+/* ── Signature badges ───────────────────────────── */
+.sig-badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.67rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+}
+.sig-valid    { background:#14532d; color:#86efac; }
+.sig-unsigned { background:#1c1c1c; color:#64748b; border:1px solid #2a2a2a; }
+.sig-invalid  { background:#450a0a; color:#fca5a5; }
+.sig-unsup    { background:#1c1f2b; color:#818cf8; }
+
 /* ── Footer ─────────────────────────────────────── */
 .page-footer {
   margin-top: 3rem;
@@ -660,9 +700,10 @@ def export_html(graph: dict) -> str:
     final_result = meta.get("final_result", "") or "in progress"
     corr_count   = sum(1 for n in nodes if n["event_type"] == "correction")
     contrib_count= sum(1 for n in nodes if "contrib" in n.get("style", ""))
-    danger_count = sum(1 for n in nodes if n.get("style") == "danger")
-    corr_edges   = [e for e in edges if e["kind"] == "correction"]
-    chain_edges  = [e for e in edges if e["kind"] == "hash_chain"]
+    danger_count  = sum(1 for n in nodes if n.get("style") == "danger")
+    corr_edges    = [e for e in edges if e["kind"] == "correction"]
+    chain_edges   = [e for e in edges if e["kind"] == "hash_chain"]
+    signed_preview= sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_valid")
 
     # outgoing correction/chain edges per node
     out_special: dict[str, list] = {}
@@ -685,17 +726,33 @@ def export_html(graph: dict) -> str:
         m      = node.get("meta", {})
         nid    = node["id"]
 
+        sig_status = m.get("signature_status", "")
+        signer_did = m.get("signer_did", "")
+        sig_badge_html = ""
+        if sig_status == "mock_valid":
+            sig_badge_html = '<span class="sig-badge sig-valid" title="mock_valid — signed">✓ sig</span>'
+        elif sig_status == "unsigned":
+            sig_badge_html = '<span class="sig-badge sig-unsigned" title="unsigned">unsigned</span>'
+        elif sig_status == "mock_invalid":
+            sig_badge_html = '<span class="sig-badge sig-invalid" title="mock_invalid — tampered?">✗ sig</span>'
+        elif sig_status == "unsupported_signature_type":
+            sig_badge_html = '<span class="sig-badge sig-unsup" title="unsupported signature type">? sig</span>'
+
         parts = [
             f'<li class="tl-item {_h(css)}">',
             f'  <span class="tl-index">{i}</span>',
             f'  <div class="tl-body">',
             f'    <span class="tl-badge" style="{_h(badge)}">{_h(et)}</span>',
             f'    <span class="tl-label">{label}</span>',
+            f'    {sig_badge_html}' if sig_badge_html else "",
             f'    <div class="tl-meta">',
             f'      <span>🗄 {table}</span>',
         ]
         if actor:
             parts.append(f'      <span>👤 {actor}</span>')
+        if sig_status == "mock_valid" and signer_did:
+            did_short = signer_did[:24] + "…" if len(signer_did) > 24 else signer_did
+            parts.append(f'      <span title="{_h(signer_did)}">🔑 {_h(did_short)}</span>')
         parts.append(f'      <span>🕐 {_h(ts)}</span>')
         parts.append(f'    </div>')
 
@@ -717,6 +774,14 @@ def export_html(graph: dict) -> str:
         parts += ["  </div>", "</li>"]
         return "\n".join(parts)
 
+    # Signature badge HTML for table cells
+    _SIG_CELL = {
+        "mock_valid":                '<span class="sig-badge sig-valid">✓ mock_valid</span>',
+        "unsigned":                  '<span class="sig-badge sig-unsigned">unsigned</span>',
+        "mock_invalid":              '<span class="sig-badge sig-invalid">✗ invalid</span>',
+        "unsupported_signature_type":'<span class="sig-badge sig-unsup">? unsupported</span>',
+    }
+
     # ── Helper: event table rows ─────────────────────────────
     def table_row(i: int, node: dict) -> str:
         style   = node.get("style", "default")
@@ -726,15 +791,16 @@ def export_html(graph: dict) -> str:
         elif style == "correction":
             row_cls = "row-correction"
         eh  = node.get("event_hash", "")
-        peh = node.get("meta", {}).get("previous_event_hash", "")  # prefer meta; fall back to direct
-        # Actually previous_event_hash is stored on the raw event, not in meta.
-        # We need to get it from the node dict itself — but build_graph doesn't put it there.
-        # Let's use the hash_to_id to derive the previous node (node before this one by index).
-        prev_nid = f"n{i-2}" if i > 1 else ""  # n0-based, i is 1-based display
+        prev_nid  = f"n{i-2}" if i > 1 else ""  # n0-based, i is 1-based display
         prev_node = id_to_node.get(prev_nid, {})
         prev_hash = prev_node.get("event_hash", "") if prev_node else ""
         corrects_nid = _corrects_id(node, hash_to_id)
         summary = _h(_summary_line(node))
+        m = node.get("meta", {})
+        sig_status = m.get("signature_status", "")
+        signer_did = m.get("signer_did", "")
+        sig_cell   = _SIG_CELL.get(sig_status, "")
+        did_short  = (signer_did[:20] + "…") if len(signer_did) > 20 else signer_did
 
         return (
             f'<tr class="{row_cls}">'
@@ -744,6 +810,8 @@ def export_html(graph: dict) -> str:
             f'<td>{_h(_actor(node))}</td>'
             f'<td class="td-hash">{_h(node["timestamp"][:19].replace("T"," "))}</td>'
             f'<td>{summary}</td>'
+            f'<td>{sig_cell}</td>'
+            f'<td class="td-hash" title="{_h(signer_did)}">{_h(did_short)}</td>'
             f'<td class="td-hash">{_h(_short_hash(eh))}</td>'
             f'<td class="td-hash">{_h(_short_hash(prev_hash))}</td>'
             f'<td class="td-hash">{_h(corrects_nid)}</td>'
@@ -751,6 +819,10 @@ def export_html(graph: dict) -> str:
         )
 
     # ── Integrity notes ──────────────────────────────────────
+    signed_count   = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_valid")
+    unsigned_count = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "unsigned")
+    invalid_count  = sum(1 for n in nodes if n.get("meta",{}).get("signature_status") == "mock_invalid")
+
     def integrity_html() -> str:
         items = []
         items.append(f'<div class="integrity-item ok">✓ {total} events across {len(set(n["table"] for n in nodes))} table(s)</div>')
@@ -764,6 +836,13 @@ def export_html(graph: dict) -> str:
             items.append(f'<div class="integrity-item err">🛑 {danger_count} danger node(s) — dignity or execution breach</div>')
         else:
             items.append(f'<div class="integrity-item ok">✓ No dignity violations detected</div>')
+        # Signature summary
+        if signed_count:
+            items.append(f'<div class="integrity-item ok">✓ {signed_count} event(s) with valid mock signature</div>')
+        if unsigned_count:
+            items.append(f'<div class="integrity-item warn">○ {unsigned_count} event(s) unsigned (allowed)</div>')
+        if invalid_count:
+            items.append(f'<div class="integrity-item err">✗ {invalid_count} event(s) with INVALID signature — possible tampering</div>')
         items.append(f'<div class="integrity-item ok">✓ No external scripts or stylesheets loaded</div>')
         items.append(f'<div class="integrity-item ok">✓ No network communication performed</div>')
         return "\n".join(items)
@@ -837,6 +916,10 @@ def export_html(graph: dict) -> str:
       <div class="val">{danger_count}</div>
       <div class="lbl">Dignity Violations</div>
     </div>
+    <div class="stat-card {'good' if signed_preview else ''}">
+      <div class="val">{signed_preview}</div>
+      <div class="lbl">Signed Events</div>
+    </div>
   </div>
 </section>
 
@@ -877,6 +960,8 @@ def export_html(graph: dict) -> str:
           <th>speaker / contributor</th>
           <th>timestamp</th>
           <th>summary</th>
+          <th>signature</th>
+          <th>signer did</th>
           <th>event_hash</th>
           <th>prev_hash</th>
           <th>corrects</th>

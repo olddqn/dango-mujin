@@ -1,0 +1,28 @@
+{
+  "event_type": "claim_created",
+  "claim_id": "housing-001",
+  "speaker": "did:key:z6MkproposerHousing",
+  "statement": "A vacant house can become a shared creative base for displaced artists.",
+  "decision": "negotiate",
+  "dignity_constraints": [
+    "no_identity_exposure",
+    "revocable_consent"
+  ],
+  "observed_state": [
+    "vacant_building_exists",
+    "community_need_documented"
+  ],
+  "missing_conditions": [
+    "legal_ownership_confirmed",
+    "safety_review",
+    "participant_consent"
+  ],
+  "signature": {
+    "type": "mock-ed25519-test-vector",
+    "did": "did:key:mock-dango-agent",
+    "key_id": "mock-key-001",
+    "signature_value": "e723b542c353449c5ccba8ca6a08fdc1dca468426051b1a082215d6afc93781e",
+    "signed_event_hash": "fd732528ab2d23b34fe087a3c866ef1d31911e17bf77460527b349ec8bcb9222",
+    "verification_status": "mock_valid"
+  }
+}

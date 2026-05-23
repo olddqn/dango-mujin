@@ -121,6 +121,7 @@ dango-gitsea-bridge/
 ├── PASS_FLOW_EXAMPLE.md           — Consent-established PASS flow walkthrough
 ├── RISK_ASSESSMENT.md             — Known risks and limitations
 ├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
+├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
 ├── examples/                      — Sample JSON files
 │   └── sutable_events/            — Example su-table event files
 ├── runtime/                       — Minimum viable Python implementation
@@ -129,12 +130,15 @@ dango-gitsea-bridge/
 │   ├── stream_preview.py          — Stream eligibility preview
 │   ├── contribution_ledger.py     — Contribution stream ledger
 │   ├── sutable_log.py             — JSONL append helper + hash chain
-│   ├── sutable_append.py          — CLI: append event to su-table
+│   ├── sutable_append.py          — CLI: append event to su-table (+ signature validation)
 │   ├── sutable_query.py           — CLI: query su-table events
 │   ├── negotiation_event.py       — CLI: structured negotiation events
 │   ├── reality_feedback_append.py — CLI: reality feedback events
 │   ├── negotiation_graph.py       — Graph builder (nodes + edges from su-table)
-│   └── graph_export.py            — CLI: export graph as mermaid or text
+│   ├── graph_export.py            — CLI: export graph as mermaid, text, or HTML
+│   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
+│   ├── sign_event.py              — CLI: attach mock signature to event JSON
+│   └── verify_event_signature.py  — CLI: verify mock signature on event JSON
 ├── sutable/                       — Live JSONL event logs
 │   ├── claims.jsonl
 │   ├── negotiations.jsonl
@@ -143,8 +147,10 @@ dango-gitsea-bridge/
 │   └── reality_feedback.jsonl
 └── examples/
     ├── sutable_events/            — Example event JSON files
-    ├── housing-001.graph.mmd     — Rendered negotiation graph (Mermaid)
-    └── housing-001.graph.html    — Local HTML preview (no external deps)
+    ├── signed-claim-event.json    — Valid mock-signed claim event
+    ├── invalid-signed-event.json  — Corrupted signature (always rejected)
+    ├── housing-001.graph.mmd      — Rendered negotiation graph (Mermaid)
+    └── housing-001.graph.html     — Local HTML preview (no external deps)
 ```
 
 ---
@@ -203,6 +209,48 @@ python runtime/graph_export.py \
 
 Open with `open examples/housing-001.graph.html` (macOS) or your browser.
 The Mermaid code block has a **Copy** button — paste into mermaid.live to render the graph visually.
+
+---
+
+## DID Signature Layer
+
+Su-table events support an optional mock DID signature field.
+
+⚠ **This is NOT real cryptography.** It is a deterministic test vector
+that fixes the signature interface so real Ed25519 / UCAN implementations
+can be dropped in at the same entry points.
+
+Mock formula: `signature_value = sha256(key_id + ":" + sha256(canonical_event_body))`
+
+```bash
+# Sign an event file → stdout
+python runtime/sign_event.py examples/sutable_events/claim_event.json
+
+# Sign and write to file
+python runtime/sign_event.py examples/sutable_events/claim_event.json \
+  --did did:key:z6MkLegalReviewer \
+  --key-id legal-key-001 \
+  --output examples/signed-claim-event.json
+
+# Verify a signed event (exit 0 = valid, 1 = invalid/unsigned, 2 = error)
+python runtime/verify_event_signature.py examples/signed-claim-event.json
+
+# JSON output for pipeline use
+python runtime/verify_event_signature.py examples/signed-claim-event.json --json
+```
+
+Sutable append signature policy:
+- `unsigned` → append with `signature_status="unsigned"` (allowed)
+- `mock_valid` → append with `signature_status="mock_valid"` (allowed)
+- `mock_invalid` → **REJECTED** — possible tampering
+- `unsupported_signature_type` → **REJECTED** — unknown type
+
+Signature status appears in the negotiation graph:
+- Mermaid: `✓sig` in node label if valid
+- Text: `✓ [signature: mock_valid]` line per event
+- HTML: colored badge + signer DID column in event table
+
+See `DID_SIGNATURE_SPEC.md` for the full specification.
 
 ---
 

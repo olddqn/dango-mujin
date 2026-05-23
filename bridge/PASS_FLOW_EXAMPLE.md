@@ -310,6 +310,9 @@ Key visual conventions:
 | `runtime/stream_preview.py` | Preview stream eligibility and contributions |
 | `runtime/negotiation_graph.py` | Builds graph dict from su-table |
 | `runtime/graph_export.py` | Exports graph as mermaid or text |
+| `runtime/sign_event.py` | Attaches mock DID signature to event |
+| `runtime/verify_event_signature.py` | Verifies mock DID signature |
+| `runtime/did_signature.py` | Mock signature library (not real crypto) |
 
 ---
 

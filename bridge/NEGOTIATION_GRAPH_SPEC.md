@@ -143,6 +143,8 @@ The negotiation graph is designed for dual audiences:
 - Edges have `kind`: `temporal | correction | hash_chain | danger`
 - `meta.has_dignity_violation` is a boolean flag
 - `meta.final_result` is the last reality feedback result
+- `node.meta.signature_status` is the signature verification result for that event
+- `node.meta.signer_did` is the DID of the signer (if signed)
 
 An AI agent can:
 1. Call `build_graph(claim_id)` to get the graph dict
@@ -150,6 +152,7 @@ An AI agent can:
 3. Check `meta.final_result` — route based on outcome
 4. Iterate nodes to find unresolved objections (objection with no following amendment/support)
 5. Identify correction events and trace what was corrected
+6. Check `node.meta.signature_status` to identify unsigned or invalid-signature events
 
 ---
 
@@ -207,6 +210,26 @@ python runtime/graph_export.py --claim-id housing-001 --format html \
 # List all available claim_ids
 python runtime/graph_export.py --list
 ```
+
+---
+
+## Signature Status in the Graph
+
+Every event node exposes `meta.signature_status` and `meta.signer_did`.
+
+These are set by `sutable_append.py` at ingest time (see `DID_SIGNATURE_SPEC.md`).
+
+Status values and their rendering:
+
+| Status | Text format | Mermaid | HTML badge |
+|---|---|---|---|
+| `mock_valid` | `✓ [signature: mock_valid]` | `✓sig` in label | Green `✓ sig` |
+| `unsigned` | `○ [signature: unsigned]` | *(no suffix)* | Gray `unsigned` |
+| `mock_invalid` | `✗ [signature: mock_invalid]` | *(no suffix)* | Red `✗ sig` |
+| `unsupported_signature_type` | `? [signature: unsupported]` | *(no suffix)* | Indigo `? sig` |
+
+Note: events appended before the signature layer was added will have no `signature_status`
+in their raw JSONL record. The graph treats absent status the same as `unsigned`.
 
 ---
 
