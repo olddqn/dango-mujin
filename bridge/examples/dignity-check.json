@@ -1,0 +1,41 @@
+{
+  "check_id": "dignity-check-refugee-story-001",
+  "claim_id": "refugee-story-001",
+  "timestamp": "2026-05-23T00:00:00Z",
+  "checker": "runtime/dignity_guard.py",
+  "checks": [
+    {
+      "rule": "consent_unknown_in_observed_state",
+      "result": "BLOCK",
+      "detail": "consent_unknown is present in observed_state. Cannot proceed."
+    },
+    {
+      "rule": "no_identity_exposure",
+      "result": "PASS",
+      "detail": "no_identity_exposure is listed in dignity_constraints."
+    },
+    {
+      "rule": "no_location_exposure",
+      "result": "PASS",
+      "detail": "no_location_exposure is listed in dignity_constraints."
+    },
+    {
+      "rule": "revocable_consent",
+      "result": "PASS",
+      "detail": "revocable_consent is listed in dignity_constraints."
+    },
+    {
+      "rule": "fair_revenue_share",
+      "result": "PASS",
+      "detail": "fair_revenue_share is listed in dignity_constraints."
+    },
+    {
+      "rule": "emergency_need",
+      "result": "NOT_FLAGGED",
+      "detail": "No emergency_need flag detected in observed_state."
+    }
+  ],
+  "final_decision": "block",
+  "final_reason": "consent_unknown detected. Dignity guard blocks all stream activity until explicit consent is established. All other checks passed — stream may proceed once consent is confirmed.",
+  "next_step": "Establish explicit, informed consent with the person whose story this is. Document consent. Rerun dignity guard."
+}

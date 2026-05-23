@@ -1,0 +1,46 @@
+{
+  "stream_id": "stream-refugee-story-001-a",
+  "claim_id": "refugee-story-001",
+  "asset_id": "refugee-story-001",
+  "entries": [
+    {
+      "contributor_id": "anon-translator-jp",
+      "contribution_type": "translation",
+      "addresses_condition": "translation",
+      "volume": "2 sessions, 1200 words",
+      "verifiable": true,
+      "verification_method": "Translated document submitted to claim owner for review",
+      "dignity_cleared": true,
+      "timestamp": "2026-05-23T00:00:00Z",
+      "status": "completed"
+    },
+    {
+      "contributor_id": "did:key:z6MkLegalReviewer",
+      "contribution_type": "legal_review",
+      "addresses_condition": "risk_review",
+      "volume": "1 legal review document",
+      "verifiable": true,
+      "verification_method": "Review document publicly available (anonymized)",
+      "dignity_cleared": false,
+      "dignity_block_reason": "consent_unknown — cannot clear dignity until consent is established",
+      "timestamp": "2026-05-23T00:00:00Z",
+      "status": "paused"
+    },
+    {
+      "contributor_id": "anon-safety-reviewer",
+      "contribution_type": "safety_review",
+      "addresses_condition": "risk_review",
+      "volume": "1 safety assessment",
+      "verifiable": false,
+      "verification_method": "Self-reported — safety reviewer identity not disclosed for their protection",
+      "dignity_cleared": false,
+      "dignity_block_reason": "consent_unknown — safety review cannot proceed before consent established",
+      "timestamp": "2026-05-23T00:00:00Z",
+      "status": "paused"
+    }
+  ],
+  "stream_status": "paused",
+  "stream_block_reason": "consent_unknown in observed_state — dignity guard blocks stream until explicit_consent is established",
+  "dignity_guard_decision": "block",
+  "created_at": "2026-05-23T00:00:00Z"
+}

@@ -1,0 +1,21 @@
+{
+  "claim_id": "refugee-story-001",
+  "title": "A refugee's story can become a dignity-preserving support stream",
+  "speaker": "human-or-agent-id",
+  "claim_type": "declarative",
+  "statement": "A person's lived story can generate support without exposing them to exploitation.",
+  "observed_state": ["story_exists", "support_needed", "consent_unknown"],
+  "required_state": ["explicit_consent", "anonymization", "translation", "revenue_split", "risk_review", "support_distribution"],
+  "missing_conditions": ["explicit_consent", "risk_review"],
+  "possible_contributions": ["translation", "legal_review", "story_editing", "safety_review", "distribution", "funding"],
+  "dignity_constraints": ["no_identity_exposure", "no_location_exposure", "revocable_consent", "fair_revenue_share"],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "Dignity constraints are listed. However consent_unknown is in observed_state — dignity guard must block until resolved."
+  },
+  "created_at": "2026-05-23T00:00:00Z",
+  "updated_at": "2026-05-23T00:00:00Z",
+  "version": 1
+}
