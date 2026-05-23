@@ -3,6 +3,8 @@
 > **Dan-Go Mujin Protocol is not crowdfunding.**
 > It is a public negotiation protocol for turning impossible claims into reality.
 
+**gitlawb (decentralized):** [https://gitlawb.com/z6MkpWP3c2xE5Veu5xSJxviWUrM69SDX4offMifsVXAs31Ts/dango-mujin](https://gitlawb.com/z6MkpWP3c2xE5Veu5xSJxviWUrM69SDX4offMifsVXAs31Ts/dango-mujin)
+
 ---
 
 ## What is a Claim?
