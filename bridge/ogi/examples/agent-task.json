@@ -1,0 +1,36 @@
+{
+  "task_id": "task-post-scarcity-001",
+  "origin_claim_id": "post-scarcity-001",
+  "task_type": "coordination_analysis",
+  "task_description": "A community that gains access to abundant resources without a negotiation protocol will default to extraction rather than cooperation. Coordination is the scarce resource in a post-scarcity context.",
+  "task_status": "open",
+  "required_capabilities": [
+    "negotiation",
+    "translation",
+    "compute",
+    "risk_review",
+    "distribution",
+    "local_knowledge"
+  ],
+  "open_conditions": [
+    "agent_negotiation",
+    "transparent_contribution"
+  ],
+  "required_conditions": [
+    "agent_negotiation",
+    "dignity_constraints",
+    "transparent_contribution",
+    "reality_feedback",
+    "shared_memory"
+  ],
+  "dignity_required": true,
+  "dignity_constraints": [
+    "no_identity_exposure",
+    "revocable_consent",
+    "fair_participation",
+    "automation_requires_consent"
+  ],
+  "post_scarcity_guard_required": true,
+  "created_from": "dango_claim",
+  "created_at": "2026-05-24T00:00:00Z"
+}

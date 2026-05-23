@@ -1,0 +1,61 @@
+{
+  "claim_id": "post-scarcity-001",
+  "entries": [
+    {
+      "contributor": "did:key:z6MkcoordAgent001",
+      "contribution_type": "coordination",
+      "addresses_condition": "agent_negotiation",
+      "volume": "3 negotiation sessions, 8 parties",
+      "dignity_cleared": true,
+      "verified": true,
+      "verification_method": "Session transcripts in su-table negotiations.jsonl",
+      "timestamp": "2026-05-24T01:00:00Z",
+      "status": "completed"
+    },
+    {
+      "contributor": "did:key:z6MktranslatorA",
+      "contribution_type": "translation",
+      "addresses_condition": "transparent_contribution",
+      "volume": "1800 words across 3 documents",
+      "dignity_cleared": true,
+      "verified": false,
+      "verification_method": "Self-reported — documents not yet reviewed",
+      "timestamp": "2026-05-24T02:00:00Z",
+      "status": "completed"
+    },
+    {
+      "contributor": "anon-compute-provider-01",
+      "contribution_type": "compute",
+      "addresses_condition": null,
+      "volume": "48 CPU-hours of analysis",
+      "dignity_cleared": true,
+      "verified": true,
+      "verification_method": "Compute log hash submitted",
+      "timestamp": "2026-05-24T03:00:00Z",
+      "status": "flowing"
+    },
+    {
+      "contributor": "did:key:z6MklegalReviewer02",
+      "contribution_type": "legal_review",
+      "addresses_condition": "dignity_constraints",
+      "volume": "1 legal assessment document",
+      "dignity_cleared": true,
+      "verified": true,
+      "verification_method": "Document publicly available (anonymized)",
+      "timestamp": "2026-05-24T04:00:00Z",
+      "status": "completed"
+    },
+    {
+      "contributor": "community-elder-anon",
+      "contribution_type": "local_knowledge",
+      "addresses_condition": "agent_negotiation",
+      "volume": "Community context briefing — 3 sessions",
+      "dignity_cleared": false,
+      "dignity_block_reason": "Contributor identity not yet anonymized. Cannot proceed until anonymization_complete.",
+      "verified": false,
+      "verification_method": "Pending",
+      "timestamp": "2026-05-24T05:00:00Z",
+      "status": "paused"
+    }
+  ]
+}

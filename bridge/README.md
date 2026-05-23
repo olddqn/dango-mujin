@@ -178,6 +178,35 @@ See `NEGOTIATION_GRAPH_SPEC.md` for the full specification.
 
 ---
 
+## OGI Compatibility Layer
+
+Dan-Go can serve as the negotiation protocol for OGI-style post-scarcity agent economies.
+
+This bridge is not an OGI integration yet.
+It is a Dan-Go compatibility layer for post-scarcity agent economies.
+Robotics and physical machine control are explicitly out of scope.
+
+```bash
+# Run post-scarcity exploitation guard
+python ogi/runtime/post_scarcity_guard.py ogi/examples/post-scarcity.claim.json
+
+# Transform Claim → OGI agent task
+python ogi/runtime/claim_to_agent_task.py ogi/examples/post-scarcity.claim.json
+
+# Map contributions → credit signals
+python ogi/runtime/contribution_to_credit.py ogi/examples/contribution-credit.json
+
+# Map reality feedback → OGI outcome record
+python ogi/runtime/reality_feedback_mapper.py ogi/examples/reality-feedback.json
+```
+
+See `ogi/DANGO_OGI_THESIS.md` for the central thesis:
+> When money loses central meaning, coordination becomes the scarce resource.
+
+See `ogi/AGENT_ECONOMY_MAPPING.md` for the full Dan-Go ↔ OGI concept table.
+
+---
+
 ## Quick Start — Consent-Established (PASS) Flow
 
 ```bash

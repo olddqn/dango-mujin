@@ -1,0 +1,45 @@
+{
+  "claim_id": "post-scarcity-001",
+  "title": "Abundance without coordination becomes collapse.",
+  "speaker": "did:key:z6MkproposerCoordination",
+  "claim_type": "declarative",
+  "statement": "A community that gains access to abundant resources without a negotiation protocol will default to extraction rather than cooperation. Coordination is the scarce resource in a post-scarcity context.",
+  "observed_state": [
+    "resource_abundance_documented",
+    "coordination_gap_identified",
+    "agent_capacity_available",
+    "human_ai_cooperation_possible"
+  ],
+  "required_state": [
+    "agent_negotiation",
+    "dignity_constraints",
+    "transparent_contribution",
+    "reality_feedback",
+    "shared_memory"
+  ],
+  "missing_conditions": [
+    "agent_negotiation",
+    "transparent_contribution"
+  ],
+  "possible_contributions": [
+    "coordination",
+    "translation",
+    "compute",
+    "legal_review",
+    "distribution",
+    "local_knowledge"
+  ],
+  "dignity_constraints": [
+    "no_identity_exposure",
+    "revocable_consent",
+    "fair_participation",
+    "automation_requires_consent"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "No vulnerable population involved. No funding without fair_participation established. Consent required for automation."
+  },
+  "created_at": "2026-05-24T00:00:00Z"
+}
