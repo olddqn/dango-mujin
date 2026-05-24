@@ -1,0 +1,113 @@
+%%{init: {"theme": "dark", "themeVariables": {"primaryColor": "#1a1a2e", "primaryTextColor": "#e0e0ff", "primaryBorderColor": "#4a4a8a", "lineColor": "#7070b0", "secondaryColor": "#16213e", "tertiaryColor": "#0f3460"}} }%%
+
+flowchart TD
+
+  %% ─── INPUT ────────────────────────────────────────────────────
+  CLAIM["📋 CLAIM\n─────────────\nstatement\nobserved_state\nmissing_conditions\ndignity_constraints"]
+
+  %% ─── DIGNITY GATE ──────────────────────────────────────────────
+  DIGNITY["🛡 DIGNITY GUARD\n─────────────\n7 rules\nconsent · anonymity\nrevocability · dignity"]
+  BLOCK["🚫 BLOCK\nor ESCALATE"]
+
+  %% ─── REASONING SURFACE (OGI) ───────────────────────────────────
+  WORLDMODEL["🌍 WORLD MODEL\n─────────────\nobserved_state\ndesired_state\nstate_gap\nuncertainty\ndignity_surface"]
+  PLANTREE["🌲 PLAN TREE\n─────────────\ngoal · subgoal\nbranch · task\nabstain\n[contestable]"]
+  TASKBUNDLE["📦 TASK BUNDLE\n─────────────\ntask specs\ndependencies\nagent classes\n[derived, not executed]"]
+
+  %% ─── NEGOTIATION ───────────────────────────────────────────────
+  NEGOTIATE["⚖ NEGOTIATION\n─────────────\nsupport\nobjection\ncontest\ncorrect\nreject"]
+  ACTIVEPLAN["✅ ACTIVE PLAN\n─────────────\n6 deterministic rules\ntransparent selection\nno hidden scoring"]
+
+  %% ─── MEMORY ────────────────────────────────────────────────────
+  MEMORY["🧠 REFLECTIVE MEMORY\n─────────────\nlearned_conditions\nprior_objections\ncorrection_depth\ncontest_count\n[structural diff]"]
+  PRIORKNOWLEDGE["💡 PRIOR KNOWLEDGE\n─────────────\nfeeds next\nworld model cycle"]
+
+  %% ─── TRUST ─────────────────────────────────────────────────────
+  TRUST["📊 TRUST DECAY\n─────────────\nexponential decay\nhalf-life: 90 days\ndignity violation → 0\n[no floor]"]
+
+  %% ─── IDENTITY ──────────────────────────────────────────────────
+  DID["🔑 DID SIGNATURES\n─────────────\ndid:key identifiers\nspeaker/proposer\n[mock — test vectors]"]
+
+  %% ─── FEDERATION ────────────────────────────────────────────────
+  FEDERATION["🕸 CLAIM FEDERATION\n─────────────\ndepends_on\nenables\ncounterclaim\nderived_from\ndignity_override"]
+
+  %% ─── PERSISTENCE ───────────────────────────────────────────────
+  SUTABLE["📂 SU-TABLE (素テーブル)\n─────────────\nclaims.jsonl\nnegotiations.jsonl\nplans.jsonl\nmemory.jsonl\nfederation.jsonl\n[append-only · SHA256 chain]"]
+
+  %% ─── ECONOMIC LAYER (HYPOTHETICAL) ────────────────────────────
+  GITSEA["💸 GITSEA\n─────────────\nrepo asset\ncontribution stream\ncredit history\n[hypothetical]"]
+  REPOASSET["🗂 REPO ASSET\n─────────────\nclaim_to_asset.py\nstream_preview.py\ncontribution_ledger.py"]
+
+  %% ─── GRAPH EXPORT ──────────────────────────────────────────────
+  GRAPH["📈 NEGOTIATION GRAPH\n─────────────\nMermaid · text · HTML\nall events\nclaim lifecycle"]
+
+  %% ─── FLOWS ─────────────────────────────────────────────────────
+
+  CLAIM --> DIGNITY
+  DIGNITY -->|BLOCK| BLOCK
+  DIGNITY -->|PASS| WORLDMODEL
+  DIGNITY -->|PASS| REPOASSET
+
+  WORLDMODEL --> PLANTREE
+  PLANTREE --> TASKBUNDLE
+  PLANTREE --> NEGOTIATE
+  MEMORY -->|prior_knowledge\nlearned_conditions| WORLDMODEL
+
+  NEGOTIATE -->|support · objection\ncontest · correct| PLANTREE
+  NEGOTIATE --> ACTIVEPLAN
+  ACTIVEPLAN -->|active plan selected| TASKBUNDLE
+  ACTIVEPLAN --> MEMORY
+  NEGOTIATE --> MEMORY
+
+  MEMORY --> PRIORKNOWLEDGE
+  PRIORKNOWLEDGE -.->|next cycle| WORLDMODEL
+
+  TRUST -->|weight signals| NEGOTIATE
+  DID -->|speaker identity| CLAIM
+  DID -->|proposer identity| PLANTREE
+
+  FEDERATION -->|context| WORLDMODEL
+  FEDERATION -->|context| NEGOTIATE
+  CLAIM --> FEDERATION
+
+  SUTABLE -->|read| WORLDMODEL
+  SUTABLE -->|read| NEGOTIATE
+  SUTABLE -->|read| TRUST
+  SUTABLE -->|read| FEDERATION
+  SUTABLE -->|read| MEMORY
+  CLAIM -->|write| SUTABLE
+  PLANTREE -->|write| SUTABLE
+  NEGOTIATE -->|write| SUTABLE
+  TASKBUNDLE -->|write| SUTABLE
+  MEMORY -->|write| SUTABLE
+  FEDERATION -->|write| SUTABLE
+
+  REPOASSET -.->|bridge\n[hypothetical]| GITSEA
+  SUTABLE --> GRAPH
+
+  %% ─── STYLES ─────────────────────────────────────────────────────
+  classDef claim      fill:#1a2744,stroke:#4a7ab0,color:#c0d8f0
+  classDef dignity    fill:#3d1a1a,stroke:#b04a4a,color:#f0c0c0
+  classDef reasoning  fill:#1a3d1a,stroke:#4ab04a,color:#c0f0c0
+  classDef negotiate  fill:#3d2d1a,stroke:#b0804a,color:#f0d8c0
+  classDef memory     fill:#2d1a3d,stroke:#804ab0,color:#d8c0f0
+  classDef trust      fill:#1a3d3d,stroke:#4ab0b0,color:#c0f0f0
+  classDef identity   fill:#3d3d1a,stroke:#b0b04a,color:#f0f0c0
+  classDef federation fill:#1a2d3d,stroke:#4a80b0,color:#c0d8f0
+  classDef storage    fill:#1a1a1a,stroke:#606060,color:#c0c0c0
+  classDef economic   fill:#3d1a3d,stroke:#b04ab0,color:#f0c0f0,stroke-dasharray: 5 5
+  classDef block      fill:#5a1a1a,stroke:#ff4444,color:#ffaaaa
+  classDef graph      fill:#2d2d1a,stroke:#a0a04a,color:#f0f0c0
+
+  class CLAIM claim
+  class DIGNITY dignity
+  class BLOCK block
+  class WORLDMODEL,PLANTREE,TASKBUNDLE reasoning
+  class NEGOTIATE,ACTIVEPLAN negotiate
+  class MEMORY,PRIORKNOWLEDGE memory
+  class TRUST trust
+  class DID identity
+  class FEDERATION federation
+  class SUTABLE storage
+  class GITSEA,REPOASSET economic
+  class GRAPH graph
