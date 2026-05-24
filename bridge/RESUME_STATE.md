@@ -1,120 +1,143 @@
-# RESUME_STATE.md — Federation-Aware Plan Branching Layer
+# RESUME_STATE.md — Federation Prerequisite Promotion Layer
 
-> **STATUS: COMPLETE**  
-> All steps done. Final commit and push pending (or done — check git log).
+> If implementation is interrupted, start here.
 
-**Phase:** Federation-Aware Plan Branching Layer  
-**Branch:** main  
-**Started:** 2026-05-24  
-**Completed:** 2026-05-24
+**Phase:** Federation Prerequisite Promotion Layer
+**Branch:** main
+**Started:** 2026-05-24
+**Last checkpoint:** starting — survey done, RESUME_STATE updated
 
 ---
 
-## Completed Steps
+## Previous Phases Complete
+
+- Reflective Memory Loop (commits 3e3d4e7..7d328c2)
+- Documentation Phase (commits 64fecb1..dc2691d)
+- Federation-Aware Branching Layer (commits b8b7d61..eab0f60)
+- Housing-002 Memory Snapshot / Cross-claim Pattern Detection (commit 3f1dba6)
+
+---
+
+## Current Phase: Federation Prerequisite Promotion
+
+Goal: A condition independently discovered by ≥2 claims through plan tree diff
+becomes a federation prerequisite candidate — then a promoted prerequisite —
+then contestable. Evidence-based, not authority-based. Append-only.
+
+Key data currently in sutable:
+  housing-001 learned: [space_safety_assessed]
+  housing-002 learned: [space_safety_assessed, network_security_assessed]
+  → space_safety_assessed: independent convergence across 2 claims ✓
 
 | Step | File | Status | Commit |
 |------|------|--------|--------|
-| 0 | RESUME_STATE.md | ✓ DONE | b8b7d61 |
-| 1 | `runtime/federation_branching.py` | ✓ DONE | b8b7d61 |
-| 2 | `runtime/federation_condition_propagation.py` | ✓ DONE | a61ee6f |
-| 3 | `runtime/federation_trust_propagation.py` | ✓ DONE | a61ee6f |
-| 4 | `runtime/federation_activation.py` | ✓ DONE | a61ee6f |
-| 5 | `runtime/federation_ripple_detector.py` | ✓ DONE | 60bbdff |
-| 6 | `runtime/federation_memory_feedback.py` | ✓ DONE | 60bbdff |
-| 7 | `examples/federation-branching.claim.json` + events | ✓ DONE | 1ca7600 |
-| 8 | `runtime/graph_export.py` update | ✓ DONE | 332210c |
-| 9 | `runtime/negotiation_graph.py` update | ✓ SKIPPED | — |
-| 10 | `FEDERATION_BRANCHING_SPEC.md` | ✓ DONE | 614863a |
-| 11 | Doc updates (README, CLAIM_FEDERATION_SPEC, REFLECTIVE_MEMORY_SPEC) | ✓ DONE | feat commit |
-| 12 | Final RESUME_STATE.md + push | ✓ DONE | feat commit |
-
-Step 9 (negotiation_graph.py update) was assessed as not required: the existing
-graph export picks up federation branching data via the new modules imported in
-graph_export.py. No structural change to negotiation_graph.py was needed.
+| 0 | RESUME_STATE.md | ✓ DONE | this commit |
+| 1 | `runtime/federation_prerequisite_detector.py` | ⏳ PENDING | — |
+| 2 | `runtime/prerequisite_evidence_bundle.py` | ⏳ PENDING | — |
+| 3 | `runtime/prerequisite_promotion.py` | ⏳ PENDING | — |
+| 4 | `runtime/prerequisite_contest_resolver.py` | ⏳ PENDING | — |
+| 5 | `runtime/prerequisite_snapshot.py` | ⏳ PENDING | — |
+| 6 | `runtime/prerequisite_memory_integration.py` | ⏳ PENDING | — |
+| 7 | `runtime/graph_export.py` update | ⏳ PENDING | — |
+| 8 | `runtime/negotiation_graph.py` update | ⏳ PENDING | — |
+| 9 | example files (4 files) | ⏳ PENDING | — |
+| 10 | `FEDERATION_PREREQUISITE_SPEC.md` | ⏳ PENDING | — |
+| 11 | doc updates (README, FEDERATION_BRANCHING_SPEC, REFLECTIVE_MEMORY_SPEC) | ⏳ PENDING | — |
+| 12 | `runtime/federation_memory_feedback.py` update | ⏳ PENDING | — |
+| 13 | Final RESUME_STATE.md + push | ⏳ PENDING | — |
 
 ---
 
-## What Was Built
+## Architecture Decisions
 
-### New Runtime Modules
+### New event types (sutable/federation.jsonl)
+- `federation_prerequisite_promoted`  — condition meets promotion criteria
+- `federation_prerequisite_contested` — a participant contests a promoted prerequisite
+- `federation_prerequisite_reaffirmed`— contest resolved: prerequisite stands
+- `federation_prerequisite_deprecated`— contest resolved: prerequisite withdrawn
 
-| Module | Purpose |
-|--------|---------|
-| `runtime/federation_branching.py` | Compute branch status per claim: active/paused/blocked/unknown |
-| `runtime/federation_condition_propagation.py` | Propagate satisfied conditions from upstream active plans |
-| `runtime/federation_trust_propagation.py` | Attenuated cross-claim trust signals (0.8/hop, dignity→0) |
-| `runtime/federation_activation.py` | Federation-wide activation snapshot; append activation events |
-| `runtime/federation_ripple_detector.py` | Blocking chains, dignity spread, contest ripples, instability |
-| `runtime/federation_memory_feedback.py` | Cross-claim memory pattern synthesis (≥2 claims threshold) |
+### Promotion criteria
+- independent_convergence_count >= 2 (INDEPENDENT_CLAIM_THRESHOLD)
+- all evidence claims dignity-safe (no dignity_violation objections on any plan)
+- condition not already promoted (dedup: check existing promoted events)
+- authority: always "none"
 
-### New Event Types (sutable/federation.jsonl)
+### Independence check
+- `plan_author_overlap`: bool — whether plan proposers overlap across claims
+- `objector_overlap`: bool — whether same objector appears in multiple claims
+  (metadata only — not a disqualifier; same agent can legitimately find same gap twice)
+- `independent_convergence`: True when different plan authors + different claims
 
-| Event | Meaning |
-|-------|---------|
-| `federation_condition_met` | Upstream condition confirmed satisfied for downstream claim |
-| `federation_condition_blocked` | Upstream condition blocked by dignity_violation |
-| `federation_claim_activated` | Claim unblocked — all dependencies met |
-| `federation_claim_paused` | Claim waiting on upstream resolution |
-| `federation_ripple_detected` | Cascading effect detected |
-| `federation_memory_feedback` | Cross-claim planning hint |
+### Module dependency graph
+```
+federation_prerequisite_detector.py
+  ← sutable_log.py (read_all: memory, plans)
+  ← claim_federation.py (federation map)
 
-### New Example Files
+prerequisite_evidence_bundle.py
+  ← federation_prerequisite_detector.py
+  ← sutable_log.py (read_all: plans, memory)
 
-| File | Contents |
-|------|---------|
-| `examples/federation-branching.claim.json` | housing-002 with federation_dependencies |
-| `examples/federation-condition-event.json` | 6 reference federation event examples |
-| `examples/federation-activation.snapshot.json` | All 5 claims active, readiness=ready |
-| `examples/federation-ripple.snapshot.json` | housing-001 instability (high) + contest_ripple (medium) |
+prerequisite_promotion.py
+  ← federation_prerequisite_detector.py
+  ← prerequisite_evidence_bundle.py
+  ← sutable_log.py (append_event: federation)
 
-### Updated Files
+prerequisite_contest_resolver.py
+  ← sutable_log.py (read_all: federation; append_event: federation)
 
-- `runtime/graph_export.py` — FEDERATION BRANCHING section added to text export
-- `FEDERATION_BRANCHING_SPEC.md` — full spec
-- `REFLECTIVE_MEMORY_SPEC.md` — Federation Memory Extension section added
-- `CLAIM_FEDERATION_SPEC.md` — Federation-Aware Branching Extension section added
-- `README.md` — Federation-Aware Branching section added
+prerequisite_snapshot.py
+  ← sutable_log.py (read_all: federation)
+  ← prerequisite_evidence_bundle.py
 
----
+prerequisite_memory_integration.py
+  ← prerequisite_snapshot.py
+  ← sutable_log.py (read_all: memory)
 
-## Known Limitations
+graph_export.py
+  ← prerequisite_snapshot.py (optional import)
 
-- DID signatures still mock (see DID_SIGNATURE_SPEC.md)
-- GITSEA still hypothetical (by design)
-- Condition propagation is advisory — no formal trigger mechanism
-- Trust propagation uses contributions.jsonl (mostly empty in current dataset)
-- `negotiation_graph.py` not updated (not needed for current graph_export flow)
-- federation_memory_feedback requires ≥2 claims with memory snapshots to emit hints;
-  currently only housing-001 has a memory snapshot
+negotiation_graph.py
+  ← prerequisite_snapshot.py (optional import)
+```
 
----
-
-## Next Step Candidates
-
-1. **Create memory snapshot for housing-002** — run negotiation events through
-   housing-002 so federation_memory_feedback can detect cross-claim patterns.
-   ```bash
-   python runtime/memory_append.py --claim-id housing-002
-   python runtime/federation_memory_feedback.py
-   ```
-
-2. **Real DID resolution** — replace mock did_signature.py with a real DID
-   resolver (requires stdlib-compatible HTTP or local key store).
-
-3. **Cross-claim plan tree branching** — allow housing-002's plan tree nodes
-   to reference housing-001 branch conditions directly in the plan_tree schema.
-   Currently conditions are propagated as advisory events; not embedded in tree.
-
-4. **negotiation_graph.py update** — add federation branch status edges to the
-   negotiation graph object (currently only shown in graph_export text format).
-
-5. **GITSEA bridge stub** — once GITSEA spec is confirmed, wire claim_to_asset.py
-   to a real GITSEA repo API.
-
-6. **Automated stale detection + re-snapshot trigger** — a scheduled runner
-   (no daemon, just a script) to check memory.jsonl staleness and emit a
-   "stale_snapshot_detected" advisory event.
+### Key invariants
+- authority: always "none" on every promoted event
+- contestable: always true on promoted events
+- append-only: contests and deprecations are new events
+- no text similarity: structure only (learned_conditions, plan_tree conditions)
+- advisory only: promoted prerequisites are hints, never hard gates
 
 ---
 
-*dango-gitsea-bridge · append-only · stdlib only · no external dependencies*
+## Next Command (if resuming)
+
+```bash
+cd /Users/olddqn/dango-mujin/bridge
+
+# Check what exists
+ls runtime/federation_prerequisite_detector.py runtime/prerequisite_*.py 2>/dev/null
+
+# Smoke test existing modules
+python3 runtime/federation_prerequisite_detector.py --json 2>/dev/null || echo "not yet"
+
+# Continue with next step in table above
+```
+
+---
+
+## Blockers
+
+None. Housing-001 and housing-002 both have memory snapshots.
+space_safety_assessed is ready to be detected and promoted.
+
+---
+
+## Known Limitations After This Phase
+
+- DID signatures still mock
+- GITSEA still hypothetical
+- Only housing-001 and housing-002 have memory snapshots
+  (housing-003/004/005 have no plan events)
+- prerequisite_decay not implemented (future step candidate)
+- cross-federation exchange not implemented (future step candidate)
