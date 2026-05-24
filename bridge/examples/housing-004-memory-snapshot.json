@@ -1,0 +1,38 @@
+{
+  "event_type": "memory_snapshot_created",
+  "claim_id": "housing-004",
+  "memory_id": "mem-housing-004-001",
+  "active_plan_id": "plan-housing-004-v2",
+  "negotiation_status": "contested",
+  "learned_conditions": [
+    "food_safety_reviewed",
+    "space_safety_assessed"
+  ],
+  "prior_supports": [],
+  "prior_objections": [
+    {
+      "plan_id": "plan-housing-004-v1",
+      "count": 1,
+      "by_type": {
+        "insufficient_risk_coverage": 1
+      },
+      "reasons": [
+        "community kitchen involves open flame, cooking equipment, and shared food handling in a structural space \u2014 plan-v1 has no space_safety_assessed gate before equipment installation and no food_safety_reviewed gate before food distribution. Both are required before the kitchen can operate safely."
+      ]
+    }
+  ],
+  "correction_chain_depth": 0,
+  "contest_count": 1,
+  "known_contested_plans": [
+    "plan-housing-004-v1"
+  ],
+  "snapshot_basis": {
+    "plans_event_count": 4,
+    "plan_count": 2,
+    "latest_event_hash": "4cd13c7c3867855535b6630085dc292456e16fc013583e02e586d88060d16539"
+  },
+  "summary": "1 contest(s); 1 objection(s) (insufficient_risk_coverage); learned: food_safety_reviewed, space_safety_assessed; active: plan-housing-004-v2",
+  "timestamp": "2026-05-24T09:03:04.801251+00:00",
+  "previous_event_hash": "f651be96e5472592d055cf3b7f593eac94e34519643e0d45844694aa0c6f9b01",
+  "event_hash": "c5503ddf53b7c942fb52d8910a29f11713f65687e6f98d43ee43ef81bc80e42d"
+}

@@ -284,6 +284,13 @@ housing-002: plan contested → counterplan adds space_safety_assessed
 `authority: "none"` is not a placeholder. It is the architecture.
 No coordinator promotes a prerequisite. Structural convergence does.
 
+A prerequisite becomes stronger when it survives independent convergence
+across more claims. When housing-004 (community kitchen) independently
+discovered `space_safety_assessed` through a different objector
+(`z6KitchenSafetyAgent004`, distinct from `z6Object001`), the prerequisite
+was reaffirmed — not re-promoted. The original event is immutable. The
+evidence score rose from 6 to 8. Objector concentration fell from 2/2 to 2/3.
+
 Every promoted prerequisite is contestable — by producing a plan tree
 that achieves the claim goals without the condition. The protocol has
 no permanent prerequisites.

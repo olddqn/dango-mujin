@@ -1,128 +1,120 @@
-# RESUME_STATE.md — Federation Prerequisite Promotion Layer
+# RESUME_STATE.md — 3-Way Convergence Test
 
 > **STATUS: COMPLETE**
 > All steps done. Push pending (check git log to confirm).
 
-**Phase:** Federation Prerequisite Promotion Layer
+**Phase:** Federation Prerequisite 3-Way Convergence Test
 **Branch:** main
 **Started:** 2026-05-24
 **Completed:** 2026-05-24
 
 ---
 
-## Completed Steps
+## Previous Phases Complete
 
-| Step | File | Status | Commit |
-|------|------|--------|--------|
-| 0 | RESUME_STATE.md | ✓ DONE | 7a521b3 |
-| 1 | `runtime/federation_prerequisite_detector.py` | ✓ DONE | c6caed6 |
-| 2 | `runtime/prerequisite_evidence_bundle.py` | ✓ DONE | c6caed6 |
-| 3 | `runtime/prerequisite_promotion.py` | ✓ DONE | 9e472b9 |
-| 4 | `runtime/prerequisite_contest_resolver.py` | ✓ DONE | 9e472b9 |
-| 5 | `runtime/prerequisite_snapshot.py` | ✓ DONE | 437a6b3 |
-| 6 | `runtime/prerequisite_memory_integration.py` | ✓ DONE | 437a6b3 |
-| 7 | `runtime/graph_export.py` update | ✓ DONE | 999132d |
-| 8 | `runtime/negotiation_graph.py` update | ✓ DONE | 999132d |
-| 9 | example files (4 files) | ✓ DONE | feat commit |
-| 10 | `FEDERATION_PREREQUISITE_SPEC.md` | ✓ DONE | feat commit |
-| 11 | doc updates (README, FEDERATION_BRANCHING_SPEC, REFLECTIVE_MEMORY_SPEC) | ✓ DONE | feat commit |
-| 12 | `runtime/federation_memory_feedback.py` update | ✓ DONE | feat commit |
-| 13 | Final RESUME_STATE.md + push | ✓ DONE | feat commit |
+- Reflective Memory Loop (commits 3e3d4e7..7d328c2)
+- Documentation Phase (commits 64fecb1..dc2691d)
+- Federation-Aware Branching Layer (commits b8b7d61..eab0f60)
+- Housing-002 Memory Snapshot / Cross-claim Pattern Detection (commit 3f1dba6)
+- Federation Prerequisite Promotion Layer (commits 7a521b3..1edc3d9)
 
 ---
 
-## What Was Built
+## This Phase: 3-Way Convergence Test
 
-### New Runtime Modules
+Goal: housing-004 (community kitchen) independently discovers space_safety_assessed,
+raising convergence to 3 claims, reaffirming the promoted prerequisite.
 
-| Module | Purpose |
-|--------|---------|
-| `runtime/federation_prerequisite_detector.py` | Detect cross-claim learned condition convergence (structure only, no text) |
-| `runtime/prerequisite_evidence_bundle.py` | Build traceable evidence bundle per prerequisite condition |
-| `runtime/prerequisite_promotion.py` | Promote candidates → `federation_prerequisite_promoted` events |
-| `runtime/prerequisite_contest_resolver.py` | Contest / reaffirm / deprecate promoted prerequisites |
-| `runtime/prerequisite_snapshot.py` | Query prerequisite state (read-only) |
-| `runtime/prerequisite_memory_integration.py` | Advisory hints → world model prior_knowledge |
+### Events appended
 
-### New Event Types (sutable/federation.jsonl)
+sutable/plans.jsonl (+4 events):
+  plan_tree_created   housing-004  plan-housing-004-v1   did:key:z6MkCommunityKitchen004
+  plan_objected       housing-004  plan-housing-004-v1   did:key:z6KitchenSafetyAgent004
+  plan_tree_created   housing-004  plan-housing-004-v2   did:key:z6MkCommunityKitchen004
+  plan_contested      housing-004  v1 ← v2               did:key:z6KitchenSafetyAgent004
 
-| Event | Meaning |
-|-------|---------|
-| `federation_prerequisite_promoted` | Condition meets convergence threshold; authority: none |
-| `federation_prerequisite_contested` | Participant contests a promoted prerequisite |
-| `federation_prerequisite_reaffirmed` | Contest resolved: prerequisite stands |
-| `federation_prerequisite_deprecated` | Contest resolved: prerequisite withdrawn |
+sutable/memory.jsonl (+1 event):
+  memory_snapshot_created  housing-004  learned_conditions=[food_safety_reviewed, space_safety_assessed]
 
-### New Example Files
+sutable/federation.jsonl (+1 event):
+  federation_prerequisite_reaffirmed  space_safety_assessed
+  (NOT a new promoted event — dedup confirmed)
 
-| File | Contents |
-|------|----------|
-| `examples/federation-prerequisite-event.json` | All 4 prerequisite event types with annotations |
-| `examples/prerequisite-evidence-bundle.json` | Full evidence bundle for space_safety_assessed |
-| `examples/contested-prerequisite-event.json` | Full contest lifecycle with contest + reaffirm + deprecate |
-| `examples/prerequisite.snapshot.json` | Live snapshot with evidence |
+### Results
 
-### Updated Files
+| Field | Before (2-way) | After (3-way) |
+|-------|---------------|--------------|
+| convergence_count | 2 | 3 |
+| triggered_by | housing-001, housing-002 | + housing-004 |
+| evidence_score | 6 | 8 |
+| plan_author_overlap | False | False |
+| shared_authorship | False | False |
+| shared_objector | True | True (z6Object001 in 2/3 claims; reduced) |
+| independent_convergence | True | True |
+| status | promoted | reaffirmed |
+| objectors | z6Object001 ×2 | z6Object001 ×2, z6KitchenSafetyAgent004 ×1 |
 
-- `runtime/graph_export.py` — FEDERATION PREREQUISITES section (text + HTML + Mermaid edges)
-- `runtime/negotiation_graph.py` — prerequisite_evidence edges added
-- `runtime/federation_memory_feedback.py` — surfaces promoted prerequisites in output
-- `FEDERATION_PREREQUISITE_SPEC.md` — full spec (new)
-- `FEDERATION_BRANCHING_SPEC.md` — related specs updated
-- `REFLECTIVE_MEMORY_SPEC.md` — prerequisite layer reference added
-- `README.md` — Federation Prerequisite Promotion section added
+### Key design points confirmed
 
-### Promoted Prerequisites (current state)
+- append-only: promoted event not modified; reaffirm is a new event
+- no duplicate promotion: prerequisite_promotion.py returned "No new prerequisites to promote"
+- deterministic: detector computed same candidates from updated memory snapshots
+- new objector DID reduces objector concentration (2/3 claims vs 2/2)
+- housing-004 also learned food_safety_reviewed (claim-specific, below threshold)
 
-- `space_safety_assessed`
-  - status: promoted
-  - authority: none
-  - evidence: housing-001, housing-002
-  - independent_convergence: true
-  - shared_authorship: false
-  - shared_objector: true (same objector, different plan authors)
-  - evidence_score: 6
-  - contestable: true
+---
+
+## New/Updated Files
+
+### New example files
+- examples/housing-004-plan-v1.json
+- examples/housing-004-objection-event.json
+- examples/housing-004-plan-v2.json
+- examples/housing-004-memory-snapshot.json
+- examples/prerequisite-3way.snapshot.json
+
+### Updated example files
+- examples/prerequisite-evidence-bundle.json  (3-way bundle)
+- examples/prerequisite.snapshot.json         (reaffirmed status)
+- examples/federation-memory-feedback.snapshot.json (3-way patterns)
+
+### Updated docs
+- FEDERATION_PREREQUISITE_SPEC.md  (Evidence Strengthens section added)
+- README.md  (3-way convergence paragraph added)
 
 ---
 
 ## Known Limitations
 
-- Only housing-001 and housing-002 have plan events → only they contribute to prerequisites
-- housing-003/004/005 have no plan events; cannot contribute to convergence
-- `shared_objector: true` for space_safety_assessed (single agent z6Object001 objected in both claims) — recorded as metadata, not a disqualifier
+- housing-003 and housing-005 still have no plan events
+- space_safety_assessed shared_objector still True (z6Object001 in housing-001 + housing-002)
+- food_safety_reviewed only appears in housing-004 (below threshold — not promoted)
+- food_safety_reviewed would need a second claim to reach federation_prerequisite_promoted
 - DID signatures still mock
 - GITSEA still hypothetical
-- prerequisite_decay not implemented
-- cross-federation exchange not implemented
 
 ---
 
 ## Next Step Candidates
 
-1. **Add plan events for housing-003/004/005** to test 3-way convergence detection
-   and evidence score scaling (convergence_count × 2 bonus)
+1. **Prerequisite deprecation lifecycle** — contest space_safety_assessed with a plan
+   tree that genuinely omits it (pre-certified prefab kitchen with sealed certification).
+   Trace: contested → plan review → reaffirmed or deprecated.
 
-2. **Test deprecation lifecycle** — contest space_safety_assessed with a plan tree
-   that achieves housing goals without the condition:
-   ```bash
-   python3 runtime/prerequisite_contest_resolver.py \
-     --contest space_safety_assessed \
-     --reason "pre-certified modular equipment bypasses space safety gate" \
-     --speaker did:key:zContester
-   ```
+2. **Prerequisite decay** — a promoted prerequisite loses evidence weight over time
+   if no new convergence arrives. Analogous to temporal_trust_decay.py.
 
-3. **Prerequisite decay** — trust weight of a promoted prerequisite decays over time
-   if no new convergence evidence arrives. Similar to temporal_trust_decay.py.
+3. **food_safety_reviewed second convergence** — add housing-005 plan events
+   with food_safety_reviewed to bring it to threshold and test new promotion.
 
-4. **Cross-federation prerequisite exchange** — when two federation networks share
-   a claim, promoted prerequisites can propagate between them (advisory).
+4. **Validator federation network** — two agents independently compute prerequisite
+   candidates from the same event log. Confirm deterministic agreement.
 
-5. **Validator federation network** — a network where validators independently
-   compute prerequisite candidates and compare convergence results.
+5. **Public negotiation UI** — HTML prerequisite panel already implemented;
+   full web view with evidence graph + contest history.
 
-6. **Public negotiation UI** — prerequisite panel in HTML export is implemented;
-   a full web view would show evidence graph + contest history.
+6. **Prerequisite trust weighting** — factor prerequisite strength (evidence_score,
+   convergence_count) into plan selection when multiple plans differ on prerequisites.
 
 ---
 

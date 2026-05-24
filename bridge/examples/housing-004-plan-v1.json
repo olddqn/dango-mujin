@@ -1,0 +1,18 @@
+{
+  "_description": "housing-004 community kitchen — initial plan. Missing space_safety_assessed and food_safety_reviewed gates.",
+  "event_type": "plan_tree_created",
+  "claim_id": "housing-004",
+  "plan_id": "plan-housing-004-v1",
+  "speaker": "did:key:z6MkCommunityKitchen004",
+  "reasoning_surface": "ogi-compatible",
+  "_gap": "No space_safety_assessed gate. Kitchen equipment installation proceeds without structural/electrical clearance. This is the gap that triggers the insufficient_risk_coverage objection and, ultimately, the 3-way prerequisite convergence.",
+  "plan_tree_conditions": [
+    "revocable_consent",
+    "no_identity_exposure",
+    "participant_consent",
+    "kitchen_equipment_available",
+    "food_distribution_permitted",
+    "volunteer_coordination_established",
+    "all_required_conditions_met"
+  ]
+}

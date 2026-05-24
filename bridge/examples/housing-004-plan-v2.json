@@ -1,0 +1,24 @@
+{
+  "_description": "housing-004 counterplan. Adds space_safety_assessed (structural/electrical clearance) and food_safety_reviewed (food handling certification) as explicit risk gates before kitchen operations.",
+  "event_type": "plan_tree_created",
+  "claim_id": "housing-004",
+  "plan_id": "plan-housing-004-v2",
+  "speaker": "did:key:z6MkCommunityKitchen004",
+  "reasoning_surface": "ogi-compatible",
+  "_new_conditions": [
+    "space_safety_assessed",
+    "food_safety_reviewed"
+  ],
+  "_learned_conditions_diff": "counterplan_conditions - contested_plan_conditions = {space_safety_assessed, food_safety_reviewed}",
+  "plan_tree_conditions": [
+    "revocable_consent",
+    "no_identity_exposure",
+    "participant_consent",
+    "space_safety_assessed",
+    "food_safety_reviewed",
+    "kitchen_equipment_available",
+    "food_distribution_permitted",
+    "volunteer_coordination_established",
+    "all_required_conditions_met"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "_description": "housing-004 objection. Key: objector is did:key:z6KitchenSafetyAgent004 — a DISTINCT DID from z6Object001 (which objected to housing-001 and housing-002). This reduces objector concentration from 2/2 to 2/3 claims.",
+  "event_type": "plan_objected",
+  "claim_id": "housing-004",
+  "plan_id": "plan-housing-004-v1",
+  "speaker": "did:key:z6KitchenSafetyAgent004",
+  "objection_type": "insufficient_risk_coverage",
+  "objection_reason": "community kitchen involves open flame, cooking equipment, and shared food handling in a structural space — plan-v1 has no space_safety_assessed gate before equipment installation and no food_safety_reviewed gate before food distribution. Both are required before the kitchen can operate safely.",
+  "_significance": "Third independent objection to the same structural gap (space_safety_assessed missing) across three different claims. Combined with housing-001 and housing-002 objections, this triggers 3-way prerequisite reaffirmation."
+}

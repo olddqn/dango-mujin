@@ -71,6 +71,31 @@ A candidate is promoted to `federation_prerequisite_promoted` status when:
 
 ---
 
+## Evidence Strengthens with Convergence
+
+A prerequisite becomes stronger when it survives independent convergence across more claims.
+
+The housing federation demonstrates this progression:
+
+| State | Claims | Plan authors | Objectors | evidence_score |
+|-------|--------|-------------|-----------|----------------|
+| Promoted (initial) | housing-001, housing-002 | z6MkproposerHousing, z6Contester001, z6MkremoteCollab001 | z6Object001 (×2) | 6 |
+| Reaffirmed (3-way) | + housing-004 | + z6MkCommunityKitchen004 | + z6KitchenSafetyAgent004 | 8 |
+
+The third claim (housing-004, community kitchen) introduced a new objector —
+`z6KitchenSafetyAgent004` — independent of the `z6Object001` who objected in the first two.
+This reduces objector concentration from 2/2 to 2/3 claims and increases the evidence score.
+
+The promoted event is **not modified** (append-only). A `federation_prerequisite_reaffirmed`
+event records the new evidence. The historical record is preserved: the promoted event
+reflects the state at promotion time; the reaffirm event carries the strengthened case.
+
+See `examples/prerequisite-3way.snapshot.json` for the full 3-way evidence bundle.
+See `examples/housing-004-plan-v1.json` through `housing-004-memory-snapshot.json`
+for the housing-004 negotiation sequence.
+
+---
+
 ## Why Text Similarity is Forbidden
 
 Conditions are detected by structural plan tree diff, not by text analysis.
