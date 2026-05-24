@@ -642,19 +642,41 @@ def build_graph(claim_id: str) -> dict[str, Any]:
                             })
                             existing.add(edge_key)
 
-            # Draw bypass edges for the current claim_id (if it bypasses this prerequisite)
+            # Draw scope-aware edges for the current claim_id
             try:
-                from prerequisite_deprecation_detector import detect_bypass_patterns
-                bp = detect_bypass_patterns(cond)
-                if claim_id in bp.get("bypassing_claims", []):
-                    plan_sources = [
-                        n["id"] for n in nodes
-                        if n.get("event_type") in (
-                            "plan_tree_created", "plan_tree_corrected",
-                            "plan_supported",
-                        )
-                    ]
-                    if plan_sources:
+                from prerequisite_scope_resolver import resolve_scope, load_scope_rules
+                scope_rules = load_scope_rules()
+                plan_sources = [
+                    n["id"] for n in nodes
+                    if n.get("event_type") in (
+                        "plan_tree_created", "plan_tree_corrected",
+                        "plan_supported", "plan_contested", "plan_objected",
+                    )
+                ]
+                if plan_sources and cond in scope_rules:
+                    res = resolve_scope(cond, claim_id)
+                    edge_key = (plan_sources[-1], prereq_node_id)
+                    if edge_key not in existing:
+                        if res["bypassed"]:
+                            edges.append({
+                                "from":  plan_sources[-1],
+                                "to":    prereq_node_id,
+                                "kind":  "scoped_bypass",
+                                "label": f"bypass: {cond}",
+                            })
+                        else:
+                            edges.append({
+                                "from":  plan_sources[-1],
+                                "to":    prereq_node_id,
+                                "kind":  "scoped_requirement",
+                                "label": f"requires: {cond}",
+                            })
+                        existing.add(edge_key)
+                elif plan_sources and cond not in scope_rules:
+                    # Unscoped prerequisite — use legacy prerequisite_bypass kind
+                    from prerequisite_deprecation_detector import detect_bypass_patterns
+                    bp = detect_bypass_patterns(cond)
+                    if claim_id in bp.get("bypassing_claims", []):
                         edge_key = (plan_sources[-1], prereq_node_id)
                         if edge_key not in existing:
                             edges.append({
@@ -662,6 +684,28 @@ def build_graph(claim_id: str) -> dict[str, Any]:
                                 "to":    prereq_node_id,
                                 "kind":  "prerequisite_bypass",
                                 "label": f"bypass: {cond}",
+                            })
+                            existing.add(edge_key)
+            except ImportError:
+                pass
+
+            # Scope conflict edges
+            try:
+                from scope_conflict_detector import detect_conflicts
+                conflicts = detect_conflicts(claim_id)
+                plan_sources = [
+                    n["id"] for n in nodes
+                    if n.get("event_type") in ("plan_tree_created", "plan_tree_corrected")
+                ]
+                for conflict in conflicts:
+                    if conflict["condition"] == cond and plan_sources:
+                        edge_key = (plan_sources[-1], prereq_node_id)
+                        if edge_key not in existing:
+                            edges.append({
+                                "from":  plan_sources[-1],
+                                "to":    prereq_node_id,
+                                "kind":  "scope_conflict",
+                                "label": f"conflict: {conflict['bypass_condition_found']} ∩ {conflict['local_indicator_found']}",
                             })
                             existing.add(edge_key)
             except ImportError:

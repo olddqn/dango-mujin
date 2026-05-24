@@ -175,6 +175,18 @@ def build_world_model_with_memory(
                     "notes":     f"learned from memory {prior_knowledge.get('memory_id', '')}",
                 })
 
+    # 4. Inject scoped prerequisite prior knowledge (scope-aware, advisory)
+    try:
+        from scoped_world_model import integrate_scoped_prerequisites
+        prior_knowledge = integrate_scoped_prerequisites(prior_knowledge, claim_id)
+    except ImportError:
+        # Fallback: unscoped prerequisite hints (pre-weakening compatibility)
+        try:
+            from prerequisite_memory_integration import integrate_into_prior_knowledge
+            prior_knowledge = integrate_into_prior_knowledge(prior_knowledge, claim_id)
+        except ImportError:
+            pass
+
     return {
         "claim_id":        claim_id,
         "world_model":     wm,

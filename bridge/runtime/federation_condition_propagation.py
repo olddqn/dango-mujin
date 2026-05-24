@@ -160,6 +160,16 @@ def compute_propagation(
                 "reason":                 "no active plan yet; dignity constraints visible",
             })
 
+    # Attach scope-aware prerequisite hints for each target (advisory only)
+    try:
+        from scoped_condition_propagation import get_scoped_propagation_hints
+        for t in targets:
+            tcid = t["target_claim_id"]
+            scope_hints = get_scoped_propagation_hints(tcid)
+            t["scoped_prerequisite_hints"] = scope_hints
+    except ImportError:
+        pass
+
     return {
         "source_claim_id":      source_claim_id,
         "active_plan_id":       active_plan_id,

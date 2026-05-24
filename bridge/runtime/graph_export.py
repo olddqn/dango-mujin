@@ -202,13 +202,30 @@ def export_mermaid(graph: dict) -> str:
                     for cid in s.get("evidence_claims", []):
                         safe_cid = cid.replace("-", "_")
                         lines.append(f"  {safe_cid} -->|evidence| prereq_{cond_id}")
-                    # Bypass edges
+                    # Scope-aware edges: bypass (-.->), requires (-->), evidence (-->)
                     try:
-                        from prerequisite_deprecation_detector import detect_bypass_patterns
-                        bp = detect_bypass_patterns(s["condition"])
-                        for bypass_cid in bp.get("bypassing_claims", []):
-                            safe_bypass = bypass_cid.replace("-", "_")
-                            lines.append(f"  {safe_bypass} -.->|bypass| prereq_{cond_id}")
+                        from prerequisite_scope_resolver import (
+                            resolve_scope, load_scope_rules,
+                            _active_plan_conditions
+                        )
+                        from sutable_log import read_all as _ra
+                        scope_rules = load_scope_rules()
+                        cond_str = s["condition"]
+                        if cond_str in scope_rules:
+                            all_plan_claims = _active_plan_conditions(_ra("plans"))
+                            for cid in sorted(all_plan_claims.keys()):
+                                safe_cid = cid.replace("-", "_")
+                                res = resolve_scope(cond_str, cid)
+                                if res["bypassed"]:
+                                    lines.append(f"  {safe_cid} -.->|bypass| prereq_{cond_id}")
+                                else:
+                                    lines.append(f"  {safe_cid} -->|requires| prereq_{cond_id}")
+                        else:
+                            from prerequisite_deprecation_detector import detect_bypass_patterns
+                            bp = detect_bypass_patterns(s["condition"])
+                            for bypass_cid in bp.get("bypassing_claims", []):
+                                safe_bypass = bypass_cid.replace("-", "_")
+                                lines.append(f"  {safe_bypass} -.->|bypass| prereq_{cond_id}")
                     except ImportError:
                         pass
     except ImportError:
@@ -695,6 +712,35 @@ def export_text(graph: dict) -> str:
                             lines.append(f"  {cid} --[bypass]--> {cond}")
                         for cid in r.get("requiring_claims", []):
                             lines.append(f"  {cid} --[requires]--> {cond}")
+                    lines.append("")
+            except ImportError:
+                pass
+
+            # SCOPED PREREQUISITES — per-claim applicability for the current claim
+            try:
+                from prerequisite_scope_resolver import scope_summary, resolve_scope
+                from scoped_prerequisite_inheritance import compute_inheritance
+
+                scoped = scope_summary()
+                if scoped:
+                    lines.append("── SCOPED PREREQUISITES ──────────────────────────────────────")
+                    for s in scoped:
+                        cond = s["condition"]
+                        lines.append(f"  {cond}  [scoped: {s['new_scope']}]")
+                        lines.append(f"    applies_to:  {s['applies_to_label']}")
+                        lines.append(f"    bypassed_by: {s['bypassed_by_labels']}")
+                        # Show resolution for the claim being exported
+                        res = resolve_scope(cond, claim_id)
+                        if res["bypassed"]:
+                            lines.append(f"    {claim_id}: bypass ✓")
+                            for bc in res.get("bypass_conditions_found", []):
+                                lines.append(f"      - {bc}")
+                        else:
+                            lines.append(f"    {claim_id}: applicable ✓")
+                            for si in res.get("scope_indicators_found", []):
+                                lines.append(f"      - {si}")
+                            if not res.get("scope_indicators_found"):
+                                lines.append(f"      - (no bypass conditions present)")
                     lines.append("")
             except ImportError:
                 pass
@@ -1569,41 +1615,93 @@ def export_html(graph: dict) -> str:
         if not prereqs:
             return '<div class="fed-panel"><span class="fed-none">No promoted prerequisites yet. Run: python runtime/prerequisite_promotion.py --append</span></div>'
 
-        sym_map = {"promoted": "✓", "reaffirmed": "✓✓", "contested": "⚠", "deprecated": "✗"}
+        sym_map = {
+            "promoted":   "✓",
+            "reaffirmed": "✓✓",
+            "weakened":   "✓~",
+            "contested":  "⚠",
+            "deprecated": "✗",
+        }
         color_map = {
             "promoted":   "var(--green)",
             "reaffirmed": "var(--green)",
+            "weakened":   "var(--amber)",
             "contested":  "var(--amber)",
             "deprecated": "var(--red)",
         }
+
+        # Scope-aware resolution for this claim
+        scope_resolutions: dict[str, dict] = {}
+        try:
+            from prerequisite_scope_resolver import resolve_scope, load_scope_rules
+            scope_rules = load_scope_rules()
+            for s in prereqs:
+                cond = s["condition"]
+                if cond in scope_rules:
+                    scope_resolutions[cond] = resolve_scope(cond, claim_id)
+        except ImportError:
+            pass
+
         rows = []
         for s in prereqs:
-            cond   = s["condition"]
-            status = s.get("status", "promoted")
-            sym    = sym_map.get(status, "?")
-            color  = color_map.get(status, "var(--muted)")
-            ind    = "independent convergence ✓" if s.get("independent_convergence") else "shared authors"
-            n_ev   = s.get("evidence_claims_count", 0)
-            score  = s.get("evidence_score", 0)
-            n_con  = s.get("contest_count", 0)
+            cond      = s["condition"]
+            status    = s.get("status", "promoted")
+            sym       = sym_map.get(status, "?")
+            color     = color_map.get(status, "var(--muted)")
+            ind       = "independent convergence ✓" if s.get("independent_convergence") else "shared authors"
+            n_ev      = s.get("evidence_claims_count", 0)
+            score     = s.get("evidence_score", 0)
+            n_con     = s.get("contest_count", 0)
+            new_scope = s.get("new_scope", "")
 
             evidence_tags = " ".join(
                 f'<span class="fed-claim-tag">{_h(cid)}</span>'
                 for cid in s.get("evidence_claims", [])
             )
 
+            # Scope applicability badge for this claim
+            scope_badge = ""
+            res = scope_resolutions.get(cond)
+            if res:
+                if res["bypassed"]:
+                    bypass_conds = ", ".join(res.get("bypass_conditions_found", []))
+                    scope_badge = (
+                        f'<div style="margin-top:0.4rem;font-size:0.75rem;'
+                        f'color:var(--cyan);border-left:2px solid var(--cyan);padding-left:0.5rem">'
+                        f'⊛ <strong>bypassed</strong> for this claim — '
+                        f'equivalent safety: {_h(bypass_conds)}</div>'
+                    )
+                else:
+                    si = ", ".join(res.get("scope_indicators_found", []))
+                    reason = f" (indicators: {_h(si)})" if si else ""
+                    scope_badge = (
+                        f'<div style="margin-top:0.4rem;font-size:0.75rem;'
+                        f'color:var(--green);border-left:2px solid var(--green);padding-left:0.5rem">'
+                        f'✓ <strong>applicable</strong> for this claim'
+                        f'{reason}</div>'
+                    )
+
+            scope_tag = ""
+            if new_scope:
+                scope_tag = (
+                    f'<span style="font-size:0.7rem;color:var(--amber);padding:0.1rem 0.4rem;'
+                    f'border:1px solid var(--amber);border-radius:3px">scope: {_h(new_scope)}</span>'
+                )
+
             rows.append(
                 f'<div class="fed-row" style="border-left:3px solid {color};padding-left:0.8rem;margin-bottom:0.8rem">'
-                f'<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem">'
+                f'<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;flex-wrap:wrap">'
                 f'<span style="font-size:1.1rem;color:{color};font-weight:700">{sym}</span>'
                 f'<code style="font-family:var(--mono);font-size:0.9rem;color:var(--fg)">{_h(cond)}</code>'
                 f'<span style="font-size:0.75rem;color:{color};padding:0.1rem 0.4rem;border:1px solid {color};border-radius:3px">{status}</span>'
                 f'<span style="font-size:0.7rem;color:var(--muted);padding:0.1rem 0.4rem;border:1px solid var(--border);border-radius:3px">authority: none</span>'
+                f'{scope_tag}'
                 f'</div>'
                 f'<div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.3rem">'
                 f'{n_ev} claim(s) · {ind} · score {score} · contested {n_con}x'
                 f'</div>'
                 f'<div style="margin-top:0.3rem">{evidence_tags}</div>'
+                f'{scope_badge}'
                 f'</div>'
             )
 

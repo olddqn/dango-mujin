@@ -62,16 +62,44 @@ def get_prerequisite_planning_hints(
     if not all_statuses:
         return []
 
+    # Use scope-aware propagation if available
+    try:
+        from scoped_condition_propagation import get_scoped_propagation_hints
+        scoped_hints = get_scoped_propagation_hints(claim_id)
+        # Enrich with evidence_claims from snapshot statuses
+        status_map = {s["condition"]: s for s in all_statuses}
+        hints_out: list[dict[str, Any]] = []
+        for h in scoped_hints:
+            cond = h["condition"]
+            s = status_map.get(cond, {})
+            entry: dict[str, Any] = {
+                "condition":            cond,
+                "hint_type":            "federation_prerequisite",
+                "authority":            "none",
+                "evidence_claims":      s.get("evidence_claims", []),
+                "convergence_count":    s.get("evidence_claims_count", 0),
+                "independent_convergence": s.get("independent_convergence"),
+                "status":               s.get("status", ""),
+                "advisory":             True,
+                "applicable":           h.get("applicable", True),
+                "scoped":               h.get("scoped", False),
+                "scope":                h.get("scope", "all_spaces"),
+                "note":                 h["note"],
+            }
+            hints_out.append(entry)
+        return hints_out
+    except ImportError:
+        pass
+
+    # Fallback: unscoped hints (pre-weakening compatibility)
     hints: list[dict[str, Any]] = []
     for s in all_statuses:
-        if s.get("status") not in ("promoted", "reaffirmed"):
+        if s.get("status") not in ("promoted", "reaffirmed", "weakened"):
             continue
 
         cond = s["condition"]
         evidence_claims = s.get("evidence_claims", [])
 
-        # Note: we include the hint even if this claim is one of the evidence claims —
-        # the world model should know what the federation has learned from its own negotiation.
         hints.append({
             "condition": cond,
             "hint_type": "federation_prerequisite",
@@ -81,6 +109,9 @@ def get_prerequisite_planning_hints(
             "independent_convergence": s.get("independent_convergence"),
             "status": s["status"],
             "advisory": True,
+            "applicable": True,
+            "scoped": False,
+            "scope": "all_spaces",
             "note": (
                 f"'{cond}' was independently discovered by {len(evidence_claims)} claim(s) "
                 f"via structural plan tree diff. Federation-level consideration recommended."
@@ -108,11 +139,13 @@ def integrate_into_prior_knowledge(
     hints = get_prerequisite_planning_hints(claim_id, fed_events=fed_events)
 
     pk["federation_prerequisites"] = hints
-    pk["federation_prerequisite_conditions"] = [h["condition"] for h in hints]
+    # Only list conditions that are actually applicable (not bypassed for this claim)
+    applicable = [h["condition"] for h in hints if h.get("applicable", True)]
+    pk["federation_prerequisite_conditions"] = applicable
 
     if hints:
         existing_note = pk.get("summary", "")
-        prereq_summary = f"federation prerequisites: {', '.join(pk['federation_prerequisite_conditions'])}"
+        prereq_summary = f"federation prerequisites: {', '.join(applicable)}" if applicable else "all prerequisites bypassed for this claim"
         if existing_note:
             pk["summary"] = f"{existing_note}; {prereq_summary}"
         else:
@@ -194,12 +227,20 @@ def _main() -> None:
 
 def _print_pk(claim_id: str, pk: dict[str, Any], *, verbose: bool) -> None:
     hints = pk.get("federation_prerequisites", [])
-    print(f"  {claim_id}  federation prerequisites: {len(hints)}")
-    for h in hints:
-        ind = "independent" if h.get("independent_convergence") else "shared authors"
-        print(f"    [{h['status']}] {h['condition']}")
+    applicable = [h for h in hints if h.get("applicable", True)]
+    bypassed   = [h for h in hints if not h.get("applicable", True)]
+    print(f"  {claim_id}  federation prerequisites: {len(hints)}"
+          f"  (applicable: {len(applicable)}, bypassed: {len(bypassed)})")
+    for h in applicable:
+        ind   = "independent" if h.get("independent_convergence") else "shared authors"
+        scope = f"  [scope: {h['scope']}]" if h.get("scoped") else "  [universal]"
+        print(f"    ✓ [{h['status']}] {h['condition']}{scope}")
         print(f"      authority: none  [{ind}]")
-        print(f"      evidence:  {', '.join(h['evidence_claims'])}")
+        print(f"      evidence:  {', '.join(h.get('evidence_claims', []))}")
+        if verbose:
+            print(f"      note: {h['note']}")
+    for h in bypassed:
+        print(f"    ⊛ [{h['status']}] {h['condition']}  [bypassed — not propagated]")
         if verbose:
             print(f"      note: {h['note']}")
     print()
