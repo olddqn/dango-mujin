@@ -1,0 +1,33 @@
+{
+  "condition": "space_safety_assessed",
+  "prerequisite_threshold": 2,
+  "evidence_bundle": {
+    "claims": [
+      {
+        "claim_id": "housing-001",
+        "objection_type": "insufficient_risk_coverage",
+        "objector": "did:key:z6Object001",
+        "contested_plan_id": "plan-housing-001-v2",
+        "counterplan_id": "plan-housing-001-v3",
+        "contested_plan_author": "did:key:z6MkproposerHousing",
+        "counterplan_author": "did:key:z6Contester001",
+        "learned_via": "plan_contest"
+      },
+      {
+        "claim_id": "housing-002",
+        "objection_type": "insufficient_risk_coverage",
+        "objector": "did:key:z6Object001",
+        "contested_plan_id": "plan-housing-002-v1",
+        "counterplan_id": "plan-housing-002-v2",
+        "contested_plan_author": "did:key:z6MkremoteCollab001",
+        "counterplan_author": "did:key:z6MkremoteCollab001",
+        "learned_via": "plan_contest"
+      }
+    ],
+    "independent_convergence": true,
+    "shared_authorship": false,
+    "shared_objector": true,
+    "dignity_safe": true,
+    "evidence_score": 6
+  }
+}

@@ -407,7 +407,10 @@ base claim (housing-001) and the remote collaboration layer (housing-002) indepe
 discovered it through structural plan tree diff — without any coordination.
 
 See `examples/federation-memory-feedback.snapshot.json` for the full output.
-See `FEDERATION_BRANCHING_SPEC.md` for the full federation memory layer specification.
+See `FEDERATION_BRANCHING_SPEC.md` for the federation memory feedback specification.
+See `FEDERATION_PREREQUISITE_SPEC.md` for the full prerequisite promotion layer —
+where federation memory feedback candidates are promoted to formal prerequisite events
+with traceable evidence bundles, contestability, and append-only lifecycle tracking.
 
 ---
 

@@ -264,6 +264,56 @@ python runtime/graph_export.py --claim-id housing-001 --format text
 
 ---
 
+## Federation Prerequisite Promotion
+
+A condition discovered independently by multiple claims becomes a federation prerequisite.
+
+Not because someone declared it. Because the negotiation evidence converges.
+
+```
+housing-001: plan contested → counterplan adds space_safety_assessed
+housing-002: plan contested → counterplan adds space_safety_assessed
+                                    ↓
+              federation_prerequisite_promoted
+                authority: none
+                evidence_claims: [housing-001, housing-002]
+                independent_convergence: true
+                contestable: true
+```
+
+`authority: "none"` is not a placeholder. It is the architecture.
+No coordinator promotes a prerequisite. Structural convergence does.
+
+Every promoted prerequisite is contestable — by producing a plan tree
+that achieves the claim goals without the condition. The protocol has
+no permanent prerequisites.
+
+```bash
+# Detect candidates
+python runtime/federation_prerequisite_detector.py --verbose
+
+# Inspect evidence bundle
+python runtime/prerequisite_evidence_bundle.py --condition space_safety_assessed
+
+# Promote
+python runtime/prerequisite_promotion.py --append
+
+# View snapshot
+python runtime/prerequisite_snapshot.py --evidence
+
+# Contest a prerequisite
+python runtime/prerequisite_contest_resolver.py \
+    --contest space_safety_assessed \
+    --reason "..." --speaker did:key:zContester
+
+# Memory integration (advisory hints for next plan tree cycle)
+python runtime/prerequisite_memory_integration.py --all-claims
+```
+
+**Spec:** `FEDERATION_PREREQUISITE_SPEC.md`
+
+---
+
 ## Structure
 
 ```
@@ -273,6 +323,7 @@ dango-gitsea-bridge/
 ├── WHY_DANGO_EXISTS.md              ← The argument for this protocol
 ├── DANGO_GITSEA_OGI_MAP.md         ← How Dan-Go maps to GITSEA / OGI / gitlawb
 ├── FEDERATION_BRANCHING_SPEC.md     ← Federation-aware plan branching
+├── FEDERATION_PREREQUISITE_SPEC.md  ← Federation prerequisite promotion
 ├── VISUAL_SYSTEM_MAP.mmd            ← Mermaid architecture diagram
 ├── EXAMPLES_INDEX.md                ← Guide to all example files
 │
@@ -332,7 +383,13 @@ dango-gitsea-bridge/
 │   ├── federation_trust_propagation.py ← Cross-claim trust weighting
 │   ├── federation_activation.py     ← Federation-wide activation snapshot
 │   ├── federation_ripple_detector.py ← Ripple effect detection
-│   └── federation_memory_feedback.py ← Cross-claim memory pattern synthesis
+│   ├── federation_memory_feedback.py ← Cross-claim memory pattern synthesis
+│   ├── federation_prerequisite_detector.py ← Cross-claim condition convergence
+│   ├── prerequisite_evidence_bundle.py ← Evidence bundle per prerequisite
+│   ├── prerequisite_promotion.py    ← Promote candidates to federation events
+│   ├── prerequisite_contest_resolver.py ← Contest / reaffirm / deprecate
+│   ├── prerequisite_snapshot.py     ← Query prerequisite state
+│   └── prerequisite_memory_integration.py ← Advisory hints → world model
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   └── runtime/
@@ -403,6 +460,7 @@ All runtime modules:
 | `REFLECTIVE_MEMORY_SPEC.md` | Reflective memory loop |
 | `CLAIM_FEDERATION_SPEC.md` | Claim federation |
 | `FEDERATION_BRANCHING_SPEC.md` | Federation-aware plan branching |
+| `FEDERATION_PREREQUISITE_SPEC.md` | Federation prerequisite promotion |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |
 | `DIGNITY_GUARD.md` | Dignity guard rules |

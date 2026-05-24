@@ -302,6 +302,17 @@ def _print_feedback(fb: dict[str, Any]) -> None:
             print(f"      {h['hint']}")
             print(f"      triggered by: {h['triggered_by']}")
 
+    # Surface promoted prerequisites from the prerequisite layer
+    try:
+        from prerequisite_snapshot import promoted_prerequisites
+        promoted = promoted_prerequisites()
+        if promoted:
+            print(f"\n  Promoted federation prerequisites ({len(promoted)}):")
+            for cond in promoted:
+                print(f"    ⊛ {cond}  [authority: none]  [contestable]")
+    except ImportError:
+        pass
+
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 

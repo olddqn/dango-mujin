@@ -401,4 +401,5 @@ python runtime/graph_export.py --claim-id housing-001 --format text
 - [CLAIM_FEDERATION_SPEC.md](CLAIM_FEDERATION_SPEC.md) — base federation layer
 - [PLAN_NEGOTIATION_SPEC.md](PLAN_NEGOTIATION_SPEC.md) — plan negotiation (includes memory integration)
 - [REFLECTIVE_MEMORY_SPEC.md](REFLECTIVE_MEMORY_SPEC.md) — memory loop
+- [FEDERATION_PREREQUISITE_SPEC.md](FEDERATION_PREREQUISITE_SPEC.md) — prerequisite promotion layer (what happens after federation_memory_feedback detects a `federation_prerequisite` pattern)
 - [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md) — full system architecture

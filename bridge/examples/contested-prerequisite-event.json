@@ -1,0 +1,28 @@
+{
+  "_description": "Example of a full prerequisite contest lifecycle for space_safety_assessed.",
+  "_how_to_contest": "Contest a prerequisite by producing a plan tree that achieves the claim goals WITHOUT the condition. Present the plan tree as evidence. The contest is itself a plan negotiation event — it does not automatically deprecate the prerequisite.",
+  "_resolution_path": "reaffirmed or deprecated — both are new events, append-only. A deprecated prerequisite can be re-promoted with new convergence evidence.",
+
+  "contest_event": {
+    "event_type": "federation_prerequisite_contested",
+    "condition": "space_safety_assessed",
+    "contest_reason": "The convergence was driven by a single objector (did:key:z6Object001) who appeared in both housing-001 and housing-002. This is shared-objector evidence, not independent convergence. A plan tree for network infrastructure that uses pre-certified modular equipment does not require space_safety_assessed as a gate.",
+    "speaker": "did:key:z6MkContestPrereq001",
+    "note": "Contest this prerequisite by producing a plan tree that does not include the condition and achieves the claim's goals."
+  },
+
+  "reaffirm_event": {
+    "event_type": "federation_prerequisite_reaffirmed",
+    "condition": "space_safety_assessed",
+    "reaffirm_reason": "Pre-certified modular equipment reduces but does not eliminate the need for a space safety assessment. Installation still requires confirming load-bearing capacity, electrical grounding, and fire egress. A plan tree using pre-certified equipment was proposed and reviewed — it still contains a space_safety_assessed branch node. The structural convergence is reaffirmed.",
+    "speaker": "did:key:z6MkReaffirmPrereq001"
+  },
+
+  "deprecation_event_example": {
+    "event_type": "federation_prerequisite_deprecated",
+    "condition": "space_safety_assessed",
+    "deprecation_reason": "Three new plan trees have been submitted for housing-003, housing-004, and housing-005. None of them include space_safety_assessed as a branch condition, and all three have been supported without objection. The convergence threshold is no longer met when considering all five claims in the federation. The prerequisite is deprecated pending new evidence.",
+    "speaker": "did:key:z6MkDeprecatePrereq001",
+    "note": "A deprecated prerequisite can be re-promoted if new convergence evidence emerges."
+  }
+}

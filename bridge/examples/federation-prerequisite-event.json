@@ -1,0 +1,37 @@
+[
+  {
+    "event_type": "federation_prerequisite_promoted",
+    "condition": "space_safety_assessed",
+    "evidence_claims": ["housing-001", "housing-002"],
+    "promotion_basis": "independent_plan_tree_diff_convergence",
+    "authority": "none",
+    "contestable": true,
+    "convergence_count": 2,
+    "independent_convergence": true,
+    "shared_authorship": false,
+    "shared_objector": true,
+    "dignity_safe": true,
+    "evidence_score": 6,
+    "_note": "authority is always 'none'. This is not a declaration — it is a record of structural convergence."
+  },
+  {
+    "event_type": "federation_prerequisite_contested",
+    "condition": "space_safety_assessed",
+    "contest_reason": "The convergence was driven by a single objector (z6Object001) appearing in both claims — this may not represent independent discovery. A plan tree that achieves the claim goals without space_safety_assessed is possible if network equipment is pre-certified.",
+    "speaker": "did:key:z6MkContestPrereq001",
+    "note": "Contest this prerequisite by producing a plan tree that does not include the condition and achieves the claim's goals."
+  },
+  {
+    "event_type": "federation_prerequisite_reaffirmed",
+    "condition": "space_safety_assessed",
+    "reaffirm_reason": "Pre-certified equipment still requires an assessed installation environment. The contested plan tree was reviewed and still requires physical safety clearance before installation. Convergence stands.",
+    "speaker": "did:key:z6MkReaffirm001"
+  },
+  {
+    "event_type": "federation_prerequisite_deprecated",
+    "condition": "example_only_condition",
+    "deprecation_reason": "New evidence from housing-003 shows this condition can be bypassed via pre-approval protocol. Plan tree diff no longer converges on this condition.",
+    "speaker": "did:key:z6MkDeprecate001",
+    "note": "A deprecated prerequisite can be re-promoted if new convergence evidence emerges."
+  }
+]
