@@ -595,32 +595,35 @@ def build_graph(claim_id: str) -> dict[str, Any]:
         prereq_statuses = prereq_snapshot()
         node_ids = {n["id"] for n in nodes}
         for s in prereq_statuses:
-            if s.get("status") not in ("promoted", "reaffirmed"):
+            status = s.get("status", "")
+            if status not in ("promoted", "reaffirmed", "weakened"):
                 continue
             cond = s["condition"]
             # Build a virtual prerequisite node
             prereq_node_id = f"prereq_{cond}"
             if prereq_node_id not in node_ids:
+                label_suffix = " [weakened]" if status == "weakened" else " [federation prerequisite]"
                 nodes.append({
                     "id":         prereq_node_id,
-                    "label":      f"⊛ {cond} [federation prerequisite]",
+                    "label":      f"⊛ {cond}{label_suffix}",
                     "event_type": "federation_prerequisite_promoted",
                     "table":      "federation",
                     "style":      "correction",   # neutral style
                     "timestamp":  "",
                     "speaker":    "authority:none",
                     "meta":       {
-                        "condition":  cond,
-                        "authority":  "none",
-                        "status":     s["status"],
+                        "condition":   cond,
+                        "authority":   "none",
+                        "status":      status,
+                        "new_scope":   s.get("new_scope"),
                         "contestable": True,
                     },
                 })
                 node_ids.add(prereq_node_id)
+
             # Draw evidence edges from each evidence claim's plan events to the prerequisite
             for evidence_cid in s.get("evidence_claims", []):
                 if evidence_cid == claim_id:
-                    # Find the last plan event for this claim to anchor the edge
                     plan_sources = [
                         n["id"] for n in nodes
                         if n.get("event_type") in (
@@ -638,6 +641,32 @@ def build_graph(claim_id: str) -> dict[str, Any]:
                                 "label": f"evidence: {cond}",
                             })
                             existing.add(edge_key)
+
+            # Draw bypass edges for the current claim_id (if it bypasses this prerequisite)
+            try:
+                from prerequisite_deprecation_detector import detect_bypass_patterns
+                bp = detect_bypass_patterns(cond)
+                if claim_id in bp.get("bypassing_claims", []):
+                    plan_sources = [
+                        n["id"] for n in nodes
+                        if n.get("event_type") in (
+                            "plan_tree_created", "plan_tree_corrected",
+                            "plan_supported",
+                        )
+                    ]
+                    if plan_sources:
+                        edge_key = (plan_sources[-1], prereq_node_id)
+                        if edge_key not in existing:
+                            edges.append({
+                                "from":  plan_sources[-1],
+                                "to":    prereq_node_id,
+                                "kind":  "prerequisite_bypass",
+                                "label": f"bypass: {cond}",
+                            })
+                            existing.add(edge_key)
+            except ImportError:
+                pass
+
     except ImportError:
         pass
 

@@ -65,14 +65,14 @@ def snapshot(
 
 
 def promoted_prerequisites(fed_events: list[dict[str, Any]] | None = None) -> list[str]:
-    """Return list of condition names currently in 'promoted' or 'reaffirmed' status."""
+    """Return list of condition names currently active (promoted / reaffirmed / weakened)."""
     if fed_events is None:
         fed_events = load_federation_events()
     statuses = all_prerequisite_statuses(fed_events)
     return [
         s["condition"]
         for s in statuses
-        if s["status"] in ("promoted", "reaffirmed")
+        if s["status"] in ("promoted", "reaffirmed", "weakened")
     ]
 
 
@@ -104,7 +104,7 @@ def _main() -> None:
 
     all_statuses = snapshot(include_evidence=args.evidence)
     if args.promoted_only:
-        all_statuses = [s for s in all_statuses if s["status"] in ("promoted", "reaffirmed")]
+        all_statuses = [s for s in all_statuses if s["status"] in ("promoted", "reaffirmed", "weakened")]
 
     if args.json:
         print(json.dumps(all_statuses, indent=2))
@@ -125,6 +125,7 @@ def _print_status(s: dict[str, Any], *, verbose: bool = False) -> None:
     sym = {
         "promoted":   "✓",
         "reaffirmed": "✓✓",
+        "weakened":   "✓~",
         "contested":  "⚠",
         "deprecated": "✗",
     }.get(s.get("status", ""), "?")
@@ -136,6 +137,8 @@ def _print_status(s: dict[str, Any], *, verbose: bool = False) -> None:
     print(f"      evidence score:  {s.get('evidence_score', 0)}")
     print(f"      contest_count:   {s.get('contest_count', 0)}")
     print(f"      reaffirmed:      {s.get('reaffirm_count', 0)}")
+    print(f"      weakened:        {s.get('weaken_count', 0)}"
+          + (f"  new_scope: {s['new_scope']}" if s.get('new_scope') else ""))
     print(f"      deprecated:      {s.get('deprecated', False)}")
     print(f"      contestable:     True")
 

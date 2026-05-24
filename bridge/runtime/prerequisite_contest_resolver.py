@@ -62,8 +62,9 @@ PROMOTED    = "federation_prerequisite_promoted"
 CONTESTED   = "federation_prerequisite_contested"
 REAFFIRMED  = "federation_prerequisite_reaffirmed"
 DEPRECATED  = "federation_prerequisite_deprecated"
+WEAKENED    = "federation_prerequisite_weakened"
 
-_PREREQ_TYPES = {PROMOTED, CONTESTED, REAFFIRMED, DEPRECATED}
+_PREREQ_TYPES = {PROMOTED, CONTESTED, REAFFIRMED, DEPRECATED, WEAKENED}
 
 
 # ── Status computation ────────────────────────────────────────────────────────
@@ -104,6 +105,7 @@ def get_prerequisite_status(
     contest_evs  = []
     reaffirm_evs = []
     deprecate_ev = None
+    weaken_evs   = []
 
     for ev in evs:
         et = ev.get("event_type")
@@ -115,19 +117,27 @@ def get_prerequisite_status(
             reaffirm_evs.append(ev)
         elif et == DEPRECATED:
             deprecate_ev = ev   # last deprecation wins
+        elif et == WEAKENED:
+            weaken_evs.append(ev)
 
     if promoted_ev is None:
         return None
 
     # Determine current status
+    # Priority: deprecated > weakened > reaffirmed > contested > promoted
     if deprecate_ev:
         current_status = "deprecated"
+    elif weaken_evs:
+        current_status = "weakened"
     elif reaffirm_evs:
         current_status = "reaffirmed"
     elif contest_evs:
         current_status = "contested"
     else:
         current_status = "promoted"
+
+    # new_scope from the most recent weakened event
+    new_scope = weaken_evs[-1].get("new_scope") if weaken_evs else None
 
     return {
         "condition": condition,
@@ -139,6 +149,8 @@ def get_prerequisite_status(
         "evidence_score": promoted_ev.get("evidence_score", 0),
         "contest_count": len(contest_evs),
         "reaffirm_count": len(reaffirm_evs),
+        "weaken_count": len(weaken_evs),
+        "new_scope": new_scope,
         "deprecated": deprecate_ev is not None,
         "contestable": True,
         "promotion_basis": promoted_ev.get("promotion_basis", ""),

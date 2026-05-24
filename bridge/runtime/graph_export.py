@@ -194,16 +194,23 @@ def export_mermaid(graph: dict) -> str:
             lines.append("")
             lines.append("  %% ── Federation Prerequisites ─────────────────────────────")
             for s in prereqs:
-                if s.get("status") in ("promoted", "reaffirmed"):
-                    cond_id = s["condition"].replace("_", "-").replace(" ", "-")
-                    lines.append(
-                        f"  prereq_{cond_id}[\"{s['condition']} [prerequisite]\"]"
-                    )
+                status = s.get("status", "")
+                if status in ("promoted", "reaffirmed", "weakened"):
+                    cond_id  = s["condition"].replace("_", "-").replace(" ", "-")
+                    label    = s["condition"] + (" [weakened]" if status == "weakened" else " [prerequisite]")
+                    lines.append(f"  prereq_{cond_id}[\"{label}\"]")
                     for cid in s.get("evidence_claims", []):
                         safe_cid = cid.replace("-", "_")
-                        lines.append(
-                            f"  {safe_cid} -->|evidence| prereq_{cond_id}"
-                        )
+                        lines.append(f"  {safe_cid} -->|evidence| prereq_{cond_id}")
+                    # Bypass edges
+                    try:
+                        from prerequisite_deprecation_detector import detect_bypass_patterns
+                        bp = detect_bypass_patterns(s["condition"])
+                        for bypass_cid in bp.get("bypassing_claims", []):
+                            safe_bypass = bypass_cid.replace("-", "_")
+                            lines.append(f"  {safe_bypass} -.->|bypass| prereq_{cond_id}")
+                    except ImportError:
+                        pass
     except ImportError:
         pass
 
@@ -657,8 +664,11 @@ def export_text(graph: dict) -> str:
                 n_evidence  = s.get("evidence_claims_count", 0)
                 n_contests  = s.get("contest_count", 0)
                 n_reaffirm  = s.get("reaffirm_count", 0)
+                n_weaken    = s.get("weaken_count", 0)
+                new_scope   = s.get("new_scope")
                 ind         = "independent ✓" if s.get("independent_convergence") else "shared authors"
-                sym_map     = {"promoted": "✓", "reaffirmed": "✓✓", "contested": "⚠", "deprecated": "✗"}
+                sym_map     = {"promoted": "✓", "reaffirmed": "✓✓", "weakened": "✓~",
+                               "contested": "⚠", "deprecated": "✗"}
                 sym         = sym_map.get(status, "?")
                 lines.append(f"  {sym} {cond}  [{status}]")
                 lines.append(f"      authority:       none")
@@ -666,9 +676,28 @@ def export_text(graph: dict) -> str:
                 for cid in s.get("evidence_claims", []):
                     lines.append(f"        - {cid}")
                 lines.append(f"      evidence score:  {score}")
-                lines.append(f"      contested:       {n_contests}  reaffirmed: {n_reaffirm}")
+                lines.append(f"      contested:       {n_contests}  reaffirmed: {n_reaffirm}  weakened: {n_weaken}")
+                if new_scope:
+                    lines.append(f"      new_scope:       {new_scope}")
                 lines.append(f"      contestable:     True")
             lines.append("")
+
+            # PREREQUISITE LIFECYCLE — bypass edges
+            try:
+                from prerequisite_deprecation_detector import detect_all_bypass_patterns
+                bp_all = detect_all_bypass_patterns()
+                any_bypass = any(r.get("bypassing_claims") for r in bp_all)
+                if any_bypass:
+                    lines.append("── PREREQUISITE LIFECYCLE ────────────────────────────────────")
+                    for r in bp_all:
+                        cond = r["condition"]
+                        for cid in r.get("bypassing_claims", []):
+                            lines.append(f"  {cid} --[bypass]--> {cond}")
+                        for cid in r.get("requiring_claims", []):
+                            lines.append(f"  {cid} --[requires]--> {cond}")
+                    lines.append("")
+            except ImportError:
+                pass
     except ImportError:
         pass
 
