@@ -154,6 +154,13 @@ The `prior_knowledge` block carries:
 
 This lets the next plan tree automatically address what the previous one missed.
 
+When two or more claims have memory snapshots, `federation_memory_feedback.py`
+detects cross-claim patterns. In the housing network, both housing-001 and
+housing-002 independently learned `space_safety_assessed` through structural
+plan tree diff — with no coordination. The federation detector surfaces this
+as a `federation_prerequisite`: that condition should become a federation-level
+requirement. See `examples/federation-memory-feedback.snapshot.json`.
+
 ---
 
 ## Quick Start

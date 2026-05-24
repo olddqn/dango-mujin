@@ -394,6 +394,19 @@ python runtime/federation_memory_feedback.py
 python runtime/federation_memory_feedback.py --append
 ```
 
+**Live example** — after housing-002 receives a memory snapshot, two cross-claim
+patterns surface immediately:
+
+| Pattern | Type | Claims |
+|---------|------|--------|
+| `space_safety_assessed` learned independently | `federation_prerequisite` | housing-001, housing-002 |
+| `insufficient_risk_coverage` objected independently | `shared_risk_pattern` | housing-001, housing-002 |
+
+`space_safety_assessed` is now a federation-level prerequisite: both the physical
+base claim (housing-001) and the remote collaboration layer (housing-002) independently
+discovered it through structural plan tree diff — without any coordination.
+
+See `examples/federation-memory-feedback.snapshot.json` for the full output.
 See `FEDERATION_BRANCHING_SPEC.md` for the full federation memory layer specification.
 
 ---

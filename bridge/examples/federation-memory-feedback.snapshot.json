@@ -1,0 +1,55 @@
+{
+  "claims_with_memory": [
+    "housing-001",
+    "housing-002"
+  ],
+  "claims_without_memory": [
+    "housing-003",
+    "housing-004",
+    "housing-005"
+  ],
+  "standalone_claims_with_memory": [],
+  "recurring_objection_types": [
+    {
+      "objection_type": "insufficient_risk_coverage",
+      "recurrence_count": 2,
+      "triggered_by": [
+        "housing-001",
+        "housing-002"
+      ]
+    }
+  ],
+  "recurring_learned_conditions": [
+    {
+      "condition": "space_safety_assessed",
+      "recurrence_count": 2,
+      "triggered_by": [
+        "housing-001",
+        "housing-002"
+      ]
+    }
+  ],
+  "planning_hints": [
+    {
+      "hint": "'space_safety_assessed' should become a federation-level prerequisite (learned independently by 2 claims)",
+      "hint_type": "federation_prerequisite",
+      "condition": "space_safety_assessed",
+      "triggered_by": [
+        "housing-001",
+        "housing-002"
+      ],
+      "recurrence_count": 2
+    },
+    {
+      "hint": "'insufficient_risk_coverage' objections recur across 2 claims — consider a federation-wide review for this objection type",
+      "hint_type": "shared_risk_pattern",
+      "objection_type": "insufficient_risk_coverage",
+      "triggered_by": [
+        "housing-001",
+        "housing-002"
+      ],
+      "recurrence_count": 2
+    }
+  ],
+  "federation_summary": "1 shared learned condition(s); 1 recurring objection type(s); 2 planning hint(s)"
+}
