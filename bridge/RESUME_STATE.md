@@ -1,153 +1,165 @@
-# RESUME_STATE.md — Reflective Memory Summarization
+# RESUME_STATE.md — Documentation + Presentation Phase
 
-> This file tracks implementation progress for the reflective memory layer.
-> If implementation is interrupted, start here.
+> This file tracks implementation progress.
+> If work is interrupted, start here.
 
-**Feature:** Reflective Memory Summarization  
+**Phase:** Documentation + Presentation  
 **Branch:** main  
 **Started:** 2026-05-24  
-**Last checkpoint:** step-7 (COMPLETE — all files implemented, committed, pushing)
+**Last checkpoint:** starting — RESUME_STATE.md updated
 
 ---
 
-## Progress
+## Previous Phase (Reflective Memory) — COMPLETE
 
-| Step | File group | Status | Commit |
-|------|-----------|--------|--------|
-| 1 | sutable_log.py (memory table) + RESUME_STATE.md | ✓ DONE | ad4e43d |
-| 2 | runtime/reflective_memory.py (core library) | ✓ DONE | 5c706dc |
-| 3 | runtime/memory_append.py + sutable/memory.jsonl | ✓ DONE | d374e3e |
-| 4 | runtime/memory_snapshot.py | ✓ DONE | 3e3d4e7 |
-| 5 | runtime/world_model_with_memory.py | ✓ DONE | fceb5c8 |
-| 6 | examples/ + REFLECTIVE_MEMORY_SPEC.md | ✓ DONE | 7d328c2 |
-| 7 | Doc updates (README, PLAN_NEGOTIATION_SPEC) + final commit + push | ✓ DONE | TBD |
+All 7 steps of the reflective memory implementation are done and pushed.
+See git log for commits ad4e43d → f5be446.
 
 ---
 
-## Completed Files
+## Current Phase: Documentation
 
-- [x] `runtime/sutable_log.py` — "memory" added to VALID_TABLES
-- [x] `RESUME_STATE.md` — this file
-- [x] `runtime/reflective_memory.py` — pure library: compute memory record from plans.jsonl
-- [x] `runtime/memory_append.py` — append memory_snapshot_created to sutable/memory.jsonl
-- [x] `sutable/memory.jsonl` — created; first event mem-housing-001-001 written
-- [x] `runtime/memory_snapshot.py` — view memory state for a claim (all CLI flags verified)
+Goal: make the project legible to engineers, protocol designers,
+AI coordination researchers, cypherpunk communities, and 30-second GitHub visitors.
 
-## Pending Files
+This phase does NOT add new runtime logic. It exposes what exists.
 
-- [ ] `runtime/world_model_with_memory.py` — world model + prior_knowledge section
-- [ ] `REFLECTIVE_MEMORY_SPEC.md` — full specification
-- [ ] `examples/memory-snapshot.json` — example memory record (generated)
-- [ ] `examples/world-model-with-memory.json` — example world model + memory (generated)
-- [ ] `README.md` — add ## Reflective Memory section
-- [ ] `PLAN_NEGOTIATION_SPEC.md` — add memory integration note
+| # | File | Status | Commit |
+|---|------|--------|--------|
+| 1 | `README.md` rewrite | ⏳ PENDING | — |
+| 2 | `ARCHITECTURE_OVERVIEW.md` | ⏳ PENDING | — |
+| 3 | `WHY_DANGO_EXISTS.md` | ⏳ PENDING | — |
+| 4 | `DANGO_GITSEA_OGI_MAP.md` | ⏳ PENDING | — |
+| 5 | `VISUAL_SYSTEM_MAP.mmd` | ⏳ PENDING | — |
+| 6 | `EXAMPLES_INDEX.md` | ⏳ PENDING | — |
+| 7 | `RESUME_STATE.md` final update | ⏳ PENDING | — |
 
 ---
 
-## Last Successful Test
+## Architecture Status (what is implemented)
+
+### Core Runtime (bridge/runtime/)
+| Module | Purpose | Status |
+|--------|---------|--------|
+| `sutable_log.py` | Append-only JSONL event log + SHA256 hash chain | ✓ |
+| `claim_to_asset.py` | Claim → GITSEA-style repo asset | ✓ |
+| `dignity_guard.py` | 7-rule dignity gate (runs first, always) | ✓ |
+| `stream_preview.py` | Stream eligibility preview | ✓ |
+| `contribution_ledger.py` | Contribution stream ledger | ✓ |
+| `negotiation_event.py` | Structured negotiation event append | ✓ |
+| `reality_feedback_append.py` | Reality feedback event append | ✓ |
+| `negotiation_graph.py` | Graph builder from su-table events | ✓ |
+| `graph_export.py` | Export graph as Mermaid / text / HTML | ✓ |
+| `plan_event_append.py` | Plan tree event append | ✓ |
+| `task_bundle_append.py` | Task bundle event append | ✓ |
+| `plan_correction.py` | Plan correction / amendment | ✓ |
+| `plan_snapshot.py` | View active plan + correction chain | ✓ |
+| `plan_negotiation_append.py` | Plan negotiation events (support/object/contest) | ✓ |
+| `active_plan_selector.py` | Deterministic active plan selection | ✓ |
+| `plan_contest_resolver.py` | Contest chain + signal aggregation | ✓ |
+| `plan_negotiation_snapshot.py` | Negotiation state snapshot | ✓ |
+| `plan_negotiation_graph.py` | Plan contest graph | ✓ |
+| `reflective_memory.py` | Derive memory record from plans.jsonl | ✓ |
+| `memory_append.py` | Append memory snapshot to memory.jsonl | ✓ |
+| `memory_snapshot.py` | Query memory state / stale diff | ✓ |
+| `world_model_with_memory.py` | World model + prior_knowledge injection | ✓ |
+| `did_signature.py` | Mock DID signature library | ✓ |
+| `sign_event.py` | Attach mock signature to event JSON | ✓ |
+| `verify_event_signature.py` | Verify mock signature | ✓ |
+| `temporal_trust_decay.py` | Trust decay (deterministic) | ✓ |
+| `trust_snapshot.py` | Contributor trust snapshot | ✓ |
+| `claim_dependency.py` | Claim dependency events | ✓ |
+| `claim_federation.py` | Claim federation graph | ✓ |
+| `federation_snapshot.py` | Federation state snapshot | ✓ |
+
+### OGI Runtime (bridge/ogi/runtime/)
+| Module | Purpose | Status |
+|--------|---------|--------|
+| `world_model_mapper.py` | Claim → OGI world model | ✓ |
+| `claim_plan_tree.py` | World model → Plan tree | ✓ |
+| `plan_tree_validator.py` | Plan tree validation | ✓ |
+| `plan_tree_to_tasks.py` | Plan tree → Task bundle | ✓ |
+| `task_dependency_resolver.py` | Task dependency resolution | ✓ |
+| `post_scarcity_guard.py` | Post-scarcity plan guard | ✓ |
+
+### Su-table logs (bridge/sutable/)
+| File | Contents |
+|------|---------|
+| `claims.jsonl` | Claim events |
+| `negotiations.jsonl` | Negotiation events |
+| `contributions.jsonl` | Contribution events |
+| `executions.jsonl` | Execution events |
+| `reality_feedback.jsonl` | Reality feedback events |
+| `plans.jsonl` | Plan tree + task bundle + negotiation events |
+| `memory.jsonl` | Reflective memory snapshots |
+
+### Specs and docs (bridge/)
+- `SUTABLE_APPEND_ONLY_SPEC.md`
+- `PLAN_APPEND_ONLY_SPEC.md`
+- `PLAN_NEGOTIATION_SPEC.md`
+- `REFLECTIVE_MEMORY_SPEC.md`
+- `CLAIM_FEDERATION_SPEC.md`
+- `DID_SIGNATURE_SPEC.md`
+- `TEMPORAL_TRUST_DECAY_SPEC.md`
+- `DIGNITY_GUARD.md`
+- `DANGO_GITSEA_THESIS.md`
+
+---
+
+## Known Limitations
+
+1. **DID signatures are mock** — not real cryptography. Test vectors only.
+2. **GITSEA integration is hypothetical** — GITSEA's real implementation status is unverified.
+3. **No real OGI connection** — OGI runtime is a local reference implementation only.
+4. **No execution layer** — the system models plans but does not run them.
+5. **world_model_mapper requires a claim file** — does not yet auto-load from claims.jsonl directly.
+6. **federation.jsonl** — populated by examples only; no live federation network.
+
+---
+
+## Next Recommended Steps (after documentation phase)
+
+1. **External integration harness** — wire up `world_model_with_memory.py` as a real API endpoint
+2. **Federation network stub** — connect federation.jsonl to a real peer list
+3. **Real DID signatures** — replace mock signatures with actual Ed25519 / did:key
+4. **Reality feedback loop** — auto-trigger memory_append when reality_feedback events arrive
+5. **Web reader** — minimal static HTML for reading the negotiation graph without installing Python
+
+---
+
+## Pending Ideas
+
+- `claim_lifecycle.py` — compute full claim state (open/active/resolved/blocked)
+- `agent_manifest.py` — describe what an agent can do in a Dan-Go negotiation
+- Streaming event log viewer (terminal UI)
+- RSS/Atom feed from su-table events
+- WASM build of sutable_log for browser use
+
+---
+
+## External Integration Status
+
+| System | Status | Notes |
+|--------|--------|-------|
+| GITSEA | Hypothetical | Design target only; implementation unverified |
+| OGI | Local reference | ogi/runtime/ is a local implementation |
+| gitlawb | Connected | Pushes to node.gitlawb.com work |
+| Nookplot | Unknown | Not integrated |
+| DID network | Mock only | did:key test vectors, not live |
+
+---
+
+## Next Command (if resuming documentation phase)
 
 ```bash
-python3 runtime/memory_snapshot.py --claim-id housing-001
-# result: latest_memory_id=mem-housing-001-001, status=contested, active=plan-housing-001-v3 ✓
-python3 runtime/memory_snapshot.py --claim-id housing-001 --diff
-# result: ✓ Up to date (no changes since snapshot) ✓
-python3 runtime/memory_snapshot.py --claim-id housing-001 --prior-knowledge
-# result: known_objection_types=['insufficient_risk_coverage'], learned=['space_safety_assessed'] ✓
-python3 runtime/memory_snapshot.py --all-claims
-# result: housing-001 listed ✓
+# Check which docs exist
+ls bridge/*.md | xargs -I{} basename {}
+
+# Start where the table above shows ⏳ PENDING
+# Commit after each doc:
+git add <file> && git commit -m "docs: <title>"
+
+# After all docs, push:
+git push github main
+GITLAWB_NODE=https://node.gitlawb.com git push gitlawb main
 ```
-
----
-
-## Next Command (if resuming)
-
-```bash
-# Step 5: write world_model_with_memory.py
-# Check if it exists first:
-ls runtime/world_model_with_memory.py 2>/dev/null && echo "exists" || echo "pending"
-# If pending: implement it (see Pending Files above)
-# Then smoke test:
-python3 runtime/world_model_with_memory.py --claim-id housing-001 --json
-```
-
----
-
-## Architecture Notes (for resume context)
-
-### Memory record structure
-```json
-{
-  "event_type": "memory_snapshot_created",
-  "claim_id": "housing-001",
-  "memory_id": "mem-housing-001-001",
-  "snapshot_basis": { "plans_event_count": 7 },
-  "active_plan_id": "plan-housing-001-v3",
-  "negotiation_status": "contested",
-  "prior_objections": [...],
-  "prior_supports": [...],
-  "learned_conditions": ["space_safety_assessed"],
-  "correction_chain_depth": 1,
-  "contest_count": 1,
-  "known_contested_plans": ["plan-housing-001-v2"],
-  "summary": "..."
-}
-```
-
-### world_model_with_memory.py structure
-```python
-def build_world_model_with_memory(claim_id: str) -> dict:
-    """
-    Wraps world_model_mapper output and injects prior_knowledge block.
-    Falls back gracefully if world_model_mapper is not available.
-    """
-    # 1. Try to load world model from ogi/runtime/world_model_mapper.py
-    # 2. Call extract_prior_knowledge(claim_id) from reflective_memory.py
-    # 3. Inject as world_model["prior_knowledge"] = prior_knowledge
-    # Returns combined dict
-```
-
-Output structure:
-```json
-{
-  "claim_id": "housing-001",
-  "world_model": { ... },
-  "prior_knowledge": {
-    "memory_id": "mem-housing-001-001",
-    "active_plan_id": "plan-housing-001-v3",
-    "negotiation_status": "contested",
-    "learned_conditions": ["space_safety_assessed"],
-    "known_objection_types": ["insufficient_risk_coverage"],
-    "correction_depth": 1,
-    "summary": "..."
-  }
-}
-```
-
-### Learned conditions algorithm
-Walk all plan trees for contested counterplans.
-Conditions in counterplan but NOT in contested plan = learned conditions.
-This is deterministic and structural (not text-mining).
-
-### World model with memory
-```
-World Model → Plan Tree → Negotiation → Memory → World Model (with prior_knowledge) → improved Plan Tree
-```
-
-### sutable table: "memory"
-Path: sutable/memory.jsonl
-Event types: memory_snapshot_created
-
----
-
-## Blockers
-
-None currently identified.
-
----
-
-## Unresolved Design Questions
-
-- Should multiple memory snapshots accumulate, or should only the latest be
-  visible? (Answer: accumulate — append-only. Latest is computed by reader.)
-- Should `learned_conditions` carry over if the objection is later withdrawn?
-  (Answer: yes — append-only. Withdrawals are new events, not deletions.)
