@@ -1,0 +1,41 @@
+{
+  "_description": "Input to claim_to_issue.py. housing-004 (community kitchen) with one missing condition discovered through negotiation: space_safety_assessed. The objection came from an independent safety agent, not a coordinator. The condition was later promoted to a federation prerequisite via 3-way convergence.",
+  "claim_id": "housing-004",
+  "speaker": "did:key:z6MkCommunityKitchen004",
+  "active_plan_id": "plan-housing-004-v2",
+  "claim_statement": "Establish a shared community kitchen at the creative space enabled by housing-001, supporting artists and remote workers with shared cooking infrastructure and community food distribution.",
+  "dignity_guard": "pass",
+  "negotiation_status": "contested",
+  "missing_conditions": [
+    {
+      "condition": "space_safety_assessed",
+      "discovered_via": "plan_objection",
+      "objection_reason": "community kitchen involves open flame, cooking equipment, and shared food handling in a structural space — plan-v1 has no space_safety_assessed gate before equipment installation.",
+      "objector": "did:key:z6KitchenSafetyAgent004",
+      "severity": "safety_critical",
+      "phase": "risk",
+      "federation_prerequisite": true,
+      "prerequisite_state": "weakened",
+      "prerequisite_scope": "non_precertified_spaces"
+    }
+  ],
+  "active_plan_conditions": [
+    "revocable_consent",
+    "no_identity_exposure",
+    "participant_consent",
+    "space_safety_assessed",
+    "food_safety_reviewed",
+    "kitchen_equipment_available",
+    "food_distribution_permitted",
+    "volunteer_coordination_established",
+    "all_required_conditions_met"
+  ],
+  "federation_context": {
+    "prerequisite_status": "weakened",
+    "survivability": 0.65,
+    "convergence_count": 3,
+    "bypassing_claims": ["housing-006"],
+    "bypass_path_available": false,
+    "_note": "housing-004 has no precertification path — prerequisite applies in full"
+  }
+}

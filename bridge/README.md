@@ -396,6 +396,40 @@ python runtime/scoped_prerequisite_snapshot.py --condition space_safety_assessed
 
 **Spec:** `SCOPED_PREREQUISITE_SPEC.md`
 
+### Gitlawb / GITSEA Demo
+
+Dan-Go can turn a missing condition into an agent-readable issue.
+This is a bountyless market:
+not money-first,
+condition-first.
+
+A missing condition discovered through negotiation (e.g., `space_safety_assessed`
+in housing-004) travels a pipeline:
+
+```
+Claim → Issue → Agent Task → PR → Reality Feedback → Stream Candidate
+```
+
+No step is automatic. No step moves money. No step creates authority.
+GITSEA may later provide economic streams for accepted contributions.
+This demo does not activate them.
+
+```bash
+# Claim → issue draft (no real issue created)
+python bridge/gitlawb/runtime/claim_to_issue.py bridge/gitlawb/examples/claim-to-issue.input.json
+
+# Issue → agent task spec (no task created)
+python bridge/gitlawb/runtime/issue_to_agent_task.py bridge/gitlawb/examples/issue-draft.output.json
+
+# PR events → reality feedback (no su-table written)
+python bridge/gitlawb/runtime/pr_feedback_mapper.py bridge/gitlawb/examples/pr-feedback.output.json
+
+# Contributions → GITSEA stream candidates (no funds, no connection)
+python bridge/gitlawb/runtime/stream_candidate_preview.py bridge/gitlawb/examples/pr-feedback.output.json
+```
+
+**Demo:** `bridge/gitlawb/DANGO_GITLAWB_GITSEA_DEMO.md`
+
 ---
 
 ## Structure
@@ -487,6 +521,24 @@ dango-gitsea-bridge/
 │   ├── scoped_condition_propagation.py ← Scope-aware prerequisite propagation hints
 │   ├── scoped_world_model.py        ← Scoped prior_knowledge integration
 │   └── scoped_prerequisite_snapshot.py ← Full scoped lifecycle query
+│
+│
+├── gitlawb/                         ← Gitlawb / GITSEA bountyless PR market demo
+│   ├── README.md                    ← Entry point
+│   ├── DANGO_GITLAWB_GITSEA_DEMO.md ← Full pipeline overview
+│   ├── CLAIM_TO_ISSUE_SPEC.md       ← Claim → issue translation spec
+│   ├── ISSUE_TO_PR_FEEDBACK_SPEC.md ← Issue → agent task → PR → feedback
+│   ├── GITSEA_STREAM_CANDIDATE_SPEC.md ← Stream candidate structure
+│   ├── examples/
+│   │   ├── claim-to-issue.input.json  ← housing-004 claim with missing condition
+│   │   ├── issue-draft.output.json    ← Issue draft + agent task hint
+│   │   ├── pr-feedback.output.json    ← Hypothetical PR lifecycle events
+│   │   └── stream-candidate.output.json ← GITSEA stream candidates (no funds)
+│   └── runtime/
+│       ├── claim_to_issue.py          ← Claim → Gitlawb issue draft
+│       ├── issue_to_agent_task.py     ← Issue draft → agent task spec
+│       ├── pr_feedback_mapper.py      ← PR events → reality feedback
+│       └── stream_candidate_preview.py← Contributions → stream candidates
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   └── runtime/

@@ -1,0 +1,60 @@
+{
+  "_description": "GITSEA-style stream candidate preview for the housing-004 / space_safety_assessed PR cycle. No funds move. This is a translation of contribution signals into GITSEA-readable credit hints — if the economic layer ever activates, this is the shape it would take.",
+  "_generated_by": "python3 bridge/gitlawb/runtime/stream_candidate_preview.py bridge/gitlawb/examples/pr-feedback.output.json",
+  "stream_candidates": [
+    {
+      "stream_candidate": true,
+      "moves_money": false,
+      "contribution_type": "safety_review",
+      "credit_signal": "evidence_submitted",
+      "contributor": "did:key:z6MkCommunityKitchen004",
+      "claim_id": "housing-004",
+      "condition": "space_safety_assessed",
+      "pr_event": "pr_opened",
+      "dignity_guard": "pass",
+      "gitsea_eligible": false,
+      "gitsea_note": "Evidence submission alone is not sufficient for GITSEA credit — requires review + acceptance.",
+      "advisory": true
+    },
+    {
+      "stream_candidate": true,
+      "moves_money": false,
+      "contribution_type": "safety_review",
+      "credit_signal": "reviewed_contribution",
+      "contributor": "did:key:z6KitchenSafetyAgent004",
+      "claim_id": "housing-004",
+      "condition": "space_safety_assessed",
+      "pr_event": "pr_reviewed",
+      "dignity_guard": "pass",
+      "gitsea_eligible": false,
+      "gitsea_note": "Review is a credit signal but requires merge + federation acknowledgment.",
+      "advisory": true
+    },
+    {
+      "stream_candidate": true,
+      "moves_money": false,
+      "contribution_type": "safety_review",
+      "credit_signal": "accepted_contribution",
+      "contributor": "did:key:z6MkCommunityKitchen004",
+      "reviewer": "did:key:z6KitchenSafetyAgent004",
+      "claim_id": "housing-004",
+      "condition": "space_safety_assessed",
+      "pr_event": "pr_merged",
+      "dignity_guard": "pass",
+      "gitsea_eligible": true,
+      "gitsea_note": "Merged safety review for a federation prerequisite. If GITSEA activates an economic stream for this condition, this contribution is the primary credit candidate.",
+      "advisory": true,
+      "credit_chain": [
+        {"role": "submitter",  "did": "did:key:z6MkCommunityKitchen004", "signal": "evidence_submitted"},
+        {"role": "reviewer",   "did": "did:key:z6KitchenSafetyAgent004", "signal": "reviewed_contribution"},
+        {"role": "federation", "did": "none",                            "signal": "prerequisite_weakened_survivor"}
+      ]
+    }
+  ],
+  "_design_note": "stream_candidate_preview is a read-only translation layer. It does not write to any su-table, does not create GITSEA streams, does not move funds. It answers: if GITSEA activates an economic stream for this claim/condition pair, who contributed, what did they do, and does the dignity guard pass? No more.",
+  "dignity_summary": {
+    "all_pass": true,
+    "checks": ["no_identity_exposure", "revocable_consent", "participant_consent"],
+    "authority": "none"
+  }
+}

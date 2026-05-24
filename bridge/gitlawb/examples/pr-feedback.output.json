@@ -1,0 +1,92 @@
+{
+  "_description": "Hypothetical PR events for housing-004 / space_safety_assessed. Represents the full PR lifecycle that Dan-Go maps to Reality Feedback events. No real PR was created — this is a translation spec example.",
+  "_generated_by": "python3 bridge/gitlawb/runtime/pr_feedback_mapper.py (example output)",
+  "pr_events": [
+    {
+      "pr_event": "pr_opened",
+      "pr_id": "pr-housing-004-safety-001",
+      "claim_id": "housing-004",
+      "condition_resolved": "space_safety_assessed",
+      "author": "did:key:z6MkCommunityKitchen004",
+      "title": "Add space_safety_assessed evidence for housing-004 community kitchen",
+      "reality_feedback": {
+        "event_type": "reality_feedback",
+        "feedback_type": "condition_evidence_submitted",
+        "claim_id": "housing-004",
+        "condition": "space_safety_assessed",
+        "source": "pr_opened",
+        "authority": "none",
+        "advisory": true,
+        "dignity_guard": "pass",
+        "moves_money": false
+      },
+      "stream_candidate": {
+        "stream_candidate": true,
+        "moves_money": false,
+        "contribution_type": "safety_review",
+        "credit_signal": "evidence_submitted",
+        "dignity_guard": "pass"
+      }
+    },
+    {
+      "pr_event": "pr_reviewed",
+      "pr_id": "pr-housing-004-safety-001",
+      "claim_id": "housing-004",
+      "condition_resolved": "space_safety_assessed",
+      "author": "did:key:z6MkCommunityKitchen004",
+      "reviewer": "did:key:z6KitchenSafetyAgent004",
+      "review_outcome": "approved_with_comment",
+      "comment": "Structural clearance certificate attached. Electrical inspection included. Condition satisfied.",
+      "reality_feedback": {
+        "event_type": "reality_feedback",
+        "feedback_type": "condition_evidence_reviewed",
+        "claim_id": "housing-004",
+        "condition": "space_safety_assessed",
+        "source": "pr_reviewed",
+        "reviewer": "did:key:z6KitchenSafetyAgent004",
+        "outcome": "approved_with_comment",
+        "authority": "none",
+        "advisory": true,
+        "dignity_guard": "pass",
+        "moves_money": false
+      },
+      "stream_candidate": {
+        "stream_candidate": true,
+        "moves_money": false,
+        "contribution_type": "safety_review",
+        "credit_signal": "reviewed_contribution",
+        "dignity_guard": "pass"
+      }
+    },
+    {
+      "pr_event": "pr_merged",
+      "pr_id": "pr-housing-004-safety-001",
+      "claim_id": "housing-004",
+      "condition_resolved": "space_safety_assessed",
+      "author": "did:key:z6MkCommunityKitchen004",
+      "reviewer": "did:key:z6KitchenSafetyAgent004",
+      "reality_feedback": {
+        "event_type": "reality_feedback",
+        "feedback_type": "condition_evidence_accepted",
+        "claim_id": "housing-004",
+        "condition": "space_safety_assessed",
+        "source": "pr_merged",
+        "authority": "none",
+        "advisory": true,
+        "dignity_guard": "pass",
+        "moves_money": false,
+        "plan_impact": "housing-004 plan-v2 condition space_safety_assessed may now be considered satisfied"
+      },
+      "stream_candidate": {
+        "stream_candidate": true,
+        "moves_money": false,
+        "contribution_type": "safety_review",
+        "credit_signal": "accepted_contribution",
+        "dignity_guard": "pass",
+        "gitsea_eligible": true,
+        "gitsea_note": "Eligible for GITSEA stream if federation activates economic layer. No funds move now."
+      }
+    }
+  ],
+  "_design_note": "PR events map to reality_feedback events in Dan-Go. The reality feedback chain is append-only. A merged PR is advisory evidence — it does not auto-satisfy the condition in the plan tree. The agent or speaker must append a plan_correction event to update the plan. This prevents PR merges from bypassing the negotiation protocol."
+}

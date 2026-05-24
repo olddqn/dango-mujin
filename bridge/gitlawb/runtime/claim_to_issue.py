@@ -1,0 +1,258 @@
+"""
+claim_to_issue.py — Dan-Go Claim → Gitlawb issue draft generator
+
+Reads a claim JSON (with missing_conditions array) and produces a Gitlawb
+issue draft. No real issue is created. This is a translation layer only.
+
+No hard enforcement. No funds. No external network. stdlib only.
+
+Usage:
+    python claim_to_issue.py <claim-input.json>
+    python claim_to_issue.py <claim-input.json> --json
+    python claim_to_issue.py <claim-input.json> --condition <condition>
+"""
+
+import json
+import sys
+import os
+from pathlib import Path
+
+
+# ---------------------------------------------------------------------------
+# Label mapping
+# ---------------------------------------------------------------------------
+
+SEVERITY_LABELS = {
+    "safety_critical": "safety-critical",
+    "risk":            "risk",
+    "coordination":    "coordination",
+    "dignity":         "dignity-required",
+}
+
+PREREQUISITE_STATE_LABELS = {
+    "promoted":   "federation-prerequisite",
+    "reaffirmed": "federation-prerequisite",
+    "weakened":   "federation-prerequisite",
+    "deprecated": "federation-prerequisite-deprecated",
+}
+
+
+# ---------------------------------------------------------------------------
+# Core: draft one issue from one missing condition
+# ---------------------------------------------------------------------------
+
+def draft_issue(claim: dict, missing: dict) -> dict:
+    """
+    Produce a Gitlawb issue draft for a single missing condition.
+
+    Returns:
+        {
+          issue_draft: { title, body, labels, assignees, moves_money, ... },
+          source_claim_id, missing_condition, severity,
+          federation_prerequisite, prerequisite_state, prerequisite_scope,
+          bypass_available,
+          agent_task_hint: { task_type, required_capabilities, ... }
+        }
+    """
+    claim_id    = claim.get("claim_id", "unknown")
+    active_plan = claim.get("active_plan_id", "unknown")
+    speaker     = claim.get("speaker", "unknown")
+    statement   = claim.get("claim_statement", "")
+    neg_status  = claim.get("negotiation_status", "unknown")
+    dig_guard   = claim.get("dignity_guard", "unknown")
+    fed_ctx     = claim.get("federation_context", {})
+
+    cond         = missing.get("condition", "unknown")
+    severity     = missing.get("severity", "unknown")
+    phase        = missing.get("phase", "unknown")
+    disc_via     = missing.get("discovered_via", "unknown")
+    objector     = missing.get("objector", "none")
+    obj_reason   = missing.get("objection_reason", "")
+    is_fed_prereq = missing.get("federation_prerequisite", False)
+    prereq_state = missing.get("prerequisite_state", "")
+    prereq_scope = missing.get("prerequisite_scope", "")
+    bypass_avail = fed_ctx.get("bypass_path_available", False)
+    survivability = fed_ctx.get("survivability", None)
+    convergence  = fed_ctx.get("convergence_count", None)
+    bypassing    = fed_ctx.get("bypassing_claims", [])
+
+    # --- labels ---
+    labels = ["dan-go", "claim", "missing-condition", "dignity-first"]
+    if severity in SEVERITY_LABELS:
+        labels.append(SEVERITY_LABELS[severity])
+    if is_fed_prereq and prereq_state in PREREQUISITE_STATE_LABELS:
+        labels.append(PREREQUISITE_STATE_LABELS[prereq_state])
+
+    # --- body ---
+    fed_section = ""
+    if is_fed_prereq:
+        scope_note = f" (scoped to {prereq_scope})" if prereq_scope else ""
+        bypass_note = (
+            "no — this claim has no precertification path"
+            if not bypass_avail
+            else "yes — see bypass conditions below"
+        )
+        bypassing_str = (
+            ", ".join(bypassing) if bypassing else "none"
+        )
+        fed_section = f"""
+### Federation Context
+
+- **Prerequisite state:** {prereq_state}{scope_note}
+- **Survivability:** {survivability if survivability is not None else "unknown"}
+- **Convergence count:** {convergence if convergence is not None else "unknown"} independent claim(s) discovered this condition
+- **Bypass available for this claim:** {bypass_note}
+- **Claims using bypass path:** {bypassing_str}
+"""
+
+    body = f"""## Dan-Go Missing Condition
+
+**Claim:** {claim_id}  \
+\n**Speaker:** {speaker}  \
+\n**Active plan:** {active_plan}  \
+\n**Negotiation status:** {neg_status}  \
+\n**Dignity guard:** {dig_guard}
+
+### Missing Condition
+
+`{cond}`
+
+**Severity:** {severity}  \
+\n**Phase:** {phase}  \
+\n**Discovery:** {disc_via}{f' by `{objector}`' if objector and objector != 'none' else ''}
+
+### Objection Reason
+
+{obj_reason if obj_reason else '_No objection reason recorded._'}
+{fed_section}
+### Claim Statement
+
+{statement if statement else '_No claim statement provided._'}
+
+### How to Resolve
+
+1. Attach evidence that `{cond}` is complete.
+2. Or establish an equivalent bypass path recognised by the federation.
+3. Update the active plan with the resolved condition.
+4. Open a PR referencing this issue.
+
+---
+_This issue was generated by Dan-Go / dango-gitsea-bridge._  \
+\n_No authority. No coordinator. Evidence only._  \
+\n_authority: none · append-only · stdlib only_"""
+
+    # --- agent task hint ---
+    task_type = "risk_review" if severity == "safety_critical" else "evidence_review"
+    capabilities = []
+    if severity == "safety_critical":
+        capabilities = ["safety_review", "evidence_checking"]
+    else:
+        capabilities = ["evidence_checking"]
+
+    agent_task_hint = {
+        "task_type":             task_type,
+        "required_capabilities": capabilities,
+        "execution_allowed":     False,
+        "reason":                "requires human/agent negotiation before execution",
+        "claim_id":              claim_id,
+        "condition":             cond,
+    }
+
+    return {
+        "issue_draft": {
+            "title":            f"[Dan-Go Claim] {cond} is missing — {claim_id}",
+            "body":             body,
+            "labels":           labels,
+            "assignees":        [],
+            "moves_money":      False,
+            "execution_allowed": False,
+        },
+        "source_claim_id":      claim_id,
+        "missing_condition":    cond,
+        "severity":             severity,
+        "federation_prerequisite": is_fed_prereq,
+        "prerequisite_state":   prereq_state,
+        "prerequisite_scope":   prereq_scope,
+        "bypass_available":     bypass_avail,
+        "agent_task_hint":      agent_task_hint,
+    }
+
+
+def claim_to_issues(claim: dict, condition: str | None = None) -> list[dict]:
+    """
+    Convert all (or one) missing_conditions to issue drafts.
+    """
+    missing_list = claim.get("missing_conditions", [])
+    if condition:
+        missing_list = [m for m in missing_list if m.get("condition") == condition]
+    return [draft_issue(claim, m) for m in missing_list]
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def _print_issue(draft: dict) -> None:
+    issue = draft["issue_draft"]
+    print(f"\n{'='*60}")
+    print(f"  CLAIM:     {draft['source_claim_id']}")
+    print(f"  CONDITION: {draft['missing_condition']}")
+    print(f"  SEVERITY:  {draft['severity']}")
+    print(f"  FED PREREQ:{draft['federation_prerequisite']} / state: {draft['prerequisite_state']}")
+    print(f"  BYPASS:    {draft['bypass_available']}")
+    print(f"{'='*60}")
+    print(f"\n  Title:  {issue['title']}")
+    print(f"  Labels: {issue['labels']}")
+    print(f"\n  Body (excerpt):\n")
+    for line in issue["body"].splitlines()[:20]:
+        print(f"    {line}")
+    print(f"\n  Agent task: {draft['agent_task_hint']['task_type']}")
+    print(f"  Capabilities: {draft['agent_task_hint']['required_capabilities']}")
+    print(f"  Execution allowed: {draft['agent_task_hint']['execution_allowed']}")
+    print()
+
+
+def main() -> None:
+    args = sys.argv[1:]
+    if not args or args[0] in ("-h", "--help"):
+        print(__doc__)
+        sys.exit(0)
+
+    input_path = args[0]
+    as_json    = "--json" in args
+    condition  = None
+    if "--condition" in args:
+        idx = args.index("--condition")
+        if idx + 1 < len(args):
+            condition = args[idx + 1]
+
+    if not os.path.exists(input_path):
+        print(f"ERROR: file not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+
+    with open(input_path) as f:
+        claim = json.load(f)
+
+    drafts = claim_to_issues(claim, condition)
+
+    if not drafts:
+        print("No missing conditions found (or condition filter matched nothing).")
+        sys.exit(0)
+
+    if as_json:
+        if len(drafts) == 1:
+            print(json.dumps(drafts[0], indent=2))
+        else:
+            print(json.dumps(drafts, indent=2))
+    else:
+        print(f"\nDan-Go → Gitlawb Issue Draft Generator")
+        print(f"Input: {input_path}")
+        print(f"Claim: {claim.get('claim_id', 'unknown')}")
+        print(f"Issues to draft: {len(drafts)}")
+        print(f"(No real issue created — draft only)")
+        for d in drafts:
+            _print_issue(d)
+
+
+if __name__ == "__main__":
+    main()
