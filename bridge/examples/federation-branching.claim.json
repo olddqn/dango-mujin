@@ -1,0 +1,49 @@
+{
+  "claim_id": "housing-002",
+  "title": "Remote collaboration infrastructure for the shared creative base",
+  "speaker": "did:key:z6MkremoteCollab001",
+  "claim_type": "declarative",
+  "statement": "A remote collaboration layer (internet access, shared tools, and coordination infrastructure) can be established at the shared creative space, once the base space is legally confirmed and safety-cleared.",
+  "decision": "negotiate",
+  "observed_state": [
+    "community_need_documented",
+    "remote_contributors_identified"
+  ],
+  "required_state": [
+    "housing-001.space_safety_assessed",
+    "housing-001.legal_ownership_confirmed",
+    "participant_consent",
+    "network_infrastructure_available"
+  ],
+  "missing_conditions": [
+    "participant_consent",
+    "network_infrastructure_available"
+  ],
+  "dignity_constraints": [
+    {
+      "constraint": "revocable_consent",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    },
+    {
+      "constraint": "no_identity_exposure",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    }
+  ],
+  "federation_dependencies": [
+    {
+      "depends_on": "housing-001",
+      "condition": "space_safety_assessed",
+      "note": "Remote infrastructure cannot be installed until space safety is assessed"
+    },
+    {
+      "depends_on": "housing-001",
+      "condition": "legal_ownership_confirmed",
+      "note": "Legal authority needed before infrastructure contracts can be signed"
+    }
+  ],
+  "_note": "This claim demonstrates federation-aware branching: housing-002 cannot proceed until housing-001 satisfies its conditions. The plan tree for housing-002 should branch on housing-001.space_safety_assessed and housing-001.legal_ownership_confirmed."
+}

@@ -1,0 +1,89 @@
+{
+    "claim_count": 5,
+    "active": [
+        "housing-001",
+        "housing-002",
+        "housing-003",
+        "housing-004",
+        "housing-005"
+    ],
+    "paused": [],
+    "blocked": [],
+    "unknown": [],
+    "federation_readiness": "ready",
+    "branch_statuses": {
+        "housing-001": {
+            "claim_id": "housing-001",
+            "branch_status": "active",
+            "blocking_claims": [],
+            "pausing_claims": [],
+            "activation_dependencies": [],
+            "negotiation_status": "contested"
+        },
+        "housing-002": {
+            "claim_id": "housing-002",
+            "branch_status": "active",
+            "blocking_claims": [],
+            "pausing_claims": [],
+            "activation_dependencies": [
+                {
+                    "claim_id": "housing-001",
+                    "relationship": "depends_on",
+                    "status": "met",
+                    "conditions_met": [
+                        "all_required_conditions_met",
+                        "legal_ownership_confirmed",
+                        "no_identity_exposure",
+                        "owner_consent",
+                        "participant_consent",
+                        "revocable_consent",
+                        "space_safety_assessed"
+                    ],
+                    "reason": "upstream has active plan"
+                }
+            ],
+            "negotiation_status": "unknown"
+        },
+        "housing-003": {
+            "claim_id": "housing-003",
+            "branch_status": "active",
+            "blocking_claims": [],
+            "pausing_claims": [],
+            "activation_dependencies": [],
+            "negotiation_status": "unknown"
+        },
+        "housing-004": {
+            "claim_id": "housing-004",
+            "branch_status": "active",
+            "blocking_claims": [],
+            "pausing_claims": [],
+            "activation_dependencies": [
+                {
+                    "claim_id": "housing-001",
+                    "relationship": "enabled_by",
+                    "status": "met",
+                    "conditions_met": [
+                        "all_required_conditions_met",
+                        "legal_ownership_confirmed",
+                        "no_identity_exposure",
+                        "owner_consent",
+                        "participant_consent",
+                        "revocable_consent",
+                        "space_safety_assessed"
+                    ],
+                    "reason": "upstream has active plan"
+                }
+            ],
+            "negotiation_status": "unknown"
+        },
+        "housing-005": {
+            "claim_id": "housing-005",
+            "branch_status": "active",
+            "blocking_claims": [],
+            "pausing_claims": [],
+            "activation_dependencies": [],
+            "negotiation_status": "unknown"
+        }
+    },
+    "summary": "5 active"
+}

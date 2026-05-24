@@ -1,0 +1,24 @@
+[
+    {
+        "ripple_type": "instability",
+        "source_claim": "housing-001",
+        "affected_claims": [
+            "housing-002",
+            "housing-004"
+        ],
+        "severity": "high",
+        "instability_score": 6,
+        "description": "housing-001 has 1 contest(s), 1 objection(s), 1 counterclaim(s), and blocks 2 downstream claim(s) (instability score: 6)"
+    },
+    {
+        "ripple_type": "contest_ripple",
+        "source_claim": "housing-001",
+        "affected_claims": [
+            "housing-002",
+            "housing-004"
+        ],
+        "severity": "medium",
+        "description": "housing-001 has 1 active contest(s); dependent claim(s) ['housing-002', 'housing-004'] may need condition re-evaluation if the active plan changes",
+        "contest_count": 1
+    }
+]

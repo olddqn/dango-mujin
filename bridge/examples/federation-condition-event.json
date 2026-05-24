@@ -1,0 +1,56 @@
+[
+  {
+    "event_type": "federation_condition_met",
+    "claim_id": "housing-002",
+    "depends_on_claim_id": "housing-001",
+    "condition": "space_safety_assessed",
+    "source_plan_id": "plan-housing-001-v3",
+    "timestamp": "2026-05-24T08:00:00Z",
+    "_note": "housing-001's active plan (v3) satisfies space_safety_assessed — propagated to housing-002"
+  },
+  {
+    "event_type": "federation_condition_met",
+    "claim_id": "housing-002",
+    "depends_on_claim_id": "housing-001",
+    "condition": "legal_ownership_confirmed",
+    "source_plan_id": "plan-housing-001-v3",
+    "timestamp": "2026-05-24T08:00:01Z",
+    "_note": "legal_ownership_confirmed from housing-001 active plan propagated to housing-002"
+  },
+  {
+    "event_type": "federation_claim_activated",
+    "claim_id": "housing-002",
+    "activation_reason": "dependent claim reached dignity-safe active state",
+    "activated_by_claim": "housing-001",
+    "timestamp": "2026-05-24T08:01:00Z",
+    "_note": "housing-002 is now unblocked — housing-001 has a dignity-safe active plan"
+  },
+  {
+    "event_type": "federation_claim_paused",
+    "claim_id": "housing-005",
+    "pause_reason": "waiting on upstream claim(s): ['housing-003']",
+    "waiting_on": ["housing-003"],
+    "timestamp": "2026-05-24T08:02:00Z",
+    "_note": "housing-005 (derived from safety counterclaim) waits for housing-003 to resolve"
+  },
+  {
+    "event_type": "federation_ripple_detected",
+    "ripple_type": "contest_ripple",
+    "source_claim": "housing-001",
+    "affected_claims": ["housing-002", "housing-004"],
+    "severity": "medium",
+    "description": "housing-001 has 1 active contest(s); dependent claims may need condition re-evaluation if the active plan changes",
+    "timestamp": "2026-05-24T08:03:00Z",
+    "_note": "contest in housing-001 could affect conditions already assumed by housing-002 and housing-004"
+  },
+  {
+    "event_type": "federation_memory_feedback",
+    "hint": "'insufficient_risk_coverage' objections recur across 2 claims — consider a federation-wide review for this objection type",
+    "hint_type": "shared_risk_pattern",
+    "objection_type": "insufficient_risk_coverage",
+    "triggered_by": ["housing-001", "housing-002"],
+    "recurrence_count": 2,
+    "timestamp": "2026-05-24T08:04:00Z",
+    "_note": "example: once housing-002 gets plan events, this pattern might emerge"
+  }
+]
