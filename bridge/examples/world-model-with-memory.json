@@ -1,0 +1,91 @@
+{
+    "claim_id": "housing-001",
+    "world_model": {
+        "world_model_id": "wm-housing-001",
+        "claim_id": "housing-001",
+        "schema_version": "1.0",
+        "generated_from": "world_model_mapper.py",
+        "observed_state": [
+            {
+                "state": "vacant_building_exists",
+                "category": "general",
+                "source": "claim.observed_state"
+            },
+            {
+                "state": "community_need_documented",
+                "category": "general",
+                "source": "claim.observed_state"
+            }
+        ],
+        "desired_state": [],
+        "state_gap": [
+            {
+                "condition": "legal_ownership_confirmed",
+                "category": "risk",
+                "blocking": true,
+                "dignity": false,
+                "risk": true,
+                "notes": "RISK-SENSITIVE — requires safety/legal clearance"
+            },
+            {
+                "condition": "safety_review",
+                "category": "general",
+                "blocking": false,
+                "dignity": false,
+                "risk": false,
+                "notes": "requires negotiation or contribution to resolve"
+            },
+            {
+                "condition": "participant_consent",
+                "category": "dignity",
+                "blocking": true,
+                "dignity": true,
+                "risk": false,
+                "notes": "DIGNITY-SENSITIVE — must not proceed without resolution"
+            },
+            {
+                "condition": "space_safety_assessed",
+                "category": "learned_from_negotiation",
+                "blocking": false,
+                "notes": "learned from memory mem-housing-001-002"
+            }
+        ],
+        "reality_feedback": [],
+        "uncertainty": {
+            "level": "high",
+            "reason": "3 missing condition(s); 2 dignity constraint(s)",
+            "missing_count": 3,
+            "dignity_count": 2
+        },
+        "dignity_surface": [
+            {
+                "constraint": "no_identity_exposure",
+                "in_missing": false,
+                "in_observed": false,
+                "status": "declared"
+            },
+            {
+                "constraint": "revocable_consent",
+                "in_missing": false,
+                "in_observed": false,
+                "status": "declared"
+            }
+        ],
+        "world_model_notes": "Claim is in negotiation — world model shows conditions to resolve. Blocking conditions: legal_ownership_confirmed, participant_consent. These must be resolved before execution."
+    },
+    "prior_knowledge": {
+        "memory_id": "mem-housing-001-002",
+        "active_plan_id": "plan-housing-001-v3",
+        "negotiation_status": "contested",
+        "learned_conditions": [
+            "space_safety_assessed"
+        ],
+        "known_objection_types": [
+            "insufficient_risk_coverage"
+        ],
+        "correction_depth": 1,
+        "contest_count": 1,
+        "summary": "1 correction(s); 1 contest(s); 1 objection(s) (insufficient_risk_coverage); 1 support(s); learned: space_safety_assessed; active: plan-housing-001-v3"
+    },
+    "memory_integrated": true
+}
