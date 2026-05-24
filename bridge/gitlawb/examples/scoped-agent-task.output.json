@@ -1,0 +1,34 @@
+{
+  "task_generated": true,
+  "task_type": "safety_review",
+  "claim_id": "housing-007",
+  "condition": "space_safety_assessed",
+  "scope_status": "applicable",
+  "scope": "non_precertified_spaces",
+  "prerequisite_state": "weakened",
+  "required_capabilities": [
+    "safety_review",
+    "evidence_checking"
+  ],
+  "priority": "high",
+  "execution_allowed": false,
+  "reason": "requires human/agent negotiation before execution",
+  "hard_enforcement": false,
+  "contestable": true,
+  "negotiation_reopen_allowed": true,
+  "checklist": [
+    "Obtain structural/electrical clearance certificate for the space.",
+    "Confirm no open-flame hazard without suppression system present.",
+    "Attach inspection report to PR referencing this issue.",
+    "Reviewer must confirm: no precertification bypass path exists for this claim.",
+    "Confirm this claim has no bypass path (no precertification, no external audit).",
+    "Check scope: prerequisite applies to non_precertified_spaces only.",
+    "After PR merge, append a plan_correction event \u2014 merge alone does not satisfy the condition.",
+    "Note: prerequisite is weakened. A bypass path (equivalent safety evidence) is accepted by the federation \u2014 but this claim does not qualify. Resolve directly or produce a bypass-eligible plan.",
+    "Note: this prerequisite is contestable. If you believe it should not apply here, contest via a better plan tree. No coordinator needed."
+  ],
+  "source_issue_title": "[Scoped Prerequisite] space_safety_assessed required \u2014 housing-007",
+  "authority": "none",
+  "advisory": true,
+  "moves_money": false
+}

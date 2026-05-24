@@ -47,7 +47,7 @@ PRIORITY_BY_SEVERITY = {
 # Core translation
 # ---------------------------------------------------------------------------
 
-def issue_to_agent_task(issue_draft: dict) -> dict:
+def issue_to_agent_task(issue_draft: dict) -> dict:  # noqa: C901
     """
     Translate an issue draft into an agent task specification.
 
@@ -114,7 +114,17 @@ def issue_to_agent_task(issue_draft: dict) -> dict:
             f"Resolution here contributes to federation evidence."
         )
 
-    return {
+    # --- scoped prerequisite fields (schema_version 1.1) ---
+    # If the issue draft carries scope_status (from scoped_plan_to_issue.py),
+    # prefer scoped_issue_to_task.py for full scope handling.
+    # Here we surface scope_status for downstream consumers.
+    scope_status = issue_draft.get("scope_status", None)
+    nc           = issue_draft.get("negotiation_context", {})
+    hard_enforce = nc.get("hard_enforcement", False) if nc else False
+    reopen       = nc.get("negotiation_reopen_allowed", True) if nc else True
+    contestable  = nc.get("contestable", True) if nc else True
+
+    result: dict = {
         "task_type":             task_type,
         "claim_id":              claim_id,
         "condition":             condition,
@@ -128,7 +138,13 @@ def issue_to_agent_task(issue_draft: dict) -> dict:
         "authority":             "none",
         "advisory":              True,
         "moves_money":           False,
+        "hard_enforcement":      hard_enforce,
+        "negotiation_reopen_allowed": reopen,
+        "contestable":           contestable,
     }
+    if scope_status:
+        result["scope_status"] = scope_status
+    return result
 
 
 # ---------------------------------------------------------------------------

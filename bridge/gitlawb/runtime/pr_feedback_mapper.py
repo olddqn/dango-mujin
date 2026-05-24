@@ -12,6 +12,11 @@ PR event lifecycle supported:
   pr_rejected → condition_evidence_rejected
   pr_superseded → condition_evidence_superseded
 
+Scoped prerequisite fields (schema_version 1.1):
+  scope_status              — "applicable" | "bypassed" | "unknown"
+  contestable               — True always (prerequisites are advisory hints)
+  negotiation_reopen_allowed — True always (PR merge is not final truth)
+
 No hard enforcement. No funds. No external network. stdlib only.
 
 Usage:
@@ -80,6 +85,12 @@ GITSEA_ELIGIBLE_EVENTS = {"pr_merged"}
 def map_pr_event(pr_event: dict) -> dict:
     """
     Map a single PR event dict to a combined feedback + stream_candidate record.
+
+    Scoped prerequisite fields are carried through every event:
+      scope_status              — from pr_event or defaults to "unknown"
+      contestable               — True always
+      negotiation_reopen_allowed — True always (PR merge is not final truth)
+      hard_enforcement          — False always
     """
     event_type   = pr_event.get("pr_event", "unknown")
     pr_id        = pr_event.get("pr_id", "unknown")
@@ -90,23 +101,34 @@ def map_pr_event(pr_event: dict) -> dict:
     outcome      = pr_event.get("review_outcome", None)
     comment      = pr_event.get("comment", None)
 
+    # Scoped prerequisite fields (schema_version 1.1)
+    scope_status = pr_event.get("scope_status", "unknown")
+    scope        = pr_event.get("scope", "")
+    prereq_state = pr_event.get("prerequisite_state", "unknown")
+
     feedback_type = PR_EVENT_TO_FEEDBACK_TYPE.get(event_type, f"unknown_pr_event:{event_type}")
     note          = PR_EVENT_NOTES.get(event_type, "")
     credit_signal = STREAM_SIGNAL_BY_PR_EVENT.get(event_type, "unknown")
     gitsea_elig   = event_type in GITSEA_ELIGIBLE_EVENTS
 
     reality_feedback: dict = {
-        "event_type":    "reality_feedback",
-        "feedback_type": feedback_type,
-        "claim_id":      claim_id,
-        "condition":     condition,
-        "pr_id":         pr_id,
-        "source":        event_type,
-        "authority":     "none",
-        "advisory":      True,
-        "dignity_guard": "pass",
-        "moves_money":   False,
-        "note":          note,
+        "event_type":                "reality_feedback",
+        "feedback_type":             feedback_type,
+        "claim_id":                  claim_id,
+        "condition":                 condition,
+        "pr_id":                     pr_id,
+        "source":                    event_type,
+        "authority":                 "none",
+        "advisory":                  True,
+        "dignity_guard":             "pass",
+        "moves_money":               False,
+        "hard_enforcement":          False,
+        "contestable":               True,
+        "negotiation_reopen_allowed": True,
+        "scope_status":              scope_status,
+        "scope":                     scope,
+        "prerequisite_state":        prereq_state,
+        "note":                      note,
     }
     if reviewer:
         reality_feedback["reviewer"] = reviewer
@@ -117,7 +139,8 @@ def map_pr_event(pr_event: dict) -> dict:
     if event_type == "pr_merged":
         reality_feedback["plan_impact"] = (
             f"{claim_id} active plan condition `{condition}` "
-            "may now be considered satisfied — pending plan_correction event by plan author."
+            "may now be considered satisfied — pending plan_correction event by plan author. "
+            "Negotiation can reopen — PR merge is not final truth."
         )
 
     stream_candidate: dict = {
@@ -172,6 +195,8 @@ def _print_mapped(mapped: dict) -> None:
     print(f"  ├─ Reality feedback type: {rf['feedback_type']}")
     print(f"  │    claim: {rf['claim_id']}  condition: {rf['condition']}")
     print(f"  │    advisory: {rf['advisory']}  moves_money: {rf['moves_money']}")
+    print(f"  │    scope_status: {rf.get('scope_status','?')}  contestable: {rf.get('contestable','?')}")
+    print(f"  │    hard_enforcement: {rf.get('hard_enforcement','?')}  negotiation_reopen: {rf.get('negotiation_reopen_allowed','?')}")
     if rf.get("note"):
         print(f"  │    note: {rf['note'][:90]}...")
     print(f"  └─ Stream candidate:")

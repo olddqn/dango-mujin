@@ -1,0 +1,14 @@
+{
+  "issue_candidate": false,
+  "claim_id": "housing-006",
+  "condition": "space_safety_assessed",
+  "scope_status": "bypassed",
+  "reason": "prerequisite bypassed by scoped resolution",
+  "bypass_conditions": [
+    "embedded_fire_controls",
+    "external_safety_audit_attached",
+    "precertified_structure"
+  ],
+  "scope": "non_precertified_spaces",
+  "advisory": true
+}

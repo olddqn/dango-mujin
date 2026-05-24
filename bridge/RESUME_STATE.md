@@ -1,8 +1,8 @@
-# RESUME_STATE.md — Scoped Plan Tree OGI Integration
+# RESUME_STATE.md — Scoped Issue Generation
 
 > **STATUS: COMPLETE**
 
-**Phase:** Scoped Plan Tree Integration (OGI reasoning surface)
+**Phase:** Scoped Issue Generation (Gitlawb pipeline)
 **Branch:** main
 **Completed:** 2026-05-24
 
@@ -19,107 +19,142 @@
 - Federation Prerequisite Deprecation Lifecycle (commits 7649826..0dd26b3)
 - Scoped Prerequisite Inheritance Layer (commits 591817e..6a6d393)
 - Gitlawb GITSEA Bountyless PR Market Demo (commit ca7d290)
-- **Scoped Plan Tree OGI Integration** (this commit)
+- Scoped Plan Tree OGI Integration
+- **Scoped Issue Generation** (this commit)
 
 ---
 
-## Scoped Plan Tree Integration: Results
+## Scoped Issue Generation: Results
 
-Core principle: A reasoning surface must plan differently when prerequisite knowledge is scoped.
+Core principle: A scoped issue is not a command. It is a negotiation invitation.
 
-### housing-006 Plan Result
-
-```
-pt-scoped-housing-006
-  applicable_prerequisites: []
-  bypassed_prerequisites:   ['space_safety_assessed']
-
-Plan tree structure:
-  [dignity]              dignity clearance (3 branches)
-  [scoped_prerequisites] scoped prerequisite resolution
-    [assertion:bypassed]   space_safety_assessed bypassed by scoped prerequisite resolution
-    [branch:bypassed]      is scoped bypass evidence valid?
-  [coordination]         coordination conditions (7 branches)
-  [branch]               can claim advance to next phase?
-
-Validator: VALID — 41 nodes, scoped_bypassed: ['space_safety_assessed']
-```
-
-### housing-007 Plan Result
+### housing-006 Issue Result
 
 ```
-pt-scoped-housing-007
-  applicable_prerequisites: ['space_safety_assessed']
-  bypassed_prerequisites:   []
-
-Plan tree structure:
-  [dignity]              dignity clearance (3 branches)
-  [scoped_prerequisites] scoped prerequisite resolution
-    [subgoal:applicable]   satisfy prerequisite: space_safety_assessed
-      [action]               request safety_review
-    [branch:applicable]    is 'space_safety_assessed' complete? → true/abstain
-  [coordination]         coordination conditions (5 branches)
-  [branch]               can claim advance to next phase?
-
-Validator: VALID — 36 nodes, scoped_applicable: ['space_safety_assessed']
+scoped-issue-housing-006.output.json
+  condition:     space_safety_assessed
+  scope_status:  bypassed
+  issue_candidate: false
+  reason: "prerequisite bypassed by scoped prerequisite resolution"
+  filter_action: suppress
+  filter_reason: bypass
 ```
 
-### Comparison Result
+### housing-007 Issue Result
 
 ```
-space_safety_assessed:
-  housing-006: ⊛ bypassed
-  housing-007: ✓ applicable  ←DIFFERS
+scoped-issue-housing-007.output.json
+  condition:     space_safety_assessed
+  scope_status:  applicable
+  issue_candidate: true
+  title: "[Scoped Prerequisite] space_safety_assessed required — housing-007"
+  labels: [dan-go, scoped-prerequisite, safety-critical, dignity-first, contestable, ...]
+  negotiation_context:
+    contestable: true
+    authority: none
+    hard_enforcement: false
+    negotiation_reopen_allowed: true
+```
 
-Key insight:
-A bypassed prerequisite is still memory.
-It is just not an active requirement in this context.
+### Agent Task Result (housing-007)
+
+```
+scoped-agent-task.output.json
+  task_generated: true
+  task_type: safety_review
+  scope_status: applicable
+  priority: high
+  execution_allowed: false
+  hard_enforcement: false
+  contestable: true
+  negotiation_reopen_allowed: true
+  moves_money: false
+```
+
+### PR Feedback Result
+
+```
+scoped-pr-feedback.output.json
+  3 events: pr_opened → pr_reviewed → pr_merged
+  Every event carries:
+    scope_status: applicable
+    hard_enforcement: false
+    contestable: true
+    negotiation_reopen_allowed: true
+    moves_money: false
+  pr_merged note: "Negotiation can reopen — PR merge is not final truth."
+  pr_merged: gitsea_eligible: true (no funds activated)
+```
+
+### Snapshot Result
+
+```
+python gitlawb/runtime/scoped_issue_snapshot.py --applicable-only
+  housing-007 / space_safety_assessed → open_draft
+  housing-006 / space_safety_assessed → suppressed (bypassed)
 ```
 
 ---
 
 ## New Files
 
-- ogi/runtime/scoped_claim_plan_tree.py
-- ogi/runtime/scoped_plan_comparison.py
-- ogi/SCOPED_PLAN_TREE_INTEGRATION.md
-- ogi/examples/scoped-plan-housing-006.output.json
-- ogi/examples/scoped-plan-housing-007.output.json
-- ogi/examples/scoped-plan-comparison.json
+- gitlawb/runtime/scoped_plan_to_issue.py
+- gitlawb/runtime/scoped_issue_filter.py
+- gitlawb/runtime/scoped_issue_to_task.py
+- gitlawb/runtime/scoped_pr_feedback.py
+- gitlawb/runtime/scoped_issue_snapshot.py
+- gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md
+- gitlawb/examples/scoped-issue-housing-007.output.json
+- gitlawb/examples/scoped-issue-housing-006.output.json
+- gitlawb/examples/scoped-agent-task.output.json
+- gitlawb/examples/scoped-pr-feedback.output.json
 
 ## Updated Files
 
-- ogi/runtime/plan_tree_validator.py (scoped assertion tracking)
-- ogi/runtime/claim_plan_tree.py (schema 1.1 metadata when federation_prerequisites present)
-- ogi/PLAN_TREE_SPEC.md (schema_version 1.1 extensions)
-- ogi/WORLD_MODEL_MAPPING.md (scoped prior_knowledge documentation)
-- SCOPED_PREREQUISITE_SPEC.md (cross-reference to OGI spec)
-- README.md (Scoped Plan Tree Integration section + module tree)
+- gitlawb/runtime/claim_to_issue.py (scoped generation preference)
+- gitlawb/runtime/issue_to_agent_task.py (scope_status, hard_enforcement, negotiation fields)
+- gitlawb/runtime/pr_feedback_mapper.py (scope_status, contestable, negotiation_reopen_allowed)
+- README.md (Scoped Issue Generation section + gitlawb directory tree update)
 - RESUME_STATE.md (this file)
+
+---
+
+## Key Invariants (all scoped issue records)
+
+| Field                      | Value   |
+|----------------------------|---------|
+| `execution_allowed`        | `false` |
+| `moves_money`              | `false` |
+| `hard_enforcement`         | `false` |
+| `advisory`                 | `true`  |
+| `contestable`              | `true`  |
+| `negotiation_reopen_allowed` | `true` |
+| `authority`                | `none`  |
 
 ---
 
 ## Known Limitations
 
 - DID signatures still mock
-- GITSEA still hypothetical
+- GITSEA still hypothetical (no stream activates)
 - `food_safety_reviewed` below promotion threshold (1 claim only)
 - Scope conflict detection is advisory only (intentional)
 - Deprecation requires explicit event (intentional — no auto-removal)
 - Plan tree for claims without plans.jsonl entries will be empty (by design)
+- scoped_issue_snapshot.py scans only `ogi/examples/scoped-plan-*.output.json`
 
 ---
 
 ## Next Step Candidates
 
-1. **Gitlawb issue creation dry-run from scoped plan** — use the applicable prerequisite
-   from housing-007's scoped plan tree to generate a Gitlawb issue automatically
-2. **Public negotiation UI** — render scoped plan tree as interactive HTML
-3. **Validator federation** — federate plan tree validation across agents
-4. **Prerequisite trust weighting** — weight scoped prerequisite applicability
-   by federation trust score of the discovering claim
-5. **OGI task bundle regeneration from scoped plan** — feed the scoped plan tree
-   into plan_tree_to_tasks.py to generate a task bundle that respects bypass
+1. **Plan correction event** — formal plan_correction flow after PR merge
+2. **Contest protocol** — structured way to contest a scoped prerequisite with a
+   better plan tree (without a coordinator)
+3. **Federated issue snapshot** — aggregate scoped_issue_snapshot across
+   multiple gitlawb nodes
+4. **OGI task bundle from scoped plan** — feed housing-007 scoped plan into
+   plan_tree_to_tasks.py, verify tasks respect bypass
+5. **Public negotiation UI** — render scoped plan tree + issue drafts as HTML
 
 ---
 

@@ -436,6 +436,44 @@ Expected:
 
 **Spec:** `ogi/SCOPED_PLAN_TREE_INTEGRATION.md`
 
+### Scoped Issue Generation
+
+Applicable prerequisites generate advisory issue drafts.
+Bypassed prerequisites do not generate issues.
+All issue drafts remain: contestable, dignity-checked, execution-disabled, advisory only.
+
+A scoped issue is not a command. It is a negotiation invitation.
+
+```bash
+# Generate issues from scoped plan trees
+python gitlawb/runtime/scoped_plan_to_issue.py \
+  ogi/examples/scoped-plan-housing-007.output.json --json
+
+# Filter and annotate (applicable / bypassed / deprecated)
+python gitlawb/runtime/scoped_issue_filter.py --scan-plans
+
+# Convert applicable issue to agent task spec
+python gitlawb/runtime/scoped_issue_to_task.py \
+  gitlawb/examples/scoped-issue-housing-007.output.json
+
+# PR feedback with scope context
+python gitlawb/runtime/scoped_pr_feedback.py \
+  gitlawb/examples/scoped-issue-housing-007.output.json --simulate-lifecycle
+
+# Full snapshot across all claims
+python gitlawb/runtime/scoped_issue_snapshot.py
+python gitlawb/runtime/scoped_issue_snapshot.py --applicable-only
+```
+
+Expected:
+- housing-006: `space_safety_assessed` → `issue_candidate: false` (bypassed)
+- housing-007: `space_safety_assessed` → `issue_candidate: true` (applicable)
+- All issues: `hard_enforcement: false`, `negotiation_reopen_allowed: true`
+- PR merge note: "Negotiation can reopen — PR merge is not final truth."
+- No real issue created · stdlib only
+
+**Spec:** `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md`
+
 ### Gitlawb / GITSEA Demo
 
 Dan-Go can turn a missing condition into an agent-readable issue.
@@ -569,22 +607,26 @@ dango-gitsea-bridge/
 │   ├── CLAIM_TO_ISSUE_SPEC.md       ← Claim → issue translation spec
 │   ├── ISSUE_TO_PR_FEEDBACK_SPEC.md ← Issue → agent task → PR → feedback
 │   ├── GITSEA_STREAM_CANDIDATE_SPEC.md ← Stream candidate structure
+│   ├── SCOPED_ISSUE_GENERATION_SPEC.md ← Scoped prerequisite → issue draft spec
 │   ├── examples/
 │   │   ├── claim-to-issue.input.json  ← housing-004 claim with missing condition
 │   │   ├── issue-draft.output.json    ← Issue draft + agent task hint
 │   │   ├── pr-feedback.output.json    ← Hypothetical PR lifecycle events
-│   │   └── stream-candidate.output.json ← GITSEA stream candidates (no funds)
-│   ├── examples/
-│   │   ├── scoped-plan-housing-006.output.json ← Scoped plan tree (bypassed)
-│   │   ├── scoped-plan-housing-007.output.json ← Scoped plan tree (applicable)
-│   │   └── scoped-plan-comparison.json         ← Side-by-side plan comparison
+│   │   ├── stream-candidate.output.json ← GITSEA stream candidates (no funds)
+│   │   ├── scoped-issue-housing-007.output.json ← Applicable prerequisite issue (housing-007)
+│   │   ├── scoped-issue-housing-006.output.json ← Suppressed issue (housing-006, bypassed)
+│   │   ├── scoped-agent-task.output.json        ← Agent task from scoped issue
+│   │   └── scoped-pr-feedback.output.json       ← PR feedback with scope context
 │   └── runtime/
-│       ├── scoped_claim_plan_tree.py  ← Scoped prerequisite-aware plan tree generator
-│       ├── scoped_plan_comparison.py  ← Compare two scoped plan trees
 │       ├── claim_to_issue.py          ← Claim → Gitlawb issue draft
 │       ├── issue_to_agent_task.py     ← Issue draft → agent task spec
-│       ├── pr_feedback_mapper.py      ← PR events → reality feedback
-│       └── stream_candidate_preview.py← Contributions → stream candidates
+│       ├── pr_feedback_mapper.py      ← PR events → reality feedback (scope-aware)
+│       ├── stream_candidate_preview.py← Contributions → stream candidates
+│       ├── scoped_plan_to_issue.py    ← Scoped plan tree → issue drafts
+│       ├── scoped_issue_filter.py     ← Filter/annotate scoped issues
+│       ├── scoped_issue_to_task.py    ← Scoped issue → agent task spec
+│       ├── scoped_pr_feedback.py      ← PR feedback with scope_status fields
+│       └── scoped_issue_snapshot.py   ← Full snapshot across all claims
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   ├── SCOPED_PLAN_TREE_INTEGRATION.md ← Scoped prerequisite plan tree spec
@@ -663,6 +705,9 @@ All runtime modules:
 | `CLAIM_FEDERATION_SPEC.md` | Claim federation |
 | `FEDERATION_BRANCHING_SPEC.md` | Federation-aware plan branching |
 | `FEDERATION_PREREQUISITE_SPEC.md` | Federation prerequisite promotion |
+| `SCOPED_PREREQUISITE_SPEC.md` | Scoped prerequisite inheritance layer |
+| `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md` | Scoped issue generation pipeline |
+| `ogi/SCOPED_PLAN_TREE_INTEGRATION.md` | Scoped prerequisite plan tree integration |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |
 | `DIGNITY_GUARD.md` | Dignity guard rules |
