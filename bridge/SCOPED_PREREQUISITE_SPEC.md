@@ -369,6 +369,7 @@ The scope is derived, not declared.
 
 ## Related Specs
 
+- [ogi/SCOPED_PLAN_TREE_INTEGRATION.md](ogi/SCOPED_PLAN_TREE_INTEGRATION.md) — OGI plan tree integration (applicable → branch, bypassed → audit assertion)
 - [PREREQUISITE_DEPRECATION_SPEC.md](PREREQUISITE_DEPRECATION_SPEC.md) — weakening, survivability, deprecation lifecycle
 - [FEDERATION_PREREQUISITE_SPEC.md](FEDERATION_PREREQUISITE_SPEC.md) — promotion, contestation, evidence lifecycle
 - [FEDERATION_BRANCHING_SPEC.md](FEDERATION_BRANCHING_SPEC.md) — federation branching and condition propagation

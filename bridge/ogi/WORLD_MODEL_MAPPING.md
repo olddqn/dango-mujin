@@ -218,6 +218,43 @@ python ogi/runtime/world_model_mapper.py ogi/examples/post-scarcity.claim.json \
 
 ---
 
+## Scoped Prerequisite Prior Knowledge (schema_version 1.1)
+
+When `world_model_with_memory.py` integrates scoped prerequisites,
+the `prior_knowledge` block gains a `federation_prerequisites` list:
+
+```json
+{
+  "federation_prerequisites": [
+    {
+      "condition":   "space_safety_assessed",
+      "hint_type":   "federation_prerequisite",
+      "authority":   "none",
+      "advisory":    true,
+      "applicable":  false,
+      "scoped":      true,
+      "scope":       "non_precertified_spaces",
+      "bypass_path": ["embedded_fire_controls", "external_safety_audit_attached", "precertified_structure"],
+      "note":        "Prerequisite bypassed for this claim — equivalent safety path."
+    }
+  ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `applicable` | `true` → plan tree requires active subgoal; `false` → audit assertion only |
+| `scoped` | Indicates the prerequisite has a scope rule from a weakened event |
+| `scope` | The scope region where the prerequisite applies |
+| `bypass_path` | The bypass conditions that qualify this claim for bypass |
+
+This prior_knowledge feeds directly into `scoped_claim_plan_tree.py` to
+produce context-sensitive plan trees.
+
+**Spec:** `SCOPED_PLAN_TREE_INTEGRATION.md`
+
+---
+
 ## What This Spec Does Not Cover
 
 - **Dynamic world model updates** — world models are generated from claim

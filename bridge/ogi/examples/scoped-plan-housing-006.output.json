@@ -1,0 +1,244 @@
+{
+  "plan_tree_id": "pt-scoped-housing-006",
+  "claim_id": "housing-006",
+  "source_plan_id": "plan-housing-006-v1",
+  "generated_from": "scoped_claim_plan_tree.py",
+  "schema_version": "1.1",
+  "scoped_prerequisites": true,
+  "applicable_prerequisites": [],
+  "bypassed_prerequisites": [
+    "space_safety_assessed"
+  ],
+  "scope_context": {},
+  "node_type": "goal",
+  "label": "housing-006",
+  "statement": "housing-006 pre-certified modular emergency kitchen. Uses precertified_structure, external_safety_audit_attached, embedded_fire_controls in place of local space_safety_assessed — deliberately omits space_safety_assessed because the modular unit carries an external audit and embedded suppression system.",
+  "children": [
+    {
+      "node_type": "subgoal",
+      "label": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "note": "All dignity branches must evaluate true before plan proceeds.",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "is 'revocable_consent' established?",
+          "condition": "revocable_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "revocable_consent confirmed",
+            "state": "revocable_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'revocable_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'no_identity_exposure' established?",
+          "condition": "no_identity_exposure",
+          "true": {
+            "node_type": "assertion",
+            "label": "no_identity_exposure confirmed",
+            "state": "no_identity_exposure"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'no_identity_exposure' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'participant_consent' established?",
+          "condition": "participant_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "participant_consent confirmed",
+            "state": "participant_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'participant_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "scoped prerequisite resolution",
+      "phase": "scoped_prerequisites",
+      "advisory": true,
+      "note": "Applicable: (none). Bypassed: ['space_safety_assessed']. Bypassed prerequisites are recorded as audit assertions — not active requirements.",
+      "children": [
+        {
+          "node_type": "assertion",
+          "label": "space_safety_assessed bypassed by scoped prerequisite resolution",
+          "state": "space_safety_assessed_bypassed",
+          "prerequisite_condition": "space_safety_assessed",
+          "scope_status": "bypassed",
+          "scope": "non_precertified_spaces",
+          "bypass_conditions_found": [
+            "embedded_fire_controls",
+            "external_safety_audit_attached",
+            "precertified_structure"
+          ],
+          "bypassed_by_labels": [
+            "embedded_suppression_units",
+            "externally_audited_units",
+            "precertified_modular_spaces"
+          ],
+          "scope_reasoning": [
+            "bypass_condition_present: embedded_fire_controls → embedded_suppression_units",
+            "bypass_condition_present: external_safety_audit_attached → externally_audited_units",
+            "bypass_condition_present: precertified_structure → precertified_modular_spaces"
+          ],
+          "advisory": true,
+          "note": "A bypassed prerequisite is still memory. It is just not an active requirement in this context. 'space_safety_assessed' is scoped to 'non_precertified_spaces' — this claim has bypass conditions: embedded_fire_controls, external_safety_audit_attached, precertified_structure."
+        },
+        {
+          "node_type": "branch",
+          "label": "is scoped bypass evidence valid?",
+          "condition": "bypass_evidence_valid",
+          "prerequisite_condition": "space_safety_assessed",
+          "scope_status": "bypassed",
+          "true": {
+            "node_type": "assertion",
+            "label": "bypass confirmed — 'space_safety_assessed' not required in this context",
+            "state": "bypass_confirmed",
+            "prerequisite_condition": "space_safety_assessed",
+            "scope_status": "bypassed",
+            "bypass_path": [
+              "embedded_fire_controls",
+              "external_safety_audit_attached",
+              "precertified_structure"
+            ]
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "bypass evidence for 'space_safety_assessed' could not be verified — condition may still apply. Re-evaluate bypass conditions: embedded_fire_controls, external_safety_audit_attached, precertified_structure."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "coordination conditions",
+      "phase": "coordination",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "is 'precertified_structure' established?",
+          "condition": "precertified_structure",
+          "true": {
+            "node_type": "assertion",
+            "label": "precertified_structure confirmed",
+            "state": "precertified_structure"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'precertified_structure' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'external_safety_audit_attached' established?",
+          "condition": "external_safety_audit_attached",
+          "true": {
+            "node_type": "assertion",
+            "label": "external_safety_audit_attached confirmed",
+            "state": "external_safety_audit_attached"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'external_safety_audit_attached' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'embedded_fire_controls' established?",
+          "condition": "embedded_fire_controls",
+          "true": {
+            "node_type": "assertion",
+            "label": "embedded_fire_controls confirmed",
+            "state": "embedded_fire_controls"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'embedded_fire_controls' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'food_safety_reviewed' established?",
+          "condition": "food_safety_reviewed",
+          "true": {
+            "node_type": "assertion",
+            "label": "food_safety_reviewed confirmed",
+            "state": "food_safety_reviewed"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'food_safety_reviewed' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'kitchen_equipment_available' established?",
+          "condition": "kitchen_equipment_available",
+          "true": {
+            "node_type": "assertion",
+            "label": "kitchen_equipment_available confirmed",
+            "state": "kitchen_equipment_available"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'kitchen_equipment_available' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'food_distribution_permitted' established?",
+          "condition": "food_distribution_permitted",
+          "true": {
+            "node_type": "assertion",
+            "label": "food_distribution_permitted confirmed",
+            "state": "food_distribution_permitted"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'food_distribution_permitted' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'volunteer_coordination_established' established?",
+          "condition": "volunteer_coordination_established",
+          "true": {
+            "node_type": "assertion",
+            "label": "volunteer_coordination_established confirmed",
+            "state": "volunteer_coordination_established"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'volunteer_coordination_established' not yet established."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "branch",
+      "label": "can claim advance to next phase?",
+      "condition": "all_required_conditions_met",
+      "true": {
+        "node_type": "terminal",
+        "label": "ready_for_negotiation",
+        "decision": "negotiate"
+      },
+      "false": {
+        "node_type": "abstain",
+        "reason": "required conditions not yet met — plan returns to negotiation. This is not failure. It is the protocol working correctly."
+      }
+    }
+  ]
+}

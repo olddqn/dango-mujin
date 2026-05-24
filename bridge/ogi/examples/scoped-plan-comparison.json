@@ -1,0 +1,88 @@
+{
+  "comparison_id": "cmp-housing-006-vs-housing-007",
+  "claim_a": "housing-006",
+  "claim_b": "housing-007",
+  "plan_tree_a": "pt-scoped-housing-006",
+  "plan_tree_b": "pt-scoped-housing-007",
+  "per_prerequisite": [
+    {
+      "condition": "space_safety_assessed",
+      "housing-006": "bypassed",
+      "housing-007": "applicable",
+      "diverges": true,
+      "reasoning": "housing-006 → bypassed; housing-007 → applicable"
+    }
+  ],
+  "differences": {
+    "only_applicable_in_a": [],
+    "only_applicable_in_b": [
+      "space_safety_assessed"
+    ],
+    "only_bypassed_in_a": [
+      "space_safety_assessed"
+    ],
+    "only_bypassed_in_b": [],
+    "applicable_in_both": [],
+    "bypassed_in_both": []
+  },
+  "structural": {
+    "housing-006": {
+      "applicable_subgoals": [],
+      "bypassed_assertions": [
+        {
+          "label": "space_safety_assessed bypassed by scoped prerequisite resolution",
+          "condition": "space_safety_assessed",
+          "bypass_conditions": [
+            "embedded_fire_controls",
+            "external_safety_audit_attached",
+            "precertified_structure"
+          ],
+          "scope": "non_precertified_spaces"
+        },
+        {
+          "label": "bypass confirmed — 'space_safety_assessed' not required in this context",
+          "condition": "space_safety_assessed",
+          "bypass_conditions": [],
+          "scope": ""
+        }
+      ],
+      "applicable_branches": [],
+      "bypass_branches": [
+        {
+          "label": "is scoped bypass evidence valid?",
+          "condition": "space_safety_assessed"
+        }
+      ],
+      "prerequisite_actions": [],
+      "abstain_count": 12
+    },
+    "housing-007": {
+      "applicable_subgoals": [
+        {
+          "label": "satisfy prerequisite: space_safety_assessed",
+          "condition": "space_safety_assessed",
+          "scope": "non_precertified_spaces"
+        }
+      ],
+      "bypassed_assertions": [],
+      "applicable_branches": [
+        {
+          "label": "is 'space_safety_assessed' complete?",
+          "condition": "space_safety_assessed"
+        }
+      ],
+      "bypass_branches": [],
+      "prerequisite_actions": [
+        {
+          "label": "request safety_review",
+          "capability": "safety_review",
+          "condition": "space_safety_assessed"
+        }
+      ],
+      "abstain_count": 10
+    }
+  },
+  "key_insight": "A bypassed prerequisite is still memory. It is just not an active requirement in this context. housing-006 bypasses ['space_safety_assessed'] via equivalent safety path. housing-007 must actively satisfy ['space_safety_assessed'].",
+  "advisory": true,
+  "hard_enforcement": false
+}

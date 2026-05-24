@@ -1,8 +1,8 @@
-# RESUME_STATE.md — Scoped Prerequisite Inheritance Layer
+# RESUME_STATE.md — Scoped Plan Tree OGI Integration
 
 > **STATUS: COMPLETE**
 
-**Phase:** Scoped Prerequisite Inheritance Layer
+**Phase:** Scoped Plan Tree Integration (OGI reasoning surface)
 **Branch:** main
 **Completed:** 2026-05-24
 
@@ -17,86 +17,85 @@
 - Federation Prerequisite Promotion Layer (commits 7a521b3..1edc3d9)
 - 3-Way Convergence Test (commit 09faf1d)
 - Federation Prerequisite Deprecation Lifecycle (commits 7649826..0dd26b3)
-- **Scoped Prerequisite Inheritance Layer** (checkpoints 591817e..14848c7 + final commit)
+- Scoped Prerequisite Inheritance Layer (commits 591817e..6a6d393)
+- Gitlawb GITSEA Bountyless PR Market Demo (commit ca7d290)
+- **Scoped Plan Tree OGI Integration** (this commit)
 
 ---
 
-## Scoped Prerequisite Inheritance Layer: Results
+## Scoped Plan Tree Integration: Results
 
-Core principle: A weakened prerequisite does not disappear. Its applicability becomes conditional.
+Core principle: A reasoning surface must plan differently when prerequisite knowledge is scoped.
 
-### Scope Rules (from federation_prerequisite_weakened event)
-
-```
-space_safety_assessed
-  new_scope:        non_precertified_spaces
-  bypass_conditions: embedded_fire_controls,
-                     external_safety_audit_attached,
-                     precertified_structure
-  applies_to_label: non_precertified_spaces
-  bypassed_by_labels: embedded_suppression_units,
-                      externally_audited_units,
-                      precertified_modular_spaces
-```
-
-### Housing-006 Result
+### housing-006 Plan Result
 
 ```
-applicable: false
-bypassed:   true
-bypass_conditions_found: embedded_fire_controls,
-                         external_safety_audit_attached,
-                         precertified_structure
+pt-scoped-housing-006
+  applicable_prerequisites: []
+  bypassed_prerequisites:   ['space_safety_assessed']
+
+Plan tree structure:
+  [dignity]              dignity clearance (3 branches)
+  [scoped_prerequisites] scoped prerequisite resolution
+    [assertion:bypassed]   space_safety_assessed bypassed by scoped prerequisite resolution
+    [branch:bypassed]      is scoped bypass evidence valid?
+  [coordination]         coordination conditions (7 branches)
+  [branch]               can claim advance to next phase?
+
+Validator: VALID — 41 nodes, scoped_bypassed: ['space_safety_assessed']
 ```
-→ space_safety_assessed suppressed from planning hints for housing-006.
 
-### Housing-007 Result
+### housing-007 Plan Result
 
 ```
-applicable: true
-bypassed:   false
-scope_indicators_found: local_safety_review,
-                        structural_modification_documented
+pt-scoped-housing-007
+  applicable_prerequisites: ['space_safety_assessed']
+  bypassed_prerequisites:   []
+
+Plan tree structure:
+  [dignity]              dignity clearance (3 branches)
+  [scoped_prerequisites] scoped prerequisite resolution
+    [subgoal:applicable]   satisfy prerequisite: space_safety_assessed
+      [action]               request safety_review
+    [branch:applicable]    is 'space_safety_assessed' complete? → true/abstain
+  [coordination]         coordination conditions (5 branches)
+  [branch]               can claim advance to next phase?
+
+Validator: VALID — 36 nodes, scoped_applicable: ['space_safety_assessed']
 ```
-→ space_safety_assessed propagated to housing-007 with scope note.
 
-### Survivability
+### Comparison Result
 
-4 requiring (housing-001, -002, -004, -007) / 1 bypassing (housing-006)
-Score = 4/5 − 0.15 = **0.65** (weakened, not at_risk)
+```
+space_safety_assessed:
+  housing-006: ⊛ bypassed
+  housing-007: ✓ applicable  ←DIFFERS
 
-### Conflicts Detected
-
-None. No claim simultaneously asserts bypass condition + local modification indicator.
+Key insight:
+A bypassed prerequisite is still memory.
+It is just not an active requirement in this context.
+```
 
 ---
 
 ## New Files
 
-- runtime/prerequisite_scope_resolver.py
-- runtime/scoped_prerequisite_inheritance.py
-- runtime/scope_conflict_detector.py
-- runtime/scoped_condition_propagation.py
-- runtime/scoped_world_model.py
-- runtime/scoped_prerequisite_snapshot.py
-- examples/scoped-prerequisite-event.json
-- examples/scoped-inheritance.snapshot.json
-- examples/housing-007-scope-resolution.json
-- examples/scoped-world-model.json
-- SCOPED_PREREQUISITE_SPEC.md
+- ogi/runtime/scoped_claim_plan_tree.py
+- ogi/runtime/scoped_plan_comparison.py
+- ogi/SCOPED_PLAN_TREE_INTEGRATION.md
+- ogi/examples/scoped-plan-housing-006.output.json
+- ogi/examples/scoped-plan-housing-007.output.json
+- ogi/examples/scoped-plan-comparison.json
 
 ## Updated Files
 
-- runtime/prerequisite_memory_integration.py
-- runtime/world_model_with_memory.py
-- runtime/federation_condition_propagation.py
-- runtime/graph_export.py
-- runtime/negotiation_graph.py
-- PREREQUISITE_DEPRECATION_SPEC.md (cross-reference added)
-- FEDERATION_PREREQUISITE_SPEC.md (cross-reference added)
-- README.md (scoped section + module tree + examples)
-- sutable/plans.jsonl (housing-007 fixture)
-- sutable/memory.jsonl (housing-007 memory snapshot)
+- ogi/runtime/plan_tree_validator.py (scoped assertion tracking)
+- ogi/runtime/claim_plan_tree.py (schema 1.1 metadata when federation_prerequisites present)
+- ogi/PLAN_TREE_SPEC.md (schema_version 1.1 extensions)
+- ogi/WORLD_MODEL_MAPPING.md (scoped prior_knowledge documentation)
+- SCOPED_PREREQUISITE_SPEC.md (cross-reference to OGI spec)
+- README.md (Scoped Plan Tree Integration section + module tree)
+- RESUME_STATE.md (this file)
 
 ---
 
@@ -104,20 +103,24 @@ None. No claim simultaneously asserts bypass condition + local modification indi
 
 - DID signatures still mock
 - GITSEA still hypothetical
-- food_safety_reviewed below promotion threshold (1 claim only)
-- Scope conflict detection is advisory only (intentional — no hard enforcement)
-- Deprecation requires explicit federation_prerequisite_deprecated event (no auto-removal)
+- `food_safety_reviewed` below promotion threshold (1 claim only)
+- Scope conflict detection is advisory only (intentional)
+- Deprecation requires explicit event (intentional — no auto-removal)
+- Plan tree for claims without plans.jsonl entries will be empty (by design)
 
 ---
 
 ## Next Step Candidates
 
-1. **Second bypass claim** — another claim with equivalent safety path → survivability drops further → approach deprecation threshold
-2. **Multi-prerequisite scoping** — second promoted condition gets weakened, tests multi-scope resolution
-3. **Contest a scope rule** — claim that disagrees with the scope resolution structure
-4. **Scoped graph visualization** — interactive HTML with scope region boundaries
-5. **OGI plan tree integration** — feed scoped prior_knowledge into OGI plan tree generator
+1. **Gitlawb issue creation dry-run from scoped plan** — use the applicable prerequisite
+   from housing-007's scoped plan tree to generate a Gitlawb issue automatically
+2. **Public negotiation UI** — render scoped plan tree as interactive HTML
+3. **Validator federation** — federate plan tree validation across agents
+4. **Prerequisite trust weighting** — weight scoped prerequisite applicability
+   by federation trust score of the discovering claim
+5. **OGI task bundle regeneration from scoped plan** — feed the scoped plan tree
+   into plan_tree_to_tasks.py to generate a task bundle that respects bypass
 
 ---
 
-*dango-gitsea-bridge · authority: none · append-only · stdlib only*
+*dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*

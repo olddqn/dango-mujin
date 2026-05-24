@@ -1,0 +1,214 @@
+{
+  "plan_tree_id": "pt-scoped-housing-007",
+  "claim_id": "housing-007",
+  "source_plan_id": "plan-housing-007-v1",
+  "generated_from": "scoped_claim_plan_tree.py",
+  "schema_version": "1.1",
+  "scoped_prerequisites": true,
+  "applicable_prerequisites": [
+    "space_safety_assessed"
+  ],
+  "bypassed_prerequisites": [],
+  "scope_context": {
+    "structure_type": "modified_existing_structure",
+    "precertified": false,
+    "external_audit": false,
+    "local_modification": true
+  },
+  "node_type": "goal",
+  "label": "housing-007",
+  "statement": "housing-007 modified community workspace in old building. Plan includes space_safety_assessed because the space is a locally-modified existing structure with no external audit or precertification — structural_modification_documented signals non-precertified context. federation prerequisite hint accepted as applicable.",
+  "children": [
+    {
+      "node_type": "subgoal",
+      "label": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "note": "All dignity branches must evaluate true before plan proceeds.",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "is 'revocable_consent' established?",
+          "condition": "revocable_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "revocable_consent confirmed",
+            "state": "revocable_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'revocable_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'no_identity_exposure' established?",
+          "condition": "no_identity_exposure",
+          "true": {
+            "node_type": "assertion",
+            "label": "no_identity_exposure confirmed",
+            "state": "no_identity_exposure"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'no_identity_exposure' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'participant_consent' established?",
+          "condition": "participant_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "participant_consent confirmed",
+            "state": "participant_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'participant_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "scoped prerequisite resolution",
+      "phase": "scoped_prerequisites",
+      "advisory": true,
+      "note": "Applicable: ['space_safety_assessed']. Bypassed: (none). Bypassed prerequisites are recorded as audit assertions — not active requirements.",
+      "children": [
+        {
+          "node_type": "subgoal",
+          "label": "satisfy prerequisite: space_safety_assessed",
+          "phase": "scoped_prerequisite",
+          "prerequisite_condition": "space_safety_assessed",
+          "scope_status": "applicable",
+          "scope": "non_precertified_spaces",
+          "scope_reasoning": [
+            "scope_indicator_present: local_safety_review → non_precertified_spaces",
+            "scope_indicator_present: structural_modification_documented → modified_existing_structures"
+          ],
+          "advisory": true,
+          "note": "Federation prerequisite 'space_safety_assessed' is applicable in this context (scope: non_precertified_spaces). No bypass path detected for this claim.",
+          "children": [
+            {
+              "node_type": "action",
+              "label": "request safety_review",
+              "required_capability": "safety_review",
+              "satisfies_condition": "space_safety_assessed",
+              "prerequisite_condition": "space_safety_assessed"
+            }
+          ]
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'space_safety_assessed' complete?",
+          "condition": "space_safety_assessed",
+          "prerequisite_condition": "space_safety_assessed",
+          "scope_status": "applicable",
+          "true": {
+            "node_type": "assertion",
+            "label": "space_safety_assessed satisfied",
+            "state": "space_safety_assessed_complete",
+            "prerequisite_condition": "space_safety_assessed",
+            "scope_status": "applicable"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'space_safety_assessed' is an applicable federation prerequisite (scope: non_precertified_spaces) and is not yet satisfied. This is not a failure — it is the protocol working correctly."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "coordination conditions",
+      "phase": "coordination",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "is 'structural_modification_documented' established?",
+          "condition": "structural_modification_documented",
+          "true": {
+            "node_type": "assertion",
+            "label": "structural_modification_documented confirmed",
+            "state": "structural_modification_documented"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'structural_modification_documented' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'local_safety_review' established?",
+          "condition": "local_safety_review",
+          "true": {
+            "node_type": "assertion",
+            "label": "local_safety_review confirmed",
+            "state": "local_safety_review"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'local_safety_review' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'kitchen_equipment_available' established?",
+          "condition": "kitchen_equipment_available",
+          "true": {
+            "node_type": "assertion",
+            "label": "kitchen_equipment_available confirmed",
+            "state": "kitchen_equipment_available"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'kitchen_equipment_available' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'food_distribution_permitted' established?",
+          "condition": "food_distribution_permitted",
+          "true": {
+            "node_type": "assertion",
+            "label": "food_distribution_permitted confirmed",
+            "state": "food_distribution_permitted"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'food_distribution_permitted' not yet established."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'volunteer_coordination_established' established?",
+          "condition": "volunteer_coordination_established",
+          "true": {
+            "node_type": "assertion",
+            "label": "volunteer_coordination_established confirmed",
+            "state": "volunteer_coordination_established"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "plan cannot advance: 'volunteer_coordination_established' not yet established."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "branch",
+      "label": "can claim advance to next phase?",
+      "condition": "all_required_conditions_met",
+      "true": {
+        "node_type": "terminal",
+        "label": "ready_for_negotiation",
+        "decision": "negotiate"
+      },
+      "false": {
+        "node_type": "abstain",
+        "reason": "required conditions not yet met — plan returns to negotiation. This is not failure. It is the protocol working correctly."
+      }
+    }
+  ]
+}

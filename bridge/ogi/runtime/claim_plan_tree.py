@@ -335,16 +335,40 @@ def build_plan_tree(claim: dict[str, Any]) -> dict[str, Any]:
         },
     })
 
-    return {
-        "plan_tree_id":    f"pt-{claim_id}",
-        "claim_id":        claim_id,
-        "generated_from":  "claim_plan_tree.py",
-        "schema_version":  "1.0",
-        "node_type":       "goal",
-        "label":           title,
-        "statement":       statement,
-        "children":        children,
+    # ── Scoped prerequisite note (schema_version 1.1 extension) ────────────
+    # If the caller passes scoped prior_knowledge in the claim dict
+    # (via the "federation_prerequisites" key), record it in metadata.
+    # Actual scoped tree injection is handled by scoped_claim_plan_tree.py.
+    # This module remains unscoped by default — no behavior change when
+    # federation_prerequisites is absent.
+    fed_prereqs = claim.get("federation_prerequisites", [])
+    applicable  = [h["condition"] for h in fed_prereqs if h.get("applicable")]
+    bypassed    = [h["condition"] for h in fed_prereqs if not h.get("applicable", True)]
+    scoped_meta: dict[str, Any] = {}
+    if fed_prereqs:
+        scoped_meta = {
+            "scoped_prerequisites":     True,
+            "applicable_prerequisites": applicable,
+            "bypassed_prerequisites":   bypassed,
+            "_note": (
+                "Scoped prerequisite metadata recorded. For full scoped tree "
+                "generation use ogi/runtime/scoped_claim_plan_tree.py."
+            ),
+        }
+
+    result: dict[str, Any] = {
+        "plan_tree_id":   f"pt-{claim_id}",
+        "claim_id":       claim_id,
+        "generated_from": "claim_plan_tree.py",
+        "schema_version": "1.1" if fed_prereqs else "1.0",
+        "node_type":      "goal",
+        "label":          title,
+        "statement":      statement,
+        "children":       children,
     }
+    if scoped_meta:
+        result.update(scoped_meta)
+    return result
 
 
 # ── CLI ────────────────────────────────────────────────────────

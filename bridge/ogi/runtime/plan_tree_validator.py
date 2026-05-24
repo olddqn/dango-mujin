@@ -17,6 +17,15 @@ Checks:
  10. No dignity-blind plan: if dignity_constraints appear in claim metadata,
      the tree must have at least one dignity branch
 
+Scoped prerequisite assertion extensions (schema_version 1.1):
+  Assertion nodes may carry extra fields without failing validation:
+    prerequisite_condition — the condition being tracked
+    scope_status           — "applicable" | "bypassed"
+    scope_reasoning        — list of reasoning strings
+    bypass_conditions_found— list of bypass condition strings
+    bypass_path            — list of bypass conditions (on bypass_confirmed)
+  These fields are tracked in the validation result for reporting.
+
 Exit codes:
   0 — valid
   1 — invalid (with reasons)
@@ -26,6 +35,8 @@ CLI:
   python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json
   python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --json
   python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --strict
+  python ogi/runtime/plan_tree_validator.py ogi/examples/scoped-plan-housing-006.output.json
+  python ogi/runtime/plan_tree_validator.py ogi/examples/scoped-plan-housing-007.output.json
 """
 
 from __future__ import annotations
@@ -67,6 +78,10 @@ class ValidationResult:
         self.has_abstain:  bool = False
         self.has_dignity_branch: bool = False
         self.has_action:  bool = False
+        # Scoped prerequisite tracking (schema_version 1.1)
+        self.scoped_applicable_assertions: list[str] = []   # condition names
+        self.scoped_bypassed_assertions:   list[str] = []   # condition names
+        self.has_scoped_prerequisites: bool = False
 
     @property
     def valid(self) -> bool:
@@ -89,6 +104,10 @@ class ValidationResult:
             "has_abstain":      self.has_abstain,
             "has_action":       self.has_action,
             "has_dignity_branch": self.has_dignity_branch,
+            # Scoped prerequisite fields
+            "has_scoped_prerequisites":    self.has_scoped_prerequisites,
+            "scoped_applicable":           self.scoped_applicable_assertions,
+            "scoped_bypassed":             self.scoped_bypassed_assertions,
         }
 
 
@@ -181,6 +200,20 @@ def _validate_node(
                 f"{path}: assertion node has children. "
                 "Assertions are typically leaf nodes."
             )
+        # Scoped prerequisite assertion tracking (schema_version 1.1)
+        # Assertion nodes may carry prerequisite_condition + scope_status fields.
+        # These are valid extensions — not errors.
+        prereq_cond  = node.get("prerequisite_condition")
+        scope_status = node.get("scope_status")
+        if prereq_cond and scope_status:
+            result.has_scoped_prerequisites = True
+            if scope_status == "applicable":
+                if prereq_cond not in result.scoped_applicable_assertions:
+                    result.scoped_applicable_assertions.append(prereq_cond)
+            elif scope_status == "bypassed":
+                if prereq_cond not in result.scoped_bypassed_assertions:
+                    result.scoped_bypassed_assertions.append(prereq_cond)
+
         # assertion without children is fine — it's a leaf fact
         children = node.get("children", [])
         if children:
@@ -360,6 +393,12 @@ def main() -> None:
         print(f"  Abstain:   {'yes' if result.has_abstain else 'no'}")
         print(f"  Actions:   {'yes' if result.has_action else 'no'}")
         print(f"  Dignity branch: {'yes' if result.has_dignity_branch else 'no'}")
+        if result.has_scoped_prerequisites:
+            print(f"  Scoped prerequisites: yes")
+            if result.scoped_applicable_assertions:
+                print(f"    applicable: {result.scoped_applicable_assertions}")
+            if result.scoped_bypassed_assertions:
+                print(f"    bypassed:   {result.scoped_bypassed_assertions}")
 
         if result.errors:
             print(f"\nErrors ({len(result.errors)}):")

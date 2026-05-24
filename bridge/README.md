@@ -396,6 +396,46 @@ python runtime/scoped_prerequisite_snapshot.py --condition space_safety_assessed
 
 **Spec:** `SCOPED_PREREQUISITE_SPEC.md`
 
+### Scoped Plan Tree Integration
+
+A reasoning surface must plan differently when prerequisite knowledge is scoped.
+
+housing-006 (precertified modular kitchen) does not require `space_safety_assessed`
+as an active subgoal — its plan tree carries an audit assertion instead.
+housing-007 (modified workspace) must actively satisfy it — its plan tree
+has a branch that abstains if the condition is not met.
+
+Same condition. Opposite plan structure. Deterministic. No hard enforcement.
+
+```bash
+# Generate scoped plan trees
+python ogi/runtime/scoped_claim_plan_tree.py --claim-id housing-006 \
+  --json > ogi/examples/scoped-plan-housing-006.output.json
+
+python ogi/runtime/scoped_claim_plan_tree.py --claim-id housing-007 \
+  --json > ogi/examples/scoped-plan-housing-007.output.json
+
+# Validate both (both should pass)
+python ogi/runtime/plan_tree_validator.py ogi/examples/scoped-plan-housing-006.output.json
+python ogi/runtime/plan_tree_validator.py ogi/examples/scoped-plan-housing-007.output.json
+
+# Compare the two plans
+python ogi/runtime/scoped_plan_comparison.py \
+  ogi/examples/scoped-plan-housing-006.output.json \
+  ogi/examples/scoped-plan-housing-007.output.json \
+  > ogi/examples/scoped-plan-comparison.json
+```
+
+Expected:
+- housing-006: `space_safety_assessed` bypassed — audit assertion only
+- housing-007: `space_safety_assessed` applicable — subgoal + abstain gate
+- Both validate (schema_version 1.1)
+- Both include dignity clearance
+- No hard enforcement
+- Deterministic · stdlib only
+
+**Spec:** `ogi/SCOPED_PLAN_TREE_INTEGRATION.md`
+
 ### Gitlawb / GITSEA Demo
 
 Dan-Go can turn a missing condition into an agent-readable issue.
@@ -534,14 +574,23 @@ dango-gitsea-bridge/
 │   │   ├── issue-draft.output.json    ← Issue draft + agent task hint
 │   │   ├── pr-feedback.output.json    ← Hypothetical PR lifecycle events
 │   │   └── stream-candidate.output.json ← GITSEA stream candidates (no funds)
+│   ├── examples/
+│   │   ├── scoped-plan-housing-006.output.json ← Scoped plan tree (bypassed)
+│   │   ├── scoped-plan-housing-007.output.json ← Scoped plan tree (applicable)
+│   │   └── scoped-plan-comparison.json         ← Side-by-side plan comparison
 │   └── runtime/
+│       ├── scoped_claim_plan_tree.py  ← Scoped prerequisite-aware plan tree generator
+│       ├── scoped_plan_comparison.py  ← Compare two scoped plan trees
 │       ├── claim_to_issue.py          ← Claim → Gitlawb issue draft
 │       ├── issue_to_agent_task.py     ← Issue draft → agent task spec
 │       ├── pr_feedback_mapper.py      ← PR events → reality feedback
 │       └── stream_candidate_preview.py← Contributions → stream candidates
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
+│   ├── SCOPED_PLAN_TREE_INTEGRATION.md ← Scoped prerequisite plan tree spec
 │   └── runtime/
+│       ├── scoped_claim_plan_tree.py  ← Scoped prerequisite-aware plan tree generator
+│       ├── scoped_plan_comparison.py  ← Compare two scoped plan trees
 │       ├── world_model_mapper.py    ← Claim → OGI world model
 │       ├── claim_plan_tree.py       ← World model → Plan tree
 │       ├── plan_tree_validator.py   ← Plan tree validation

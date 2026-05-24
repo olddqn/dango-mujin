@@ -372,6 +372,58 @@ See `PLAN_APPEND_ONLY_SPEC.md` for the full append-only persistence specificatio
 
 ---
 
+## Scoped Prerequisite Extensions (schema_version 1.1)
+
+When a claim has scoped prerequisite knowledge from the federation memory,
+the plan tree may carry additional fields:
+
+### Root-level metadata
+
+| Field | Type | Meaning |
+|---|---|---|
+| `schema_version` | `"1.1"` | Signals scoped prerequisite extensions present |
+| `scoped_prerequisites` | `bool` | True if scoped prerequisite logic was applied |
+| `applicable_prerequisites` | `list[str]` | Prerequisites requiring active subgoal |
+| `bypassed_prerequisites` | `list[str]` | Prerequisites recorded as audit assertions only |
+
+### Extended assertion fields
+
+Assertion nodes may carry additional fields (valid, not errors):
+
+| Field | Type | Meaning |
+|---|---|---|
+| `prerequisite_condition` | `str` | The tracked prerequisite condition name |
+| `scope_status` | `"applicable"` \| `"bypassed"` | Resolution result for this claim |
+| `scope_reasoning` | `list[str]` | Chain of reasoning from federation events |
+| `bypass_conditions_found` | `list[str]` | Bypass conditions present in the active plan |
+| `bypass_path` | `list[str]` | Bypass conditions on a bypass_confirmed assertion |
+
+### Extended branch fields
+
+Branch nodes in scoped prerequisite sections carry:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `prerequisite_condition` | `str` | The condition being gated |
+| `scope_status` | `"applicable"` \| `"bypassed"` | Scope resolution context |
+
+### Scoped node phases
+
+New phase labels used in subgoal nodes:
+
+| Phase | Meaning |
+|---|---|
+| `scoped_prerequisites` | Contains applicable/bypassed prerequisite resolution |
+
+### Generator
+
+`ogi/runtime/scoped_claim_plan_tree.py` — reads `compute_inheritance()` from
+the scoped prerequisite layer and builds the scoped tree.
+
+**Spec:** `SCOPED_PLAN_TREE_INTEGRATION.md`
+
+---
+
 ## What This Spec Does Not Cover
 
 - **Cross-plan federation** — see `CLAIM_FEDERATION_SPEC.md`
