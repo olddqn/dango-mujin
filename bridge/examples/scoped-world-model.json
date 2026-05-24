@@ -1,0 +1,37 @@
+{
+  "_description": "Scoped world model prior_knowledge for two contrasting claims. housing-007 receives space_safety_assessed as applicable (scope: non_precertified_spaces). housing-006 receives it as bypassed (not propagated). Both records are advisory — no hard enforcement.",
+  "_generated_by": "python3 runtime/scoped_world_model.py --json",
+  "housing-007": {
+    "claim_id": "housing-007",
+    "federation_prerequisites": [
+      {
+        "condition": "space_safety_assessed",
+        "hint_type": "federation_prerequisite",
+        "authority": "none",
+        "advisory": true,
+        "applicable": true,
+        "scoped": true,
+        "scope": "non_precertified_spaces",
+        "bypass_path": null,
+        "note": "Independently discovered by 2 claim(s) via structural plan tree diff. Applies to: non_precertified_spaces. Can be bypassed via: ['embedded_suppression_units', 'externally_audited_units', 'precertified_modular_spaces']."
+      }
+    ]
+  },
+  "housing-006": {
+    "claim_id": "housing-006",
+    "federation_prerequisites": [
+      {
+        "condition": "space_safety_assessed",
+        "hint_type": "federation_prerequisite",
+        "authority": "none",
+        "advisory": true,
+        "applicable": false,
+        "scoped": true,
+        "scope": "non_precertified_spaces",
+        "bypass_path": ["embedded_fire_controls", "external_safety_audit_attached", "precertified_structure"],
+        "note": "Prerequisite bypassed for this claim: embedded_fire_controls, external_safety_audit_attached, precertified_structure provides equivalent safety path."
+      }
+    ]
+  },
+  "_design_note": "The prior_knowledge block for housing-006 includes the prerequisite with applicable=false. This tells the plan tree generator: 'the federation has learned space_safety_assessed, but your equivalent safety path means you don't need to include it.' The hint is present for auditability — not presence vs absence."
+}

@@ -513,6 +513,7 @@ python runtime/prerequisite_contest_resolver.py \
 
 ## Related Specs
 
+- [SCOPED_PREREQUISITE_SPEC.md](SCOPED_PREREQUISITE_SPEC.md) — scoped prerequisite inheritance, conditional applicability, scope conflict detection
 - [PREREQUISITE_DEPRECATION_SPEC.md](PREREQUISITE_DEPRECATION_SPEC.md) — weakening, survivability, deprecation lifecycle
 - [FEDERATION_BRANCHING_SPEC.md](FEDERATION_BRANCHING_SPEC.md) — federation branching and condition propagation
 - [REFLECTIVE_MEMORY_SPEC.md](REFLECTIVE_MEMORY_SPEC.md) — reflective memory loop (source of learned_conditions)

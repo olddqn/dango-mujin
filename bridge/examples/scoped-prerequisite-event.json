@@ -1,0 +1,46 @@
+{
+  "_description": "The four lifecycle events that define a scoped prerequisite. Progression: promoted → reaffirmed (3-way convergence) → weakened (housing-006 bypass). The weakened event carries the scope rule: new_scope + equivalent_safety_conditions. No event is modified — all coexist in federation.jsonl.",
+  "_generated_from": "sutable/federation.jsonl",
+  "events": [
+    {
+      "event_type": "federation_prerequisite_promoted",
+      "condition": "space_safety_assessed",
+      "evidence_claims": ["housing-001", "housing-002"],
+      "convergence_count": 2,
+      "authority": "none",
+      "contestable": true,
+      "independent_convergence": true,
+      "shared_authorship": false,
+      "shared_objector": true,
+      "dignity_safe": true,
+      "evidence_score": 6,
+      "_note": "Promoted when housing-001 and housing-002 independently discovered the condition."
+    },
+    {
+      "event_type": "federation_prerequisite_reaffirmed",
+      "condition": "space_safety_assessed",
+      "_note": "Reaffirmed when housing-004 (community kitchen) independently converged on the same condition."
+    },
+    {
+      "event_type": "federation_prerequisite_weakened",
+      "condition": "space_safety_assessed",
+      "new_scope": "non_precertified_spaces",
+      "reason": "equivalent_safe_alternative_detected",
+      "bypassing_claims": ["housing-006"],
+      "equivalent_safety_conditions": [
+        "embedded_fire_controls",
+        "external_safety_audit_attached",
+        "precertified_structure"
+      ],
+      "authority": "none",
+      "contestable": true,
+      "_note": "Weakened when housing-006 (pre-certified modular kitchen) bypassed via equivalent safety path. Scope narrowed to non_precertified_spaces. The prerequisite was NOT abolished."
+    }
+  ],
+  "_design_note": "scope_rules are derived from the weakened event's equivalent_safety_conditions. No hardcoded scope tables. The resolver reads the event directly.",
+  "_scope_rule_derived": {
+    "bypass_conditions": ["embedded_fire_controls", "external_safety_audit_attached", "precertified_structure"],
+    "applies_to": "non_precertified_spaces",
+    "bypassed_by": ["embedded_suppression_units", "externally_audited_units", "precertified_modular_spaces"]
+  }
+}

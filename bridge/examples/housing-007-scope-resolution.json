@@ -1,0 +1,25 @@
+{
+  "_description": "Scope resolution for housing-007 (modified community workspace). The claim has no bypass conditions (no precertification, no external audit) but has scope indicators (structural_modification_documented, local_safety_review). Result: space_safety_assessed is APPLICABLE.",
+  "claim_id": "housing-007",
+  "condition": "space_safety_assessed",
+  "applicable": true,
+  "bypassed": false,
+  "bypass_conditions_found": [],
+  "scope_indicators_found": ["local_safety_review", "structural_modification_documented"],
+  "bypassed_by_labels": [],
+  "applies_to_label": "non_precertified_spaces",
+  "has_scope_rule": true,
+  "scope_reasoning": [
+    "scope_indicator_present: local_safety_review → non_precertified_spaces",
+    "scope_indicator_present: structural_modification_documented → modified_existing_structures"
+  ],
+  "_contrast": {
+    "housing-006": {
+      "applicable": false,
+      "bypassed": true,
+      "bypass_conditions_found": ["embedded_fire_controls", "external_safety_audit_attached", "precertified_structure"],
+      "note": "housing-006 uses precertified modular unit — bypass via equivalent safety path"
+    }
+  },
+  "_design_point": "Resolution is structural and deterministic. No text analysis. No hidden scoring. Bypass requires a bypass condition in the active plan. Scope indicators strengthen the applicability case but are not required — absence of bypass conditions is sufficient."
+}

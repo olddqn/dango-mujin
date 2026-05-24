@@ -1,0 +1,58 @@
+{
+  "_description": "Full scoped inheritance snapshot for space_safety_assessed after housing-006 bypass and housing-007 fixture. Shows scope rules, applicable/bypassed claims, and per-claim reasoning.",
+  "_generated_by": "python3 runtime/scoped_prerequisite_snapshot.py --json",
+  "condition": "space_safety_assessed",
+  "new_scope": "non_precertified_spaces",
+  "applies_to_label": "non_precertified_spaces",
+  "bypassed_by_labels": [
+    "embedded_suppression_units",
+    "externally_audited_units",
+    "precertified_modular_spaces"
+  ],
+  "bypass_conditions": [
+    "embedded_fire_controls",
+    "external_safety_audit_attached",
+    "precertified_structure"
+  ],
+  "applicable_claims": ["housing-001", "housing-002", "housing-004", "housing-007"],
+  "bypassed_claims": ["housing-006"],
+  "claim_details": {
+    "housing-001": {
+      "applicable": true,
+      "bypassed": false,
+      "scope_reasoning": ["no_bypass_conditions_found: prerequisite applies in scope=non_precertified_spaces"]
+    },
+    "housing-002": {
+      "applicable": true,
+      "bypassed": false,
+      "scope_reasoning": ["no_bypass_conditions_found: prerequisite applies in scope=non_precertified_spaces"]
+    },
+    "housing-004": {
+      "applicable": true,
+      "bypassed": false,
+      "scope_reasoning": ["no_bypass_conditions_found: prerequisite applies in scope=non_precertified_spaces"]
+    },
+    "housing-006": {
+      "applicable": false,
+      "bypassed": true,
+      "bypass_conditions_found": ["embedded_fire_controls", "external_safety_audit_attached", "precertified_structure"],
+      "scope_reasoning": [
+        "bypass_condition_present: embedded_fire_controls → embedded_suppression_units",
+        "bypass_condition_present: external_safety_audit_attached → externally_audited_units",
+        "bypass_condition_present: precertified_structure → precertified_modular_spaces"
+      ]
+    },
+    "housing-007": {
+      "applicable": true,
+      "bypassed": false,
+      "scope_indicators_found": ["local_safety_review", "structural_modification_documented"],
+      "scope_reasoning": [
+        "scope_indicator_present: local_safety_review → non_precertified_spaces",
+        "scope_indicator_present: structural_modification_documented → modified_existing_structures"
+      ]
+    }
+  },
+  "conflicts": [],
+  "survivability": 0.65,
+  "survivability_status": "weakened"
+}

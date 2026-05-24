@@ -333,7 +333,7 @@ Scope narrowed to `non_precertified_spaces`. The prerequisite still
 applies to any claim that lacks the equivalent precertification evidence.
 
 Survivability score = `requiring / (requiring + bypassing) - 0.15 penalty`
-= `3 / (3+1) - 0.15` = **0.60** (weakened, not at_risk).
+= `4 / (4+1) - 0.15` = **0.65** (weakened, not at_risk). Updated after housing-007 added as requiring claim.
 
 Deprecation requires a second bypass claim (bypass_count ≥ 2) plus an
 explicit `federation_prerequisite_deprecated` event — no auto-removal.
@@ -355,6 +355,47 @@ python runtime/prerequisite_reevaluation.py
 
 **Spec:** `PREREQUISITE_DEPRECATION_SPEC.md`
 
+### Scoped Prerequisite Inheritance
+
+A weakened prerequisite does not disappear. Its applicability becomes conditional.
+
+housing-006's bypass narrowed `space_safety_assessed` to `non_precertified_spaces`.
+housing-007 (modified community workspace — old building, local modifications,
+no external audit, no precertification) confirms the other half: the prerequisite
+is **applicable** where the bypass path is absent.
+
+Two claims, same condition, opposite resolution. The scope rule mediates:
+
+```
+space_safety_assessed
+  applies_to:  non_precertified_spaces      ← housing-007: applicable
+  bypassed_by: precertified_modular_spaces  ← housing-006: bypassed
+```
+
+Resolution is deterministic — no text analysis, no fuzzy scoring. Bypass
+requires a `bypass_condition` in the active plan. Scope is not assigned by
+any coordinator. The plan assigns it to itself.
+
+```bash
+# Scope rules + per-claim resolution
+python runtime/prerequisite_scope_resolver.py
+python runtime/prerequisite_scope_resolver.py --condition space_safety_assessed --claim-id housing-007
+
+# Per-claim inheritance (applicable / bypassed / unscoped)
+python runtime/scoped_prerequisite_inheritance.py --claim-id housing-007 --json
+
+# Scope conflict detection (advisory only)
+python runtime/scope_conflict_detector.py
+
+# Scope-aware propagation hints
+python runtime/scoped_condition_propagation.py --claim-id housing-006
+
+# Full scoped snapshot
+python runtime/scoped_prerequisite_snapshot.py --condition space_safety_assessed --json
+```
+
+**Spec:** `SCOPED_PREREQUISITE_SPEC.md`
+
 ---
 
 ## Structure
@@ -366,6 +407,7 @@ dango-gitsea-bridge/
 ├── WHY_DANGO_EXISTS.md              ← The argument for this protocol
 ├── DANGO_GITSEA_OGI_MAP.md         ← How Dan-Go maps to GITSEA / OGI / gitlawb
 ├── FEDERATION_BRANCHING_SPEC.md     ← Federation-aware plan branching
+├── SCOPED_PREREQUISITE_SPEC.md      ← Scoped prerequisite inheritance layer
 ├── FEDERATION_PREREQUISITE_SPEC.md  ← Federation prerequisite promotion
 ├── VISUAL_SYSTEM_MAP.mmd            ← Mermaid architecture diagram
 ├── EXAMPLES_INDEX.md                ← Guide to all example files
@@ -438,7 +480,13 @@ dango-gitsea-bridge/
 │   ├── prerequisite_survivability.py ← Survivability score (requiring vs bypassing)
 │   ├── prerequisite_weakening.py    ← Append weakened events (scope narrowing)
 │   ├── prerequisite_reevaluation.py ← Lifecycle synthesis (all signals)
-│   └── prerequisite_deprecation_snapshot.py ← Full lifecycle query
+│   ├── prerequisite_deprecation_snapshot.py ← Full lifecycle query
+│   ├── prerequisite_scope_resolver.py ← Scope rule loading + per-claim resolution
+│   ├── scoped_prerequisite_inheritance.py ← Applicable / bypassed / unscoped per claim
+│   ├── scope_conflict_detector.py   ← Contradictory scope condition detection (advisory)
+│   ├── scoped_condition_propagation.py ← Scope-aware prerequisite propagation hints
+│   ├── scoped_world_model.py        ← Scoped prior_knowledge integration
+│   └── scoped_prerequisite_snapshot.py ← Full scoped lifecycle query
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   └── runtime/
@@ -459,6 +507,10 @@ dango-gitsea-bridge/
 │   └── memory.jsonl
 │
 └── examples/                        ← Reference JSON examples
+    ├── scoped-prerequisite-event.json ← Prerequisite lifecycle: promoted→reaffirmed→weakened
+    ├── scoped-inheritance.snapshot.json ← Full cross-claim scope resolution snapshot
+    ├── housing-007-scope-resolution.json ← housing-007 scope resolution detail
+    ├── scoped-world-model.json      ← Scoped prior_knowledge for housing-006 and housing-007
     ├── housing-001.*                ← Full housing claim lifecycle
     ├── refugee-story*.claim.json    ← Dignity-sensitive claim examples
     ├── plan-*.json                  ← Plan events
