@@ -6,7 +6,7 @@
 **Feature:** Reflective Memory Summarization  
 **Branch:** main  
 **Started:** 2026-05-24  
-**Last checkpoint:** step-1 (table registration)
+**Last checkpoint:** step-4 (memory_snapshot.py — smoke tested, committed)
 
 ---
 
@@ -14,10 +14,10 @@
 
 | Step | File group | Status | Commit |
 |------|-----------|--------|--------|
-| 1 | sutable_log.py (memory table) + RESUME_STATE.md | ✓ DONE | TBD |
-| 2 | runtime/reflective_memory.py (core library) | ⏳ PENDING | — |
-| 3 | runtime/memory_append.py + sutable/memory.jsonl | ⏳ PENDING | — |
-| 4 | runtime/memory_snapshot.py | ⏳ PENDING | — |
+| 1 | sutable_log.py (memory table) + RESUME_STATE.md | ✓ DONE | ad4e43d |
+| 2 | runtime/reflective_memory.py (core library) | ✓ DONE | 5c706dc |
+| 3 | runtime/memory_append.py + sutable/memory.jsonl | ✓ DONE | d374e3e |
+| 4 | runtime/memory_snapshot.py | ✓ DONE | TBD |
 | 5 | runtime/world_model_with_memory.py | ⏳ PENDING | — |
 | 6 | examples/ + REFLECTIVE_MEMORY_SPEC.md | ⏳ PENDING | — |
 | 7 | Doc updates (README, PLAN_NEGOTIATION_SPEC) + final commit + push | ⏳ PENDING | — |
@@ -28,13 +28,13 @@
 
 - [x] `runtime/sutable_log.py` — "memory" added to VALID_TABLES
 - [x] `RESUME_STATE.md` — this file
+- [x] `runtime/reflective_memory.py` — pure library: compute memory record from plans.jsonl
+- [x] `runtime/memory_append.py` — append memory_snapshot_created to sutable/memory.jsonl
+- [x] `sutable/memory.jsonl` — created; first event mem-housing-001-001 written
+- [x] `runtime/memory_snapshot.py` — view memory state for a claim (all CLI flags verified)
 
 ## Pending Files
 
-- [ ] `runtime/reflective_memory.py` — pure library: compute memory record from plans.jsonl
-- [ ] `runtime/memory_append.py` — append memory_snapshot_created to sutable/memory.jsonl
-- [ ] `sutable/memory.jsonl` — created on first memory_append run
-- [ ] `runtime/memory_snapshot.py` — view memory state for a claim
 - [ ] `runtime/world_model_with_memory.py` — world model + prior_knowledge section
 - [ ] `REFLECTIVE_MEMORY_SPEC.md` — full specification
 - [ ] `examples/memory-snapshot.json` — example memory record (generated)
@@ -47,8 +47,14 @@
 ## Last Successful Test
 
 ```bash
-python3 runtime/plan_negotiation_snapshot.py --claim-id housing-001 --json
-# result: status=contested, computed_active=plan-housing-001-v3 ✓
+python3 runtime/memory_snapshot.py --claim-id housing-001
+# result: latest_memory_id=mem-housing-001-001, status=contested, active=plan-housing-001-v3 ✓
+python3 runtime/memory_snapshot.py --claim-id housing-001 --diff
+# result: ✓ Up to date (no changes since snapshot) ✓
+python3 runtime/memory_snapshot.py --claim-id housing-001 --prior-knowledge
+# result: known_objection_types=['insufficient_risk_coverage'], learned=['space_safety_assessed'] ✓
+python3 runtime/memory_snapshot.py --all-claims
+# result: housing-001 listed ✓
 ```
 
 ---
@@ -56,12 +62,12 @@ python3 runtime/plan_negotiation_snapshot.py --claim-id housing-001 --json
 ## Next Command (if resuming)
 
 ```bash
-# Step 2: write reflective_memory.py
+# Step 5: write world_model_with_memory.py
 # Check if it exists first:
-ls runtime/reflective_memory.py 2>/dev/null && echo "exists" || echo "pending"
+ls runtime/world_model_with_memory.py 2>/dev/null && echo "exists" || echo "pending"
 # If pending: implement it (see Pending Files above)
 # Then smoke test:
-python3 runtime/reflective_memory.py --claim-id housing-001 --json
+python3 runtime/world_model_with_memory.py --claim-id housing-001 --json
 ```
 
 ---
@@ -84,6 +90,36 @@ python3 runtime/reflective_memory.py --claim-id housing-001 --json
   "contest_count": 1,
   "known_contested_plans": ["plan-housing-001-v2"],
   "summary": "..."
+}
+```
+
+### world_model_with_memory.py structure
+```python
+def build_world_model_with_memory(claim_id: str) -> dict:
+    """
+    Wraps world_model_mapper output and injects prior_knowledge block.
+    Falls back gracefully if world_model_mapper is not available.
+    """
+    # 1. Try to load world model from ogi/runtime/world_model_mapper.py
+    # 2. Call extract_prior_knowledge(claim_id) from reflective_memory.py
+    # 3. Inject as world_model["prior_knowledge"] = prior_knowledge
+    # Returns combined dict
+```
+
+Output structure:
+```json
+{
+  "claim_id": "housing-001",
+  "world_model": { ... },
+  "prior_knowledge": {
+    "memory_id": "mem-housing-001-001",
+    "active_plan_id": "plan-housing-001-v3",
+    "negotiation_status": "contested",
+    "learned_conditions": ["space_safety_assessed"],
+    "known_objection_types": ["insufficient_risk_coverage"],
+    "correction_depth": 1,
+    "summary": "..."
+  }
 }
 ```
 
