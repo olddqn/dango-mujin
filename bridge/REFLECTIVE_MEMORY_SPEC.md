@@ -378,8 +378,29 @@ every field points back to a specific negotiation event in `plans.jsonl` or `mem
 
 ---
 
+## Federation Memory Extension
+
+Reflective memory can be extended to operate across a claim federation.
+`runtime/federation_memory_feedback.py` synthesizes cross-claim patterns:
+
+- Recurring objection types across ≥2 claims → `shared_risk_pattern` hint
+- Recurring learned conditions across ≥2 claims → `federation_prerequisite` hint
+- High correction depth across ≥2 claims → `correction_pattern` hint
+
+These hints are appended to `federation.jsonl` as `federation_memory_feedback` events.
+
+```bash
+python runtime/federation_memory_feedback.py
+python runtime/federation_memory_feedback.py --append
+```
+
+See `FEDERATION_BRANCHING_SPEC.md` for the full federation memory layer specification.
+
+---
+
 ## Related Specs
 
 - [PLAN_NEGOTIATION_SPEC.md](PLAN_NEGOTIATION_SPEC.md) — multi-agent plan negotiation
+- [FEDERATION_BRANCHING_SPEC.md](FEDERATION_BRANCHING_SPEC.md) — federation memory feedback
 - [ogi/PLAN_TREE_SPEC.md](ogi/PLAN_TREE_SPEC.md) — plan tree structure and correction
 - [ogi/PLAN_TO_TASK_SPEC.md](ogi/PLAN_TO_TASK_SPEC.md) — plan-to-task bundle derivation

@@ -324,6 +324,38 @@ from federation_graph import (
 
 ---
 
+## Federation-Aware Branching Extension
+
+This spec covers the base federation layer: dependency relationships, federation map,
+graph traversal, depth computation, and the `federation.jsonl` event log.
+
+The **federation-aware plan branching layer** extends this with:
+
+- **Branch status computation** (`active` / `paused` / `blocked` / `unknown`)
+  derived from upstream negotiation state. See `runtime/federation_branching.py`.
+
+- **Condition propagation** — When upstream claim reaches active plan state,
+  its plan-tree conditions propagate to downstream claims as advisory events.
+  See `runtime/federation_condition_propagation.py`.
+
+- **Dignity propagation** — A `dignity_violation` objection on upstream propagates
+  `blocked` status to all dependent claims immediately.
+
+- **Ripple detection** — Cascading uncertainty (blocking chains, contest ripples,
+  instability scores) made visible via `runtime/federation_ripple_detector.py`.
+
+- **Trust propagation** — Attenuated cross-claim trust signals (0.8 per hop).
+  `dignity_violation` sets propagated weight to 0, no floor.
+  See `runtime/federation_trust_propagation.py`.
+
+- **Federation memory feedback** — Cross-claim pattern synthesis: recurring
+  objection types, recurring learned conditions, correction depth patterns.
+  See `runtime/federation_memory_feedback.py`.
+
+Full specification: `FEDERATION_BRANCHING_SPEC.md`.
+
+---
+
 ## What This Spec Does Not Cover
 
 - **Consensus mechanisms** — Federation records relationships, not votes.
@@ -333,9 +365,8 @@ from federation_graph import (
   Whether the execution engine enforces it is a protocol concern, not
   this layer's concern.
 
-- **Trust weighting of federated claims** — See `TEMPORAL_TRUST_DECAY_SPEC.md`.
-  Trust decay applies to contributions within a claim; cross-claim trust
-  aggregation is not implemented.
+- **Branch status and condition propagation** — Covered in `FEDERATION_BRANCHING_SPEC.md`.
+  This spec covers only the base federation graph and event types.
 
 - **External DID resolution** — All DIDs are mock. No real DID resolver is
   contacted. See `DID_SIGNATURE_SPEC.md`.

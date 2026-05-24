@@ -214,6 +214,49 @@ python runtime/world_model_with_memory.py --claim-id housing-001
 
 ---
 
+## Federation-Aware Branching
+
+No claim exists alone. Plans branch on the negotiation state of related claims.
+
+```
+housing-001 (base space)         housing-002 (remote collaboration)
+  negotiation → active plan  ──────────────┐
+  space_safety_assessed ✓               depends_on housing-001
+  legal_ownership_confirmed ✓        └─ [active] — conditions met
+                                         branch gates satisfied
+```
+
+When housing-001 is contested, housing-002 detects a `contest_ripple`:
+conditions it relies on may change if the active plan changes.
+When housing-001 has a `dignity_violation`, housing-002 is `blocked`.
+
+```bash
+# Compute branch status for a claim
+python runtime/federation_branching.py --claim-id housing-002
+
+# Propagate conditions from an upstream claim
+python runtime/federation_condition_propagation.py --source-claim housing-001
+
+# Full federation activation snapshot
+python runtime/federation_activation.py
+
+# Detect ripple effects across the federation
+python runtime/federation_ripple_detector.py
+
+# Cross-claim trust propagation
+python runtime/federation_trust_propagation.py --all-pairs
+
+# Federation-wide memory feedback
+python runtime/federation_memory_feedback.py
+
+# Graph export now includes FEDERATION BRANCHING section
+python runtime/graph_export.py --claim-id housing-001 --format text
+```
+
+**Spec:** `FEDERATION_BRANCHING_SPEC.md`
+
+---
+
 ## Structure
 
 ```
@@ -222,6 +265,7 @@ dango-gitsea-bridge/
 ├── ARCHITECTURE_OVERVIEW.md         ← Full system architecture
 ├── WHY_DANGO_EXISTS.md              ← The argument for this protocol
 ├── DANGO_GITSEA_OGI_MAP.md         ← How Dan-Go maps to GITSEA / OGI / gitlawb
+├── FEDERATION_BRANCHING_SPEC.md     ← Federation-aware plan branching
 ├── VISUAL_SYSTEM_MAP.mmd            ← Mermaid architecture diagram
 ├── EXAMPLES_INDEX.md                ← Guide to all example files
 │
@@ -275,7 +319,13 @@ dango-gitsea-bridge/
 │   ├── claim_dependency.py          ← Claim dependency events
 │   ├── claim_federation.py          ← Claim federation graph
 │   ├── federation_graph.py          ← Federation graph builder
-│   └── federation_snapshot.py       ← Federation state snapshot
+│   ├── federation_snapshot.py       ← Federation state snapshot
+│   ├── federation_branching.py      ← Branch activation status per claim
+│   ├── federation_condition_propagation.py ← Condition propagation from active plans
+│   ├── federation_trust_propagation.py ← Cross-claim trust weighting
+│   ├── federation_activation.py     ← Federation-wide activation snapshot
+│   ├── federation_ripple_detector.py ← Ripple effect detection
+│   └── federation_memory_feedback.py ← Cross-claim memory pattern synthesis
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   └── runtime/
@@ -345,6 +395,7 @@ All runtime modules:
 | `PLAN_NEGOTIATION_SPEC.md` | Multi-agent plan negotiation |
 | `REFLECTIVE_MEMORY_SPEC.md` | Reflective memory loop |
 | `CLAIM_FEDERATION_SPEC.md` | Claim federation |
+| `FEDERATION_BRANCHING_SPEC.md` | Federation-aware plan branching |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |
 | `DIGNITY_GUARD.md` | Dignity guard rules |
