@@ -34,6 +34,7 @@ VALID_TABLES = {
     "reality_feedback",
     "federation",
     "plans",
+    "memory",   # reflective memory snapshots (derived from plans.jsonl)
 }
 
 
