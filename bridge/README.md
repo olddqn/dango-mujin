@@ -123,6 +123,7 @@ dango-gitsea-bridge/
 ├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
 ├── PLAN_APPEND_ONLY_SPEC.md       — Plan + task bundle persistence specification
 ├── PLAN_NEGOTIATION_SPEC.md       — Multi-agent plan negotiation specification
+├── REFLECTIVE_MEMORY_SPEC.md      — Reflective memory summarization specification
 ├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
 ├── TEMPORAL_TRUST_DECAY_SPEC.md   — Temporal trust decay specification
 ├── examples/                      — Sample JSON files
@@ -148,6 +149,10 @@ dango-gitsea-bridge/
 │   ├── active_plan_selector.py    — CLI: deterministic active plan selection
 │   ├── plan_contest_resolver.py   — Contest chain + signal aggregation library
 │   ├── plan_negotiation_graph.py  — CLI: plan contest graph builder
+│   ├── reflective_memory.py       — Compute memory record from plans.jsonl (read-only)
+│   ├── memory_append.py           — CLI: append memory_snapshot_created to memory.jsonl
+│   ├── memory_snapshot.py         — CLI: view memory state / stale diff / prior knowledge
+│   ├── world_model_with_memory.py — CLI: world model enriched with prior knowledge
 │   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
 │   ├── sign_event.py              — CLI: attach mock signature to event JSON
 │   ├── verify_event_signature.py  — CLI: verify mock signature on event JSON
@@ -160,7 +165,8 @@ dango-gitsea-bridge/
 │   ├── contributions.jsonl
 │   ├── executions.jsonl
 │   ├── reality_feedback.jsonl
-│   └── plans.jsonl                — Plan tree + task bundle events (append-only)
+│   ├── plans.jsonl                — Plan tree + task bundle events (append-only)
+│   └── memory.jsonl               — Reflective memory snapshots (append-only)
 └── examples/
     ├── sutable_events/            — Example event JSON files
     ├── plan-event.json            — Example plan_tree_created event
@@ -173,6 +179,8 @@ dango-gitsea-bridge/
     ├── plan-objection-event.json  — Example plan_objected event
     ├── plan-contest-event.json    — Example plan_contested event (embedded counterplan)
     ├── negotiation.snapshot.json  — Generated negotiation snapshot (housing-001)
+    ├── memory-snapshot.json       — Example memory_snapshot_created event
+    ├── world-model-with-memory.json — World model + prior_knowledge (housing-001)
     ├── signed-claim-event.json    — Valid mock-signed claim event
     ├── invalid-signed-event.json  — Corrupted signature (always rejected)
     ├── trust-decay-input.json     — Contribution event for trust weight example
@@ -648,6 +656,58 @@ python runtime/graph_export.py --claim-id housing-001 --format text
 | Both preserved | Yes — append-only | Yes — append-only |
 
 **Spec:** `PLAN_NEGOTIATION_SPEC.md`
+
+---
+
+## Reflective Memory
+
+Negotiation produces evidence. Without memory, each plan tree cycle starts from zero —
+repeating objected conditions, ignoring learned constraints.
+
+Reflective memory closes the loop:
+
+```
+World Model → Plan Tree → Negotiation → Memory
+      ↑                                     |
+      └──────────── prior_knowledge ────────┘
+```
+
+Memory snapshots are derived from `plans.jsonl` (append-only, never deleted). The latest
+snapshot is injected as `prior_knowledge` into the next world model cycle — automatically
+incorporating conditions learned from competing plan trees.
+
+### What memory captures
+
+| Field | Description |
+|---|---|
+| `active_plan_id` | Currently active plan |
+| `negotiation_status` | `open` / `signalled` / `contested` / `active` |
+| `learned_conditions` | Conditions in counterplans but not in contested plans |
+| `prior_objections` | Typed objection signals per plan |
+| `prior_supports` | Support signals per plan |
+| `correction_chain_depth` | How many correction hops exist |
+| `contest_count` | Number of competing plan proposals |
+
+### Pipeline
+
+```bash
+# Snapshot negotiation history into memory.jsonl
+python runtime/memory_append.py --claim-id housing-001
+
+# View current memory state
+python runtime/memory_snapshot.py --claim-id housing-001
+
+# Check if snapshot is stale (plans.jsonl changed since snapshot)
+python runtime/memory_snapshot.py --claim-id housing-001 --diff
+
+# View prior knowledge block (what the next world model cycle will receive)
+python runtime/memory_snapshot.py --claim-id housing-001 --prior-knowledge
+
+# Build world model enriched with prior knowledge (closes the loop)
+python runtime/world_model_with_memory.py --claim-id housing-001
+```
+
+**Spec:** `REFLECTIVE_MEMORY_SPEC.md`
 
 ---
 

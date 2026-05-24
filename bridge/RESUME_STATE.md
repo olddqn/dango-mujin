@@ -6,7 +6,7 @@
 **Feature:** Reflective Memory Summarization  
 **Branch:** main  
 **Started:** 2026-05-24  
-**Last checkpoint:** step-4 (memory_snapshot.py — smoke tested, committed)
+**Last checkpoint:** step-7 (COMPLETE — all files implemented, committed, pushing)
 
 ---
 
@@ -17,10 +17,10 @@
 | 1 | sutable_log.py (memory table) + RESUME_STATE.md | ✓ DONE | ad4e43d |
 | 2 | runtime/reflective_memory.py (core library) | ✓ DONE | 5c706dc |
 | 3 | runtime/memory_append.py + sutable/memory.jsonl | ✓ DONE | d374e3e |
-| 4 | runtime/memory_snapshot.py | ✓ DONE | TBD |
-| 5 | runtime/world_model_with_memory.py | ⏳ PENDING | — |
-| 6 | examples/ + REFLECTIVE_MEMORY_SPEC.md | ⏳ PENDING | — |
-| 7 | Doc updates (README, PLAN_NEGOTIATION_SPEC) + final commit + push | ⏳ PENDING | — |
+| 4 | runtime/memory_snapshot.py | ✓ DONE | 3e3d4e7 |
+| 5 | runtime/world_model_with_memory.py | ✓ DONE | fceb5c8 |
+| 6 | examples/ + REFLECTIVE_MEMORY_SPEC.md | ✓ DONE | 7d328c2 |
+| 7 | Doc updates (README, PLAN_NEGOTIATION_SPEC) + final commit + push | ✓ DONE | TBD |
 
 ---
 

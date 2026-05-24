@@ -368,6 +368,41 @@ No agent may bypass the contestation record. No agent may delete an objection.
 
 ---
 
+## Memory Integration
+
+Negotiation produces evidence. Reflective memory captures that evidence and feeds it
+back into the next world model cycle as **prior knowledge**.
+
+```
+World Model → Plan Tree → Negotiation → Memory
+      ↑                                     |
+      └──────────── prior_knowledge ────────┘
+```
+
+After negotiation activity, create a memory snapshot:
+
+```bash
+python runtime/memory_append.py --claim-id housing-001
+```
+
+The snapshot records:
+- `learned_conditions` — conditions in counterplans but not in contested plans
+- `prior_objections` — typed objection signals per plan
+- `active_plan_id` — the currently selected plan
+
+On the next world model cycle, load the enriched world model:
+
+```bash
+python runtime/world_model_with_memory.py --claim-id housing-001
+```
+
+This injects `learned_conditions` directly into the world model's `state_gap`,
+so the next plan tree automatically addresses objected constraints.
+
+**Spec:** `REFLECTIVE_MEMORY_SPEC.md`
+
+---
+
 ## Related Specs
 
 - `PLAN_APPEND_ONLY_SPEC.md` — append-only persistence for plans and bundles
@@ -375,3 +410,4 @@ No agent may bypass the contestation record. No agent may delete an objection.
 - `PLAN_TO_TASK_SPEC.md` — plan tree → task bundle extraction
 - `SUTABLE_APPEND_ONLY_SPEC.md` — core su-table append-only specification
 - `MULTI_TASK_DECOMPOSITION.md` — full pipeline architecture
+- `REFLECTIVE_MEMORY_SPEC.md` — reflective memory loop specification
