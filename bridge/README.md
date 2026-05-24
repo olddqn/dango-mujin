@@ -1,110 +1,216 @@
 # dango-gitsea-bridge
 
-> 「AはAである」を超越し、「Aが非AのゆえにAである」へ。
+> 「AはAである」を超越し、「Aが非AのゆえにAである」へ。  
 > Transcending "A is A" to "A is A because A is not A."
 
 ---
 
-dango-gitsea-bridge is not a financial product.
-It is a translation layer between Dan-Go Claims and GITSEA-style repo assets,
-contribution streams, and agent credit records.
+**Dan-Go is a negotiation protocol for impossible claims.**
 
-Dan-Go asks:
-"What would need to change for this impossible claim to become real?"
+A claim is a statement of what must become real — even when it currently cannot.  
+The protocol asks: *what conditions are missing, and who can close the gap?*
 
-GITSEA may provide:
-- repository identity
-- contribution accounting
-- streamable value
-- credit history
-- agent-to-agent economic coordination
-
-This bridge does not move money.
-It does not sign transactions.
-It does not custody keys.
-It only models the transformation.
-
-> **Note:** GITSEA's implementation status is unverified.
-> This bridge treats GITSEA as a hypothetical financial layer.
-> Even if GITSEA is abandoned or fraudulent, this bridge can be forked
-> to connect Dan-Go with any equivalent protocol.
-> Forks, objections, and counterclaims are valid participation.
+This bridge connects Dan-Go's negotiation layer to GITSEA-style economic accounting,
+OGI-compatible world models, and append-only sutable event logs.
 
 ---
 
-## Core Loop
+## The Core Loop
 
 ```
-Claim → Negotiation → Contribution → Execution → Reality Feedback
-         ↓
-    [dango-gitsea-bridge]
-         ↓
-  Repo Asset → Contribution Stream → Agent Credit Record
+Claim
+  │
+  ▼
+World Model          ← what is observed vs what must become true
+  │
+  ▼
+Plan Tree            ← how to close the gap (contestable, not final)
+  │
+  ▼
+Task Bundle          ← derived from the plan (extracted, not executed)
+  │
+  ▼
+Negotiation          ← agents support, object, contest, correct
+  │
+  ▼
+Reflective Memory    ← what was learned, for the next cycle
+  │
+  └──────────────────► World Model (improved)
 ```
+
+No step is hidden. No step is irreversible. Every event is append-only.
 
 ---
 
-## What this bridge does
+## What Dan-Go Is NOT
 
-| Input | Output |
-|---|---|
-| Dan-Go Claim JSON | GITSEA-style repo asset |
-| Contribution list | Streamable contribution ledger |
-| Dignity constraints | Dignity guard decision (pass / block / escalate) |
-| Claim + contributions + guard | Stream preview report |
+| NOT | WHY |
+|-----|-----|
+| A financial product | No tokens. No staking. No investment. |
+| A DAO | No governance votes. No quorum. |
+| A blockchain | Append-only JSONL files, not a chain. |
+| A planning engine | Plans are proposals, not commands. |
+| An AI decision system | Agents negotiate; no AI makes final decisions. |
+| A promise to GITSEA | GITSEA is hypothetical. The bridge is real. |
+| A consensus mechanism | Disagreement is preserved, not resolved. |
+
+---
+
+## Why This Exists
+
+Most coordination systems ask: *who decides?*
+
+Dan-Go asks: *what conditions are missing, and can they be addressed without violating dignity?*
+
+This reframing matters because:
+
+- Some claims are structurally impossible until upstream conditions change
+- Many contributions are invisible to price-only systems
+- AI agents need a public, auditable surface to negotiate — not internal hidden state
+- Dignity must be protocol-level, not a policy attached to an existing system
+- Corrections and objections must remain visible — silence is not resolution
+
+See `WHY_DANGO_EXISTS.md` for the full argument.
+
+---
+
+## Relationship to GITSEA / OGI / gitlawb
+
+| System | Role in Dan-Go |
+|--------|---------------|
+| **GITSEA** | Hypothetical economic layer. This bridge models the translation from Dan-Go claims to GITSEA-style repo assets and contribution streams. GITSEA's real implementation is unverified. |
+| **OGI** | Reasoning surface. `ogi/runtime/` provides world model and plan tree generators compatible with OGI's reasoning format. |
+| **gitlawb** | Source of truth. This repo is pushed to `node.gitlawb.com`. gitlawb provides DID-based identity for protocol participants. |
+| **Nookplot** | Unknown. Not integrated. |
+
+See `DANGO_GITSEA_OGI_MAP.md` for the full mapping.
+
+---
+
+## Dignity-First Architecture
+
+The dignity guard is not optional. It runs before every other transformation.
+
+```
+Dignity Guard (7 rules)
+  ├── PASS  → proceed to asset transformation
+  ├── BLOCK → hard stop, reason logged
+  └── ESCALATE → pause, request human review
+```
+
+Rules enforced:
+1. Do not violate the dignity of another.
+2. Do not monetize suffering without consent.
+3. Do not expose location or identity of vulnerable people.
+4. Do not treat refugees as content inventory.
+5. Do not convert emergency need into speculative asset.
+6. Consent, anonymity, revocability, and revenue sharing must be explicit.
+7. If unsure, block.
+
+`dignity_violation` objections in plan negotiation automatically disqualify a plan
+from active selection — regardless of support count.
+
+---
+
+## Append-Only Negotiation
+
+The **su-table** (素テーブル) is an append-only JSONL event log with SHA256 hash chains.
+
+Nothing is deleted. Corrections are new events. Disagreement is permanently visible.
+
+```
+sutable/
+├── claims.jsonl          ← claim events
+├── negotiations.jsonl    ← objections, supports, decisions
+├── contributions.jsonl   ← contribution records
+├── executions.jsonl      ← execution events
+├── reality_feedback.jsonl← post-execution ground truth
+├── plans.jsonl           ← plan trees, task bundles, negotiation signals
+└── memory.jsonl          ← reflective memory snapshots
+```
+
+Every event carries:
+- `timestamp` — ISO 8601 UTC
+- `event_hash` — SHA256 of the serialized event body
+- `previous_event_hash` — link to the preceding event (chain integrity)
+
+---
+
+## Reflective Memory Loop
+
+Each negotiation cycle produces evidence. The memory layer captures it.
+
+```
+memory_append.py     ← snapshot negotiation state into memory.jsonl
+memory_snapshot.py   ← query state, detect staleness, view prior knowledge
+world_model_with_memory.py  ← inject prior_knowledge into next world model
+```
+
+The `prior_knowledge` block carries:
+- which plan is active
+- what objection types were raised
+- what conditions were *learned* from competing plan trees (structural diff)
+- how deep the correction chain is
+
+This lets the next plan tree automatically address what the previous one missed.
 
 ---
 
 ## Quick Start
 
 ```bash
-# Model a claim as a repo asset
-python runtime/claim_to_asset.py examples/refugee-story.claim.json
+# 1. Check dignity constraints on a claim
+python runtime/dignity_guard.py examples/refugee-story-consented.claim.json
 
-# Check dignity constraints
-python runtime/dignity_guard.py examples/refugee-story.claim.json
+# 2. Build a world model from the claim
+python ogi/runtime/world_model_mapper.py examples/refugee-story-consented.claim.json
 
-# Preview stream eligibility
-python runtime/stream_preview.py examples/refugee-story.claim.json examples/contribution-stream.json
+# 3. View the plan snapshot (housing claim, pre-negotiated)
+python runtime/plan_snapshot.py --claim-id housing-001
+
+# 4. See the full negotiation state
+python runtime/plan_negotiation_snapshot.py --claim-id housing-001
+
+# 5. Query reflective memory
+python runtime/memory_snapshot.py --claim-id housing-001 --prior-knowledge
+
+# 6. Build enriched world model (closes the loop)
+python runtime/world_model_with_memory.py --claim-id housing-001
+
+# 7. Export the full negotiation graph
+python runtime/graph_export.py --claim-id housing-001 --format text
 ```
 
 ---
 
-## Su-table
-
-Dan-Go uses a fully open, append-only state table called the **su-table** (素テーブル).
-
-Nothing is deleted.
-Corrections are appended.
-Negotiation history is part of the protocol itself.
-
-The goal is not immutable truth.
-The goal is transparent state transition.
+## Full Pipeline (housing-001 example)
 
 ```bash
 # Append a claim event
-python runtime/sutable_append.py --table claims --event examples/sutable_events/claim_event.json
+python runtime/sutable_append.py --table claims \
+  --event examples/sutable_events/claim_event.json
 
-# Append a negotiation objection
-python runtime/negotiation_event.py objection \
-  --claim-id housing-001 \
-  --speaker did:key:critic \
-  --reason "Legal ownership unresolved."
+# Build plan tree from claim
+python runtime/plan_event_append.py examples/plan-event.json
 
-# Append reality feedback
-python runtime/reality_feedback_append.py \
-  --claim-id housing-001 \
-  --result partial_success \
-  --notes "Internet established. Space not yet legally cleared."
+# Negotiate: support a plan
+python runtime/plan_negotiation_append.py examples/plan-support-event.json
 
-# Query: full timeline for a claim
-python runtime/sutable_query.py --timeline housing-001
+# Negotiate: object to a plan
+python runtime/plan_negotiation_append.py examples/plan-objection-event.json
 
-# Verify chain integrity
-python runtime/sutable_query.py --verify
+# Contest: propose a competing plan (counterplan auto-created if embedded)
+python runtime/plan_negotiation_append.py examples/plan-contest-event.json
+
+# Select the active plan (deterministic, transparent, 6 rules)
+python runtime/active_plan_selector.py --claim-id housing-001
+
+# Snapshot memory
+python runtime/memory_append.py --claim-id housing-001
+
+# View enriched world model
+python runtime/world_model_with_memory.py --claim-id housing-001
 ```
-
-See `SUTABLE_APPEND_ONLY_SPEC.md` for the full specification.
 
 ---
 
@@ -112,650 +218,134 @@ See `SUTABLE_APPEND_ONLY_SPEC.md` for the full specification.
 
 ```
 dango-gitsea-bridge/
-├── README.md                      — This file
-├── DANGO_GITSEA_THESIS.md         — Why this bridge exists
-├── CLAIM_TO_REPO_ASSET.md         — How Claims become repo assets
-├── CONTRIBUTION_STREAM_SPEC.md    — How contributions become streams
-├── REFUGEE_STORY_STREAM_ETHICS.md — Ethics of story-based streams
-├── DIGNITY_GUARD.md               — The guard layer
-├── PASS_FLOW_EXAMPLE.md           — Consent-established PASS flow walkthrough
-├── RISK_ASSESSMENT.md             — Known risks and limitations
-├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
-├── PLAN_APPEND_ONLY_SPEC.md       — Plan + task bundle persistence specification
-├── PLAN_NEGOTIATION_SPEC.md       — Multi-agent plan negotiation specification
-├── REFLECTIVE_MEMORY_SPEC.md      — Reflective memory summarization specification
-├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
-├── TEMPORAL_TRUST_DECAY_SPEC.md   — Temporal trust decay specification
-├── examples/                      — Sample JSON files
-│   └── sutable_events/            — Example su-table event files
-├── runtime/                       — Minimum viable Python implementation
-│   ├── claim_to_asset.py          — Claim → repo asset
-│   ├── dignity_guard.py           — 7-rule dignity guard
-│   ├── stream_preview.py          — Stream eligibility preview
-│   ├── contribution_ledger.py     — Contribution stream ledger
-│   ├── sutable_log.py             — JSONL append helper + hash chain
-│   ├── sutable_append.py          — CLI: append event to su-table (+ signature validation)
-│   ├── sutable_query.py           — CLI: query su-table events
-│   ├── negotiation_event.py       — CLI: structured negotiation events
-│   ├── reality_feedback_append.py — CLI: reality feedback events
-│   ├── negotiation_graph.py       — Graph builder (nodes + edges from su-table)
-│   ├── graph_export.py            — CLI: export graph as mermaid, text, or HTML
-│   ├── plan_event_append.py       — CLI: append plan tree event to plans.jsonl
-│   ├── task_bundle_append.py      — CLI: append task bundle event to plans.jsonl
-│   ├── plan_correction.py         — CLI: issue plan correction or amendment
-│   ├── plan_snapshot.py           — CLI: view active plan + correction chain
-│   ├── plan_negotiation_append.py — CLI: append plan negotiation events
-│   ├── plan_negotiation_snapshot.py — CLI: negotiation state snapshot
-│   ├── active_plan_selector.py    — CLI: deterministic active plan selection
-│   ├── plan_contest_resolver.py   — Contest chain + signal aggregation library
-│   ├── plan_negotiation_graph.py  — CLI: plan contest graph builder
-│   ├── reflective_memory.py       — Compute memory record from plans.jsonl (read-only)
-│   ├── memory_append.py           — CLI: append memory_snapshot_created to memory.jsonl
-│   ├── memory_snapshot.py         — CLI: view memory state / stale diff / prior knowledge
-│   ├── world_model_with_memory.py — CLI: world model enriched with prior knowledge
-│   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
-│   ├── sign_event.py              — CLI: attach mock signature to event JSON
-│   ├── verify_event_signature.py  — CLI: verify mock signature on event JSON
-│   ├── temporal_trust_decay.py    — Trust decay library (deterministic, no I/O)
-│   ├── contribution_weight.py     — CLI: compute trust weight for single event
-│   └── trust_snapshot.py          — CLI: contributor trust snapshot from su-table
-├── sutable/                       — Live JSONL event logs
+├── README.md                        ← This file
+├── ARCHITECTURE_OVERVIEW.md         ← Full system architecture
+├── WHY_DANGO_EXISTS.md              ← The argument for this protocol
+├── DANGO_GITSEA_OGI_MAP.md         ← How Dan-Go maps to GITSEA / OGI / gitlawb
+├── VISUAL_SYSTEM_MAP.mmd            ← Mermaid architecture diagram
+├── EXAMPLES_INDEX.md                ← Guide to all example files
+│
+├── DANGO_GITSEA_THESIS.md           ← Original thesis
+├── CLAIM_TO_REPO_ASSET.md           ← Claim → repo asset mapping
+├── CONTRIBUTION_STREAM_SPEC.md      ← Contribution stream spec
+├── DIGNITY_GUARD.md                 ← Dignity guard (7 rules)
+├── PASS_FLOW_EXAMPLE.md             ← Consent-established PASS flow walkthrough
+├── RISK_ASSESSMENT.md               ← Known risks and limitations
+├── REFUGEE_STORY_STREAM_ETHICS.md   ← Ethics of story-based streams
+├── SUTABLE_APPEND_ONLY_SPEC.md      ← Su-table specification
+├── PLAN_APPEND_ONLY_SPEC.md         ← Plan + task bundle persistence
+├── PLAN_NEGOTIATION_SPEC.md         ← Multi-agent plan negotiation
+├── REFLECTIVE_MEMORY_SPEC.md        ← Reflective memory loop
+├── CLAIM_FEDERATION_SPEC.md         ← Claim federation
+├── DID_SIGNATURE_SPEC.md            ← DID signature (mock)
+├── TEMPORAL_TRUST_DECAY_SPEC.md     ← Trust decay specification
+├── NEGOTIATION_GRAPH_SPEC.md        ← Negotiation graph spec
+│
+├── runtime/                         ← Dan-Go bridge runtime (stdlib only)
+│   ├── sutable_log.py               ← JSONL append + SHA256 hash chain
+│   ├── sutable_append.py            ← CLI: append event to su-table
+│   ├── sutable_query.py             ← CLI: query su-table events
+│   ├── claim_to_asset.py            ← Claim → repo asset
+│   ├── dignity_guard.py             ← 7-rule dignity gate
+│   ├── stream_preview.py            ← Stream eligibility preview
+│   ├── contribution_ledger.py       ← Contribution ledger
+│   ├── negotiation_event.py         ← Structured negotiation events
+│   ├── reality_feedback_append.py   ← Reality feedback events
+│   ├── negotiation_graph.py         ← Graph builder from su-table
+│   ├── graph_export.py              ← Export: Mermaid / text / HTML
+│   ├── plan_event_append.py         ← Plan tree event append
+│   ├── task_bundle_append.py        ← Task bundle event append
+│   ├── plan_correction.py           ← Plan correction / amendment
+│   ├── plan_snapshot.py             ← View plan + correction chain
+│   ├── plan_negotiation_append.py   ← Support / objection / contest events
+│   ├── active_plan_selector.py      ← Deterministic active plan selection
+│   ├── plan_contest_resolver.py     ← Contest chain + signal aggregation
+│   ├── plan_negotiation_snapshot.py ← Negotiation state snapshot
+│   ├── plan_negotiation_graph.py    ← Plan contest graph
+│   ├── reflective_memory.py         ← Memory record from plans.jsonl
+│   ├── memory_append.py             ← Append memory snapshot
+│   ├── memory_snapshot.py           ← Query memory / stale diff
+│   ├── world_model_with_memory.py   ← World model + prior_knowledge
+│   ├── did_signature.py             ← Mock DID signature library
+│   ├── sign_event.py                ← Attach mock signature to event
+│   ├── verify_event_signature.py    ← Verify mock signature
+│   ├── temporal_trust_decay.py      ← Trust decay (deterministic)
+│   ├── contribution_weight.py       ← Trust weight for single event
+│   ├── trust_snapshot.py            ← Contributor trust snapshot
+│   ├── claim_dependency.py          ← Claim dependency events
+│   ├── claim_federation.py          ← Claim federation graph
+│   ├── federation_graph.py          ← Federation graph builder
+│   └── federation_snapshot.py       ← Federation state snapshot
+│
+├── ogi/                             ← OGI-compatible reasoning surface
+│   └── runtime/
+│       ├── world_model_mapper.py    ← Claim → OGI world model
+│       ├── claim_plan_tree.py       ← World model → Plan tree
+│       ├── plan_tree_validator.py   ← Plan tree validation
+│       ├── plan_tree_to_tasks.py    ← Plan tree → Task bundle
+│       ├── task_dependency_resolver.py ← Task dependency resolution
+│       └── post_scarcity_guard.py   ← Post-scarcity plan guard
+│
+├── sutable/                         ← Live append-only event logs
 │   ├── claims.jsonl
 │   ├── negotiations.jsonl
 │   ├── contributions.jsonl
 │   ├── executions.jsonl
 │   ├── reality_feedback.jsonl
-│   ├── plans.jsonl                — Plan tree + task bundle events (append-only)
-│   └── memory.jsonl               — Reflective memory snapshots (append-only)
-└── examples/
-    ├── sutable_events/            — Example event JSON files
-    ├── plan-event.json            — Example plan_tree_created event
-    ├── plan-correction-event.json — Example plan_tree_corrected event
-    ├── task-bundle-event.json     — Example task_bundle_created event
-    ├── plans.snapshot.json        — Generated plan snapshot (housing-001)
-    ├── competing-plan-a.json      — Reference: Plan A (plan-housing-001-v2)
-    ├── competing-plan-b.json      — Reference: Plan B (plan-housing-001-v3, counterplan)
-    ├── plan-support-event.json    — Example plan_supported event
-    ├── plan-objection-event.json  — Example plan_objected event
-    ├── plan-contest-event.json    — Example plan_contested event (embedded counterplan)
-    ├── negotiation.snapshot.json  — Generated negotiation snapshot (housing-001)
-    ├── memory-snapshot.json       — Example memory_snapshot_created event
-    ├── world-model-with-memory.json — World model + prior_knowledge (housing-001)
-    ├── signed-claim-event.json    — Valid mock-signed claim event
-    ├── invalid-signed-event.json  — Corrupted signature (always rejected)
-    ├── trust-decay-input.json     — Contribution event for trust weight example
-    ├── trust-decay-output.json    — Computed trust weight (reference_date fixed)
-    ├── contributor-history.json   — Multi-contributor trust decay example
-    ├── housing-001.graph.mmd      — Rendered negotiation graph (Mermaid)
-    └── housing-001.graph.html     — Local HTML preview (no external deps)
+│   ├── plans.jsonl
+│   └── memory.jsonl
+│
+└── examples/                        ← Reference JSON examples
+    ├── housing-001.*                ← Full housing claim lifecycle
+    ├── refugee-story*.claim.json    ← Dignity-sensitive claim examples
+    ├── plan-*.json                  ← Plan events
+    ├── memory-snapshot.json         ← Memory snapshot example
+    ├── world-model-with-memory.json ← Enriched world model example
+    ├── trust-decay-*.json           ← Trust decay examples
+    ├── claim-federation.json        ← Federation graph example
+    └── sutable_events/              ← Raw su-table event examples
 ```
+
+See `EXAMPLES_INDEX.md` for a guided tour of the examples.
 
 ---
 
-## Negotiation Graph
-
-Su-table events can be rendered as a negotiation graph.
-
-This graph does not prove truth.
-It visualizes the path from Claim to Reality Feedback.
-
-```bash
-# Text output (terminal)
-python runtime/graph_export.py --claim-id housing-001 --format text
-
-# Mermaid output (GitHub / mermaid.live)
-python runtime/graph_export.py --claim-id housing-001 --format mermaid
-
-# Save Mermaid to file
-python runtime/graph_export.py --claim-id housing-001 --format mermaid \
-  > examples/housing-001.graph.mmd
-
-# HTML preview — open in browser, no external dependencies
-python runtime/graph_export.py --claim-id housing-001 --format html \
-  --output examples/housing-001.graph.html
-
-# List all claim_ids in the su-table
-python runtime/graph_export.py --list
-```
-
-Correction events appear as dashed edges — the original is preserved,
-the correction is appended. Dignity violations render as dark-red nodes
-with automated processing halted.
-
-See `NEGOTIATION_GRAPH_SPEC.md` for the full specification.
-
----
-
-## Graph HTML Preview
-
-HTML preview is local-only and does not load external scripts or stylesheets.
-
-The HTML file includes:
-- Summary statistics (events, result, corrections, dignity violations)
-- Full event timeline with speaker/contributor and edge annotations
-- Mermaid source code with copy-to-clipboard button
-- Event table (hash, prev_hash, corrects reference)
-- Integrity notes (chain links, violations, no-network confirmation)
-
-```bash
-python runtime/graph_export.py \
-  --claim-id housing-001 \
-  --format html \
-  --output examples/housing-001.graph.html
-```
-
-Open with `open examples/housing-001.graph.html` (macOS) or your browser.
-The Mermaid code block has a **Copy** button — paste into mermaid.live to render the graph visually.
-
----
-
-## Temporal Trust Decay
-
-Dan-Go su-table contribution events carry a **time-decaying trust weight**.
-
-Trust is not a fixed score. Trust is coordination memory that fades with time.
-Ancient contributions are still recorded. Their coordination signal weakens.
-
-```
-trust_weight = base_weight × decay_factor × verification_multiplier
-             × dignity_multiplier × continuity_multiplier
-
-decay_factor = max(0.05, 0.5 ^ (days_since / half_life_days))
-```
-
-Defaults: half-life = 90 days, minimum = 0.05 (ancient contributions never fully vanish).
-Dignity block is the only hard zero: trust_weight = 0.0 exactly.
-
-```bash
-# Compute trust weight for a single contribution event
-python runtime/contribution_weight.py examples/trust-decay-input.json
-
-# Contributor trust snapshot from su-table (by claim)
-python runtime/trust_snapshot.py --claim-id housing-001
-
-# With fixed reference date (for deterministic output)
-python runtime/trust_snapshot.py --claim-id housing-001 --reference-date 2026-05-24
-```
-
-Trust appears in all graph export formats:
-- Text: `↑ trust=0.99  decay=0.99  level=high`
-- Mermaid: `↑trust=0.99` in contribution node labels
-- HTML: colored badge (cyan=high / amber=medium / gray=low / red=blocked) with hover tooltip
-
-Multipliers:
-- `verified` → 1.2 | `self_reported` → 1.0 | `disputed` → 0.6
-- continuity bonus: min(1.5, 1.0 + 0.1 × (count − 1)) — anti-cartel capped
-- `dignity: pass` → 1.0 | `escalate` → 0.8 | `block` → 0.0
-
-See `TEMPORAL_TRUST_DECAY_SPEC.md` for the full specification.
-
----
-
-## DID Signature Layer
-
-Su-table events support an optional mock DID signature field.
-
-⚠ **This is NOT real cryptography.** It is a deterministic test vector
-that fixes the signature interface so real Ed25519 / UCAN implementations
-can be dropped in at the same entry points.
-
-Mock formula: `signature_value = sha256(key_id + ":" + sha256(canonical_event_body))`
-
-```bash
-# Sign an event file → stdout
-python runtime/sign_event.py examples/sutable_events/claim_event.json
-
-# Sign and write to file
-python runtime/sign_event.py examples/sutable_events/claim_event.json \
-  --did did:key:z6MkLegalReviewer \
-  --key-id legal-key-001 \
-  --output examples/signed-claim-event.json
-
-# Verify a signed event (exit 0 = valid, 1 = invalid/unsigned, 2 = error)
-python runtime/verify_event_signature.py examples/signed-claim-event.json
-
-# JSON output for pipeline use
-python runtime/verify_event_signature.py examples/signed-claim-event.json --json
-```
-
-Sutable append signature policy:
-- `unsigned` → append with `signature_status="unsigned"` (allowed)
-- `mock_valid` → append with `signature_status="mock_valid"` (allowed)
-- `mock_invalid` → **REJECTED** — possible tampering
-- `unsupported_signature_type` → **REJECTED** — unknown type
-
-Signature status appears in the negotiation graph:
-- Mermaid: `✓sig` in node label if valid
-- Text: `✓ [signature: mock_valid]` line per event
-- HTML: colored badge + signer DID column in event table
-
-See `DID_SIGNATURE_SPEC.md` for the full specification.
-
----
-
-## Claim Federation
-
-Claims are not isolated — they depend on, enable, block, counterclaim, and
-derive from each other. The federation layer records these cross-claim
-relationships in `sutable/federation.jsonl` and makes them queryable.
-
-**Relationship types:**
-
-| Type              | Meaning |
-|-------------------|---------|
-| `depends_on`      | A cannot proceed without B |
-| `enables`         | B (upstream) makes A (downstream) possible |
-| `blocks`          | B prevents A from proceeding |
-| `counterclaim`    | A publicly disputes B — both preserved |
-| `amendment_of`    | A modifies B; B still exists |
-| `derived_from`    | A is derived from B's content or outcome |
-| `federation_link` | Symmetric association (stored both ways) |
-| `dignity_override`| B overrides dignity constraints for A |
-
-**Circular detection:** `depends_on`, `blocks`, and `dignity_override` edges
-are checked for cycles. Counterclaims are never circular-detected.
-
-```bash
-# Validate a federation event (exit 0 = valid, exit 1 = invalid)
-python runtime/claim_dependency.py examples/claim-dependency.json
-
-# Validate and append to su-table
-python runtime/claim_dependency.py examples/claim-dependency.json --append
-
-# Build federation map from su-table
-python runtime/claim_federation.py
-
-# Single claim summary
-python runtime/claim_federation.py --claim-id housing-001
-
-# Federation snapshot (compact)
-python runtime/federation_snapshot.py --claim-id housing-001
-python runtime/federation_snapshot.py --all-claims --verbose
-
-# Export federation graph
-python runtime/federation_graph.py --format text
-python runtime/federation_graph.py --format mermaid --output examples/federation.graph.mmd
-```
-
-Federation context appears in the negotiation graph export:
-- **Text:** `── CLAIM FEDERATION ──` section with depth + all relationships
-- **Mermaid:** `%%` comment header with federation depth and linked claims
-- **HTML:** "Claim Federation" panel with colored tags + depth stat card
-
-See `CLAIM_FEDERATION_SPEC.md` for the full specification.
-
----
-
-## OGI Compatibility Layer
-
-Dan-Go can serve as the negotiation protocol for OGI-style post-scarcity agent economies.
-
-This bridge is not an OGI integration yet.
-It is a Dan-Go compatibility layer for post-scarcity agent economies.
-Robotics and physical machine control are explicitly out of scope.
-
-```bash
-# Run post-scarcity exploitation guard
-python ogi/runtime/post_scarcity_guard.py ogi/examples/post-scarcity.claim.json
-
-# Transform Claim → OGI agent task
-python ogi/runtime/claim_to_agent_task.py ogi/examples/post-scarcity.claim.json
-
-# Map contributions → credit signals
-python ogi/runtime/contribution_to_credit.py ogi/examples/contribution-credit.json
-
-# Map reality feedback → OGI outcome record
-python ogi/runtime/reality_feedback_mapper.py ogi/examples/reality-feedback.json
-```
-
-See `ogi/DANGO_OGI_THESIS.md` for the central thesis:
-> When money loses central meaning, coordination becomes the scarce resource.
-
-See `ogi/AGENT_ECONOMY_MAPPING.md` for the full Dan-Go ↔ OGI concept table.
-
----
-
-## OGI Reasoning Surface Compatibility
-
-Dan-Go now includes a structured reasoning layer between language and execution.
-This separates natural language claims from structured plan trees.
-
-**The three surfaces:**
-
-| Surface | Form | Example |
-|---|---|---|
-| Language | Claim statement | "This vacant house should become shared space." |
-| Reasoning | Plan tree JSON | `goal → dignity clearance → action nodes → terminal` |
-| Execution | Contribution events | `sutable/contributions.jsonl` |
-
-```bash
-# Generate world model from claim (observed/desired/gap)
-python ogi/runtime/world_model_mapper.py ogi/examples/post-scarcity.claim.json
-
-# Generate plan tree from claim (reasoning structure)
-python ogi/runtime/claim_plan_tree.py ogi/examples/post-scarcity.claim.json \
-  > ogi/examples/plan-tree.output.json
-
-# Validate plan tree (structural + dignity check)
-python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json
-
-# JSON validation report
-python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --json
-```
-
-**Key rules:**
-- Dignity branches always precede action nodes
-- `abstain` is a first-class output — not a failure state
-- Action nodes declare `required_capability` but do not execute
-- Invalid plan trees are rejected before negotiation begins
-
-**Spec docs:**
-- `ogi/REASONING_SURFACE_SPEC.md` — why reasoning ≠ language
-- `ogi/PLAN_TREE_SPEC.md` — grammar, node types, failure modes
-- `ogi/WORLD_MODEL_MAPPING.md` — claim → world model transformation
-- `ogi/MEMORY_SURFACE_MAPPING.md` — su-table as agent memory
-- `ogi/OGI_CODEX_IMPORT_NOTES.md` — what was imported, what was left out
-- `ogi/MULTI_TASK_DECOMPOSITION.md` — plan tree → task bundle architecture
-
----
-
-## Plan Tree Task Extraction
-
-Plan trees are reasoning structures. Task bundles are negotiation proposals.
-This layer converts one into the other.
-
-```
-Plan Tree → Task Bundle → Dependency Graph → Execution Order
-```
-
-```bash
-# Extract task bundle from a plan tree
-python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json
-
-# JSON output
-python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json \
-  > ogi/examples/plan-to-task.output.json
-
-# Human-readable summary with blocked records
-python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json \
-  --summary --show-blocked
-
-# Resolve dependency graph and execution order
-python ogi/runtime/task_dependency_resolver.py ogi/examples/plan-to-task.output.json
-
-# Topological execution order only
-python ogi/runtime/task_dependency_resolver.py ogi/examples/plan-to-task.output.json \
-  --order
-
-# Validate task bundle structure
-python ogi/runtime/task_bundle_validator.py ogi/examples/plan-to-task.output.json
-```
-
-**Extraction rules:**
-- `action` nodes → executable task candidates
-- dignity `branch` (true=assertion) → synthetic `condition_gate` task (priority=0, execution_allowed=true)
-- risk `branch` (true=action) → real task that is also a dependency gate (priority=0)
-- `abstain` → `blocked_record` (no task)
-- `terminal` → updates `bundle_status` (no task)
-- `subgoal` → group/phase label only
-
-**Gate dependency model:**
-- Dignity gates are always independently executable (no cross-blocking)
-- Risk gate tasks are blocked by dignity gates
-- All coordination tasks are blocked by dignity + risk gates
-- No circular dependencies allowed (validated)
-
-**Full pipeline:**
-```bash
-python ogi/runtime/claim_plan_tree.py ogi/examples/plan-tree.claim.json > /tmp/tree.json
-python ogi/runtime/plan_tree_validator.py /tmp/tree.json
-python ogi/runtime/plan_tree_to_tasks.py /tmp/tree.json > /tmp/bundle.json
-python ogi/runtime/task_bundle_validator.py /tmp/bundle.json
-python ogi/runtime/task_dependency_resolver.py /tmp/bundle.json
-```
-
-**Spec:** `ogi/PLAN_TO_TASK_SPEC.md`
-
----
-
-## Plan Append-Only Persistence
-
-Plan trees and task bundles are reasoning artifacts.
-They are stored in `sutable/plans.jsonl` — never deleted, never modified.
-Corrections are new events. The original is always preserved.
-
-> A plan that was wrong is still a record.
-> A correction that erases the original is not a correction — it is a lie.
-
-### Event types
-
-| Event | Meaning |
-|---|---|
-| `plan_tree_created` | New plan tree proposed for a claim |
-| `plan_tree_corrected` | Full correction: new plan supersedes old structurally |
-| `plan_tree_amended` | Partial update; original plan remains active |
-| `task_bundle_created` | Task bundle derived from a specific plan tree |
-| `task_bundle_blocked` | Bundle fully blocked (all gates unresolved) |
-| `task_bundle_ready` | All gates resolved; bundle ready for negotiation |
-| `task_bundle_abandoned` | Bundle abandoned (new plan or claim withdrawn) |
-
-### Pipeline
-
-```bash
-# Append a plan tree event (validates before write)
-python runtime/plan_event_append.py examples/plan-event.json
-python runtime/plan_event_append.py examples/plan-event.json --dry-run
-
-# Issue a correction (supersedes old plan, keeps it in the log)
-python runtime/plan_correction.py examples/plan-event.json \
-  --reason "missing dignity branch for owner_consent"
-
-# Issue an amendment (partial update; original remains active)
-python runtime/plan_correction.py examples/plan-event.json \
-  --amend --reason "added note to coordination phase"
-
-# Append a task bundle event
-python runtime/task_bundle_append.py examples/task-bundle-event.json
-
-# View active plan, correction chain, bundle status
-python runtime/plan_snapshot.py --claim-id housing-001
-python runtime/plan_snapshot.py --claim-id housing-001 --json
-python runtime/plan_snapshot.py --all-claims --verbose
-```
-
-### Correction chain example
-
-```
-plan-housing-001-v1  [corrected]  ↳ corrected by: plan-housing-001-v2
-plan-housing-001-v2  [active]
-bundle-housing-001-v1  [created]  derived from: plan-housing-001-v2, 8 tasks, 4 blocked
-```
-
-### Plan lineage
-
-```
-claim-housing-001
-  → plan-housing-001-v1   (created)   corrected by
-  → plan-housing-001-v2   (active)    produces
-  → bundle-housing-001-v1 (partially_blocked)
-```
-
-Plan history appears in all graph export formats:
-- **Text:** `── PLAN HISTORY ──` section before federation
-- **HTML:** "Plan History" panel with status badges and correction chain
-- **Mermaid:** `%%` comment lines for plan metadata, dashed correction edges
-
-**Spec:** `PLAN_APPEND_ONLY_SPEC.md`
-
----
-
-## Multi-Agent Plan Negotiation
-
-A plan is not accepted because it is generated.
-A plan is accepted because it survives negotiation.
-
-Multiple agents may propose competing plans. Any agent may object to an
-existing plan. Any agent may propose a better one. The active plan is
-selected deterministically — no hidden ranking, no central authority.
-
-### Negotiation events (append-only, stored in plans.jsonl)
-
-| Event | Meaning |
-|---|---|
-| `plan_supported` | Structured support signal (evidence, not vote) |
-| `plan_objected` | Typed objection (missing_condition, dignity_violation, etc.) |
-| `plan_contested` | Competing plan proposes to replace existing |
-| `plan_rejected` | Formal plan rejection |
-| `active_plan_selected` | Deterministic selection result recorded |
-
-### Pipeline
-
-```bash
-# Signal support for a plan
-python runtime/plan_negotiation_append.py examples/plan-support-event.json
-
-# Signal a typed objection
-python runtime/plan_negotiation_append.py examples/plan-objection-event.json
-
-# Contest a plan with a competing counterplan
-# (auto-creates the counterplan if embedded in the event)
-python runtime/plan_negotiation_append.py examples/plan-contest-event.json
-
-# Select active plan (deterministic, transparent, no write)
-python runtime/active_plan_selector.py --claim-id housing-001
-
-# Select and record the result as active_plan_selected event
-python runtime/active_plan_selector.py --claim-id housing-001 --append
-
-# View negotiation state snapshot
-python runtime/plan_negotiation_snapshot.py --claim-id housing-001
-python runtime/plan_negotiation_snapshot.py --claim-id housing-001 --json
-
-# Plan negotiation graph (focused contest graph)
-python runtime/plan_negotiation_graph.py --claim-id housing-001
-
-# Full graph export includes plan negotiation section
-python runtime/graph_export.py --claim-id housing-001 --format text
-```
-
-### Selection rules (deterministic, transparent)
-
-1. Exclude plans with status `rejected`, `superseded`, or `corrected`
-2. Exclude plans with any `dignity_violation` objection
-3. Fewest objections wins
-4. Most supports wins (if tied on objections)
-5. Shallowest correction depth wins (fresh proposals preferred)
-6. Newest timestamp as final tiebreaker
-
-### Correction vs. Contest
-
-| | Correction | Contest |
-|---|---|---|
-| Who initiates | Original author | Any participant |
-| Effect on original | `corrected` (excluded from selection) | `contested` (still a candidate) |
-| Both preserved | Yes — append-only | Yes — append-only |
-
-**Spec:** `PLAN_NEGOTIATION_SPEC.md`
-
----
-
-## Reflective Memory
-
-Negotiation produces evidence. Without memory, each plan tree cycle starts from zero —
-repeating objected conditions, ignoring learned constraints.
-
-Reflective memory closes the loop:
-
-```
-World Model → Plan Tree → Negotiation → Memory
-      ↑                                     |
-      └──────────── prior_knowledge ────────┘
-```
-
-Memory snapshots are derived from `plans.jsonl` (append-only, never deleted). The latest
-snapshot is injected as `prior_knowledge` into the next world model cycle — automatically
-incorporating conditions learned from competing plan trees.
-
-### What memory captures
-
-| Field | Description |
-|---|---|
-| `active_plan_id` | Currently active plan |
-| `negotiation_status` | `open` / `signalled` / `contested` / `active` |
-| `learned_conditions` | Conditions in counterplans but not in contested plans |
-| `prior_objections` | Typed objection signals per plan |
-| `prior_supports` | Support signals per plan |
-| `correction_chain_depth` | How many correction hops exist |
-| `contest_count` | Number of competing plan proposals |
-
-### Pipeline
-
-```bash
-# Snapshot negotiation history into memory.jsonl
-python runtime/memory_append.py --claim-id housing-001
-
-# View current memory state
-python runtime/memory_snapshot.py --claim-id housing-001
-
-# Check if snapshot is stale (plans.jsonl changed since snapshot)
-python runtime/memory_snapshot.py --claim-id housing-001 --diff
-
-# View prior knowledge block (what the next world model cycle will receive)
-python runtime/memory_snapshot.py --claim-id housing-001 --prior-knowledge
-
-# Build world model enriched with prior knowledge (closes the loop)
-python runtime/world_model_with_memory.py --claim-id housing-001
-```
-
-**Spec:** `REFLECTIVE_MEMORY_SPEC.md`
-
----
-
-## Quick Start — Consent-Established (PASS) Flow
-
-```bash
-# Run dignity guard on a consent-established claim
-python runtime/dignity_guard.py examples/refugee-story-consented.claim.json
-
-# Transform claim to repo asset — expect trust_mode: dignity-first, stream_eligible: true
-python runtime/claim_to_asset.py examples/refugee-story-consented.claim.json
-
-# Preview the active contribution stream
-python runtime/stream_preview.py \
-  examples/refugee-story-consented.claim.json \
-  examples/contribution-stream-consented.json
-```
-
-See `PASS_FLOW_EXAMPLE.md` for the full annotated walkthrough.
-
----
-
-## Dignity-first execution
-
-Dan-Go does not ask: "Can this be monetized?"
-Dan-Go asks: "Can this become real without violating dignity?"
-
-A stream is allowed only after:
-
-- explicit, informed, revocable consent
-- anonymization complete (identity not exposed)
-- risk review passed
-- fair participation and revenue share guaranteed
-- every condition acknowledged — not assumed
-
-When consent is unknown → stream is **blocked**. No exceptions.
-When consent is established → stream enters `dignity-first` trust mode.
-
-`dignity-first` is not a reward. It is the minimum required to proceed.
+## Runtime Overview
+
+All runtime modules:
+- **stdlib only** — no pip installs, no external dependencies
+- **independently runnable** — each module has a CLI (`python runtime/module.py --help`)
+- **read-only by default** — queries do not write; appends are explicit
+- **no execution** — plans are proposals; no module runs tasks
 
 ---
 
 ## Principles
 
 1. No financial product. No investment solicitation.
-2. No keys, no signatures, no transactions.
+2. No tokens. No staking. No DAO.
 3. Dignity before efficiency. Always.
 4. GITSEA is hypothetical. The bridge is real.
-5. If GITSEA fails, fork to another layer.
+5. If GITSEA fails, fork to another layer. Forks are valid participation.
 6. Consent, anonymity, revocability — explicit or blocked.
-7. Do not violate the dignity of another.
+7. Disagreement is part of the protocol. Silence is not resolution.
+8. Do not violate the dignity of another.
+
+---
+
+## Specs
+
+| Document | Subject |
+|----------|---------|
+| `ARCHITECTURE_OVERVIEW.md` | Full system architecture |
+| `WHY_DANGO_EXISTS.md` | The argument for this protocol |
+| `DANGO_GITSEA_OGI_MAP.md` | Dan-Go ↔ GITSEA ↔ OGI ↔ gitlawb mapping |
+| `SUTABLE_APPEND_ONLY_SPEC.md` | Append-only event log |
+| `PLAN_APPEND_ONLY_SPEC.md` | Plan + task bundle persistence |
+| `PLAN_NEGOTIATION_SPEC.md` | Multi-agent plan negotiation |
+| `REFLECTIVE_MEMORY_SPEC.md` | Reflective memory loop |
+| `CLAIM_FEDERATION_SPEC.md` | Claim federation |
+| `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
+| `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |
+| `DIGNITY_GUARD.md` | Dignity guard rules |
+| `DANGO_GITSEA_THESIS.md` | Why this bridge exists |
