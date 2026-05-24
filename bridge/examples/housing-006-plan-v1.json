@@ -1,0 +1,24 @@
+{
+  "_description": "housing-006 pre-certified modular emergency kitchen. Omits space_safety_assessed deliberately — uses precertified_structure + external_safety_audit_attached + embedded_fire_controls as equivalent safety path. Plan is supported without objection (no structural diff → no learned_conditions in memory snapshot).",
+  "event_type": "plan_tree_created",
+  "claim_id": "housing-006",
+  "plan_id": "plan-housing-006-v1",
+  "speaker": "did:key:z6MkPrefabKitchen006",
+  "reasoning_surface": "ogi-compatible",
+  "_key_design_point": "This plan bypasses space_safety_assessed because the modular unit arrives pre-certified. The equivalent safety conditions (precertified_structure, external_safety_audit_attached, embedded_fire_controls) provide the same safety guarantee via a different path.",
+  "plan_tree_conditions": [
+    "revocable_consent",
+    "no_identity_exposure",
+    "participant_consent",
+    "precertified_structure",
+    "external_safety_audit_attached",
+    "embedded_fire_controls",
+    "food_safety_reviewed",
+    "kitchen_equipment_available",
+    "food_distribution_permitted",
+    "volunteer_coordination_established",
+    "all_required_conditions_met"
+  ],
+  "_conditions_absent": ["space_safety_assessed"],
+  "_bypass_reason": "precertified_modular_unit_with_external_audit"
+}

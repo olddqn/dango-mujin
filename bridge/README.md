@@ -319,6 +319,42 @@ python runtime/prerequisite_memory_integration.py --all-claims
 
 **Spec:** `FEDERATION_PREREQUISITE_SPEC.md`
 
+### Prerequisite Deprecation Lifecycle
+
+A prerequisite must remain weakeneable, or it is no longer evidence-based.
+
+housing-006 (pre-certified modular emergency kitchen) demonstrates this:
+its plan uses `precertified_structure + external_safety_audit_attached +
+embedded_fire_controls` in place of `space_safety_assessed`. This is a
+**bypass with an equivalent safety path** — not a gap.
+
+Outcome: `space_safety_assessed` is now in **weakened** state.
+Scope narrowed to `non_precertified_spaces`. The prerequisite still
+applies to any claim that lacks the equivalent precertification evidence.
+
+Survivability score = `requiring / (requiring + bypassing) - 0.15 penalty`
+= `3 / (3+1) - 0.15` = **0.60** (weakened, not at_risk).
+
+Deprecation requires a second bypass claim (bypass_count ≥ 2) plus an
+explicit `federation_prerequisite_deprecated` event — no auto-removal.
+
+```bash
+# Detect bypass patterns and survivability
+python runtime/prerequisite_deprecation_detector.py
+python runtime/prerequisite_survivability.py
+
+# Preview weakening (dry-run)
+python runtime/prerequisite_weakening.py
+
+# Full lifecycle snapshot
+python runtime/prerequisite_deprecation_snapshot.py
+
+# Reevaluate all signals
+python runtime/prerequisite_reevaluation.py
+```
+
+**Spec:** `PREREQUISITE_DEPRECATION_SPEC.md`
+
 ---
 
 ## Structure
@@ -394,9 +430,15 @@ dango-gitsea-bridge/
 │   ├── federation_prerequisite_detector.py ← Cross-claim condition convergence
 │   ├── prerequisite_evidence_bundle.py ← Evidence bundle per prerequisite
 │   ├── prerequisite_promotion.py    ← Promote candidates to federation events
-│   ├── prerequisite_contest_resolver.py ← Contest / reaffirm / deprecate
-│   ├── prerequisite_snapshot.py     ← Query prerequisite state
-│   └── prerequisite_memory_integration.py ← Advisory hints → world model
+│   ├── prerequisite_contest_resolver.py ← Contest / reaffirm / deprecate / weaken
+│   ├── prerequisite_snapshot.py     ← Query prerequisite state (incl. weakened)
+│   ├── prerequisite_memory_integration.py ← Advisory hints → world model
+│   ├── prerequisite_alternative_plan.py ← Detect bypass plans with equiv safety
+│   ├── prerequisite_deprecation_detector.py ← Bypass patterns + weakening/deprecation candidates
+│   ├── prerequisite_survivability.py ← Survivability score (requiring vs bypassing)
+│   ├── prerequisite_weakening.py    ← Append weakened events (scope narrowing)
+│   ├── prerequisite_reevaluation.py ← Lifecycle synthesis (all signals)
+│   └── prerequisite_deprecation_snapshot.py ← Full lifecycle query
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   └── runtime/

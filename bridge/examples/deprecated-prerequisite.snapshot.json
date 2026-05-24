@@ -1,0 +1,28 @@
+{
+  "_description": "Hypothetical full deprecation snapshot. Shows what space_safety_assessed would look like if two bypass claims (housing-006 + housing-007) had equivalent safety, reducing survivability to 0.35 (below at_risk), and a federation_prerequisite_deprecated event was then appended.",
+  "_status": "HYPOTHETICAL — not yet reached in the current event log",
+  "_how_to_reach": [
+    "1. Add housing-007 plan with precertified_structure + external_safety_audit_attached",
+    "2. Run prerequisite_deprecation_detector.py → deprecation_candidate=True (bypass_count >= 2)",
+    "3. Run prerequisite_contest_resolver.py --deprecate space_safety_assessed --reason '...' --speaker did:key:zDeprecater",
+    "4. Run prerequisite_deprecation_snapshot.py → lifecycle_state=deprecated"
+  ],
+  "_hypothetical_survivability": {
+    "requiring_count": 3,
+    "bypassing_count": 2,
+    "base_score": 0.60,
+    "objector_penalty": 0.15,
+    "survivability": 0.45,
+    "status": "at_risk"
+  },
+  "_hypothetical_deprecation_event": {
+    "event_type": "federation_prerequisite_deprecated",
+    "condition": "space_safety_assessed",
+    "deprecation_reason": "Two independent claims (housing-006, housing-007) successfully achieved identical safety outcomes via precertified_structure + external_safety_audit_attached + embedded_fire_controls, without space_safety_assessed. The condition is no longer necessary when equivalent precertification evidence is attached.",
+    "speaker": "did:key:zDeprecater",
+    "authority": "none",
+    "contestable": true,
+    "note": "A deprecated prerequisite can be re-promoted if new convergence evidence emerges. The promotion event is permanent in federation.jsonl."
+  },
+  "_design_note": "No auto-removal. No centralized override. A human (or an agent with appropriate standing) must explicitly append the deprecation event after reviewing the evidence. The event is append-only; the promotion event is never deleted."
+}

@@ -1,0 +1,51 @@
+{
+  "_description": "Full deprecation lifecycle snapshot. space_safety_assessed is in 'weakened' state. Lifecycle: promoted → reaffirmed → weakened. To reach deprecated, a second bypass claim with equivalent safety is needed (bypass_count >= 2).",
+  "_generated_by": "python3 runtime/prerequisite_deprecation_snapshot.py --json",
+  "condition": "space_safety_assessed",
+  "lifecycle_state": "weakened",
+  "survivability": 0.6,
+  "survivability_status": "weakened",
+  "requiring_count": 3,
+  "bypassing_count": 1,
+  "weakening_candidate": false,
+  "deprecation_candidate": false,
+  "recommended_action": "monitor — weakened scope; watch for additional bypass evidence",
+  "bypass_details": [
+    {
+      "claim_id": "housing-006",
+      "plan_id": "plan-housing-006-v1",
+      "condition": "space_safety_assessed",
+      "bypasses_prerequisite": true,
+      "equivalent_safety_found": true,
+      "equivalent_conditions": [
+        "embedded_fire_controls",
+        "external_safety_audit_attached",
+        "precertified_structure"
+      ],
+      "requires_local_assessment": false,
+      "basis": "plan_tree",
+      "dignity_safe": true
+    }
+  ],
+  "lifecycle_events": [
+    {
+      "event_type": "federation_prerequisite_promoted",
+      "timestamp": "2026-05-24T08:36:51.237925+00:00",
+      "hash": "17f0338a7e45"
+    },
+    {
+      "event_type": "federation_prerequisite_reaffirmed",
+      "timestamp": "2026-05-24T09:03:36.506468+00:00",
+      "hash": "201ac8375ca9"
+    },
+    {
+      "event_type": "federation_prerequisite_weakened",
+      "timestamp": "2026-05-24T09:25:08.352827+00:00",
+      "hash": "9c452c482819"
+    }
+  ],
+  "new_scope": "non_precertified_spaces",
+  "_lifecycle_path": "promoted → reaffirmed → weakened",
+  "_next_threshold": "bypass_count >= 2 with equivalent_safety=True → deprecation_candidate",
+  "_what_would_deprecate": "A second independent claim (e.g. housing-007) that successfully omits space_safety_assessed using equivalent safety conditions, then a federation_prerequisite_deprecated event appended after manual review."
+}

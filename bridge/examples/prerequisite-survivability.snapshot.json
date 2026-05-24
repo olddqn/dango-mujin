@@ -1,0 +1,27 @@
+{
+  "_description": "Live survivability snapshot for space_safety_assessed after housing-006 bypass. Score = base(0.75) - objector_penalty(0.15) = 0.60. Status: weakened. Prerequisite remains active for non_precertified_spaces.",
+  "_generated_by": "python3 runtime/prerequisite_survivability.py --json",
+  "condition": "space_safety_assessed",
+  "requiring_count": 3,
+  "bypassing_count": 1,
+  "base_score": 0.75,
+  "objector_penalty": 0.15,
+  "survivability": 0.6,
+  "status": "weakened",
+  "shared_objector": true,
+  "requiring_claims": [
+    "housing-001",
+    "housing-002",
+    "housing-004"
+  ],
+  "bypassing_claims": [
+    "housing-006"
+  ],
+  "_formula": "base = requiring / (requiring + bypassing) = 3/4 = 0.75; penalty = 0.15 (shared_objector=True); survivability = 0.75 - 0.15 = 0.60",
+  "_score_bands": {
+    "strong":              "survivability >= 0.80",
+    "weakened":            "survivability >= 0.50",
+    "at_risk":             "survivability >= 0.20",
+    "deprecated_candidate": "survivability < 0.20"
+  }
+}

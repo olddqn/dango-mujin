@@ -1,0 +1,16 @@
+{
+  "_description": "housing-006 memory snapshot. Plan v1 was supported without objection, so no structural plan contest occurred → learned_conditions is empty. The snapshot records bypass_conditions and equivalent_safety_conditions for the deprecation detector to consume.",
+  "event_type": "memory_snapshot_created",
+  "claim_id": "housing-006",
+  "speaker": "did:key:z6MkPrefabKitchen006",
+  "snapshot_type": "reflective_memory",
+  "learned_conditions": [],
+  "_note": "No learned_conditions because no contest occurred. The bypass is structural: plan-v1 was accepted as-is.",
+  "bypass_conditions": ["space_safety_assessed"],
+  "bypass_reason": "precertified_modular_unit_with_external_audit",
+  "equivalent_safety_conditions": [
+    "precertified_structure",
+    "external_safety_audit_attached",
+    "embedded_fire_controls"
+  ]
+}
