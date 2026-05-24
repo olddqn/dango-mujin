@@ -1,0 +1,34 @@
+[
+  {
+    "claim_id": "housing-006",
+    "condition": "space_safety_assessed",
+    "issue_status": "suppressed",
+    "issue_candidate": false,
+    "scope_status": "bypassed",
+    "markdown_renderable": true,
+    "markdown_length": 2098,
+    "execution_allowed": false,
+    "moves_money": false,
+    "advisory": true,
+    "written_to": "gitlawb/examples/github-issue-housing-006.md",
+    "suppression_reason": "prerequisite bypassed by scoped resolution",
+    "bypass_conditions": [
+      "embedded_fire_controls",
+      "external_safety_audit_attached",
+      "precertified_structure"
+    ]
+  },
+  {
+    "claim_id": "housing-007",
+    "condition": "space_safety_assessed",
+    "issue_status": "open_draft",
+    "issue_candidate": true,
+    "scope_status": "applicable",
+    "markdown_renderable": true,
+    "markdown_length": 5068,
+    "execution_allowed": false,
+    "moves_money": false,
+    "advisory": true,
+    "written_to": "gitlawb/examples/github-issue-housing-007.md"
+  }
+]

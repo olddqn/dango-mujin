@@ -474,6 +474,51 @@ Expected:
 
 **Spec:** `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md`
 
+### GitHub / Gitlawb Markdown Rendering
+
+Dan-Go can render scoped issue drafts into GitHub-compatible Markdown.
+
+These Markdown files are:
+- advisory
+- contestable
+- dignity-aware
+- execution-disabled
+
+Human-readable negotiation is part of the protocol.
+
+```bash
+# Render applicable issue → Markdown
+python gitlawb/runtime/scoped_issue_markdown.py \
+  gitlawb/examples/scoped-issue-housing-007.output.json \
+  > gitlawb/examples/github-issue-housing-007.md
+
+# Render suppressed issue → bypass explanation Markdown
+python gitlawb/runtime/scoped_issue_markdown.py \
+  gitlawb/examples/scoped-issue-housing-006.output.json \
+  > gitlawb/examples/github-issue-housing-006.md
+
+# Render issue + PR feedback lifecycle
+python gitlawb/runtime/scoped_issue_markdown.py \
+  gitlawb/examples/scoped-issue-housing-007.output.json \
+  --pr-feedback gitlawb/examples/scoped-pr-feedback.output.json \
+  > gitlawb/examples/scoped-pr-markdown.md
+
+# Full snapshot across all claims (console)
+python gitlawb/runtime/rendered_issue_snapshot.py
+
+# Write all rendered Markdown to gitlawb/examples/
+python gitlawb/runtime/rendered_issue_snapshot.py --write-files
+```
+
+Expected:
+- housing-007: full issue Markdown, negotiation context, dignity guard visible
+- housing-006: suppression explanation, bypass conditions explained
+- All output: `execution_allowed: false`, `authority: none`, `moves_money: false`
+- No HTML dependency — pure Markdown only
+- Deterministic · stdlib only
+
+**Spec:** `gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md`
+
 ### Gitlawb / GITSEA Demo
 
 Dan-Go can turn a missing condition into an agent-readable issue.
@@ -608,6 +653,7 @@ dango-gitsea-bridge/
 │   ├── ISSUE_TO_PR_FEEDBACK_SPEC.md ← Issue → agent task → PR → feedback
 │   ├── GITSEA_STREAM_CANDIDATE_SPEC.md ← Stream candidate structure
 │   ├── SCOPED_ISSUE_GENERATION_SPEC.md ← Scoped prerequisite → issue draft spec
+│   ├── ISSUE_MARKDOWN_RENDERING_SPEC.md ← Markdown rendering spec
 │   ├── examples/
 │   │   ├── claim-to-issue.input.json  ← housing-004 claim with missing condition
 │   │   ├── issue-draft.output.json    ← Issue draft + agent task hint
@@ -616,17 +662,26 @@ dango-gitsea-bridge/
 │   │   ├── scoped-issue-housing-007.output.json ← Applicable prerequisite issue (housing-007)
 │   │   ├── scoped-issue-housing-006.output.json ← Suppressed issue (housing-006, bypassed)
 │   │   ├── scoped-agent-task.output.json        ← Agent task from scoped issue
-│   │   └── scoped-pr-feedback.output.json       ← PR feedback with scope context
+│   │   ├── scoped-pr-feedback.output.json       ← PR feedback with scope + markdown_summary
+│   │   ├── github-issue-housing-007.md          ← Rendered Markdown (applicable)
+│   │   ├── github-issue-housing-006.md          ← Rendered Markdown (suppression explanation)
+│   │   ├── scoped-pr-markdown.md                ← Issue + PR feedback lifecycle Markdown
+│   │   └── rendered-issue.snapshot.json         ← Rendering snapshot across all claims
 │   └── runtime/
 │       ├── claim_to_issue.py          ← Claim → Gitlawb issue draft
 │       ├── issue_to_agent_task.py     ← Issue draft → agent task spec
 │       ├── pr_feedback_mapper.py      ← PR events → reality feedback (scope-aware)
 │       ├── stream_candidate_preview.py← Contributions → stream candidates
-│       ├── scoped_plan_to_issue.py    ← Scoped plan tree → issue drafts
+│       ├── scoped_plan_to_issue.py    ← Scoped plan tree → issue drafts (markdown_renderable)
 │       ├── scoped_issue_filter.py     ← Filter/annotate scoped issues
 │       ├── scoped_issue_to_task.py    ← Scoped issue → agent task spec
-│       ├── scoped_pr_feedback.py      ← PR feedback with scope_status fields
-│       └── scoped_issue_snapshot.py   ← Full snapshot across all claims
+│       ├── scoped_pr_feedback.py      ← PR feedback with scope + markdown_summary
+│       ├── scoped_issue_snapshot.py   ← Full snapshot across all claims
+│       ├── issue_markdown_renderer.py ← Issue JSON → GitHub Markdown
+│       ├── scoped_issue_markdown.py   ← CLI: render single issue as Markdown
+│       ├── negotiation_context_renderer.py ← Render negotiation context section
+│       ├── prerequisite_markdown_renderer.py ← Render prerequisite state sections
+│       └── rendered_issue_snapshot.py ← Markdown snapshot across all claims
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   ├── SCOPED_PLAN_TREE_INTEGRATION.md ← Scoped prerequisite plan tree spec
@@ -707,6 +762,7 @@ All runtime modules:
 | `FEDERATION_PREREQUISITE_SPEC.md` | Federation prerequisite promotion |
 | `SCOPED_PREREQUISITE_SPEC.md` | Scoped prerequisite inheritance layer |
 | `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md` | Scoped issue generation pipeline |
+| `gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md` | GitHub-compatible Markdown rendering |
 | `ogi/SCOPED_PLAN_TREE_INTEGRATION.md` | Scoped prerequisite plan tree integration |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |

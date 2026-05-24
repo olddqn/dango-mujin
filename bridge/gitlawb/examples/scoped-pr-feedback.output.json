@@ -34,7 +34,8 @@
       "gitsea_eligible": false,
       "advisory": true,
       "gitsea_note": "Not GITSEA-eligible at this stage \u2014 requires pr_merged."
-    }
+    },
+    "markdown_summary": "Evidence submitted. Awaiting peer review. Condition is not satisfied until merged."
   },
   {
     "pr_event": "pr_reviewed",
@@ -71,7 +72,8 @@
       "gitsea_eligible": false,
       "advisory": true,
       "gitsea_note": "Not GITSEA-eligible at this stage \u2014 requires pr_merged."
-    }
+    },
+    "markdown_summary": "Evidence reviewed. Scope context preserved. Condition is not satisfied until merged."
   },
   {
     "pr_event": "pr_merged",
@@ -109,6 +111,7 @@
       "gitsea_eligible": true,
       "advisory": true,
       "gitsea_note": "Merged contribution for scoped condition 'space_safety_assessed' (scope: non_precertified_spaces). GITSEA-eligible if stream activates. No funds move now."
-    }
+    },
+    "markdown_summary": "PR merged. Condition evidence accepted. Negotiation remains reopenable. Append a `plan_correction` event to formally update the plan tree."
   }
 ]

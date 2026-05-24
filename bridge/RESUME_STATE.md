@@ -1,8 +1,8 @@
-# RESUME_STATE.md — Scoped Issue Generation
+# RESUME_STATE.md — GitHub-Compatible Markdown Rendering
 
 > **STATUS: COMPLETE**
 
-**Phase:** Scoped Issue Generation (Gitlawb pipeline)
+**Phase:** Scoped Issue Markdown Rendering
 **Branch:** main
 **Completed:** 2026-05-24
 
@@ -19,107 +19,96 @@
 - Federation Prerequisite Deprecation Lifecycle (commits 7649826..0dd26b3)
 - Scoped Prerequisite Inheritance Layer (commits 591817e..6a6d393)
 - Gitlawb GITSEA Bountyless PR Market Demo (commit ca7d290)
-- Scoped Plan Tree OGI Integration
-- **Scoped Issue Generation** (this commit)
+- Scoped Plan Tree OGI Integration (commit 17b344c)
+- Scoped Issue Generation (commit a93ffb0)
+- **Scoped Issue Markdown Rendering** (this commit)
 
 ---
 
-## Scoped Issue Generation: Results
+## Markdown Rendering: Results
 
-Core principle: A scoped issue is not a command. It is a negotiation invitation.
+Core principle: Human-readable negotiation is part of the protocol.
 
-### housing-006 Issue Result
-
-```
-scoped-issue-housing-006.output.json
-  condition:     space_safety_assessed
-  scope_status:  bypassed
-  issue_candidate: false
-  reason: "prerequisite bypassed by scoped prerequisite resolution"
-  filter_action: suppress
-  filter_reason: bypass
-```
-
-### housing-007 Issue Result
+### housing-007 Markdown Result
 
 ```
-scoped-issue-housing-007.output.json
-  condition:     space_safety_assessed
-  scope_status:  applicable
-  issue_candidate: true
-  title: "[Scoped Prerequisite] space_safety_assessed required — housing-007"
-  labels: [dan-go, scoped-prerequisite, safety-critical, dignity-first, contestable, ...]
-  negotiation_context:
-    contestable: true
-    authority: none
-    hard_enforcement: false
-    negotiation_reopen_allowed: true
+github-issue-housing-007.md  (5068 chars, 17 sections)
+  issue_status:      open_draft
+  scope_status:      applicable
+  markdown_renderable: true
+  Contains:
+    - Why This Prerequisite Applies (scope signals table)
+    - Prerequisite Lifecycle: Weakened
+    - How to Resolve (5 steps)
+    - Negotiation Context (authority/contestable/hard_enforcement table)
+    - Agent Task Hint
+    - Dignity Guard
+    - Important (advisory notice)
+    - Advisory footer
 ```
 
-### Agent Task Result (housing-007)
+### housing-006 Markdown Result
 
 ```
-scoped-agent-task.output.json
-  task_generated: true
-  task_type: safety_review
-  scope_status: applicable
-  priority: high
-  execution_allowed: false
-  hard_enforcement: false
-  contestable: true
-  negotiation_reopen_allowed: true
-  moves_money: false
+github-issue-housing-006.md  (2098 chars)
+  issue_status:      suppressed
+  scope_status:      bypassed
+  markdown_renderable: true
+  Contains:
+    - Status: Issue suppressed
+    - Bypass Explanation (3 bypass conditions with descriptions)
+    - "A bypassed prerequisite is still memory..."
+    - Transparency (how to contest the suppression)
+    - Advisory footer
 ```
 
-### PR Feedback Result
+### PR Feedback Markdown Result
 
 ```
-scoped-pr-feedback.output.json
+scoped-pr-markdown.md  (181 lines)
   3 events: pr_opened → pr_reviewed → pr_merged
-  Every event carries:
-    scope_status: applicable
-    hard_enforcement: false
-    contestable: true
-    negotiation_reopen_allowed: true
-    moves_money: false
-  pr_merged note: "Negotiation can reopen — PR merge is not final truth."
-  pr_merged: gitsea_eligible: true (no funds activated)
+  PR lifecycle table
+  Per-event notes with negotiation_reopen, hard_enforcement, contestable
+  pr_merged: "Negotiation remains reopenable."
+  Advisory: "PR merge is not truth."
 ```
 
 ### Snapshot Result
 
 ```
-python gitlawb/runtime/scoped_issue_snapshot.py --applicable-only
-  housing-007 / space_safety_assessed → open_draft
-  housing-006 / space_safety_assessed → suppressed (bypassed)
+python gitlawb/runtime/rendered_issue_snapshot.py
+  Total: 2  Rendered: 1  Suppressed: 1
+  housing-007: open_draft  · markdown_length: 5068
+  housing-006: suppressed  · markdown_length: 2098
+  Invariants: execution_allowed=False, moves_money=False, advisory=True
 ```
 
 ---
 
 ## New Files
 
-- gitlawb/runtime/scoped_plan_to_issue.py
-- gitlawb/runtime/scoped_issue_filter.py
-- gitlawb/runtime/scoped_issue_to_task.py
-- gitlawb/runtime/scoped_pr_feedback.py
-- gitlawb/runtime/scoped_issue_snapshot.py
-- gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md
-- gitlawb/examples/scoped-issue-housing-007.output.json
-- gitlawb/examples/scoped-issue-housing-006.output.json
-- gitlawb/examples/scoped-agent-task.output.json
-- gitlawb/examples/scoped-pr-feedback.output.json
+- gitlawb/runtime/issue_markdown_renderer.py
+- gitlawb/runtime/scoped_issue_markdown.py
+- gitlawb/runtime/negotiation_context_renderer.py
+- gitlawb/runtime/prerequisite_markdown_renderer.py
+- gitlawb/runtime/rendered_issue_snapshot.py
+- gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md
+- gitlawb/examples/github-issue-housing-007.md
+- gitlawb/examples/github-issue-housing-006.md
+- gitlawb/examples/scoped-pr-markdown.md
+- gitlawb/examples/rendered-issue.snapshot.json
 
 ## Updated Files
 
-- gitlawb/runtime/claim_to_issue.py (scoped generation preference)
-- gitlawb/runtime/issue_to_agent_task.py (scope_status, hard_enforcement, negotiation fields)
-- gitlawb/runtime/pr_feedback_mapper.py (scope_status, contestable, negotiation_reopen_allowed)
-- README.md (Scoped Issue Generation section + gitlawb directory tree update)
+- gitlawb/runtime/scoped_pr_feedback.py (markdown_summary field added)
+- gitlawb/runtime/scoped_plan_to_issue.py (markdown_renderable: true added)
+- gitlawb/examples/scoped-pr-feedback.output.json (regenerated with markdown_summary)
+- README.md (Markdown Rendering section + directory tree update + Specs table)
 - RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all scoped issue records)
+## Key Invariants (all rendered output)
 
 | Field                      | Value   |
 |----------------------------|---------|
@@ -130,6 +119,7 @@ python gitlawb/runtime/scoped_issue_snapshot.py --applicable-only
 | `contestable`              | `true`  |
 | `negotiation_reopen_allowed` | `true` |
 | `authority`                | `none`  |
+| `markdown_renderable`      | `true`  |
 
 ---
 
@@ -138,24 +128,22 @@ python gitlawb/runtime/scoped_issue_snapshot.py --applicable-only
 - DID signatures still mock
 - GITSEA still hypothetical (no stream activates)
 - `food_safety_reviewed` below promotion threshold (1 claim only)
-- Scope conflict detection is advisory only (intentional)
-- Deprecation requires explicit event (intentional — no auto-removal)
-- Plan tree for claims without plans.jsonl entries will be empty (by design)
-- scoped_issue_snapshot.py scans only `ogi/examples/scoped-plan-*.output.json`
+- Markdown rendering is output-only — no GitHub paste automation (intentional)
+- `rendered_issue_snapshot.py` scans only `gitlawb/examples/scoped-issue-*.output.json`
+- HTML not generated — pure Markdown only (intentional)
 
 ---
 
 ## Next Step Candidates
 
-1. **Plan correction event** — formal plan_correction flow after PR merge
-2. **Contest protocol** — structured way to contest a scoped prerequisite with a
-   better plan tree (without a coordinator)
-3. **Federated issue snapshot** — aggregate scoped_issue_snapshot across
-   multiple gitlawb nodes
-4. **OGI task bundle from scoped plan** — feed housing-007 scoped plan into
-   plan_tree_to_tasks.py, verify tasks respect bypass
-5. **Public negotiation UI** — render scoped plan tree + issue drafts as HTML
+1. **Plan correction event rendering** — Markdown document for `plan_correction` after PR merge
+2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
+3. **Multi-agent negotiation rendering** — render negotiation between multiple claims
+4. **GITSEA stream candidate Markdown** — human-readable preview of stream candidate
+5. **Public negotiation dashboard** — render scoped plan tree + issues + PR history as HTML
+6. **Federated snapshot** — aggregate `rendered_issue_snapshot` across multiple gitlawb nodes
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
+*Human-readable negotiation is part of the protocol.*

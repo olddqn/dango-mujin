@@ -81,6 +81,37 @@ def _pr_note(event: str, condition: str, scope_status: str) -> str:
     return notes.get(event, f"PR event '{event}' recorded.")
 
 
+# ── Markdown summary ──────────────────────────────────────────────────────────
+
+_MARKDOWN_SUMMARIES: dict[str, str] = {
+    "pr_opened": (
+        "Evidence submitted. Awaiting peer review. "
+        "Condition is not satisfied until merged."
+    ),
+    "pr_reviewed": (
+        "Evidence reviewed. Scope context preserved. "
+        "Condition is not satisfied until merged."
+    ),
+    "pr_merged": (
+        "PR merged. Condition evidence accepted. "
+        "Negotiation remains reopenable. "
+        "Append a `plan_correction` event to formally update the plan tree."
+    ),
+    "pr_rejected": (
+        "PR rejected. Evidence not accepted. "
+        "Condition remains open. A new PR or alternative evidence path is needed."
+    ),
+}
+
+
+def _markdown_summary(event: str, condition: str) -> str:
+    """Return a one-line human-readable markdown summary for a PR event."""
+    base = _MARKDOWN_SUMMARIES.get(
+        event, f"PR event `{event}` recorded for `{condition}`."
+    )
+    return base
+
+
 # ── Core ──────────────────────────────────────────────────────────────────────
 
 def _extract_task_fields(source: dict[str, Any]) -> dict[str, Any]:
@@ -202,11 +233,15 @@ def generate_scoped_pr_feedback(
             ),
         }
 
+        # Human-readable markdown summary for this event
+        markdown_summary = _markdown_summary(event, condition)
+
         results.append({
             "pr_event":         event,
             "pr_id":            pr_id,
             "reality_feedback": reality_feedback,
             "stream_candidate": stream_candidate,
+            "markdown_summary": markdown_summary,
         })
 
     return results

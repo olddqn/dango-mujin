@@ -211,24 +211,26 @@ def generate_issue_candidate(
     # ── Suppression cases ─────────────────────────────────────────────────────
     if scope_status == "bypassed":
         return {
-            "issue_candidate":   False,
-            "claim_id":          claim_id,
-            "condition":         condition,
-            "scope_status":      "bypassed",
-            "reason":            "prerequisite bypassed by scoped resolution",
-            "bypass_conditions": bypassing,
-            "scope":             scope,
-            "advisory":          True,
+            "issue_candidate":    False,
+            "claim_id":           claim_id,
+            "condition":          condition,
+            "scope_status":       "bypassed",
+            "reason":             "prerequisite bypassed by scoped resolution",
+            "bypass_conditions":  bypassing,
+            "scope":              scope,
+            "advisory":           True,
+            "markdown_renderable": True,
         }
 
     if deprecated:
         return {
-            "issue_candidate":   False,
-            "claim_id":          claim_id,
-            "condition":         condition,
-            "scope_status":      scope_status,
-            "reason":            "prerequisite deprecated — lifecycle ended",
-            "advisory":          True,
+            "issue_candidate":    False,
+            "claim_id":           claim_id,
+            "condition":          condition,
+            "scope_status":       scope_status,
+            "reason":             "prerequisite deprecated — lifecycle ended",
+            "advisory":           True,
+            "markdown_renderable": True,
         }
 
     # ── Issue draft for applicable prerequisite ───────────────────────────────
@@ -267,9 +269,10 @@ def generate_issue_candidate(
             "execution_allowed":     False,
             "reason":                "requires human/agent negotiation before execution",
         },
-        "execution_allowed":  False,
-        "moves_money":        False,
-        "advisory":           True,
+        "execution_allowed":   False,
+        "moves_money":         False,
+        "advisory":            True,
+        "markdown_renderable": True,
     }
 
 
