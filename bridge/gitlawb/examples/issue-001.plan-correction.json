@@ -1,0 +1,28 @@
+{
+  "event_type": "plan_correction_proposed",
+  "timestamp": "2026-05-24T14:48:34Z",
+  "claim_id": "housing-007",
+  "condition": "space_safety_assessed",
+  "corrects_plan": "plan-housing-007-v1",
+  "proposed_plan": "plan-housing-007-v2",
+  "reason": "counter_evidence",
+  "reopens_issue": 1,
+  "triggered_by_pr": "pr-housing-007-space-safety-assessed-001",
+  "correction_description": "New evidence for `space_safety_assessed` requires re-evaluation of the plan tree for `housing-007`. The updated plan incorporates the counter-evidence into the reasoning surface.",
+  "note": "New evidence for `space_safety_assessed` requires re-evaluation of the plan tree for `housing-007`. The updated plan incorporates the counter-evidence into the reasoning surface.",
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "contestable": true,
+  "hard_enforcement": false,
+  "append_only": true,
+  "original_plan_preserved": true,
+  "note_append_only": "The original plan `plan-housing-007-v1` is NOT deleted. Both versions remain in the append-only event log. The plan tree can be regenerated from either version.",
+  "note_merge": "A merged PR is evidence. Not authority. This correction addresses the condition `space_safety_assessed` based on the negotiation_reopened event.",
+  "proposed_plan_changes": [
+    "Re-evaluate `space_safety_assessed` evidence node",
+    "Attach counter-evidence as a sibling assertion",
+    "Branch: if counter-evidence invalidates original \u2192 abstain"
+  ]
+}

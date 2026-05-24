@@ -519,6 +519,55 @@ Expected:
 
 **Spec:** `gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md`
 
+### Reopenable PR Negotiation
+
+Dan-Go treats PRs as negotiation evidence.
+
+Merged PRs remain:
+- contestable
+- reopenable
+- append-only
+- dignity-aware
+
+A merged PR is evidence. Not authority.
+
+Issue → PR Draft → PR Feedback → Negotiation Reopen → Plan Correction.
+No step deletes prior steps. All steps remain in the append-only event log.
+
+```bash
+# Render PR draft from scoped issue
+python gitlawb/runtime/pr_draft_renderer.py \
+  gitlawb/examples/scoped-issue-housing-007.output.json \
+  > gitlawb/examples/issue-001.pr-draft.md
+
+# Generate negotiation reopen event (after PR merge)
+python gitlawb/runtime/negotiation_reopen.py \
+  gitlawb/examples/issue-001.pr-feedback.json \
+  > gitlawb/examples/issue-001.reopen-event.json
+
+# Generate plan correction proposal (from reopen event)
+python gitlawb/runtime/plan_correction_renderer.py \
+  gitlawb/examples/issue-001.reopen-event.json \
+  > gitlawb/examples/issue-001.plan-correction.json
+
+# Render full negotiation history as Markdown
+python gitlawb/runtime/negotiation_history_renderer.py \
+  > gitlawb/examples/issue-001.negotiation-history.md
+
+# Generate append-only timeline JSON (7 steps)
+python gitlawb/runtime/negotiation_timeline.py \
+  > gitlawb/examples/issue-001.timeline.json
+```
+
+Expected:
+- Timeline: 7 steps (issue_created → plan_correction_proposed)
+- All steps: `authority: none`, `append_only: true`
+- PR merge step: `reopenable: true`, `negotiation_reopen_allowed: true`
+- Plan correction: original plan preserved, new version proposed
+- No deletion · No overwrite · stdlib only
+
+**Spec:** `gitlawb/PR_NEGOTIATION_REOPEN_SPEC.md`
+
 ### Gitlawb / GITSEA Demo
 
 Dan-Go can turn a missing condition into an agent-readable issue.
@@ -654,6 +703,7 @@ dango-gitsea-bridge/
 │   ├── GITSEA_STREAM_CANDIDATE_SPEC.md ← Stream candidate structure
 │   ├── SCOPED_ISSUE_GENERATION_SPEC.md ← Scoped prerequisite → issue draft spec
 │   ├── ISSUE_MARKDOWN_RENDERING_SPEC.md ← Markdown rendering spec
+│   ├── PR_NEGOTIATION_REOPEN_SPEC.md   ← Reopenable PR negotiation lifecycle
 │   ├── examples/
 │   │   ├── claim-to-issue.input.json  ← housing-004 claim with missing condition
 │   │   ├── issue-draft.output.json    ← Issue draft + agent task hint
@@ -666,7 +716,13 @@ dango-gitsea-bridge/
 │   │   ├── github-issue-housing-007.md          ← Rendered Markdown (applicable)
 │   │   ├── github-issue-housing-006.md          ← Rendered Markdown (suppression explanation)
 │   │   ├── scoped-pr-markdown.md                ← Issue + PR feedback lifecycle Markdown
-│   │   └── rendered-issue.snapshot.json         ← Rendering snapshot across all claims
+│   │   ├── rendered-issue.snapshot.json         ← Rendering snapshot across all claims
+│   │   ├── issue-001.pr-draft.md                ← PR draft for Issue #1 (housing-007)
+│   │   ├── issue-001.pr-feedback.json           ← PR lifecycle events for Issue #1
+│   │   ├── issue-001.reopen-event.json          ← Negotiation reopen event (post-merge)
+│   │   ├── issue-001.plan-correction.json       ← Plan correction proposal (v1 → v2)
+│   │   ├── issue-001.negotiation-history.md     ← Full negotiation history Markdown
+│   │   └── issue-001.timeline.json              ← Append-only timeline (7 steps)
 │   └── runtime/
 │       ├── claim_to_issue.py          ← Claim → Gitlawb issue draft
 │       ├── issue_to_agent_task.py     ← Issue draft → agent task spec
@@ -681,7 +737,12 @@ dango-gitsea-bridge/
 │       ├── scoped_issue_markdown.py   ← CLI: render single issue as Markdown
 │       ├── negotiation_context_renderer.py ← Render negotiation context section
 │       ├── prerequisite_markdown_renderer.py ← Render prerequisite state sections
-│       └── rendered_issue_snapshot.py ← Markdown snapshot across all claims
+│       ├── rendered_issue_snapshot.py ← Markdown snapshot across all claims
+│       ├── pr_draft_renderer.py       ← Issue → PR draft Markdown
+│       ├── negotiation_reopen.py      ← Generate negotiation_reopened event
+│       ├── plan_correction_renderer.py← Reopen → plan_correction_proposed
+│       ├── negotiation_history_renderer.py ← Full history as Markdown
+│       └── negotiation_timeline.py    ← Append-only 7-step timeline JSON
 │
 ├── ogi/                             ← OGI-compatible reasoning surface
 │   ├── SCOPED_PLAN_TREE_INTEGRATION.md ← Scoped prerequisite plan tree spec
@@ -763,6 +824,7 @@ All runtime modules:
 | `SCOPED_PREREQUISITE_SPEC.md` | Scoped prerequisite inheritance layer |
 | `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md` | Scoped issue generation pipeline |
 | `gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md` | GitHub-compatible Markdown rendering |
+| `gitlawb/PR_NEGOTIATION_REOPEN_SPEC.md` | Reopenable PR negotiation lifecycle |
 | `ogi/SCOPED_PLAN_TREE_INTEGRATION.md` | Scoped prerequisite plan tree integration |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |

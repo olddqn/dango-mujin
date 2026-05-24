@@ -1,0 +1,32 @@
+{
+  "event_type": "negotiation_reopened",
+  "timestamp": "2026-05-24T14:48:25Z",
+  "claim_id": "housing-007",
+  "condition": "space_safety_assessed",
+  "scope_status": "applicable",
+  "scope": "non_precertified_spaces",
+  "prerequisite_state": "weakened",
+  "pr_id": "pr-housing-007-space-safety-assessed-001",
+  "reopens_issue": 1,
+  "reopens_condition": "space_safety_assessed",
+  "reason": "counter_evidence",
+  "reason_description": "New evidence has been submitted that contradicts or qualifies the previously accepted evidence. The condition requires re-evaluation.",
+  "note": "New evidence has been submitted that contradicts or qualifies the previously accepted evidence. The condition requires re-evaluation.",
+  "authority": "none",
+  "contestable": true,
+  "hard_enforcement": false,
+  "negotiation_reopen_allowed": true,
+  "reopenable": true,
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "reopen_reason_examples": [
+    "counter_evidence",
+    "bypass_equivalence",
+    "dignity_violation",
+    "prerequisite_deprecation",
+    "scope_contest"
+  ],
+  "append_only": true,
+  "note_merge": "A merged PR is evidence. Not authority. This reopen event does not invalidate the PR \u2014 it records that the negotiation has entered a new phase."
+}

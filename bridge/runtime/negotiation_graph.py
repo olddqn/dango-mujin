@@ -27,6 +27,7 @@ EdgeDict:
   from       — source node ID
   to         — target node ID
   kind       — "temporal" | "correction" | "hash_chain"
+              | "pr_draft" | "pr_feedback" | "negotiation_reopen" | "plan_correction"
 
 Design notes:
   - Correction events produce a "correction" (dashed) edge from the original

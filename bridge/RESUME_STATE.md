@@ -1,8 +1,8 @@
-# RESUME_STATE.md — GitHub-Compatible Markdown Rendering
+# RESUME_STATE.md — Reopenable PR Negotiation
 
 > **STATUS: COMPLETE**
 
-**Phase:** Scoped Issue Markdown Rendering
+**Phase:** Reopenable PR Negotiation Lifecycle (Issue #1)
 **Branch:** main
 **Completed:** 2026-05-24
 
@@ -21,105 +21,133 @@
 - Gitlawb GITSEA Bountyless PR Market Demo (commit ca7d290)
 - Scoped Plan Tree OGI Integration (commit 17b344c)
 - Scoped Issue Generation (commit a93ffb0)
-- **Scoped Issue Markdown Rendering** (this commit)
+- Scoped Issue Markdown Rendering (commit d3bbc5e)
+- Issue Markdown Canonical Format Rewrite (commit a904afb)
+- GitHub Issue #1 Created (https://github.com/olddqn/dango-mujin/issues/1)
+- **Reopenable PR Negotiation Lifecycle** (this commit)
 
 ---
 
-## Markdown Rendering: Results
+## Reopenable PR Negotiation: Results
 
-Core principle: Human-readable negotiation is part of the protocol.
+Core principle: A merged PR is evidence. Not authority.
 
-### housing-007 Markdown Result
-
-```
-github-issue-housing-007.md  (5068 chars, 17 sections)
-  issue_status:      open_draft
-  scope_status:      applicable
-  markdown_renderable: true
-  Contains:
-    - Why This Prerequisite Applies (scope signals table)
-    - Prerequisite Lifecycle: Weakened
-    - How to Resolve (5 steps)
-    - Negotiation Context (authority/contestable/hard_enforcement table)
-    - Agent Task Hint
-    - Dignity Guard
-    - Important (advisory notice)
-    - Advisory footer
-```
-
-### housing-006 Markdown Result
+### PR Draft Result
 
 ```
-github-issue-housing-006.md  (2098 chars)
-  issue_status:      suppressed
-  scope_status:      bypassed
-  markdown_renderable: true
-  Contains:
-    - Status: Issue suppressed
-    - Bypass Explanation (3 bypass conditions with descriptions)
-    - "A bypassed prerequisite is still memory..."
-    - Transparency (how to contest the suppression)
-    - Advisory footer
+issue-001.pr-draft.md
+  Condition Addressed: space_safety_assessed
+  Evidence:
+    - local structural review
+    - safety inspection notes
+    - community access risk assessment
+  Negotiation Context table included
+  Reopenability section: 4 reopen conditions listed
+  Dignity Guard: participant_consent, revocable_consent
+  "A merged PR is evidence. Not authority."
 ```
 
-### PR Feedback Markdown Result
+### Reopen Event Result
 
 ```
-scoped-pr-markdown.md  (181 lines)
-  3 events: pr_opened → pr_reviewed → pr_merged
-  PR lifecycle table
-  Per-event notes with negotiation_reopen, hard_enforcement, contestable
-  pr_merged: "Negotiation remains reopenable."
-  Advisory: "PR merge is not truth."
+issue-001.reopen-event.json
+  event_type: "negotiation_reopened"
+  claim_id:   housing-007
+  condition:  space_safety_assessed
+  reopens_issue: 1
+  reason:     counter_evidence
+  authority:  none
+  contestable: true
+  append_only: true
+  reopenable: true
+  reopen_reason_examples: [counter_evidence, bypass_equivalence,
+                           dignity_violation, prerequisite_deprecation]
 ```
 
-### Snapshot Result
+### Plan Correction Result
 
 ```
-python gitlawb/runtime/rendered_issue_snapshot.py
-  Total: 2  Rendered: 1  Suppressed: 1
-  housing-007: open_draft  · markdown_length: 5068
-  housing-006: suppressed  · markdown_length: 2098
-  Invariants: execution_allowed=False, moves_money=False, advisory=True
+issue-001.plan-correction.json
+  event_type:   "plan_correction_proposed"
+  claim_id:     housing-007
+  corrects_plan: plan-housing-007-v1
+  proposed_plan: plan-housing-007-v2
+  original_plan_preserved: true
+  append_only: true
+  proposed_plan_changes:
+    - Re-evaluate space_safety_assessed evidence node
+    - Attach counter-evidence as a sibling assertion
+    - Branch: if counter-evidence invalidates original → abstain
+```
+
+### Negotiation History Result
+
+```
+issue-001.negotiation-history.md
+  5 sections:
+    1. Issue Created
+    2. PR Draft Submitted
+    3. PR Feedback (pr_opened → pr_reviewed → pr_merged)
+    4. Negotiation Reopened
+    5. Plan Correction Proposed
+  Summary table: all steps authority=none, append_only=true
+```
+
+### Timeline Result
+
+```
+issue-001.timeline.json
+  7 steps:
+    Step 1: issue_created
+    Step 2: pr_draft_submitted
+    Step 3: pr_feedback:pr_opened
+    Step 4: pr_feedback:pr_reviewed
+    Step 5: pr_feedback:pr_merged   (gitsea_eligible: true)
+    Step 6: negotiation_reopened
+    Step 7: plan_correction_proposed
+  Invariants: authority=none, execution_allowed=false, append_only=true
 ```
 
 ---
 
 ## New Files
 
-- gitlawb/runtime/issue_markdown_renderer.py
-- gitlawb/runtime/scoped_issue_markdown.py
-- gitlawb/runtime/negotiation_context_renderer.py
-- gitlawb/runtime/prerequisite_markdown_renderer.py
-- gitlawb/runtime/rendered_issue_snapshot.py
-- gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md
-- gitlawb/examples/github-issue-housing-007.md
-- gitlawb/examples/github-issue-housing-006.md
-- gitlawb/examples/scoped-pr-markdown.md
-- gitlawb/examples/rendered-issue.snapshot.json
+- gitlawb/runtime/pr_draft_renderer.py
+- gitlawb/runtime/negotiation_reopen.py
+- gitlawb/runtime/plan_correction_renderer.py
+- gitlawb/runtime/negotiation_history_renderer.py
+- gitlawb/runtime/negotiation_timeline.py
+- gitlawb/PR_NEGOTIATION_REOPEN_SPEC.md
+- gitlawb/examples/issue-001.pr-draft.md
+- gitlawb/examples/issue-001.pr-feedback.json
+- gitlawb/examples/issue-001.reopen-event.json
+- gitlawb/examples/issue-001.plan-correction.json
+- gitlawb/examples/issue-001.negotiation-history.md
+- gitlawb/examples/issue-001.timeline.json
 
 ## Updated Files
 
-- gitlawb/runtime/scoped_pr_feedback.py (markdown_summary field added)
-- gitlawb/runtime/scoped_plan_to_issue.py (markdown_renderable: true added)
-- gitlawb/examples/scoped-pr-feedback.output.json (regenerated with markdown_summary)
-- README.md (Markdown Rendering section + directory tree update + Specs table)
+- gitlawb/runtime/scoped_pr_feedback.py (reopenable, reopen_reason_examples)
+- runtime/negotiation_graph.py (new edge kinds: pr_draft, pr_feedback, negotiation_reopen, plan_correction)
+- runtime/graph_export.py (new edge arrows and labels)
+- README.md (Reopenable PR Negotiation section + directory tree)
 - RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all rendered output)
+## Key Invariants (all negotiation steps)
 
-| Field                      | Value   |
-|----------------------------|---------|
-| `execution_allowed`        | `false` |
-| `moves_money`              | `false` |
-| `hard_enforcement`         | `false` |
-| `advisory`                 | `true`  |
-| `contestable`              | `true`  |
+| Field | Value |
+|-------|-------|
+| `authority` | `none` |
+| `execution_allowed` | `false` |
+| `moves_money` | `false` |
+| `hard_enforcement` | `false` |
+| `advisory` | `true` |
+| `contestable` | `true` |
+| `append_only` | `true` |
+| `reopenable` | `true` |
 | `negotiation_reopen_allowed` | `true` |
-| `authority`                | `none`  |
-| `markdown_renderable`      | `true`  |
 
 ---
 
@@ -127,23 +155,23 @@ python gitlawb/runtime/rendered_issue_snapshot.py
 
 - DID signatures still mock
 - GITSEA still hypothetical (no stream activates)
-- `food_safety_reviewed` below promotion threshold (1 claim only)
-- Markdown rendering is output-only — no GitHub paste automation (intentional)
-- `rendered_issue_snapshot.py` scans only `gitlawb/examples/scoped-issue-*.output.json`
-- HTML not generated — pure Markdown only (intentional)
+- Negotiation timeline is generated from example files (not live su-table)
+- `plan_correction_proposed` is a proposal — not yet integrated into plan tree (intentional)
+- PR draft does not auto-submit to GitHub (intentional)
+- Reopen event does not modify GitHub Issue #1 (intentional)
 
 ---
 
 ## Next Step Candidates
 
-1. **Plan correction event rendering** — Markdown document for `plan_correction` after PR merge
-2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
-3. **Multi-agent negotiation rendering** — render negotiation between multiple claims
-4. **GITSEA stream candidate Markdown** — human-readable preview of stream candidate
-5. **Public negotiation dashboard** — render scoped plan tree + issues + PR history as HTML
-6. **Federated snapshot** — aggregate `rendered_issue_snapshot` across multiple gitlawb nodes
+1. **Post negotiation_reopened comment on Issue #1** — use `gh issue comment` to add the reopen event to the live GitHub issue
+2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite with a better plan tree
+3. **Multi-agent negotiation rendering** — render negotiation between multiple claims side by side
+4. **GITSEA stream candidate Markdown** — human-readable stream candidate preview
+5. **Public negotiation dashboard** — HTML render of full negotiation lifecycle
+6. **Federated negotiation snapshots** — aggregate Issue history across multiple gitlawb nodes
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
-*Human-readable negotiation is part of the protocol.*
+*A merged PR is evidence. Not authority.*

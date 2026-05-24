@@ -242,6 +242,13 @@ def generate_scoped_pr_feedback(
             "reality_feedback": reality_feedback,
             "stream_candidate": stream_candidate,
             "markdown_summary": markdown_summary,
+            "reopenable":       True,
+            "reopen_reason_examples": [
+                "counter_evidence",
+                "bypass_equivalence",
+                "dignity_violation",
+                "prerequisite_deprecation",
+            ],
         })
 
     return results

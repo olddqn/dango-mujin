@@ -77,29 +77,39 @@ MERMAID_CLASSDEFS = """\
 """
 
 EDGE_ARROW = {
-    "temporal":          "-->",
-    "danger":            "-->",
-    "correction":        "-.->",
-    "hash_chain":        "-.->",
-    "plan_correction":   "-.->",
-    "plan_amendment":    "-.->",
-    "bundle_derivation": "-->",
-    "plan_contest":      "-.->",
-    "plan_support":      "-.->",
-    "plan_objection":    "-.->",
-    "active_selection":  "-->",
+    "temporal":            "-->",
+    "danger":              "-->",
+    "correction":          "-.->",
+    "hash_chain":          "-.->",
+    "plan_correction":     "-.->",
+    "plan_amendment":      "-.->",
+    "bundle_derivation":   "-->",
+    "plan_contest":        "-.->",
+    "plan_support":        "-.->",
+    "plan_objection":      "-.->",
+    "active_selection":    "-->",
+    # Gitlawb PR negotiation lifecycle edges
+    "pr_draft":            "-->",
+    "pr_feedback":         "-->",
+    "negotiation_reopen":  "-.->",
+    "plan_correction_v2":  "-.->",
 }
 
 EDGE_LABEL = {
-    "correction":        "|corrects|",
-    "hash_chain":        "|chain|",
-    "plan_correction":   "|corrected_by|",
-    "plan_amendment":    "|amended_by|",
-    "bundle_derivation": "|produces|",
-    "plan_contest":      "|contested_by|",
-    "plan_support":      "|supports|",
-    "plan_objection":    "|objects_to|",
-    "active_selection":  "|selected_as_active|",
+    "correction":          "|corrects|",
+    "hash_chain":          "|chain|",
+    "plan_correction":     "|corrected_by|",
+    "plan_amendment":      "|amended_by|",
+    "bundle_derivation":   "|produces|",
+    "plan_contest":        "|contested_by|",
+    "plan_support":        "|supports|",
+    "plan_objection":      "|objects_to|",
+    "active_selection":    "|selected_as_active|",
+    # Gitlawb PR negotiation lifecycle edges
+    "pr_draft":            "|pr_draft|",
+    "pr_feedback":         "|pr_feedback|",
+    "negotiation_reopen":  "|reopened_by|",
+    "plan_correction_v2":  "|correction_proposed|",
 }
 
 
