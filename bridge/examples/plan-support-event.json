@@ -1,0 +1,7 @@
+{
+  "event_type": "plan_supported",
+  "claim_id": "housing-001",
+  "plan_id": "plan-housing-001-v2",
+  "speaker": "did:key:z6Support001",
+  "support_reason": "dignity branch coverage complete — all four consent conditions (revocable_consent, no_identity_exposure, owner_consent, participant_consent) are addressed with proper abstain gates"
+}

@@ -122,6 +122,7 @@ dango-gitsea-bridge/
 ├── RISK_ASSESSMENT.md             — Known risks and limitations
 ├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
 ├── PLAN_APPEND_ONLY_SPEC.md       — Plan + task bundle persistence specification
+├── PLAN_NEGOTIATION_SPEC.md       — Multi-agent plan negotiation specification
 ├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
 ├── TEMPORAL_TRUST_DECAY_SPEC.md   — Temporal trust decay specification
 ├── examples/                      — Sample JSON files
@@ -142,6 +143,11 @@ dango-gitsea-bridge/
 │   ├── task_bundle_append.py      — CLI: append task bundle event to plans.jsonl
 │   ├── plan_correction.py         — CLI: issue plan correction or amendment
 │   ├── plan_snapshot.py           — CLI: view active plan + correction chain
+│   ├── plan_negotiation_append.py — CLI: append plan negotiation events
+│   ├── plan_negotiation_snapshot.py — CLI: negotiation state snapshot
+│   ├── active_plan_selector.py    — CLI: deterministic active plan selection
+│   ├── plan_contest_resolver.py   — Contest chain + signal aggregation library
+│   ├── plan_negotiation_graph.py  — CLI: plan contest graph builder
 │   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
 │   ├── sign_event.py              — CLI: attach mock signature to event JSON
 │   ├── verify_event_signature.py  — CLI: verify mock signature on event JSON
@@ -161,6 +167,12 @@ dango-gitsea-bridge/
     ├── plan-correction-event.json — Example plan_tree_corrected event
     ├── task-bundle-event.json     — Example task_bundle_created event
     ├── plans.snapshot.json        — Generated plan snapshot (housing-001)
+    ├── competing-plan-a.json      — Reference: Plan A (plan-housing-001-v2)
+    ├── competing-plan-b.json      — Reference: Plan B (plan-housing-001-v3, counterplan)
+    ├── plan-support-event.json    — Example plan_supported event
+    ├── plan-objection-event.json  — Example plan_objected event
+    ├── plan-contest-event.json    — Example plan_contested event (embedded counterplan)
+    ├── negotiation.snapshot.json  — Generated negotiation snapshot (housing-001)
     ├── signed-claim-event.json    — Valid mock-signed claim event
     ├── invalid-signed-event.json  — Corrupted signature (always rejected)
     ├── trust-decay-input.json     — Contribution event for trust weight example
@@ -566,6 +578,76 @@ Plan history appears in all graph export formats:
 - **Mermaid:** `%%` comment lines for plan metadata, dashed correction edges
 
 **Spec:** `PLAN_APPEND_ONLY_SPEC.md`
+
+---
+
+## Multi-Agent Plan Negotiation
+
+A plan is not accepted because it is generated.
+A plan is accepted because it survives negotiation.
+
+Multiple agents may propose competing plans. Any agent may object to an
+existing plan. Any agent may propose a better one. The active plan is
+selected deterministically — no hidden ranking, no central authority.
+
+### Negotiation events (append-only, stored in plans.jsonl)
+
+| Event | Meaning |
+|---|---|
+| `plan_supported` | Structured support signal (evidence, not vote) |
+| `plan_objected` | Typed objection (missing_condition, dignity_violation, etc.) |
+| `plan_contested` | Competing plan proposes to replace existing |
+| `plan_rejected` | Formal plan rejection |
+| `active_plan_selected` | Deterministic selection result recorded |
+
+### Pipeline
+
+```bash
+# Signal support for a plan
+python runtime/plan_negotiation_append.py examples/plan-support-event.json
+
+# Signal a typed objection
+python runtime/plan_negotiation_append.py examples/plan-objection-event.json
+
+# Contest a plan with a competing counterplan
+# (auto-creates the counterplan if embedded in the event)
+python runtime/plan_negotiation_append.py examples/plan-contest-event.json
+
+# Select active plan (deterministic, transparent, no write)
+python runtime/active_plan_selector.py --claim-id housing-001
+
+# Select and record the result as active_plan_selected event
+python runtime/active_plan_selector.py --claim-id housing-001 --append
+
+# View negotiation state snapshot
+python runtime/plan_negotiation_snapshot.py --claim-id housing-001
+python runtime/plan_negotiation_snapshot.py --claim-id housing-001 --json
+
+# Plan negotiation graph (focused contest graph)
+python runtime/plan_negotiation_graph.py --claim-id housing-001
+
+# Full graph export includes plan negotiation section
+python runtime/graph_export.py --claim-id housing-001 --format text
+```
+
+### Selection rules (deterministic, transparent)
+
+1. Exclude plans with status `rejected`, `superseded`, or `corrected`
+2. Exclude plans with any `dignity_violation` objection
+3. Fewest objections wins
+4. Most supports wins (if tied on objections)
+5. Shallowest correction depth wins (fresh proposals preferred)
+6. Newest timestamp as final tiebreaker
+
+### Correction vs. Contest
+
+| | Correction | Contest |
+|---|---|---|
+| Who initiates | Original author | Any participant |
+| Effect on original | `corrected` (excluded from selection) | `contested` (still a candidate) |
+| Both preserved | Yes — append-only | Yes — append-only |
+
+**Spec:** `PLAN_NEGOTIATION_SPEC.md`
 
 ---
 

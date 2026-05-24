@@ -67,25 +67,39 @@ MERMAID_CLASSDEFS = """\
   classDef bundle         fill:#d1fae5,stroke:#059669,color:#064e3b
   classDef bundleBlocked  fill:#fee2e2,stroke:#dc2626,color:#450a0a
   classDef bundleReady    fill:#bbf7d0,stroke:#15803d,color:#14532d
-  classDef bundleAbandoned fill:#f3f4f6,stroke:#9ca3af,color:#6b7280\
+  classDef bundleAbandoned fill:#f3f4f6,stroke:#9ca3af,color:#6b7280
+  classDef planSupported  fill:#d1fae5,stroke:#059669,color:#064e3b
+  classDef planObjected   fill:#ffedd5,stroke:#ea580c,color:#431407
+  classDef planContested  fill:#fce7f3,stroke:#be185d,color:#500724
+  classDef planRejected   fill:#f3f4f6,stroke:#6b7280,color:#374151
+  classDef planSuperseded fill:#f3f4f6,stroke:#9ca3af,color:#6b7280
+  classDef planActive     fill:#bbf7d0,stroke:#15803d,color:#14532d\
 """
 
 EDGE_ARROW = {
-    "temporal":         "-->",
-    "danger":           "-->",
-    "correction":       "-.->",
-    "hash_chain":       "-.->",
-    "plan_correction":  "-.->",
-    "plan_amendment":   "-.->",
-    "bundle_derivation":"-->",
+    "temporal":          "-->",
+    "danger":            "-->",
+    "correction":        "-.->",
+    "hash_chain":        "-.->",
+    "plan_correction":   "-.->",
+    "plan_amendment":    "-.->",
+    "bundle_derivation": "-->",
+    "plan_contest":      "-.->",
+    "plan_support":      "-.->",
+    "plan_objection":    "-.->",
+    "active_selection":  "-->",
 }
 
 EDGE_LABEL = {
-    "correction":       "|corrects|",
-    "hash_chain":       "|chain|",
-    "plan_correction":  "|corrected_by|",
-    "plan_amendment":   "|amended_by|",
-    "bundle_derivation":"|produces|",
+    "correction":        "|corrects|",
+    "hash_chain":        "|chain|",
+    "plan_correction":   "|corrected_by|",
+    "plan_amendment":    "|amended_by|",
+    "bundle_derivation": "|produces|",
+    "plan_contest":      "|contested_by|",
+    "plan_support":      "|supports|",
+    "plan_objection":    "|objects_to|",
+    "active_selection":  "|selected_as_active|",
 }
 
 
@@ -337,6 +351,16 @@ def export_text(graph: dict) -> str:
                 if old and new:
                     corr_by[old] = new
 
+        # Contest signals from negotiation events
+        contested_pids: set[str] = set()
+        try:
+            from plan_contest_resolver import build_full_contest_graph, _load_plan_events
+            _neg_evs = _load_plan_events(claim_id)
+            for c in build_full_contest_graph(_neg_evs):
+                contested_pids.add(c.get("contested", ""))
+        except ImportError:
+            pass
+
         for n in tree_nodes:
             pid   = n["meta"].get("plan_id", n["id"])
             ts    = n["timestamp"][:19].replace("T", " ")
@@ -345,6 +369,8 @@ def export_text(graph: dict) -> str:
                 badge = "[corrected]"
             elif et == "plan_tree_amended":
                 badge = "[amended]"
+            elif pid in contested_pids:
+                badge = "[contested]"
             else:
                 badge = "[active]"
 
@@ -390,6 +416,83 @@ def export_text(graph: dict) -> str:
                 if tc != "?":
                     lines.append(f"       tasks: {tc} total, {bc} blocked")
                 lines.append(f"       {ts}")
+        lines.append("")
+
+    # ── Plan negotiation ──────────────────────────────────────
+    neg_nodes = [n for n in nodes if n["event_type"] in (
+        "plan_supported", "plan_objected", "plan_contested",
+        "plan_rejected", "plan_superseded", "active_plan_selected",
+    )]
+    if neg_nodes:
+        # Import negotiation resolution lazily (avoids circular imports in test)
+        try:
+            from plan_contest_resolver import (
+                aggregate_signals, build_full_contest_graph,
+                get_plan_statuses, _load_plan_events, _get_plan_ids,
+            )
+            neg_events = _load_plan_events(claim_id)
+            neg_plan_ids = _get_plan_ids(neg_events)
+            neg_signals  = aggregate_signals(neg_events)
+            neg_statuses = get_plan_statuses(neg_events)
+            neg_contests = build_full_contest_graph(neg_events)
+        except ImportError:
+            neg_plan_ids = []
+            neg_signals  = {}
+            neg_statuses = {}
+            neg_contests = []
+
+        lines.append("")
+        lines.append("── PLAN NEGOTIATION ──────────────────────────────────────")
+
+        # Formal active from active_plan_selected events
+        formal_active = ""
+        for n in neg_nodes:
+            if n["event_type"] == "active_plan_selected":
+                formal_active = n["meta"].get("selected_plan_id", "")
+
+        # Computed active from selector
+        computed_active = ""
+        try:
+            from active_plan_selector import select_active_plan
+            sel = select_active_plan(claim_id)
+            computed_active = sel.get("selected_plan_id") or ""
+        except ImportError:
+            pass
+
+        if formal_active:
+            lines.append(f"  Active plan (formal):   {formal_active}")
+        elif computed_active:
+            lines.append(f"  Active plan (computed): {computed_active}  [not yet recorded]")
+
+        if neg_plan_ids:
+            lines.append("")
+            for pid in neg_plan_ids:
+                status  = neg_statuses.get(pid, "open")
+                sigs    = neg_signals.get(pid, {})
+                sup_n   = sigs.get("support_count", 0)
+                obj_n   = sigs.get("objection_count", 0)
+                active_m = " ← active" if pid == (formal_active or computed_active) else ""
+                lines.append(
+                    f"  {'★' if active_m else ' '} {pid}  [{status}]"
+                    f"  +{sup_n} support / -{obj_n} objection{active_m}"
+                )
+                for reason in sigs.get("support_reasons", []):
+                    lines.append(f"      + {reason[:60]}")
+                obj_reasons = sigs.get("objection_reasons", [])
+                obj_types   = sigs.get("objections_by_type", {})
+                for i_obj, reason in enumerate(obj_reasons):
+                    otype = list(obj_types.keys())[i_obj] if i_obj < len(obj_types) else "?"
+                    lines.append(f"      ✗ [{otype}] {reason[:60]}")
+
+        if neg_contests:
+            lines.append("")
+            for c in neg_contests:
+                lines.append(
+                    f"  {c['contested']:30s} -.->|contested_by| {c['counterplan']}"
+                )
+                if c.get("reason"):
+                    lines.append(f"      reason: {c['reason'][:60]}")
+
         lines.append("")
 
     # ── Federation context ───────────────────────────────────
@@ -468,6 +571,13 @@ _HTML_STYLE_CLASS = {
     "bundleBlocked":     "ev-bundle-blocked",
     "bundleReady":       "ev-bundle-ready",
     "bundleAbandoned":   "ev-bundle-abandoned",
+    # Plan negotiation events
+    "planSupported":     "ev-plan-supported",
+    "planObjected":      "ev-plan-objected",
+    "planContested":     "ev-plan-contested",
+    "planRejected":      "ev-plan-rejected",
+    "planSuperseded":    "ev-plan-superseded",
+    "planActive":        "ev-plan-active",
     "default":           "ev-default",
 }
 
@@ -495,6 +605,13 @@ _BADGE_STYLE = {
     "bundleBlocked":     "background:#7f1d1d;color:#fee2e2",
     "bundleReady":       "background:#14532d;color:#bbf7d0",
     "bundleAbandoned":   "background:#4b5563;color:#f3f4f6",
+    # Plan negotiation events
+    "planSupported":     "background:#059669;color:#d1fae5",
+    "planObjected":      "background:#c2410c;color:#ffedd5",
+    "planContested":     "background:#be185d;color:#fce7f3",
+    "planRejected":      "background:#6b7280;color:#f3f4f6",
+    "planSuperseded":    "background:#9ca3af;color:#f3f4f6",
+    "planActive":        "background:#15803d;color:#bbf7d0",
     "default":           "background:#374151;color:#d1d5db",
 }
 
@@ -890,6 +1007,10 @@ tr:hover td { background: var(--surface); }
 .plan-active    { background:#0369a1;color:#e0f2fe; }
 .plan-corrected { background:#9d174d;color:#fce7f3; }
 .plan-amended   { background:#92400e;color:#fef3c7; }
+.plan-contested { background:#be185d;color:#fce7f3; }
+.plan-rejected  { background:#6b7280;color:#f3f4f6; }
+.plan-supported { background:#059669;color:#d1fae5; }
+.plan-objected  { background:#c2410c;color:#ffedd5; }
 .bundle-created  { background:#065f46;color:#d1fae5; }
 .bundle-blocked  { background:#7f1d1d;color:#fee2e2; }
 .bundle-ready    { background:#14532d;color:#bbf7d0; }
@@ -1359,6 +1480,125 @@ def export_html(graph: dict) -> str:
 
         return '<div class="plan-panel">\n' + "\n".join(rows) + "\n</div>"
 
+    def plan_negotiation_html() -> str:
+        """Generate HTML panel for plan negotiation signals."""
+        try:
+            from plan_contest_resolver import (
+                aggregate_signals, build_full_contest_graph,
+                get_plan_statuses, _load_plan_events, _get_plan_ids,
+            )
+            neg_events  = _load_plan_events(claim_id)
+            neg_pids    = _get_plan_ids(neg_events)
+            neg_signals = aggregate_signals(neg_events)
+            neg_statuses= get_plan_statuses(neg_events)
+            neg_contests= build_full_contest_graph(neg_events)
+        except ImportError:
+            return '<div class="plan-panel"><span class="plan-none">(plan_contest_resolver not available)</span></div>'
+
+        neg_events_list = [
+            ev for ev in neg_events
+            if ev.get("event_type") in (
+                "plan_supported", "plan_objected", "plan_contested",
+                "plan_rejected", "plan_superseded", "active_plan_selected",
+            )
+        ]
+        if not neg_events_list and not neg_contests:
+            return '<div class="plan-panel"><span class="plan-none">(no negotiation signals for this claim)</span></div>'
+
+        # Formal active plan
+        formal_active = ""
+        for ev in reversed(neg_events):
+            if ev.get("event_type") == "active_plan_selected":
+                formal_active = ev.get("selected_plan_id", "")
+                break
+
+        # Computed active plan
+        computed_active = ""
+        try:
+            from active_plan_selector import select_active_plan
+            sel_res = select_active_plan(claim_id)
+            computed_active = sel_res.get("selected_plan_id") or ""
+        except ImportError:
+            pass
+
+        rows: list[str] = []
+
+        # Active plan badge
+        effective_active = formal_active or computed_active
+        if effective_active:
+            formal_lbl = "(formal selection)" if formal_active else "(computed — not yet recorded)"
+            rows.append(
+                f'<div class="plan-row">'
+                f'<span class="plan-badge plan-active">★ active</span> '
+                f'<code class="plan-id">{_h(effective_active)}</code> '
+                f'<span class="plan-ts">{_h(formal_lbl)}</span>'
+                f'</div>'
+            )
+            rows.append('<hr class="plan-divider">')
+
+        # Per-plan signal rows
+        for pid in neg_pids:
+            status = neg_statuses.get(pid, "open")
+            sigs   = neg_signals.get(pid, {})
+            sup_n  = sigs.get("support_count", 0)
+            obj_n  = sigs.get("objection_count", 0)
+
+            _status_css = {
+                "active":     "plan-active",
+                "contested":  "plan-contested",
+                "corrected":  "plan-corrected",
+                "superseded": "plan-amended",
+                "rejected":   "bundle-abandoned",
+                "open":       "bundle-created",
+            }
+            badge_css  = _status_css.get(status, "bundle-created")
+            active_mark = "★ " if pid == effective_active else ""
+            status_badge = f'<span class="plan-badge {badge_css}">{_h(active_mark + status)}</span>'
+
+            signal_html = ""
+            if sup_n or obj_n:
+                signal_html = (
+                    f'<div class="plan-sub">'
+                    f'<span style="color:#22c55e">+{sup_n} support</span> '
+                    f'<span style="color:#f97316">−{obj_n} objection</span>'
+                    f'</div>'
+                )
+
+            obj_reasons = sigs.get("objection_reasons", [])
+            obj_types   = list(sigs.get("objections_by_type", {}).keys())
+            obj_rows = ""
+            for i_o, reason in enumerate(obj_reasons):
+                otype = obj_types[i_o] if i_o < len(obj_types) else "?"
+                obj_rows += f'<div class="plan-sub reason">✗ [{_h(otype)}] {_h(reason[:80])}</div>'
+
+            sup_rows = ""
+            for reason in sigs.get("support_reasons", []):
+                sup_rows += f'<div class="plan-sub">+ {_h(reason[:80])}</div>'
+
+            rows.append(
+                f'<div class="plan-row">'
+                f'<code class="plan-id">{_h(pid)}</code> {status_badge}'
+                f'{signal_html}{sup_rows}{obj_rows}'
+                f'</div>'
+            )
+
+        # Contest chains
+        if neg_contests:
+            rows.append('<hr class="plan-divider">')
+            rows.append('<div class="plan-sub" style="font-weight:600;margin-bottom:4px">Contest chains:</div>')
+            for c in neg_contests:
+                reason = c.get("reason", "")
+                rows.append(
+                    f'<div class="plan-row">'
+                    f'<code class="plan-id">{_h(c["contested"])}</code>'
+                    f'<span class="plan-badge plan-contested">contested_by</span>'
+                    f'<code class="plan-id">{_h(c["counterplan"])}</code>'
+                    + (f'<div class="plan-sub reason">{_h(reason)}</div>' if reason else "")
+                    + f'</div>'
+                )
+
+        return '<div class="plan-panel">\n' + "\n".join(rows) + "\n</div>"
+
     # ── Assemble HTML ────────────────────────────────────────
     tl_items_html  = "\n".join(tl_item(i+1, n) for i, n in enumerate(nodes))
     table_rows_html= "\n".join(table_row(i+1, n) for i, n in enumerate(nodes))
@@ -1448,6 +1688,12 @@ def export_html(graph: dict) -> str:
 <section>
   <h2>Plan History</h2>
   {plan_history_html()}
+</section>
+
+<!-- ── PLAN NEGOTIATION ──────────────────────────── -->
+<section>
+  <h2>Plan Negotiation</h2>
+  {plan_negotiation_html()}
 </section>
 
 <!-- ── CLAIM FEDERATION ─────────────────────────── -->

@@ -1,0 +1,8 @@
+{
+  "event_type": "plan_objected",
+  "claim_id": "housing-001",
+  "plan_id": "plan-housing-001-v2",
+  "speaker": "did:key:z6Object001",
+  "objection_type": "insufficient_risk_coverage",
+  "objection_reason": "risk review phase covers only legal_ownership_confirmed — shared creative spaces require a separate space_safety_assessed gate before coordination tasks can proceed"
+}

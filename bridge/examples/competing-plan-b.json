@@ -1,0 +1,115 @@
+{
+  "event_type": "plan_tree_created",
+  "claim_id": "housing-001",
+  "plan_id": "plan-housing-001-v3",
+  "speaker": "did:key:z6Contester001",
+  "note": "Counterplan B: improves on v2 by adding a second risk gate (space_safety_assessed) and clearer phase structure.",
+  "plan_tree": {
+    "plan_tree_id": "pt-housing-001-v3",
+    "claim_id": "housing-001",
+    "node_type": "goal",
+    "label": "turn a vacant house into a shared creative base",
+    "children": [
+      {
+        "node_type": "subgoal",
+        "label": "dignity clearance — required before any action",
+        "phase": "dignity",
+        "children": [
+          {
+            "node_type": "branch",
+            "label": "is 'revocable_consent' established?",
+            "condition": "revocable_consent",
+            "true": { "node_type": "assertion", "label": "revocable_consent confirmed" },
+            "false": { "node_type": "abstain", "reason": "execution blocked until 'revocable_consent' is established. This is not a failure — it is a necessary gate." }
+          },
+          {
+            "node_type": "branch",
+            "label": "is 'no_identity_exposure' established?",
+            "condition": "no_identity_exposure",
+            "true": { "node_type": "assertion", "label": "no_identity_exposure confirmed" },
+            "false": { "node_type": "abstain", "reason": "execution blocked until 'no_identity_exposure' is established." }
+          },
+          {
+            "node_type": "branch",
+            "label": "is 'owner_consent' established?",
+            "condition": "owner_consent",
+            "true": { "node_type": "assertion", "label": "owner_consent confirmed" },
+            "false": { "node_type": "abstain", "reason": "execution blocked until 'owner_consent' is established." }
+          },
+          {
+            "node_type": "branch",
+            "label": "is 'participant_consent' established?",
+            "condition": "participant_consent",
+            "true": { "node_type": "assertion", "label": "participant_consent confirmed" },
+            "false": { "node_type": "abstain", "reason": "execution blocked until 'participant_consent' is established." }
+          }
+        ]
+      },
+      {
+        "node_type": "subgoal",
+        "label": "risk and safety clearance",
+        "phase": "risk",
+        "children": [
+          {
+            "node_type": "branch",
+            "label": "is legal_ownership_confirmed?",
+            "condition": "legal_ownership_confirmed",
+            "true": {
+              "node_type": "action",
+              "label": "request legal_review",
+              "required_capability": "legal_review",
+              "satisfies_condition": "legal_ownership_confirmed"
+            },
+            "false": { "node_type": "abstain", "reason": "execution blocked until legal_ownership_confirmed is cleared." }
+          },
+          {
+            "node_type": "branch",
+            "label": "is space_safety_assessed?",
+            "condition": "space_safety_assessed",
+            "true": {
+              "node_type": "action",
+              "label": "request safety_review",
+              "required_capability": "safety_review",
+              "satisfies_condition": "space_safety_assessed"
+            },
+            "false": { "node_type": "abstain", "reason": "execution blocked until space_safety_assessed is cleared. Shared spaces require explicit safety review." }
+          }
+        ]
+      },
+      {
+        "node_type": "subgoal",
+        "label": "coordinate available contributions",
+        "phase": "coordination",
+        "children": [
+          {
+            "node_type": "action",
+            "label": "propose contribution: legal_review",
+            "required_capability": "legal_review"
+          },
+          {
+            "node_type": "action",
+            "label": "propose contribution: safety_review",
+            "required_capability": "safety_review"
+          },
+          {
+            "node_type": "action",
+            "label": "propose contribution: coordination",
+            "required_capability": "coordination"
+          },
+          {
+            "node_type": "action",
+            "label": "propose contribution: local_knowledge",
+            "required_capability": "local_knowledge"
+          }
+        ]
+      },
+      {
+        "node_type": "branch",
+        "label": "can claim advance to negotiation?",
+        "condition": "all_required_conditions_met",
+        "true": { "node_type": "terminal", "label": "negotiate" },
+        "false": { "node_type": "abstain", "reason": "required conditions not yet met — plan returns to negotiation. This is not failure. It is the protocol working correctly." }
+      }
+    ]
+  }
+}

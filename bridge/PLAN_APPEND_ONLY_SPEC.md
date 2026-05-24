@@ -51,15 +51,39 @@ Neither a plan tree nor a task bundle executes anything.
 
 All plan-related events are stored in `sutable/plans.jsonl`.
 
+### Plan tree events
+
 | Event type | Meaning |
 |---|---|
 | `plan_tree_created` | A new plan tree is proposed for a claim |
 | `plan_tree_amended` | A subcomponent of the plan is amended; the original plan remains active |
 | `plan_tree_corrected` | A full correction: new plan supersedes old structurally |
+
+### Task bundle events
+
+| Event type | Meaning |
+|---|---|
 | `task_bundle_created` | A task bundle is derived from a specific plan tree |
 | `task_bundle_blocked` | The bundle is fully blocked (all gates unresolved) |
 | `task_bundle_ready` | All gates resolved; bundle is ready for negotiation |
 | `task_bundle_abandoned` | The bundle was abandoned (new plan issued or claim withdrawn) |
+
+### Plan negotiation events
+
+| Event type | Meaning |
+|---|---|
+| `plan_supported` | A speaker signals support for a plan (structured evidence) |
+| `plan_objected` | A speaker signals a typed objection to a plan |
+| `plan_contested` | A competing plan proposes to replace an existing plan |
+| `plan_rejected` | A plan is formally rejected (with reason) |
+| `plan_superseded` | A plan is marked superseded by another |
+| `active_plan_selected` | Formal record of deterministic active plan selection |
+
+These events are append-only and never deleted.
+Support and objection signals are not votes — they are structured negotiation inputs.
+The active plan is selected deterministically by `active_plan_selector.py`.
+
+See `PLAN_NEGOTIATION_SPEC.md` for the full multi-agent negotiation specification.
 
 ---
 

@@ -273,6 +273,44 @@ python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json \
 
 ---
 
+## Competing Plans
+
+Multiple agents may propose competing plan trees for the same claim.
+A competing plan is a `plan_tree_created` event from a different speaker
+that proposes an alternative reasoning structure.
+
+Competing plans do not automatically replace each other. The negotiation
+layer (`plan_negotiation_append.py`) tracks:
+
+- `plan_supported` events — structured support signals
+- `plan_objected` events — typed objections with reasons
+- `plan_contested` events — formal competing proposals
+
+The active plan is selected deterministically by `active_plan_selector.py`
+using transparent rules (fewest objections → most supports → shallowest
+correction depth → newest timestamp).
+
+No plan wins by authority. A plan wins by surviving negotiation.
+
+A `plan_contested` event may carry an embedded `counterplan` dict.
+When appended via `plan_negotiation_append.py`, the counterplan is
+automatically created as `plan_tree_created` before the contest event.
+
+```bash
+# Append a competing plan
+python runtime/plan_negotiation_append.py examples/plan-contest-event.json
+
+# Select the active plan (deterministic, transparent)
+python runtime/active_plan_selector.py --claim-id housing-001 --verbose
+
+# View negotiation state
+python runtime/plan_negotiation_snapshot.py --claim-id housing-001
+```
+
+See `PLAN_NEGOTIATION_SPEC.md` for the full specification.
+
+---
+
 ## Append-Only Persistence
 
 Plan trees are reasoning artifacts. Like all su-table events, they are

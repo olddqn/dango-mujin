@@ -1,0 +1,98 @@
+{
+  "claim_id": "housing-001",
+  "negotiation_status": "contested",
+  "active_plan": null,
+  "computed_active_plan": "plan-housing-001-v3",
+  "plans": [
+    {
+      "plan_id": "plan-housing-001-v1",
+      "status": "corrected",
+      "correction_depth": 0,
+      "timestamp": "2026-05-24T02:39:40.389215+00:00",
+      "support_count": 0,
+      "objection_count": 0,
+      "support_speakers": [],
+      "support_reasons": [],
+      "objections_by_type": {},
+      "objection_speakers": [],
+      "objection_reasons": []
+    },
+    {
+      "plan_id": "plan-housing-001-v2",
+      "status": "contested",
+      "correction_depth": 1,
+      "timestamp": "2026-05-24T02:39:40.428225+00:00",
+      "support_count": 1,
+      "objection_count": 1,
+      "support_speakers": [
+        "did:key:z6Support001"
+      ],
+      "support_reasons": [
+        "dignity branch coverage complete — all four consent conditions (revocable_consent, no_identity_exposure, owner_consent, participant_consent) are addressed with proper abstain gates"
+      ],
+      "objections_by_type": {
+        "insufficient_risk_coverage": 1
+      },
+      "objection_speakers": [
+        "did:key:z6Object001"
+      ],
+      "objection_reasons": [
+        "risk review phase covers only legal_ownership_confirmed — shared creative spaces require a separate space_safety_assessed gate before coordination tasks can proceed"
+      ]
+    },
+    {
+      "plan_id": "plan-housing-001-v3",
+      "status": "open",
+      "correction_depth": 0,
+      "timestamp": "2026-05-24T03:24:54.507483+00:00",
+      "support_count": 0,
+      "objection_count": 0,
+      "support_speakers": [],
+      "support_reasons": [],
+      "objections_by_type": {},
+      "objection_speakers": [],
+      "objection_reasons": []
+    }
+  ],
+  "contested_plans": [
+    "plan-housing-001-v2"
+  ],
+  "rejected_plans": [],
+  "superseded_plans": [
+    "plan-housing-001-v1"
+  ],
+  "support_summary": {
+    "plan-housing-001-v2": {
+      "count": 1,
+      "speakers": [
+        "did:key:z6Support001"
+      ],
+      "reasons": [
+        "dignity branch coverage complete — all four consent conditions (revocable_consent, no_identity_exposure, owner_consent, participant_consent) are addressed with proper abstain gates"
+      ]
+    }
+  },
+  "objection_summary": {
+    "plan-housing-001-v2": {
+      "count": 1,
+      "by_type": {
+        "insufficient_risk_coverage": 1
+      },
+      "speakers": [
+        "did:key:z6Object001"
+      ],
+      "reasons": [
+        "risk review phase covers only legal_ownership_confirmed — shared creative spaces require a separate space_safety_assessed gate before coordination tasks can proceed"
+      ]
+    }
+  },
+  "contest_chains": [
+    {
+      "contested": "plan-housing-001-v2",
+      "counterplan": "plan-housing-001-v3",
+      "reason": "improved risk phase — plan-v2 has only one risk gate (legal_ownership_confirmed); plan-v3 adds space_safety_assessed as a required second risk gate for shared spaces",
+      "speaker": "did:key:z6Contester001",
+      "timestamp": "2026-05-24T03:24:54.508604+00:00"
+    }
+  ]
+}

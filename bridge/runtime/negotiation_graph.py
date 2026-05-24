@@ -89,6 +89,13 @@ SHAPE = {
     "task_bundle_blocked":       "para",
     "task_bundle_ready":         "para",
     "task_bundle_abandoned":     "para",
+    # Plan negotiation events
+    "plan_supported":            "rect",
+    "plan_objected":             "hex",
+    "plan_contested":            "hex",
+    "plan_rejected":             "asymmetric",
+    "plan_superseded":           "rect",
+    "active_plan_selected":      "stadium",
 }
 
 # ── Style class names ─────────────────────────────────────────
@@ -130,6 +137,13 @@ def _style_for(event: dict) -> str:
         "task_bundle_blocked":   "bundleBlocked",
         "task_bundle_ready":     "bundleReady",
         "task_bundle_abandoned": "bundleAbandoned",
+        # Plan negotiation events
+        "plan_supported":        "planSupported",
+        "plan_objected":         "planObjected",
+        "plan_contested":        "planContested",
+        "plan_rejected":         "planRejected",
+        "plan_superseded":       "planSuperseded",
+        "active_plan_selected":  "planActive",
     }.get(et, "default")
 
 
@@ -250,6 +264,42 @@ def _label_for(event: dict, claim_id: str) -> str:
             reason = event.get("abandoned_reason", "")
             return f"✗ Abandoned: {_trunc(bid, 38)}" + (f"\n{_trunc(reason, 38)}" if reason else "")
 
+        case "plan_supported":
+            pid    = event.get("plan_id", "")
+            reason = event.get("support_reason", "")
+            return f"✓ Support → {_trunc(pid, 36)}" + (f"\n{_trunc(reason, 40)}" if reason else "")
+
+        case "plan_objected":
+            pid    = event.get("plan_id", "")
+            otype  = event.get("objection_type", "")
+            reason = event.get("objection_reason", "")
+            tag    = f"[{otype}] " if otype else ""
+            return f"✗ Objection → {_trunc(pid, 34)}\n{tag}{_trunc(reason, 40)}"
+
+        case "plan_contested":
+            contested   = event.get("contested_plan_id", "")
+            counterplan = event.get("counterplan_id", "")
+            reason      = event.get("contest_reason", "")
+            s = f"⚔ Contest: {_trunc(contested, 26)} ← {_trunc(counterplan, 26)}"
+            return s + (f"\n{_trunc(reason, 44)}" if reason else "")
+
+        case "plan_rejected":
+            pid    = event.get("plan_id", "")
+            reason = event.get("rejection_reason", "")
+            return f"✗ Rejected: {_trunc(pid, 38)}" + (f"\n{_trunc(reason, 40)}" if reason else "")
+
+        case "plan_superseded":
+            pid   = event.get("plan_id", "")
+            by_id = event.get("superseded_by", "")
+            return f"Superseded: {_trunc(pid, 36)}" + (f" by {_trunc(by_id, 28)}" if by_id else "")
+
+        case "active_plan_selected":
+            sel   = event.get("selected_plan_id", "")
+            basis = event.get("selection_basis", {})
+            sup   = basis.get("support_count", "?") if isinstance(basis, dict) else "?"
+            obj   = basis.get("objection_count", "?") if isinstance(basis, dict) else "?"
+            return f"★ Active: {_trunc(sel, 40)}\nsup={sup}  obj={obj}"
+
         case _:
             return _trunc(et.replace("_", " ").title())
 
@@ -279,6 +329,12 @@ _META_KEYS = {
     "plan_tree_hash", "task_bundle_hash",
     "task_count", "blocked_count", "bundle_status",
     "abandoned_reason", "amendment_reason",
+    # Plan negotiation fields
+    "contested_plan_id", "counterplan_id",
+    "contest_reason", "support_reason",
+    "objection_type", "objection_reason",
+    "rejection_reason", "superseded_by",
+    "selected_plan_id", "selection_basis",
 }
 
 def _meta_for(event: dict) -> dict:
@@ -440,6 +496,55 @@ def build_graph(claim_id: str) -> dict[str, Any]:
                     "to":   node["id"],
                     "kind": "bundle_derivation",
                     "label": "produces",
+                })
+
+        # 2c. Plan negotiation edges
+        elif et == "plan_contested":
+            contested   = node["meta"].get("contested_plan_id", "")
+            counterplan = node["meta"].get("counterplan_id", "")
+            if contested and contested in plan_id_to_node:
+                edges.append({
+                    "from":  plan_id_to_node[contested],
+                    "to":    node["id"],
+                    "kind":  "plan_contest",
+                    "label": "contested_by",
+                })
+            if counterplan and counterplan in plan_id_to_node:
+                edges.append({
+                    "from":  node["id"],
+                    "to":    plan_id_to_node[counterplan],
+                    "kind":  "plan_contest",
+                    "label": "counterplan",
+                })
+
+        elif et == "plan_supported":
+            pid = node["meta"].get("plan_id", "")
+            if pid and pid in plan_id_to_node:
+                edges.append({
+                    "from":  node["id"],
+                    "to":    plan_id_to_node[pid],
+                    "kind":  "plan_support",
+                    "label": "supports",
+                })
+
+        elif et == "plan_objected":
+            pid = node["meta"].get("plan_id", "")
+            if pid and pid in plan_id_to_node:
+                edges.append({
+                    "from":  node["id"],
+                    "to":    plan_id_to_node[pid],
+                    "kind":  "plan_objection",
+                    "label": "objects_to",
+                })
+
+        elif et == "active_plan_selected":
+            sel = node["meta"].get("selected_plan_id", "")
+            if sel and sel in plan_id_to_node:
+                edges.append({
+                    "from":  plan_id_to_node[sel],
+                    "to":    node["id"],
+                    "kind":  "active_selection",
+                    "label": "selected_as_active",
                 })
 
     # 3. Hash-chain edges within tables (for visual chain verification)
