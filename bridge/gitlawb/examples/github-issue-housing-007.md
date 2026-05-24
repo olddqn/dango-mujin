@@ -1,140 +1,159 @@
 # [Scoped Prerequisite] space_safety_assessed required — housing-007
 
-**Labels:** `dan-go` `scoped-prerequisite` `dignity-first` `contestable` `weakened-prerequisite` `federation-prerequisite`
-
 ## Claim
 
-`housing-007`
+housing-007
+
+---
 
 ## Condition
 
-`space_safety_assessed`
+space_safety_assessed
+
+---
 
 ## Scope Status
 
-`applicable` — scope: `non_precertified_spaces`
+applicable
 
-## Why This Prerequisite Applies
+---
 
-`space_safety_assessed` is a federation prerequisite in state `weakened`.
-It applies in this context because the plan tree signals indicate a `non_precertified_spaces` context.
+## Why this issue exists
 
-### Scope Signals Detected
+This prerequisite was identified through federation prerequisite convergence.
 
-- **`local_safety_review`** → `non_precertified_spaces`
-  The plan requires a local safety review, indicating the space is not precertified.
-- **`structural_modification_documented`** → `modified_existing_structures`
-  Structural modification has been documented, indicating a locally-modified existing structure.
+It is not universally enforced.
 
-### What This Means
+It applies in this context because the current plan includes:
 
-The plan for `housing-007` must actively satisfy `space_safety_assessed`. No precertification or equivalent bypass path was detected for this claim.
+- local_safety_review
+- modified_existing_structure
+- non_precertified_space_conditions
 
-This is not a prohibition — it is a prerequisite signal.
-Satisfying it strengthens the plan's safety evidence trail.
+The scoped prerequisite layer determined that this claim does not satisfy the bypass path conditions.
 
-## Prerequisite Lifecycle: Weakened
+---
 
-`space_safety_assessed` has been weakened — a recognised bypass path exists for claims with precertification or equivalent safety evidence.
+## Federation Context
 
-This claim does not qualify for the bypass. The condition is still applicable here.
+This condition emerged independently across multiple negotiation histories.
 
-Weakening is not deprecation. The prerequisite still applies in non-bypass contexts.
+No coordinator declared it.
 
-## How to Resolve
+The prerequisite surfaced because multiple contested plan trees converged on the same structural requirement.
 
-1. Collect evidence that `space_safety_assessed` is satisfied.
-   Examples: inspection certificate, structural assessment report,
-   fire safety certificate, authority sign-off.
+Current lifecycle state:
 
-2. Open a PR in this repository attaching the evidence.
-   Reference this issue in the PR description.
+- status: weakened
+- authority: none
+- contestable: true
+- negotiation_reopen_allowed: true
 
-3. A peer agent or human reviewer will evaluate the evidence.
-   The review is advisory — the reviewer does not have authority
-   to enforce the condition, only to accept or request more evidence.
+The weakened status means:
 
-4. On merge, append a `plan_correction` event to update the plan tree.
+This prerequisite may not apply universally.
+Equivalent safety paths may bypass it in some contexts.
 
-   > **A merged PR is advisory — it does not auto-satisfy the condition.**
-   > The plan tree is updated by a `plan_correction` event, not by merge.
+Example:
 
-5. If you believe this prerequisite should not apply here,
-   contest it by producing a better plan tree (see Negotiation Context).
+housing-006 bypasses this prerequisite because it includes:
+
+- embedded_fire_controls
+- external_safety_audit_attached
+- precertified_structure
+
+housing-007 does not include those bypass conditions.
+
+Therefore the prerequisite remains applicable here.
+
+---
 
 ## Negotiation Context
 
 | Field | Value |
-|-------|-------|
-| authority | `none` |
-| contestable | `true` |
-| hard_enforcement | `false` |
-| negotiation_reopen_allowed | `true` |
-| execution_allowed | `false` |
-| moves_money | `false` |
-| scope | `non_precertified_spaces` |
-
-**authority: none** — No coordinator issued this issue.
-It arose from independent claim convergence in the federation.
-No agent or institution has the power to enforce it.
-
-**Contestable:** Yes.
-
-If you believe `space_safety_assessed` does not apply in this context, you can contest by:
-
-1. Produce a plan tree that addresses the underlying concern
-   via an alternative evidence path.
-2. Submit the plan tree as a PR referencing this issue.
-3. If accepted, the prerequisite will be weakened or scoped out.
-4. No coordinator is needed. Better evidence wins.
-
-**Prerequisite lifecycle state: `weakened`**
-
-This prerequisite has been weakened — a recognised bypass path exists. Claims with precertification or equivalent safety evidence may bypass it. It still applies to claims in scope that do not qualify for bypass.
-
-**Scope: `non_precertified_spaces`**
-
-This prerequisite applies to spaces that are not precertified and have not been independently audited for structural or fire safety.
-
-**Negotiation is always reopenable.**
-
-A PR merge is advisory — it records that evidence was accepted at a point in time. It does not permanently close negotiation. Any participant can reopen by submitting a better plan tree or contesting the scope.
-
-**Federation convergence:** 2 independent claim(s) identified this condition as a necessary prerequisite.
-Convergence strengthens the signal but does not make it mandatory.
-
-## Agent Task Hint
-
-- task_type: `safety_review`
-- required_capabilities: `safety_review`, `evidence_checking`
-- execution_allowed: `false`
-
-## Dignity Guard
-
-| Rule | Status |
-|------|--------|
-| no identity exposure | required |
-| revocable consent | required |
-| participant consent | required |
-| execution_allowed | `false` |
-| moves_money | `false` |
-| authority | `none` |
-
-> No personal data about plan participants may be attached to evidence. Evidence must be about conditions, not people.
-
-## Important
-
-This issue is advisory only.
-PR merge does not establish truth.
-Negotiation may reopen at any time.
-
-A `plan_correction` event by the plan author is needed to formally update the plan tree after a PR merge.
+|---|---|
+| authority | none |
+| contestable | true |
+| hard_enforcement | false |
+| advisory | true |
+| execution_allowed | false |
+| moves_money | false |
+| negotiation_reopen_allowed | true |
 
 ---
 
-> **Advisory only.** This issue was generated by Dan-Go / dango-gitsea-bridge.
-> No authority. No coordinator. Evidence only.
->
-> A scoped issue is not a command. It is a negotiation invitation.
->
-> `authority: none · advisory · execution_allowed: false · moves_money: false`
+## Suggested Agent Task
+
+Suggested task type:
+
+`safety_review`
+
+Suggested capabilities:
+
+- evidence_checking
+- structural_review
+- local_space_assessment
+
+This task is advisory only.
+
+No automatic execution is permitted.
+
+---
+
+## Dignity Guard
+
+Required:
+
+- revocable_consent
+- participant_consent
+- no_identity_exposure
+
+Current status:
+
+- no_identity_exposure: pass
+- execution_allowed: false
+
+---
+
+## Important
+
+This issue is not a command.
+
+It is a negotiation invitation.
+
+PR merge does not establish truth.
+
+Negotiation may reopen if:
+
+- new evidence appears
+- a counterplan emerges
+- equivalent safety paths are demonstrated
+- federation prerequisites are contested or deprecated
+
+---
+
+## Structural Note
+
+Human-readable negotiation is part of the protocol.
+
+This issue was generated from:
+
+Claim
+→ Scoped Plan Tree
+→ Federation Prerequisite Resolution
+→ Scoped Issue Draft
+→ Markdown Rendering
+
+No hidden scoring.
+No central authority.
+No hard enforcement.
+
+---
+
+## Repository
+
+GitHub:
+https://github.com/olddqn/dango-mujin
+
+gitlawb:
+https://gitlawb.com/z6MkpWP3c2xE5Veu5xSJxviWUrM69SDX4offMifsVXAs31Ts/dango-mujin
