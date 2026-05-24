@@ -1,0 +1,112 @@
+{
+  "world_model_id": "wm-post-scarcity-001",
+  "claim_id": "post-scarcity-001",
+  "schema_version": "1.0",
+  "generated_from": "world_model_mapper.py",
+  "observed_state": [
+    {
+      "state": "resource_abundance_documented",
+      "category": "general",
+      "source": "claim.observed_state"
+    },
+    {
+      "state": "coordination_gap_identified",
+      "category": "coordination",
+      "source": "claim.observed_state"
+    },
+    {
+      "state": "agent_capacity_available",
+      "category": "coordination",
+      "source": "claim.observed_state"
+    },
+    {
+      "state": "human_ai_cooperation_possible",
+      "category": "general",
+      "source": "claim.observed_state"
+    }
+  ],
+  "desired_state": [
+    {
+      "state": "agent_negotiation",
+      "category": "coordination",
+      "met": false,
+      "source": "claim.required_state"
+    },
+    {
+      "state": "dignity_constraints",
+      "category": "dignity",
+      "met": false,
+      "source": "claim.required_state"
+    },
+    {
+      "state": "transparent_contribution",
+      "category": "general",
+      "met": false,
+      "source": "claim.required_state"
+    },
+    {
+      "state": "reality_feedback",
+      "category": "infrastructure",
+      "met": false,
+      "source": "claim.required_state"
+    },
+    {
+      "state": "shared_memory",
+      "category": "infrastructure",
+      "met": false,
+      "source": "claim.required_state"
+    }
+  ],
+  "state_gap": [
+    {
+      "condition": "agent_negotiation",
+      "category": "coordination",
+      "blocking": false,
+      "dignity": false,
+      "risk": false,
+      "notes": "requires negotiation or contribution to resolve"
+    },
+    {
+      "condition": "transparent_contribution",
+      "category": "general",
+      "blocking": false,
+      "dignity": false,
+      "risk": false,
+      "notes": "requires negotiation or contribution to resolve"
+    }
+  ],
+  "reality_feedback": [],
+  "uncertainty": {
+    "level": "high",
+    "reason": "2 missing condition(s); 4 dignity constraint(s)",
+    "missing_count": 2,
+    "dignity_count": 4
+  },
+  "dignity_surface": [
+    {
+      "constraint": "no_identity_exposure",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    },
+    {
+      "constraint": "revocable_consent",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    },
+    {
+      "constraint": "fair_participation",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    },
+    {
+      "constraint": "automation_requires_consent",
+      "in_missing": false,
+      "in_observed": false,
+      "status": "declared"
+    }
+  ],
+  "world_model_notes": "Claim is in negotiation — world model shows conditions to resolve."
+}

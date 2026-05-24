@@ -174,3 +174,34 @@ An AI agent that follows Dan-Go's protocol:
 ...is a participant in post-scarcity coordination, not an obstacle to it.
 
 The OGI compatibility layer in this bridge is designed for exactly this kind of agent.
+
+---
+
+## Reasoning in Post-Scarcity Coordination
+
+In a post-scarcity context, the coordination bottleneck is not resources — it is
+structured reasoning about how to allocate them fairly. Abundance does not
+automatically produce coordination; it requires agents that can reason about
+conditions, constraints, and consent before acting.
+
+Dan-Go addresses this with the **reasoning surface** — a plan tree layer
+that sits between language and execution:
+
+```
+Language surface:   "This vacant house should become shared space."
+                    ↓
+Reasoning surface:  goal → dignity clearance → condition resolution → decision
+                    ↓
+Execution surface:  contribution / task / su-table event
+```
+
+The plan tree makes the reasoning verifiable:
+- Did the plan account for all dignity constraints?
+- Are all action nodes tied to declared capabilities?
+- Does the plan reach a terminal conclusion, or does it abstain?
+
+In post-scarcity coordination, a plan that **correctly abstains** is more
+valuable than one that proceeds without checking constraints. Abundance does
+not override dignity. The plan tree encodes this as a structural requirement.
+
+**See:** `REASONING_SURFACE_SPEC.md`, `PLAN_TREE_SPEC.md`

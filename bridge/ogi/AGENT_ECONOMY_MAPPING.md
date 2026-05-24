@@ -14,6 +14,10 @@
 | **Reality Feedback** | Outcome Record | Post-execution report becomes the economy's ground truth record |
 | **Trust Mode** | Agent Trust Level | dignity-first / guarded / open maps to agent access tiers |
 | **Constitution** | Economic Constitution | "Do not violate the dignity of another" becomes a non-negotiable protocol rule |
+| **Plan Tree** | Agent Reasoning Structure | Structured goal/subgoal/action/branch tree encodes reasoning before execution |
+| **World Model** | Agent World State | observed_state / required_state / state_gap maps to OGI world model |
+| **Memory Surface** | Agent Memory Types | Su-table tables map to episodic/procedural/semantic/reflective memory |
+| **Federation Map** | Associative Memory | Cross-claim dependency network = agent associative memory |
 
 ---
 
@@ -230,3 +234,77 @@ Counterclaims in the federation map signal **contested task framing** —
 the agent economy should surface these for human review rather than
 resolving them algorithmically. Both the claim and its counterclaim
 are preserved; resolution is a negotiation outcome, not a federation outcome.
+
+
+---
+
+## Reasoning Surface / Memory Surface / World Model
+
+### Reasoning Surface Mapping
+
+The OGI reasoning surface maps to Dan-Go's plan tree layer:
+
+```
+OGI                         Dan-Go
+───                         ──────
+reasoning module        →   claim_plan_tree.py
+plan representation     →   plan tree JSON (goal/subgoal/action/branch)
+self-verification       →   plan_tree_validator.py
+abstain / refusal       →   abstain node (first-class output)
+execution gate          →   terminal node (plan complete)
+language vs. reasoning  →   claim statement ≠ plan tree
+```
+
+The plan tree is generated FROM the claim, not extracted FROM the statement.
+It is a separate artifact derived from structured claim fields
+(`observed_state`, `required_state`, `missing_conditions`, `dignity_constraints`).
+
+### Memory Surface Mapping
+
+```
+OGI Memory Type      Dan-Go Equivalent         Storage
+───────────────      ─────────────────         ───────
+Episodic memory  →   Su-table events           sutable/*.jsonl
+Procedural memory→   Plan trees                ogi/examples/*.output.json
+Semantic memory  →   Specification documents   bridge/*.md, ogi/*.md
+Reflective memory→   Reality feedback events   sutable/reality_feedback.jsonl
+Working memory   →   Negotiation graph         in-memory (negotiation_graph.py)
+Associative mem. →   Federation map            sutable/federation.jsonl
+```
+
+### World Model Mapping
+
+```
+OGI World Model      Dan-Go Claim Field         Notes
+───────────────      ──────────────────         ─────
+observed_state   →   claim.observed_state       What is currently true
+desired_state    →   claim.required_state       What must become true
+state_gap        →   claim.missing_conditions   Delta to close
+ground_truth     →   reality_feedback events    Post-execution record
+uncertainty      →   missing_count + dignity    Categorical: low/medium/high
+dignity_surface  →   dignity_constraints        Hard gates (blocking: true)
+```
+
+### CLI for Reasoning + World Model Layer
+
+```bash
+# Generate world model from claim
+python ogi/runtime/world_model_mapper.py ogi/examples/post-scarcity.claim.json
+
+# Generate plan tree from claim
+python ogi/runtime/claim_plan_tree.py ogi/examples/post-scarcity.claim.json \
+  > ogi/examples/plan-tree.output.json
+
+# Validate plan tree
+python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json
+
+# Full JSON validation report
+python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --json
+```
+
+**See:**
+- `REASONING_SURFACE_SPEC.md` — why reasoning ≠ language
+- `PLAN_TREE_SPEC.md` — grammar, validation rules, failure modes
+- `WORLD_MODEL_MAPPING.md` — Dan-Go → world model transformation
+- `MEMORY_SURFACE_MAPPING.md` — OGI memory types ↔ su-table tables
+- `OGI_CODEX_IMPORT_NOTES.md` — what was taken, what was left, why

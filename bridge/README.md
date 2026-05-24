@@ -385,6 +385,50 @@ See `ogi/AGENT_ECONOMY_MAPPING.md` for the full Dan-Go ↔ OGI concept table.
 
 ---
 
+## OGI Reasoning Surface Compatibility
+
+Dan-Go now includes a structured reasoning layer between language and execution.
+This separates natural language claims from structured plan trees.
+
+**The three surfaces:**
+
+| Surface | Form | Example |
+|---|---|---|
+| Language | Claim statement | "This vacant house should become shared space." |
+| Reasoning | Plan tree JSON | `goal → dignity clearance → action nodes → terminal` |
+| Execution | Contribution events | `sutable/contributions.jsonl` |
+
+```bash
+# Generate world model from claim (observed/desired/gap)
+python ogi/runtime/world_model_mapper.py ogi/examples/post-scarcity.claim.json
+
+# Generate plan tree from claim (reasoning structure)
+python ogi/runtime/claim_plan_tree.py ogi/examples/post-scarcity.claim.json \
+  > ogi/examples/plan-tree.output.json
+
+# Validate plan tree (structural + dignity check)
+python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json
+
+# JSON validation report
+python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --json
+```
+
+**Key rules:**
+- Dignity branches always precede action nodes
+- `abstain` is a first-class output — not a failure state
+- Action nodes declare `required_capability` but do not execute
+- Invalid plan trees are rejected before negotiation begins
+
+**Spec docs:**
+- `ogi/REASONING_SURFACE_SPEC.md` — why reasoning ≠ language
+- `ogi/PLAN_TREE_SPEC.md` — grammar, node types, failure modes
+- `ogi/WORLD_MODEL_MAPPING.md` — claim → world model transformation
+- `ogi/MEMORY_SURFACE_MAPPING.md` — su-table as agent memory
+- `ogi/OGI_CODEX_IMPORT_NOTES.md` — what was imported, what was left out
+- `ogi/MULTI_TASK_DECOMPOSITION.md` — plan tree → task bundle architecture
+
+---
+
 ## Quick Start — Consent-Established (PASS) Flow
 
 ```bash

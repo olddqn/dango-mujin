@@ -184,5 +184,53 @@ Each task:
 - Inherits the dignity constraints from the parent Claim
 - Reports reality feedback to the same su-table claim
 
-Multi-task decomposition is not yet automated.
-It is described here for future implementation.
+Multi-task decomposition is now structured via the plan tree layer.
+See `MULTI_TASK_DECOMPOSITION.md` for the full architecture.
+
+---
+
+## Extended Pipeline: Claim → Plan Tree → Task Bundle
+
+The claim-to-task transformation now has an intermediate reasoning step:
+
+```
+Claim JSON
+  ↓  world_model_mapper.py
+World Model (observed_state / desired_state / state_gap)
+  ↓  claim_plan_tree.py
+Plan Tree (structured reasoning, not execution)
+  ↓  plan_tree_validator.py
+Validated Plan Tree
+  ↓  (task bundle extraction — see MULTI_TASK_DECOMPOSITION.md)
+Task Bundle [task-A, task-B, task-C, ...]
+  ↓
+Contribution Layer (sutable/contributions.jsonl)
+```
+
+The plan tree layer does **not** replace `claim_to_agent_task.py`.
+It adds a structured reasoning step **before** task creation:
+- The world model identifies the gap
+- The plan tree proposes how to close it
+- Validation confirms the plan is structurally sound
+- Tasks are extracted from `action` nodes only
+
+`action` nodes in the plan tree become tasks.
+`abstain` nodes in the plan tree become abstain records (no task).
+`branch` nodes gate task creation on condition evaluation.
+
+### CLI — Full Pipeline
+
+```bash
+# Step 1: Generate world model
+python ogi/runtime/world_model_mapper.py ogi/examples/post-scarcity.claim.json
+
+# Step 2: Generate plan tree
+python ogi/runtime/claim_plan_tree.py ogi/examples/post-scarcity.claim.json \
+  > ogi/examples/plan-tree.output.json
+
+# Step 3: Validate plan tree
+python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json
+
+# Step 4: Transform claim to agent task (single task, existing pipeline)
+python ogi/runtime/claim_to_agent_task.py ogi/examples/post-scarcity.claim.json
+```

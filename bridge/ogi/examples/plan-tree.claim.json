@@ -1,0 +1,49 @@
+{
+  "claim_id": "housing-plan-001",
+  "title": "A vacant house can become a shared creative base",
+  "speaker": "did:key:z6MkproposerHousing",
+  "claim_type": "declarative",
+  "statement": "A vacant building owned by the municipality can be transformed into a shared creative space for community artists and remote workers, provided legal ownership is confirmed and participant dignity is protected throughout.",
+  "observed_state": [
+    "building_identified",
+    "community_interest_confirmed",
+    "agent_capacity_available"
+  ],
+  "required_state": [
+    "legal_ownership_confirmed",
+    "owner_consent",
+    "safety_assessment",
+    "participant_consent",
+    "coordination_established",
+    "transparent_contribution",
+    "reality_feedback"
+  ],
+  "missing_conditions": [
+    "legal_ownership_confirmed",
+    "owner_consent",
+    "safety_assessment",
+    "participant_consent",
+    "coordination_established"
+  ],
+  "possible_contributions": [
+    "legal_review",
+    "coordination",
+    "local_knowledge",
+    "compute",
+    "care",
+    "translation"
+  ],
+  "dignity_constraints": [
+    "revocable_consent",
+    "no_identity_exposure",
+    "fair_participation",
+    "automation_requires_consent"
+  ],
+  "decision": "negotiate",
+  "constitution_check": {
+    "violates_dignity": false,
+    "uses_coercion": false,
+    "notes": "No vulnerable population identified as primary subject. Participant consent required for all automation. Identity exposure explicitly forbidden."
+  },
+  "created_at": "2026-05-24T00:00:00Z"
+}
