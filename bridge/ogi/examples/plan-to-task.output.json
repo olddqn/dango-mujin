@@ -1,0 +1,345 @@
+{
+  "bundle_id": "bundle-housing-plan-001",
+  "plan_tree_id": "pt-housing-plan-001",
+  "claim_id": "housing-plan-001",
+  "generated_from": "plan_tree_to_tasks.py",
+  "schema_version": "1.0",
+  "bundle_status": "partially_blocked",
+  "terminal_decision": "negotiate",
+  "summary": {
+    "task_count": 15,
+    "executable_count": 6,
+    "blocked_count": 9,
+    "gate_count": 6,
+    "dignity_gate_count": 6,
+    "risk_gate_count": 2
+  },
+  "dignity_gates": [
+    "task-gate-revocable-consent",
+    "task-gate-no-identity-exposure",
+    "task-gate-fair-participation",
+    "task-gate-automation-requires-consent",
+    "task-gate-owner-consent",
+    "task-gate-participant-consent"
+  ],
+  "risk_gates": [
+    "task-gate-legal-ownership-confirmed",
+    "task-gate-safety-assessment"
+  ],
+  "tasks": [
+    {
+      "task_id": "task-gate-revocable-consent",
+      "task_type": "condition_gate",
+      "condition": "revocable_consent",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'revocable_consent' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-no-identity-exposure",
+      "task_type": "condition_gate",
+      "condition": "no_identity_exposure",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'no_identity_exposure' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-fair-participation",
+      "task_type": "condition_gate",
+      "condition": "fair_participation",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'fair_participation' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-automation-requires-consent",
+      "task_type": "condition_gate",
+      "condition": "automation_requires_consent",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'automation_requires_consent' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-owner-consent",
+      "task_type": "condition_gate",
+      "condition": "owner_consent",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'owner_consent' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-participant-consent",
+      "task_type": "condition_gate",
+      "condition": "participant_consent",
+      "group": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "execution_allowed": true,
+      "priority": 0,
+      "note": "Dignity gate: 'participant_consent' must be established before downstream tasks may proceed."
+    },
+    {
+      "task_id": "task-gate-legal-ownership-confirmed",
+      "task_type": "legal_review",
+      "required_capability": "legal_review",
+      "condition": "legal_ownership_confirmed",
+      "satisfies_condition": "legal_ownership_confirmed",
+      "group": "risk and safety clearance",
+      "phase": "risk",
+      "execution_allowed": false,
+      "priority": 0,
+      "note": "Risk gate: 'legal_ownership_confirmed' must be cleared before downstream tasks may proceed.",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent"
+      ],
+      "blocked_reason": "dignity_gate_not_resolved"
+    },
+    {
+      "task_id": "task-gate-safety-assessment",
+      "task_type": "safety_review",
+      "required_capability": "safety_review",
+      "condition": "safety_assessment",
+      "satisfies_condition": "safety_assessment",
+      "group": "risk and safety clearance",
+      "phase": "risk",
+      "execution_allowed": false,
+      "priority": 0,
+      "note": "Risk gate: 'safety_assessment' must be cleared before downstream tasks may proceed.",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent"
+      ],
+      "blocked_reason": "dignity_gate_not_resolved"
+    },
+    {
+      "task_id": "task-coordination-001",
+      "task_type": "coordination",
+      "required_capability": "coordination",
+      "group": "satisfy condition: coordination_established",
+      "phase": "conditions",
+      "execution_allowed": false,
+      "priority": 1,
+      "satisfies_condition": "coordination_established",
+      "label": "request coordination",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-legal-review-002",
+      "task_type": "legal_review",
+      "required_capability": "legal_review",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 0,
+      "label": "propose contribution: legal_review",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-coordination-003",
+      "task_type": "coordination",
+      "required_capability": "coordination",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 1,
+      "label": "propose contribution: coordination",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-local-knowledge-004",
+      "task_type": "local_knowledge",
+      "required_capability": "local_knowledge",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 2,
+      "label": "propose contribution: local_knowledge",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-compute-005",
+      "task_type": "compute",
+      "required_capability": "compute",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 2,
+      "label": "propose contribution: compute",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-care-006",
+      "task_type": "care",
+      "required_capability": "care",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 2,
+      "label": "propose contribution: care",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    },
+    {
+      "task_id": "task-translation-007",
+      "task_type": "translation",
+      "required_capability": "translation",
+      "group": "coordinate available contributions",
+      "phase": "coordination",
+      "execution_allowed": false,
+      "priority": 2,
+      "label": "propose contribution: translation",
+      "blocked_by": [
+        "task-gate-revocable-consent",
+        "task-gate-no-identity-exposure",
+        "task-gate-fair-participation",
+        "task-gate-automation-requires-consent",
+        "task-gate-owner-consent",
+        "task-gate-participant-consent",
+        "task-gate-legal-ownership-confirmed",
+        "task-gate-safety-assessment"
+      ],
+      "blocked_reason": "upstream_gate_not_resolved"
+    }
+  ],
+  "blocked_records": [
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'revocable_consent' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "revocable_consent"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'no_identity_exposure' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "no_identity_exposure"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'fair_participation' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "fair_participation"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'automation_requires_consent' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "automation_requires_consent"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'owner_consent' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "owner_consent"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked until 'participant_consent' is established. This is not a failure — it is a necessary gate.",
+      "phase": "dignity",
+      "condition": "participant_consent"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked pending 'legal_ownership_confirmed' clearance",
+      "phase": "risk",
+      "condition": "legal_ownership_confirmed"
+    },
+    {
+      "record_type": "abstain",
+      "execution_allowed": false,
+      "reason": "execution blocked pending 'safety_assessment' clearance",
+      "phase": "risk",
+      "condition": "safety_assessment"
+    },
+    {
+      "record_type": "bundle_blocked",
+      "execution_allowed": false,
+      "reason": "required conditions not yet met — plan returns to negotiation. This is not failure. It is the protocol working correctly.",
+      "condition": "all_required_conditions_met"
+    }
+  ]
+}

@@ -429,6 +429,65 @@ python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json --j
 
 ---
 
+## Plan Tree Task Extraction
+
+Plan trees are reasoning structures. Task bundles are negotiation proposals.
+This layer converts one into the other.
+
+```
+Plan Tree → Task Bundle → Dependency Graph → Execution Order
+```
+
+```bash
+# Extract task bundle from a plan tree
+python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json
+
+# JSON output
+python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json \
+  > ogi/examples/plan-to-task.output.json
+
+# Human-readable summary with blocked records
+python ogi/runtime/plan_tree_to_tasks.py ogi/examples/plan-to-task.input.json \
+  --summary --show-blocked
+
+# Resolve dependency graph and execution order
+python ogi/runtime/task_dependency_resolver.py ogi/examples/plan-to-task.output.json
+
+# Topological execution order only
+python ogi/runtime/task_dependency_resolver.py ogi/examples/plan-to-task.output.json \
+  --order
+
+# Validate task bundle structure
+python ogi/runtime/task_bundle_validator.py ogi/examples/plan-to-task.output.json
+```
+
+**Extraction rules:**
+- `action` nodes → executable task candidates
+- dignity `branch` (true=assertion) → synthetic `condition_gate` task (priority=0, execution_allowed=true)
+- risk `branch` (true=action) → real task that is also a dependency gate (priority=0)
+- `abstain` → `blocked_record` (no task)
+- `terminal` → updates `bundle_status` (no task)
+- `subgoal` → group/phase label only
+
+**Gate dependency model:**
+- Dignity gates are always independently executable (no cross-blocking)
+- Risk gate tasks are blocked by dignity gates
+- All coordination tasks are blocked by dignity + risk gates
+- No circular dependencies allowed (validated)
+
+**Full pipeline:**
+```bash
+python ogi/runtime/claim_plan_tree.py ogi/examples/plan-tree.claim.json > /tmp/tree.json
+python ogi/runtime/plan_tree_validator.py /tmp/tree.json
+python ogi/runtime/plan_tree_to_tasks.py /tmp/tree.json > /tmp/bundle.json
+python ogi/runtime/task_bundle_validator.py /tmp/bundle.json
+python ogi/runtime/task_dependency_resolver.py /tmp/bundle.json
+```
+
+**Spec:** `ogi/PLAN_TO_TASK_SPEC.md`
+
+---
+
 ## Quick Start — Consent-Established (PASS) Flow
 
 ```bash

@@ -1,0 +1,239 @@
+{
+  "plan_tree_id": "pt-housing-plan-001",
+  "claim_id": "housing-plan-001",
+  "generated_from": "claim_plan_tree.py",
+  "schema_version": "1.0",
+  "node_type": "goal",
+  "label": "A vacant house can become a shared creative base",
+  "statement": "A vacant building owned by the municipality can be transformed into a shared creative space for community artists and remote workers, provided legal ownership is confirmed and participant dignity is protected throughout.",
+  "children": [
+    {
+      "node_type": "subgoal",
+      "label": "verify observed world state",
+      "phase": "observation",
+      "children": [
+        {
+          "node_type": "assertion",
+          "label": "observed: building_identified",
+          "state": "building_identified"
+        },
+        {
+          "node_type": "assertion",
+          "label": "observed: community_interest_confirmed",
+          "state": "community_interest_confirmed"
+        },
+        {
+          "node_type": "assertion",
+          "label": "observed: agent_capacity_available",
+          "state": "agent_capacity_available"
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "dignity clearance — required before any action",
+      "phase": "dignity",
+      "note": "All dignity branches must evaluate true before plan proceeds.",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "is 'revocable_consent' established?",
+          "condition": "revocable_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "revocable_consent confirmed",
+            "state": "revocable_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'revocable_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'no_identity_exposure' established?",
+          "condition": "no_identity_exposure",
+          "true": {
+            "node_type": "assertion",
+            "label": "no_identity_exposure confirmed",
+            "state": "no_identity_exposure"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'no_identity_exposure' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'fair_participation' established?",
+          "condition": "fair_participation",
+          "true": {
+            "node_type": "assertion",
+            "label": "fair_participation confirmed",
+            "state": "fair_participation"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'fair_participation' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'automation_requires_consent' established?",
+          "condition": "automation_requires_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "automation_requires_consent confirmed",
+            "state": "automation_requires_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'automation_requires_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'owner_consent' established?",
+          "condition": "owner_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "owner_consent confirmed",
+            "state": "owner_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'owner_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "is 'participant_consent' established?",
+          "condition": "participant_consent",
+          "true": {
+            "node_type": "assertion",
+            "label": "participant_consent confirmed",
+            "state": "participant_consent"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked until 'participant_consent' is established. This is not a failure — it is a necessary gate."
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "risk and safety clearance",
+      "phase": "risk",
+      "children": [
+        {
+          "node_type": "branch",
+          "label": "has 'legal_ownership_confirmed' been cleared?",
+          "condition": "legal_ownership_confirmed",
+          "true": {
+            "node_type": "action",
+            "label": "request legal_review",
+            "required_capability": "legal_review",
+            "satisfies_condition": "legal_ownership_confirmed"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked pending 'legal_ownership_confirmed' clearance"
+          }
+        },
+        {
+          "node_type": "branch",
+          "label": "has 'safety_assessment' been cleared?",
+          "condition": "safety_assessment",
+          "true": {
+            "node_type": "action",
+            "label": "request safety_review",
+            "required_capability": "safety_review",
+            "satisfies_condition": "safety_assessment"
+          },
+          "false": {
+            "node_type": "abstain",
+            "reason": "execution blocked pending 'safety_assessment' clearance"
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "satisfy missing conditions",
+      "phase": "conditions",
+      "children": [
+        {
+          "node_type": "subgoal",
+          "label": "satisfy condition: coordination_established",
+          "children": [
+            {
+              "node_type": "action",
+              "label": "request coordination",
+              "required_capability": "coordination",
+              "satisfies_condition": "coordination_established"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node_type": "subgoal",
+      "label": "coordinate available contributions",
+      "phase": "coordination",
+      "note": "Action nodes propose — they do not execute.",
+      "children": [
+        {
+          "node_type": "action",
+          "label": "propose contribution: legal_review",
+          "required_capability": "legal_review"
+        },
+        {
+          "node_type": "action",
+          "label": "propose contribution: coordination",
+          "required_capability": "coordination"
+        },
+        {
+          "node_type": "action",
+          "label": "propose contribution: local_knowledge",
+          "required_capability": "local_knowledge"
+        },
+        {
+          "node_type": "action",
+          "label": "propose contribution: compute",
+          "required_capability": "compute"
+        },
+        {
+          "node_type": "action",
+          "label": "propose contribution: care",
+          "required_capability": "care"
+        },
+        {
+          "node_type": "action",
+          "label": "propose contribution: translation",
+          "required_capability": "translation"
+        }
+      ]
+    },
+    {
+      "node_type": "assertion",
+      "label": "constitution check passed",
+      "state": "constitution_pass",
+      "note": "No vulnerable population identified as primary subject. Participant consent required for all automation. Identity exposure explicitly forbidden."
+    },
+    {
+      "node_type": "branch",
+      "label": "can claim advance to next phase?",
+      "condition": "all_required_conditions_met",
+      "true": {
+        "node_type": "terminal",
+        "label": "ready_for_negotiation",
+        "decision": "negotiate"
+      },
+      "false": {
+        "node_type": "abstain",
+        "reason": "required conditions not yet met — plan returns to negotiation. This is not failure. It is the protocol working correctly."
+      }
+    }
+  ]
+}

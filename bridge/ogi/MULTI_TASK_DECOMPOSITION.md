@@ -45,10 +45,13 @@ Plan Tree (goal → subgoals → actions → branches → terminals/abstains)
   ↓  plan_tree_validator.py
 Validated Plan Tree
   │
-  ↓  claim_to_agent_task.py (extended)
+  ↓  plan_tree_to_tasks.py          ← IMPLEMENTED
 Task Bundle [task-A, task-B, task-C, ...]
   │
-  ↓  contribution layer
+  ↓  task_bundle_validator.py       ← validates structure + references
+  ↓  task_dependency_resolver.py    ← topological order + cycle detection
+  │
+  ↓  (human / agent negotiation — NOT automated)
 Contributions (sutable/contributions.jsonl)
   │
   ↓  reality_feedback_mapper.py
@@ -59,57 +62,67 @@ Reality Feedback (sutable/reality_feedback.jsonl)
 
 ## From Plan Tree to Task Bundle
 
-Each `action` node in the validated plan tree becomes a candidate task:
+The extraction rules differ by node type:
+
+| Plan tree node | Bundle output |
+|---|---|
+| `action` | Executable task candidate |
+| `branch` (dignity: `true=assertion`) | Synthetic `condition_gate` task (priority=0, execution_allowed=true) |
+| `branch` (risk: `true=action`) | Real task that is also a dependency gate (priority=0) |
+| `subgoal` | Group/phase label only — no task |
+| `abstain` | `blocked_record` (no task) |
+| `terminal` | Updates `bundle_status` (no task) |
+| `assertion` | No task (already true in world state) |
+
+Example: an `action` node in the conditions phase becomes:
 
 ```json
 {
   "node_type": "action",
-  "label": "request legal_review",
-  "required_capability": "legal_review",
-  "satisfies_condition": "legal_ownership_confirmed"
+  "label": "request coordination",
+  "required_capability": "coordination",
+  "satisfies_condition": "coordination_established"
 }
 ```
 
-Becomes:
+→
 
 ```json
 {
-  "task_id": "task-housing-001-legal_review",
-  "origin_claim_id": "housing-001",
-  "origin_plan_tree_id": "pt-housing-001",
-  "origin_node_label": "request legal_review",
-  "required_capability": "legal_review",
-  "satisfies_condition": "legal_ownership_confirmed",
-  "task_status": "open",
-  "dignity_required": true,
-  "dignity_constraints": ["revocable_consent", "no_identity_exposure"],
-  "created_from": "plan_tree_action"
+  "task_id": "task-coordination-001",
+  "task_type": "coordination",
+  "required_capability": "coordination",
+  "group": "satisfy condition: coordination_established",
+  "phase": "conditions",
+  "execution_allowed": false,
+  "priority": 1,
+  "satisfies_condition": "coordination_established",
+  "blocked_by": ["task-gate-revocable-consent", "task-gate-legal-ownership-confirmed", ...],
+  "blocked_reason": "upstream_gate_not_resolved"
 }
 ```
-
-Key properties inherited from the plan tree:
-- `origin_plan_tree_id` — which plan tree this task comes from
-- `satisfies_condition` — which missing condition this task addresses
-- `dignity_required` — always true if the parent claim has dignity constraints
-- `dignity_constraints` — copied from parent claim
 
 ---
 
 ## Task Ordering via Plan Tree Phases
 
-The plan tree's phase structure implies task ordering:
+The plan tree's phase structure determines task dependency gates:
 
-| Phase | Tasks produced | Must complete before |
+| Phase | Gate type | Must complete before |
 |---|---|---|
-| `dignity` | Consent verification tasks | All other phases |
-| `risk` | Safety / legal review tasks | `coordination` phase |
-| `conditions` | Condition-specific tasks | `coordination` phase |
-| `coordination` | General contribution tasks | `decision` branch |
-| `decision` | None (branch only) | Terminal / abstain |
+| `dignity` | `condition_gate` (synthetic) | ALL other phases |
+| `risk` | Real action task as gate | `conditions` + `coordination` phases |
+| `conditions` | Regular task (not a gate) | — |
+| `coordination` | Regular task (not a gate) | — |
+| `decision` | No task — updates `bundle_status` | — |
 
-Tasks from earlier phases must be completed before later-phase tasks begin.
-This is not enforced automatically — it is declared in the plan tree
-and must be respected by the coordination protocol.
+Dependency gate rules:
+- Dignity gates: always `execution_allowed=true` — parallel, independent
+- Risk gates: `blocked_by=[dignity_gate_ids]`
+- Regular tasks: `blocked_by=[all_dignity_gates + all_risk_gates]`
+
+The dependency graph is fully encoded in each task's `blocked_by` field.
+`task_dependency_resolver.py` computes a verifiable topological execution order.
 
 ---
 
@@ -118,26 +131,32 @@ and must be respected by the coordination protocol.
 **Input claim:** `housing-plan-001` (4 dignity constraints, 5 missing conditions,
 6 possible contributions)
 
-**Generated tasks:**
+**Generated bundle:** 15 tasks, 6 dignity gates immediately executable
 
-| Task ID | Capability | Phase | Satisfies |
-|---|---|---|---|
-| `task-housing-001-revocable_consent` | `consent_facilitation` | dignity | `revocable_consent` |
-| `task-housing-001-no_identity_exposure` | *(dignity branch only)* | dignity | `no_identity_exposure` |
-| `task-housing-001-legal_review-1` | `legal_review` | risk | `legal_ownership_confirmed` |
-| `task-housing-001-legal_review-2` | `legal_review` | risk | `owner_consent` |
-| `task-housing-001-safety` | `safety_review` | risk | `safety_assessment` |
-| `task-housing-001-coord` | `coordination` | conditions | `coordination_established` |
-| `task-housing-001-legal_review-coord` | `legal_review` | coordination | — |
-| `task-housing-001-local_knowledge` | `local_knowledge` | coordination | — |
-| `task-housing-001-compute` | `compute` | coordination | — |
-| `task-housing-001-care` | `care` | coordination | — |
-| `task-housing-001-translation` | `translation` | coordination | — |
+| Task ID | Capability | Phase | Executable | Gate? |
+|---|---|---|---|---|
+| `task-gate-revocable-consent` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-no-identity-exposure` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-fair-participation` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-automation-requires-consent` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-owner-consent` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-participant-consent` | `condition_gate` | dignity | ✓ | dignity gate |
+| `task-gate-legal-ownership-confirmed` | `legal_review` | risk | ✗ | risk gate |
+| `task-gate-safety-assessment` | `safety_review` | risk | ✗ | risk gate |
+| `task-coordination-001` | `coordination` | conditions | ✗ | — |
+| `task-legal-review-002` | `legal_review` | coordination | ✗ | — |
+| `task-coordination-003` | `coordination` | coordination | ✗ | — |
+| `task-local-knowledge-004` | `local_knowledge` | coordination | ✗ | — |
+| `task-compute-005` | `compute` | coordination | ✗ | — |
+| `task-care-006` | `care` | coordination | ✗ | — |
+| `task-translation-007` | `translation` | coordination | ✗ | — |
 
-All tasks inherit:
-- `dignity_required: true`
-- `dignity_constraints: [revocable_consent, no_identity_exposure, fair_participation, automation_requires_consent]`
-- `origin_claim_id: housing-plan-001`
+```bash
+# Generate this bundle:
+python ogi/runtime/claim_plan_tree.py ogi/examples/plan-tree.claim.json > /tmp/tree.json
+python ogi/runtime/plan_tree_to_tasks.py /tmp/tree.json > /tmp/bundle.json
+python ogi/runtime/task_dependency_resolver.py /tmp/bundle.json --order
+```
 
 ---
 
@@ -198,23 +217,23 @@ de-duplicate automatically — de-duplication is a coordination protocol concern
 
 The following are NOT automated by the current implementation:
 
-- **Plan tree → task bundle conversion** — described here but not yet implemented
-  as a runtime module. `claim_plan_tree.py` generates the plan tree;
-  task bundle extraction is a future step.
 - **Task assignment** — no automatic agent matching or task routing
-- **Task ordering enforcement** — the phase order is declared; enforcement
-  is a coordination protocol concern
+- **Task ordering enforcement** — the dependency order is declared in `blocked_by`;
+  enforcement is a coordination protocol concern (not automated here)
 - **Cross-claim task deduplication** — federation records relationships;
   task merging is not automated
+- **Contribution creation** — task bundles are proposals; contributions are
+  created by human / agent negotiation, not by this layer
 
-These are described here to define the intended architecture for future
-implementation.
+The task bundle layer (`plan_tree_to_tasks.py`) IS implemented and generates
+a fully structured, validated, dependency-resolved proposal for negotiation.
 
 ---
 
 ## See Also
 
-- `CLAIM_TO_AGENT_TASK.md` — Claim → single Agent Task
+- `PLAN_TO_TASK_SPEC.md` — full extraction rules, schema, and CLI
+- `CLAIM_TO_AGENT_TASK.md` — Claim → single Agent Task (simpler path)
 - `PLAN_TREE_SPEC.md` — plan tree grammar and validation rules
 - `WORLD_MODEL_MAPPING.md` — world model → plan tree input
 - `CLAIM_FEDERATION_SPEC.md` — cross-claim dependencies
