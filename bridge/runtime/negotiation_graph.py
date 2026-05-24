@@ -586,6 +586,61 @@ def build_graph(claim_id: str) -> dict[str, Any]:
         "trust_summary":         trust_counts,
     }
 
+    # ── Federation prerequisite edges (advisory) ─────────────────
+    # Adds edges: claim → prerequisite_condition (kind: prerequisite_evidence)
+    # These are structural edges showing which claim contributed evidence
+    # to which promoted prerequisite. Advisory only — not enforcement.
+    try:
+        from prerequisite_snapshot import snapshot as prereq_snapshot
+        prereq_statuses = prereq_snapshot()
+        node_ids = {n["id"] for n in nodes}
+        for s in prereq_statuses:
+            if s.get("status") not in ("promoted", "reaffirmed"):
+                continue
+            cond = s["condition"]
+            # Build a virtual prerequisite node
+            prereq_node_id = f"prereq_{cond}"
+            if prereq_node_id not in node_ids:
+                nodes.append({
+                    "id":         prereq_node_id,
+                    "label":      f"⊛ {cond} [federation prerequisite]",
+                    "event_type": "federation_prerequisite_promoted",
+                    "table":      "federation",
+                    "style":      "correction",   # neutral style
+                    "timestamp":  "",
+                    "speaker":    "authority:none",
+                    "meta":       {
+                        "condition":  cond,
+                        "authority":  "none",
+                        "status":     s["status"],
+                        "contestable": True,
+                    },
+                })
+                node_ids.add(prereq_node_id)
+            # Draw evidence edges from each evidence claim's plan events to the prerequisite
+            for evidence_cid in s.get("evidence_claims", []):
+                if evidence_cid == claim_id:
+                    # Find the last plan event for this claim to anchor the edge
+                    plan_sources = [
+                        n["id"] for n in nodes
+                        if n.get("event_type") in (
+                            "plan_tree_created", "plan_tree_corrected",
+                            "plan_contested", "plan_objected",
+                        )
+                    ]
+                    if plan_sources:
+                        edge_key = (plan_sources[-1], prereq_node_id)
+                        if edge_key not in existing:
+                            edges.append({
+                                "from":  plan_sources[-1],
+                                "to":    prereq_node_id,
+                                "kind":  "prerequisite_evidence",
+                                "label": f"evidence: {cond}",
+                            })
+                            existing.add(edge_key)
+    except ImportError:
+        pass
+
     return {
         "claim_id": claim_id,
         "nodes":    nodes,

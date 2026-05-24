@@ -186,6 +186,27 @@ def export_mermaid(graph: dict) -> str:
     for edge in edges:
         lines.append(_mermaid_edge_line(edge))
 
+    # ── Federation prerequisite edges ────────────────────────────
+    try:
+        from prerequisite_snapshot import snapshot as prereq_snapshot
+        prereqs = prereq_snapshot()
+        if prereqs:
+            lines.append("")
+            lines.append("  %% ── Federation Prerequisites ─────────────────────────────")
+            for s in prereqs:
+                if s.get("status") in ("promoted", "reaffirmed"):
+                    cond_id = s["condition"].replace("_", "-").replace(" ", "-")
+                    lines.append(
+                        f"  prereq_{cond_id}[\"{s['condition']} [prerequisite]\"]"
+                    )
+                    for cid in s.get("evidence_claims", []):
+                        safe_cid = cid.replace("-", "_")
+                        lines.append(
+                            f"  {safe_cid} -->|evidence| prereq_{cond_id}"
+                        )
+    except ImportError:
+        pass
+
     return "\n".join(lines)
 
 
@@ -618,6 +639,36 @@ def export_text(graph: dict) -> str:
                             f"  {'✓' if t['dignity_gate_passed'] else '✗ (dignity blocked)'}"
                         )
                 lines.append("")
+    except ImportError:
+        pass
+
+    # ── Federation Prerequisites ──────────────────────────────────
+    try:
+        from prerequisite_snapshot import snapshot as prereq_snapshot
+        from prerequisite_evidence_bundle import build_evidence_bundle
+
+        prereqs = prereq_snapshot()
+        if prereqs:
+            lines.append("── FEDERATION PREREQUISITES ──────────────────────────────────")
+            for s in prereqs:
+                cond        = s["condition"]
+                status      = s.get("status", "promoted")
+                score       = s.get("evidence_score", 0)
+                n_evidence  = s.get("evidence_claims_count", 0)
+                n_contests  = s.get("contest_count", 0)
+                n_reaffirm  = s.get("reaffirm_count", 0)
+                ind         = "independent ✓" if s.get("independent_convergence") else "shared authors"
+                sym_map     = {"promoted": "✓", "reaffirmed": "✓✓", "contested": "⚠", "deprecated": "✗"}
+                sym         = sym_map.get(status, "?")
+                lines.append(f"  {sym} {cond}  [{status}]")
+                lines.append(f"      authority:       none")
+                lines.append(f"      evidence claims: {n_evidence}  convergence: {ind}")
+                for cid in s.get("evidence_claims", []):
+                    lines.append(f"        - {cid}")
+                lines.append(f"      evidence score:  {score}")
+                lines.append(f"      contested:       {n_contests}  reaffirmed: {n_reaffirm}")
+                lines.append(f"      contestable:     True")
+            lines.append("")
     except ImportError:
         pass
 
@@ -1478,6 +1529,57 @@ def export_html(graph: dict) -> str:
                 )
         return f'<div class="fed-panel">\n' + "\n".join(rows) + "\n</div>"
 
+    # ── Federation prerequisite panel HTML ───────────────────
+    def prerequisite_html() -> str:
+        try:
+            from prerequisite_snapshot import snapshot as prereq_snapshot
+            prereqs = prereq_snapshot()
+        except ImportError:
+            return '<div class="fed-panel"><span class="fed-none">(prerequisite_snapshot not available)</span></div>'
+
+        if not prereqs:
+            return '<div class="fed-panel"><span class="fed-none">No promoted prerequisites yet. Run: python runtime/prerequisite_promotion.py --append</span></div>'
+
+        sym_map = {"promoted": "✓", "reaffirmed": "✓✓", "contested": "⚠", "deprecated": "✗"}
+        color_map = {
+            "promoted":   "var(--green)",
+            "reaffirmed": "var(--green)",
+            "contested":  "var(--amber)",
+            "deprecated": "var(--red)",
+        }
+        rows = []
+        for s in prereqs:
+            cond   = s["condition"]
+            status = s.get("status", "promoted")
+            sym    = sym_map.get(status, "?")
+            color  = color_map.get(status, "var(--muted)")
+            ind    = "independent convergence ✓" if s.get("independent_convergence") else "shared authors"
+            n_ev   = s.get("evidence_claims_count", 0)
+            score  = s.get("evidence_score", 0)
+            n_con  = s.get("contest_count", 0)
+
+            evidence_tags = " ".join(
+                f'<span class="fed-claim-tag">{_h(cid)}</span>'
+                for cid in s.get("evidence_claims", [])
+            )
+
+            rows.append(
+                f'<div class="fed-row" style="border-left:3px solid {color};padding-left:0.8rem;margin-bottom:0.8rem">'
+                f'<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem">'
+                f'<span style="font-size:1.1rem;color:{color};font-weight:700">{sym}</span>'
+                f'<code style="font-family:var(--mono);font-size:0.9rem;color:var(--fg)">{_h(cond)}</code>'
+                f'<span style="font-size:0.75rem;color:{color};padding:0.1rem 0.4rem;border:1px solid {color};border-radius:3px">{status}</span>'
+                f'<span style="font-size:0.7rem;color:var(--muted);padding:0.1rem 0.4rem;border:1px solid var(--border);border-radius:3px">authority: none</span>'
+                f'</div>'
+                f'<div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.3rem">'
+                f'{n_ev} claim(s) · {ind} · score {score} · contested {n_con}x'
+                f'</div>'
+                f'<div style="margin-top:0.3rem">{evidence_tags}</div>'
+                f'</div>'
+            )
+
+        return '<div class="fed-panel">\n' + "\n".join(rows) + "\n</div>"
+
     # ── Final result badge ───────────────────────────────────
     RESULT_COLOR = {
         "success":                   "var(--green)",
@@ -1797,6 +1899,12 @@ def export_html(graph: dict) -> str:
 <section>
   <h2>Claim Federation</h2>
   {federation_html()}
+</section>
+
+<!-- ── FEDERATION PREREQUISITES ──────────────────── -->
+<section>
+  <h2>Federation Prerequisites</h2>
+  {prerequisite_html()}
 </section>
 
 <!-- ── MERMAID SOURCE ────────────────────────────── -->
