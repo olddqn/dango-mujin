@@ -227,6 +227,42 @@ def export_text(graph: dict) -> str:
     meta     = graph.get("meta", {})
 
     if not nodes:
+        # Claim may exist only in the federation — show federation branching if available
+        fed_lines: list[str] = []
+        try:
+            from federation_branching import compute_branch_status
+            from federation_ripple_detector import detect_ripples
+            fed_ev = load_federation_events()
+            if fed_ev:
+                fmap_fb = build_federation_map(fed_ev)
+                if claim_id in fmap_fb:
+                    bs_fb  = compute_branch_status(claim_id, fmap_fb, fed_ev)
+                    icons_fb = {"active": "✓", "paused": "⏸", "blocked": "✗", "unknown": "?"}
+                    status_fb = bs_fb["branch_status"]
+                    fed_lines.append(f"CLAIM {claim_id}  [{status_fb}]")
+                    fed_lines.append("(no su-table events — federation view only)")
+                    fed_lines.append("")
+                    fed_lines.append("── FEDERATION BRANCHING ──")
+                    fed_lines.append(f"  {icons_fb.get(status_fb,'?')} {claim_id}  [{status_fb}]")
+                    for d in bs_fb.get("activation_dependencies", []):
+                        di = icons_fb.get(d["status"], "?")
+                        fed_lines.append(f"    {di} {d['claim_id']}  ({d['relationship']})  → {d['status']}")
+                        for c in d.get("conditions_met", [])[:5]:
+                            fed_lines.append(f"         • {c} ✓")
+                    my_rip = [
+                        r for r in detect_ripples(fmap_fb, fed_ev)
+                        if claim_id in r.get("affected_claims", []) or r["source_claim"] == claim_id
+                    ]
+                    if my_rip:
+                        fed_lines.append("")
+                        fed_lines.append("  Ripple effects:")
+                        for r in my_rip:
+                            fed_lines.append(f"    [{r['severity']}] {r['ripple_type']}: "
+                                             f"{r['source_claim']} → {r['affected_claims']}")
+        except ImportError:
+            pass
+        if fed_lines:
+            return "\n".join(fed_lines)
         return f"CLAIM {claim_id}\n  (no events found)"
 
     lines: list[str] = []
@@ -523,6 +559,67 @@ def export_text(graph: dict) -> str:
                 if vals:
                     lines.append(f"  {label}{', '.join(vals)}")
             lines.append("")
+
+    # ── Federation Branching ─────────────────────────────────
+    try:
+        from federation_branching import compute_branch_status
+        from federation_ripple_detector import detect_ripples
+        from federation_trust_propagation import compute_all_pairs
+
+        fed_events_br = load_federation_events()
+        if fed_events_br:
+            fmap_br = build_federation_map(fed_events_br)
+            if claim_id in fmap_br:
+                lines.append("── FEDERATION BRANCHING ──────────────────────────────────")
+                bs_result = compute_branch_status(claim_id, fmap_br, fed_events_br)
+                status    = bs_result["branch_status"]
+                icons_br  = {"active": "✓", "paused": "⏸", "blocked": "✗", "unknown": "?"}
+                lines.append(f"  {icons_br.get(status,'?')} {claim_id}  [{status}]")
+
+                deps = bs_result.get("activation_dependencies", [])
+                if deps:
+                    lines.append("  depends on:")
+                    for d in deps:
+                        di = icons_br.get(d["status"], "?")
+                        conds = d.get("conditions_met", [])
+                        conds_str = f"  ({len(conds)} conditions)" if conds else ""
+                        lines.append(f"    {di} {d['claim_id']:20s}  "
+                                     f"→ {d['status']}{conds_str}")
+                        for c in conds[:5]:   # show up to 5 conditions
+                            lines.append(f"         • {c} ✓")
+
+                # Ripples affecting this claim
+                all_ripples = detect_ripples(fmap_br, fed_events_br)
+                my_ripples  = [
+                    r for r in all_ripples
+                    if r["source_claim"] == claim_id
+                    or claim_id in r.get("affected_claims", [])
+                ]
+                if my_ripples:
+                    lines.append("")
+                    lines.append("  Ripple effects:")
+                    sev_icons = {"high": "🔴", "medium": "🟡", "low": "🟢"}
+                    for r in my_ripples:
+                        lines.append(
+                            f"    {sev_icons.get(r['severity'],'·')} "
+                            f"[{r['severity']:6s}] {r['ripple_type']}: "
+                            f"{r['source_claim']} → {r['affected_claims']}"
+                        )
+
+                # Propagated trust (incoming)
+                all_trust = compute_all_pairs(fmap_br)
+                my_trust  = [t for t in all_trust if t["target_claim"] == claim_id]
+                if my_trust:
+                    lines.append("")
+                    lines.append("  Propagated trust (incoming):")
+                    for t in my_trust:
+                        lines.append(
+                            f"    {t['source_claim']:20s}  → {t['propagated_trust_weight']:.3f}"
+                            f"  {'✓' if t['dignity_gate_passed'] else '✗ (dignity blocked)'}"
+                        )
+                lines.append("")
+    except ImportError:
+        pass
 
     lines.append("=" * 60)
     final = meta.get("final_result", "")
@@ -1821,6 +1918,12 @@ def main() -> None:
     graph = build_graph(args.claim_id)
 
     if not graph["nodes"]:
+        # Try federation-only view before hard exit
+        if args.format == "text":
+            content = export_text(graph)
+            if "(no events found)" not in content:
+                print(content)
+                return
         print(f"No events found for claim_id: {args.claim_id}", file=sys.stderr)
         sys.exit(1)
 
