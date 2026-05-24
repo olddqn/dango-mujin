@@ -1,0 +1,39 @@
+{
+  "claim_id": "housing-001",
+  "active_plan": "plan-housing-001-v2",
+  "correction_chain_depth": 1,
+  "plan_count": 2,
+  "bundle_count": 1,
+  "plans": [
+    {
+      "plan_id": "plan-housing-001-v1",
+      "event_type": "plan_tree_created",
+      "status": "corrected",
+      "timestamp": "2026-05-24T02:39:40.389215+00:00",
+      "corrected_by": "plan-housing-001-v2",
+      "plan_tree_hash": "db63b5b94bb511ef…"
+    },
+    {
+      "plan_id": "plan-housing-001-v2",
+      "event_type": "plan_tree_corrected",
+      "status": "active",
+      "timestamp": "2026-05-24T02:39:40.428225+00:00",
+      "corrects_plan_id": "plan-housing-001-v1",
+      "correction_reason": "missing dignity branch for owner_consent and participant_consent",
+      "bundles": [
+        "bundle-housing-001-v1"
+      ],
+      "plan_tree_hash": "4893b5312ae88ba6…"
+    }
+  ],
+  "bundles": [
+    {
+      "bundle_id": "bundle-housing-001-v1",
+      "status": "created",
+      "derived_from_plan_id": "plan-housing-001-v2",
+      "task_count": 8,
+      "blocked_count": 4,
+      "bundle_status": "partially_blocked"
+    }
+  ]
+}

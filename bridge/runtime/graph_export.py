@@ -60,19 +60,32 @@ MERMAID_CLASSDEFS = """\
   classDef feedbackPartial fill:#fef9c3,stroke:#ca8a04,color:#422006
   classDef feedbackFail   fill:#fee2e2,stroke:#dc2626,color:#450a0a
   classDef feedbackUnexpected fill:#fff7ed,stroke:#c2410c,color:#431407
-  classDef danger         fill:#7f1d1d,stroke:#450a0a,color:#fef2f2\
+  classDef danger         fill:#7f1d1d,stroke:#450a0a,color:#fef2f2
+  classDef plan           fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+  classDef planAmended    fill:#fef9c3,stroke:#a16207,color:#3b1a00
+  classDef planCorrected  fill:#fce7f3,stroke:#9d174d,color:#4a0020
+  classDef bundle         fill:#d1fae5,stroke:#059669,color:#064e3b
+  classDef bundleBlocked  fill:#fee2e2,stroke:#dc2626,color:#450a0a
+  classDef bundleReady    fill:#bbf7d0,stroke:#15803d,color:#14532d
+  classDef bundleAbandoned fill:#f3f4f6,stroke:#9ca3af,color:#6b7280\
 """
 
 EDGE_ARROW = {
-    "temporal":   "-->",
-    "danger":     "-->",
-    "correction": "-.->",
-    "hash_chain": "-.->",
+    "temporal":         "-->",
+    "danger":           "-->",
+    "correction":       "-.->",
+    "hash_chain":       "-.->",
+    "plan_correction":  "-.->",
+    "plan_amendment":   "-.->",
+    "bundle_derivation":"-->",
 }
 
 EDGE_LABEL = {
-    "correction": "|corrects|",
-    "hash_chain": "|chain|",
+    "correction":       "|corrects|",
+    "hash_chain":       "|chain|",
+    "plan_correction":  "|corrected_by|",
+    "plan_amendment":   "|amended_by|",
+    "bundle_derivation":"|produces|",
 }
 
 
@@ -302,6 +315,83 @@ def export_text(graph: dict) -> str:
             lines.append(f"    ╌╌ corrects ╌╌→ {dst.get('id','?')} ({dst.get('label','?')[:32]})")
         lines.append("")
 
+    # ── Plan history ─────────────────────────────────────────
+    plan_nodes = [n for n in nodes if n["event_type"] in (
+        "plan_tree_created", "plan_tree_amended", "plan_tree_corrected",
+        "task_bundle_created", "task_bundle_blocked",
+        "task_bundle_ready", "task_bundle_abandoned",
+    )]
+    if plan_nodes:
+        lines.append("")
+        lines.append("── PLAN HISTORY ──────────────────────────────────────────")
+        # Group plan tree events and bundle events separately
+        tree_nodes   = [n for n in plan_nodes if "plan_tree" in n["event_type"]]
+        bundle_nodes = [n for n in plan_nodes if "task_bundle" in n["event_type"]]
+
+        # Correction chain: determine corrected_by relationships
+        corr_by: dict[str, str] = {}   # old_plan_id → new_plan_id
+        for n in tree_nodes:
+            if n["event_type"] == "plan_tree_corrected":
+                old = n["meta"].get("corrects_plan_id", "")
+                new = n["meta"].get("plan_id", "")
+                if old and new:
+                    corr_by[old] = new
+
+        for n in tree_nodes:
+            pid   = n["meta"].get("plan_id", n["id"])
+            ts    = n["timestamp"][:19].replace("T", " ")
+            et    = n["event_type"]
+            if pid in corr_by:
+                badge = "[corrected]"
+            elif et == "plan_tree_amended":
+                badge = "[amended]"
+            else:
+                badge = "[active]"
+
+            if et == "plan_tree_created":
+                icon = "📋"
+            elif et == "plan_tree_corrected":
+                icon = "↩"
+            else:
+                icon = "✏"
+
+            lines.append(f"  {icon} {pid}  {badge}")
+            if et == "plan_tree_corrected":
+                reason = n["meta"].get("correction_reason", "")
+                old    = n["meta"].get("corrects_plan_id", "")
+                if old:
+                    lines.append(f"       corrects: {old}")
+                if reason:
+                    lines.append(f"       reason: {reason}")
+            if pid in corr_by:
+                lines.append(f"       ↳ corrected by: {corr_by[pid]}")
+            lines.append(f"       {ts}")
+
+        if bundle_nodes:
+            lines.append("")
+            for n in bundle_nodes:
+                bid  = n["meta"].get("bundle_id", n["id"])
+                et   = n["event_type"]
+                dpid = n["meta"].get("derived_from_plan_id", "")
+                tc   = n["meta"].get("task_count", "?")
+                bc   = n["meta"].get("blocked_count", 0)
+                ts   = n["timestamp"][:19].replace("T", " ")
+
+                _bundle_icons = {
+                    "task_bundle_created":   "→",
+                    "task_bundle_blocked":   "🛑",
+                    "task_bundle_ready":     "✓",
+                    "task_bundle_abandoned": "✗",
+                }
+                icon = _bundle_icons.get(et, "•")
+                lines.append(f"  {icon} {bid}  [{et.replace('task_bundle_','')}]")
+                if dpid:
+                    lines.append(f"       derived from: {dpid}")
+                if tc != "?":
+                    lines.append(f"       tasks: {tc} total, {bc} blocked")
+                lines.append(f"       {ts}")
+        lines.append("")
+
     # ── Federation context ───────────────────────────────────
     fed_events = load_federation_events()
     if fed_events:
@@ -371,6 +461,13 @@ _HTML_STYLE_CLASS = {
     "feedbackFail":      "ev-feedback-fail",
     "feedbackUnexpected":"ev-feedback-unexpected",
     "danger":            "ev-danger",
+    "plan":              "ev-plan",
+    "planAmended":       "ev-plan-amended",
+    "planCorrected":     "ev-plan-corrected",
+    "bundle":            "ev-bundle",
+    "bundleBlocked":     "ev-bundle-blocked",
+    "bundleReady":       "ev-bundle-ready",
+    "bundleAbandoned":   "ev-bundle-abandoned",
     "default":           "ev-default",
 }
 
@@ -391,6 +488,13 @@ _BADGE_STYLE = {
     "feedbackFail":      "background:#7f1d1d;color:#fee2e2",
     "feedbackUnexpected":"background:#9a3412;color:#fff7ed",
     "danger":            "background:#450a0a;color:#fca5a5",
+    "plan":              "background:#0369a1;color:#e0f2fe",
+    "planAmended":       "background:#92400e;color:#fef3c7",
+    "planCorrected":     "background:#9d174d;color:#fce7f3",
+    "bundle":            "background:#065f46;color:#d1fae5",
+    "bundleBlocked":     "background:#7f1d1d;color:#fee2e2",
+    "bundleReady":       "background:#14532d;color:#bbf7d0",
+    "bundleAbandoned":   "background:#4b5563;color:#f3f4f6",
     "default":           "background:#374151;color:#d1d5db",
 }
 
@@ -739,6 +843,59 @@ tr:hover td { background: var(--surface); }
 .fed-claim-tag.fed-enables      { border-color: #16a34a; color: var(--green); }
 .fed-claim-tag.fed-blocked      { border-color: #b45309; color: var(--amber); }
 .fed-none { color: var(--muted); font-style: italic; }
+
+/* ── Plan history panel ──────────────────────────── */
+.plan-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.plan-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.bundle-row { border-color: #065f46; }
+.plan-id {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+}
+.plan-ts {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.plan-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.plan-sub code { color: var(--text); font-family: var(--mono); font-size: 0.78rem; }
+.plan-sub.reason { color: var(--amber); font-style: italic; }
+.plan-badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+.plan-active    { background:#0369a1;color:#e0f2fe; }
+.plan-corrected { background:#9d174d;color:#fce7f3; }
+.plan-amended   { background:#92400e;color:#fef3c7; }
+.bundle-created  { background:#065f46;color:#d1fae5; }
+.bundle-blocked  { background:#7f1d1d;color:#fee2e2; }
+.bundle-ready    { background:#14532d;color:#bbf7d0; }
+.bundle-abandoned{ background:#4b5563;color:#f3f4f6; }
+.plan-divider { border: none; border-top: 1px solid var(--border); margin: 0.3rem 0; }
+.plan-none { color: var(--muted); font-style: italic; }
 
 /* ── Footer ─────────────────────────────────────── */
 .page-footer {
@@ -1114,6 +1271,94 @@ def export_html(graph: dict) -> str:
     }
     result_color = RESULT_COLOR.get(final_result, "var(--muted)")
 
+    # ── Plan history context ─────────────────────────────────
+    from sutable_log import read_all as _read_all
+    _plan_events = [e for e in _read_all("plans") if e.get("claim_id") == claim_id]
+    plan_tree_events  = [e for e in _plan_events
+                         if e.get("event_type") in ("plan_tree_created", "plan_tree_amended", "plan_tree_corrected")]
+    bundle_events_raw = [e for e in _plan_events
+                         if e.get("event_type") in ("task_bundle_created", "task_bundle_blocked",
+                                                     "task_bundle_ready", "task_bundle_abandoned")]
+
+    # Correction chain
+    _corr_by: dict[str, str] = {}
+    for _pe in plan_tree_events:
+        if _pe.get("event_type") == "plan_tree_corrected":
+            _old = _pe.get("corrects_plan_id", "")
+            _new = _pe.get("plan_id", "")
+            if _old and _new:
+                _corr_by[_old] = _new
+
+    def plan_history_html() -> str:
+        if not plan_tree_events and not bundle_events_raw:
+            return '<div class="plan-panel"><span class="plan-none">(no plan events for this claim)</span></div>'
+
+        rows: list[str] = []
+
+        # Plan tree rows
+        for pe in plan_tree_events:
+            pid   = pe.get("plan_id", "?")
+            et    = pe.get("event_type", "")
+            ts    = pe.get("timestamp", "")[:19].replace("T", " ")
+            reason = pe.get("correction_reason", "") or pe.get("amendment_reason", "")
+
+            if pid in _corr_by:
+                status_badge = '<span class="plan-badge plan-corrected">corrected</span>'
+            elif et == "plan_tree_amended":
+                status_badge = '<span class="plan-badge plan-amended">amended</span>'
+            else:
+                status_badge = '<span class="plan-badge plan-active">active</span>'
+
+            corrects_row = ""
+            if et == "plan_tree_corrected":
+                old = pe.get("corrects_plan_id", "")
+                corrects_row = f'<div class="plan-sub">corrects: <code>{_h(old)}</code></div>'
+            if pid in _corr_by:
+                corrects_row += f'<div class="plan-sub">↳ corrected by: <code>{_h(_corr_by[pid])}</code></div>'
+            reason_row = f'<div class="plan-sub reason">{_h(reason)}</div>' if reason else ""
+
+            rows.append(
+                f'<div class="plan-row">'
+                f'<code class="plan-id">{_h(pid)}</code> {status_badge}'
+                f'<div class="plan-ts">{_h(ts)}</div>'
+                f'{corrects_row}{reason_row}'
+                f'</div>'
+            )
+
+        # Bundle rows
+        if bundle_events_raw:
+            rows.append('<hr class="plan-divider">')
+            for be in bundle_events_raw:
+                bid   = be.get("bundle_id", "?")
+                et    = be.get("event_type", "")
+                ts    = be.get("timestamp", "")[:19].replace("T", " ")
+                dpid  = be.get("derived_from_plan_id", "")
+                tc    = be.get("task_count", "?")
+                bc    = be.get("blocked_count", 0)
+
+                _bundle_badge_css = {
+                    "task_bundle_created":   "bundle-created",
+                    "task_bundle_blocked":   "bundle-blocked",
+                    "task_bundle_ready":     "bundle-ready",
+                    "task_bundle_abandoned": "bundle-abandoned",
+                }
+                badge_css = _bundle_badge_css.get(et, "bundle-created")
+                status_lbl = et.replace("task_bundle_", "")
+                status_badge = f'<span class="plan-badge {badge_css}">{status_lbl}</span>'
+                from_row = f'<div class="plan-sub">from: <code>{_h(dpid)}</code></div>' if dpid else ""
+                count_row = (f'<div class="plan-sub">{tc} tasks, {bc} blocked</div>'
+                             if tc != "?" else "")
+
+                rows.append(
+                    f'<div class="plan-row bundle-row">'
+                    f'<code class="plan-id">{_h(bid)}</code> {status_badge}'
+                    f'<div class="plan-ts">{_h(ts)}</div>'
+                    f'{from_row}{count_row}'
+                    f'</div>'
+                )
+
+        return '<div class="plan-panel">\n' + "\n".join(rows) + "\n</div>"
+
     # ── Assemble HTML ────────────────────────────────────────
     tl_items_html  = "\n".join(tl_item(i+1, n) for i, n in enumerate(nodes))
     table_rows_html= "\n".join(table_row(i+1, n) for i, n in enumerate(nodes))
@@ -1197,6 +1442,12 @@ def export_html(graph: dict) -> str:
   <ul class="timeline">
 {tl_items_html}
   </ul>
+</section>
+
+<!-- ── PLAN HISTORY ──────────────────────────────── -->
+<section>
+  <h2>Plan History</h2>
+  {plan_history_html()}
 </section>
 
 <!-- ── CLAIM FEDERATION ─────────────────────────── -->

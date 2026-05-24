@@ -394,6 +394,59 @@ Contribution events → sutable/contributions.jsonl
 
 ---
 
+## Bundle Persistence
+
+Task bundles are append-only artifacts stored in `sutable/plans.jsonl`
+alongside the plan tree events they were derived from.
+
+A bundle references its source plan via `derived_from_plan_id`. If the
+source plan is corrected, the old bundle is NOT invalidated — it continues
+to reference the plan it was derived from. A new bundle should be created
+from the corrected plan.
+
+### Bundle event types
+
+| Event type | Meaning |
+|---|---|
+| `task_bundle_created` | A bundle is derived from a specific plan tree |
+| `task_bundle_blocked` | The bundle is fully blocked (all gates unresolved) |
+| `task_bundle_ready` | All gates resolved; bundle is ready for negotiation |
+| `task_bundle_abandoned` | The bundle was abandoned (new plan issued or claim withdrawn) |
+
+### Appending bundle events
+
+```bash
+# Append a task_bundle_created event (validates derived_from_plan_id exists)
+python runtime/task_bundle_append.py examples/task-bundle-event.json
+
+# Status update events
+python runtime/task_bundle_append.py examples/task-bundle-blocked.json
+python runtime/task_bundle_append.py examples/task-bundle-ready.json
+```
+
+### Bundle lineage
+
+```
+claim-housing-001
+  → plan-housing-001-v1   (created)
+      corrected by
+  → plan-housing-001-v2   (active)
+      produces
+  → bundle-housing-001-v1  (partially_blocked)
+```
+
+### Snapshot
+
+```bash
+# View plan history + bundle status for a claim
+python runtime/plan_snapshot.py --claim-id housing-001
+python runtime/plan_snapshot.py --claim-id housing-001 --json
+```
+
+See `PLAN_APPEND_ONLY_SPEC.md` for the full persistence specification.
+
+---
+
 ## Absolute Prohibitions
 
 This layer does not:
@@ -412,6 +465,7 @@ Task bundles are negotiation proposals, not execution instructions.
 ## Related Specs
 
 - `PLAN_TREE_SPEC.md` — grammar and validation rules for plan trees
+- `PLAN_APPEND_ONLY_SPEC.md` — append-only persistence for plans and bundles
 - `REASONING_SURFACE_SPEC.md` — why reasoning ≠ language
 - `WORLD_MODEL_MAPPING.md` — claim → world model transformation
 - `MULTI_TASK_DECOMPOSITION.md` — architecture of plan tree → task bundle

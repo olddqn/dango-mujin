@@ -121,6 +121,7 @@ dango-gitsea-bridge/
 ├── PASS_FLOW_EXAMPLE.md           — Consent-established PASS flow walkthrough
 ├── RISK_ASSESSMENT.md             — Known risks and limitations
 ├── SUTABLE_APPEND_ONLY_SPEC.md    — Su-table append-only specification
+├── PLAN_APPEND_ONLY_SPEC.md       — Plan + task bundle persistence specification
 ├── DID_SIGNATURE_SPEC.md          — Mock DID signature specification
 ├── TEMPORAL_TRUST_DECAY_SPEC.md   — Temporal trust decay specification
 ├── examples/                      — Sample JSON files
@@ -137,6 +138,10 @@ dango-gitsea-bridge/
 │   ├── reality_feedback_append.py — CLI: reality feedback events
 │   ├── negotiation_graph.py       — Graph builder (nodes + edges from su-table)
 │   ├── graph_export.py            — CLI: export graph as mermaid, text, or HTML
+│   ├── plan_event_append.py       — CLI: append plan tree event to plans.jsonl
+│   ├── task_bundle_append.py      — CLI: append task bundle event to plans.jsonl
+│   ├── plan_correction.py         — CLI: issue plan correction or amendment
+│   ├── plan_snapshot.py           — CLI: view active plan + correction chain
 │   ├── did_signature.py           — Mock DID signature library (test vector, not real crypto)
 │   ├── sign_event.py              — CLI: attach mock signature to event JSON
 │   ├── verify_event_signature.py  — CLI: verify mock signature on event JSON
@@ -148,9 +153,14 @@ dango-gitsea-bridge/
 │   ├── negotiations.jsonl
 │   ├── contributions.jsonl
 │   ├── executions.jsonl
-│   └── reality_feedback.jsonl
+│   ├── reality_feedback.jsonl
+│   └── plans.jsonl                — Plan tree + task bundle events (append-only)
 └── examples/
     ├── sutable_events/            — Example event JSON files
+    ├── plan-event.json            — Example plan_tree_created event
+    ├── plan-correction-event.json — Example plan_tree_corrected event
+    ├── task-bundle-event.json     — Example task_bundle_created event
+    ├── plans.snapshot.json        — Generated plan snapshot (housing-001)
     ├── signed-claim-event.json    — Valid mock-signed claim event
     ├── invalid-signed-event.json  — Corrupted signature (always rejected)
     ├── trust-decay-input.json     — Contribution event for trust weight example
@@ -485,6 +495,77 @@ python ogi/runtime/task_dependency_resolver.py /tmp/bundle.json
 ```
 
 **Spec:** `ogi/PLAN_TO_TASK_SPEC.md`
+
+---
+
+## Plan Append-Only Persistence
+
+Plan trees and task bundles are reasoning artifacts.
+They are stored in `sutable/plans.jsonl` — never deleted, never modified.
+Corrections are new events. The original is always preserved.
+
+> A plan that was wrong is still a record.
+> A correction that erases the original is not a correction — it is a lie.
+
+### Event types
+
+| Event | Meaning |
+|---|---|
+| `plan_tree_created` | New plan tree proposed for a claim |
+| `plan_tree_corrected` | Full correction: new plan supersedes old structurally |
+| `plan_tree_amended` | Partial update; original plan remains active |
+| `task_bundle_created` | Task bundle derived from a specific plan tree |
+| `task_bundle_blocked` | Bundle fully blocked (all gates unresolved) |
+| `task_bundle_ready` | All gates resolved; bundle ready for negotiation |
+| `task_bundle_abandoned` | Bundle abandoned (new plan or claim withdrawn) |
+
+### Pipeline
+
+```bash
+# Append a plan tree event (validates before write)
+python runtime/plan_event_append.py examples/plan-event.json
+python runtime/plan_event_append.py examples/plan-event.json --dry-run
+
+# Issue a correction (supersedes old plan, keeps it in the log)
+python runtime/plan_correction.py examples/plan-event.json \
+  --reason "missing dignity branch for owner_consent"
+
+# Issue an amendment (partial update; original remains active)
+python runtime/plan_correction.py examples/plan-event.json \
+  --amend --reason "added note to coordination phase"
+
+# Append a task bundle event
+python runtime/task_bundle_append.py examples/task-bundle-event.json
+
+# View active plan, correction chain, bundle status
+python runtime/plan_snapshot.py --claim-id housing-001
+python runtime/plan_snapshot.py --claim-id housing-001 --json
+python runtime/plan_snapshot.py --all-claims --verbose
+```
+
+### Correction chain example
+
+```
+plan-housing-001-v1  [corrected]  ↳ corrected by: plan-housing-001-v2
+plan-housing-001-v2  [active]
+bundle-housing-001-v1  [created]  derived from: plan-housing-001-v2, 8 tasks, 4 blocked
+```
+
+### Plan lineage
+
+```
+claim-housing-001
+  → plan-housing-001-v1   (created)   corrected by
+  → plan-housing-001-v2   (active)    produces
+  → bundle-housing-001-v1 (partially_blocked)
+```
+
+Plan history appears in all graph export formats:
+- **Text:** `── PLAN HISTORY ──` section before federation
+- **HTML:** "Plan History" panel with status badges and correction chain
+- **Mermaid:** `%%` comment lines for plan metadata, dashed correction edges
+
+**Spec:** `PLAN_APPEND_ONLY_SPEC.md`
 
 ---
 

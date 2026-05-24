@@ -33,6 +33,7 @@ VALID_TABLES = {
     "executions",
     "reality_feedback",
     "federation",
+    "plans",
 }
 
 

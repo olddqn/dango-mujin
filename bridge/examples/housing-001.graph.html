@@ -351,6 +351,59 @@ tr:hover td { background: var(--surface); }
 .fed-claim-tag.fed-blocked      { border-color: #b45309; color: var(--amber); }
 .fed-none { color: var(--muted); font-style: italic; }
 
+/* ── Plan history panel ──────────────────────────── */
+.plan-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.plan-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.bundle-row { border-color: #065f46; }
+.plan-id {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+}
+.plan-ts {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.plan-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.plan-sub code { color: var(--text); font-family: var(--mono); font-size: 0.78rem; }
+.plan-sub.reason { color: var(--amber); font-style: italic; }
+.plan-badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+.plan-active    { background:#0369a1;color:#e0f2fe; }
+.plan-corrected { background:#9d174d;color:#fce7f3; }
+.plan-amended   { background:#92400e;color:#fef3c7; }
+.bundle-created  { background:#065f46;color:#d1fae5; }
+.bundle-blocked  { background:#7f1d1d;color:#fee2e2; }
+.bundle-ready    { background:#14532d;color:#bbf7d0; }
+.bundle-abandoned{ background:#4b5563;color:#f3f4f6; }
+.plan-divider { border: none; border-top: 1px solid var(--border); margin: 0.3rem 0; }
+.plan-none { color: var(--muted); font-style: italic; }
+
 /* ── Footer ─────────────────────────────────────── */
 .page-footer {
   margin-top: 3rem;
@@ -367,7 +420,7 @@ tr:hover td { background: var(--surface); }
 
 <header class="page-header">
   <h1>Dan-Go Negotiation Graph — housing-001</h1>
-  <span class="subtitle">dango-gitsea-bridge / su-table · generated 2026-05-23 18:41 UTC</span>
+  <span class="subtitle">dango-gitsea-bridge / su-table · generated 2026-05-24 02:45 UTC</span>
 </header>
 
 
@@ -379,7 +432,7 @@ tr:hover td { background: var(--surface); }
   <h2>Summary</h2>
   <div class="summary-grid">
     <div class="stat-card">
-      <div class="val">10</div>
+      <div class="val">13</div>
       <div class="lbl">Total Events</div>
     </div>
     <div class="stat-card good">
@@ -477,7 +530,7 @@ tr:hover td { background: var(--surface); }
   <div class="tl-body">
     <span class="tl-badge" style="background:#7c3aed;color:#f5f3ff">contribution offer</span>
     <span class="tl-label">Offer: legal_review</span>
-    <span class="trust-badge trust-blocked" title="trust=0.0 decay=0.9992 days=0.1 verif=self_reported">🛑 0.0</span>
+    <span class="trust-badge trust-blocked" title="trust=0.0 decay=0.9967 days=0.4 verif=self_reported">🛑 0.0</span>
     <div class="tl-meta">
       <span>🗄 contributions</span>
       <span>👤 did:key:z6MklawAgent001</span>
@@ -490,7 +543,7 @@ tr:hover td { background: var(--surface); }
   <div class="tl-body">
     <span class="tl-badge" style="background:#7c3aed;color:#f5f3ff">contribution accepted</span>
     <span class="tl-label">Accepted: legal_review — Owner consent letter obtaine…</span>
-    <span class="trust-badge trust-high" title="trust=0.9992 decay=0.9992 days=0.1 verif=self_reported">↑ 0.9992</span>
+    <span class="trust-badge trust-high" title="trust=0.9967 decay=0.9967 days=0.4 verif=self_reported">↑ 0.9967</span>
     <div class="tl-meta">
       <span>🗄 contributions</span>
       <span>👤 did:key:z6MklawAgent001</span>
@@ -547,7 +600,53 @@ tr:hover td { background: var(--surface); }
     </div>
   </div>
 </li>
+<li class="tl-item ev-plan">
+  <span class="tl-index">11</span>
+  <div class="tl-body">
+    <span class="tl-badge" style="background:#0369a1;color:#e0f2fe">plan tree created</span>
+    <span class="tl-label">Plan: plan-housing-001-v1</span>
+    <div class="tl-meta">
+      <span>🗄 plans</span>
+      <span>👤 did:key:z6MkproposerHousing</span>
+      <span>🕐 2026-05-24 02:39:40</span>
+    </div>
+  </div>
+</li>
+<li class="tl-item ev-plan-corrected">
+  <span class="tl-index">12</span>
+  <div class="tl-body">
+    <span class="tl-badge" style="background:#9d174d;color:#fce7f3">plan tree corrected</span>
+    <span class="tl-label">↩ Corrected: plan-housing-001-v2 / missing dignity branch for owner_con…</span>
+    <div class="tl-meta">
+      <span>🗄 plans</span>
+      <span>👤 did:key:z6MkproposerHousing</span>
+      <span>🕐 2026-05-24 02:39:40</span>
+    </div>
+  </div>
+</li>
+<li class="tl-item ev-bundle">
+  <span class="tl-index">13</span>
+  <div class="tl-body">
+    <span class="tl-badge" style="background:#065f46;color:#d1fae5">task bundle created</span>
+    <span class="tl-label">Bundle: bundle-housing-001-v1 (8 tasks, 4 blocked)</span>
+    <div class="tl-meta">
+      <span>🗄 plans</span>
+      <span>🕐 2026-05-24 02:39:40</span>
+    </div>
+  </div>
+</li>
   </ul>
+</section>
+
+<!-- ── PLAN HISTORY ──────────────────────────────── -->
+<section>
+  <h2>Plan History</h2>
+  <div class="plan-panel">
+<div class="plan-row"><code class="plan-id">plan-housing-001-v1</code> <span class="plan-badge plan-corrected">corrected</span><div class="plan-ts">2026-05-24 02:39:40</div><div class="plan-sub">↳ corrected by: <code>plan-housing-001-v2</code></div></div>
+<div class="plan-row"><code class="plan-id">plan-housing-001-v2</code> <span class="plan-badge plan-active">active</span><div class="plan-ts">2026-05-24 02:39:40</div><div class="plan-sub">corrects: <code>plan-housing-001-v1</code></div><div class="plan-sub reason">missing dignity branch for owner_consent and participant_consent</div></div>
+<hr class="plan-divider">
+<div class="plan-row bundle-row"><code class="plan-id">bundle-housing-001-v1</code> <span class="plan-badge bundle-created">created</span><div class="plan-ts">2026-05-24 02:39:40</div><div class="plan-sub">from: <code>plan-housing-001-v2</code></div><div class="plan-sub">8 tasks, 4 blocked</div></div>
+</div>
 </section>
 
 <!-- ── CLAIM FEDERATION ─────────────────────────── -->
@@ -566,7 +665,7 @@ tr:hover td { background: var(--surface); }
   <h2>Mermaid Source</h2>
   <div class="mermaid-wrap">
     <div class="mermaid-toolbar">
-      <span class="toolbar-left">flowchart TD · 10 nodes · 12 edges</span>
+      <span class="toolbar-left">flowchart TD · 13 nodes · 17 edges</span>
       <button class="copy-btn" id="copy-btn" onclick="copyMermaid()">Copy</button>
     </div>
     <div class="mermaid-hint">
@@ -575,7 +674,7 @@ tr:hover td { background: var(--surface); }
     </div>
     <pre class="mermaid-src"><code id="mermaid-source">%% Negotiation Graph: housing-001
 %% Generated by dango-gitsea-bridge / graph_export.py
-%% Events: 10  |  Final: partial_success
+%% Events: 13  |  Final: partial_success
 %% Federation depth: 2
 %%   enables: housing-004
 %%   counterclaimed_by: housing-003
@@ -596,6 +695,13 @@ flowchart TD
   classDef feedbackFail   fill:#fee2e2,stroke:#dc2626,color:#450a0a
   classDef feedbackUnexpected fill:#fff7ed,stroke:#c2410c,color:#431407
   classDef danger         fill:#7f1d1d,stroke:#450a0a,color:#fef2f2
+  classDef plan           fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+  classDef planAmended    fill:#fef9c3,stroke:#a16207,color:#3b1a00
+  classDef planCorrected  fill:#fce7f3,stroke:#9d174d,color:#4a0020
+  classDef bundle         fill:#d1fae5,stroke:#059669,color:#064e3b
+  classDef bundleBlocked  fill:#fee2e2,stroke:#dc2626,color:#450a0a
+  classDef bundleReady    fill:#bbf7d0,stroke:#15803d,color:#14532d
+  classDef bundleAbandoned fill:#f3f4f6,stroke:#9ca3af,color:#6b7280
 
   %% ── Nodes ─────────────────────────────
   n0[&quot;Claim: A vacant house can become a shared creative …&lt;br/&gt;&lt;small&gt;2026-05-23 16:14&lt;/small&gt;&quot;]:::claim
@@ -603,11 +709,14 @@ flowchart TD
   n2(&quot;Amendment: [legal_ownership_confirmed] Require writte…&lt;br/&gt;&lt;small&gt;2026-05-23 16:15&lt;/small&gt;&quot;):::amendment
   n3[&quot;Support: Amendment accepted. The ownership requiremen…&lt;br/&gt;&lt;small&gt;2026-05-23 16:16&lt;/small&gt;&quot;]:::support
   n4[/&quot;Offer: legal_review 🛑trust=0.0&lt;br/&gt;&lt;small&gt;2026-05-23 16:18&lt;/small&gt;&quot;/]:::contrib
-  n5[/&quot;Accepted: legal_review — Owner consent letter obtaine… ↑trust=0.9992&lt;br/&gt;&lt;small&gt;2026-05-23 16:18&lt;/small&gt;&quot;/]:::contrib
+  n5[/&quot;Accepted: legal_review — Owner consent letter obtaine… ↑trust=0.9967&lt;br/&gt;&lt;small&gt;2026-05-23 16:18&lt;/small&gt;&quot;/]:::contrib
   n6([&quot;Execution Started: All required conditions establishe…&lt;br/&gt;&lt;small&gt;2026-05-23 16:19&lt;/small&gt;&quot;]):::execution
   n7([&quot;Feedback: Partial Success&lt;br/&gt;Internet connection established. Shared …&lt;br/&gt;&lt;small&gt;2026-05-23 16:19&lt;/small&gt;&quot;]):::feedbackPartial
   n8&gt;&quot;↩ Correction: Previous objection cited wrong section…&lt;br/&gt;&lt;small&gt;2026-05-23 16:36&lt;/small&gt;&quot;]:::correction
   n9[&quot;Claim: A vacant house can become a shared creative … ✓sig&lt;br/&gt;&lt;small&gt;2026-05-23 17:51&lt;/small&gt;&quot;]:::claim
+  n10[&quot;Plan: plan-housing-001-v1&lt;br/&gt;&lt;small&gt;2026-05-24 02:39&lt;/small&gt;&quot;]:::plan
+  n11&gt;&quot;↩ Corrected: plan-housing-001-v2&lt;br/&gt;missing dignity branch for owner_con…&lt;br/&gt;&lt;small&gt;2026-05-24 02:39&lt;/small&gt;&quot;]:::planCorrected
+  n12[/&quot;Bundle: bundle-housing-001-v1 (8 tasks, 4 blocked)&lt;br/&gt;&lt;small&gt;2026-05-24 02:39&lt;/small&gt;&quot;/]:::bundle
 
   %% ── Edges ─────────────────────────────
   n0 --&gt; n1
@@ -619,7 +728,12 @@ flowchart TD
   n6 --&gt; n7
   n7 --&gt; n8
   n8 --&gt; n9
+  n9 --&gt; n10
+  n10 --&gt; n11
+  n11 --&gt; n12
   n1 -.-&gt; |corrects| n8
+  n10 -.-&gt; |corrected_by| n11
+  n11 --&gt; |produces| n12
   n3 -.-&gt; |chain| n8
   n0 -.-&gt; |chain| n9</code></pre>
   </div>
@@ -651,12 +765,15 @@ flowchart TD
 <tr class=""><td class="td-hash">n1</td><td>negotiations</td><td class="td-type">objection</td><td>did:key:z6Mkcritic001</td><td class="td-hash">2026-05-23 16:15:06</td><td>Legal ownership of the building has not been established. Cannot proceed until o…</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">9e83cab09a5d…</td><td class="td-hash">1871597af0bf…</td><td class="td-hash"></td></tr>
 <tr class=""><td class="td-hash">n2</td><td>negotiations</td><td class="td-type">amendment</td><td>did:key:z6Mkproposer001</td><td class="td-hash">2026-05-23 16:15:35</td><td>Require written consent from registered property owner before any use. Add legal…</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">965c063f8343…</td><td class="td-hash">9e83cab09a5d…</td><td class="td-hash"></td></tr>
 <tr class=""><td class="td-hash">n3</td><td>negotiations</td><td class="td-type">support</td><td>did:key:z6Mk…ember001</td><td class="td-hash">2026-05-23 16:16:49</td><td>Amendment accepted. The ownership requirement is correct and protects all partic…</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">5484ddcf7f4f…</td><td class="td-hash">965c063f8343…</td><td class="td-hash"></td></tr>
-<tr class=""><td class="td-hash">n4</td><td>contributions</td><td class="td-type">contribution_offer</td><td>did:key:z6MklawAgent001</td><td class="td-hash">2026-05-23 16:18:01</td><td>Offer: legal_review</td><td><span class="trust-badge trust-blocked" title="trust=0.0 decay=0.9992 days=0.1 verif=self_reported">🛑 0.0</span></td><td></td><td class="td-hash" title=""></td><td class="td-hash">6754a2cff17a…</td><td class="td-hash">5484ddcf7f4f…</td><td class="td-hash"></td></tr>
-<tr class=""><td class="td-hash">n5</td><td>contributions</td><td class="td-type">contribution_accepted</td><td>did:key:z6MklawAgent001</td><td class="td-hash">2026-05-23 16:18:01</td><td>Owner consent letter obtained and verified.</td><td><span class="trust-badge trust-high" title="trust=0.9992 decay=0.9992 days=0.1 verif=self_reported">↑ 0.9992</span></td><td></td><td class="td-hash" title=""></td><td class="td-hash">52fdbae92abf…</td><td class="td-hash">6754a2cff17a…</td><td class="td-hash"></td></tr>
+<tr class=""><td class="td-hash">n4</td><td>contributions</td><td class="td-type">contribution_offer</td><td>did:key:z6MklawAgent001</td><td class="td-hash">2026-05-23 16:18:01</td><td>Offer: legal_review</td><td><span class="trust-badge trust-blocked" title="trust=0.0 decay=0.9967 days=0.4 verif=self_reported">🛑 0.0</span></td><td></td><td class="td-hash" title=""></td><td class="td-hash">6754a2cff17a…</td><td class="td-hash">5484ddcf7f4f…</td><td class="td-hash"></td></tr>
+<tr class=""><td class="td-hash">n5</td><td>contributions</td><td class="td-type">contribution_accepted</td><td>did:key:z6MklawAgent001</td><td class="td-hash">2026-05-23 16:18:01</td><td>Owner consent letter obtained and verified.</td><td><span class="trust-badge trust-high" title="trust=0.9967 decay=0.9967 days=0.4 verif=self_reported">↑ 0.9967</span></td><td></td><td class="td-hash" title=""></td><td class="td-hash">52fdbae92abf…</td><td class="td-hash">6754a2cff17a…</td><td class="td-hash"></td></tr>
 <tr class=""><td class="td-hash">n6</td><td>executions</td><td class="td-type">execution_started</td><td>did:key:z6MkproposerHousing</td><td class="td-hash">2026-05-23 16:19:51</td><td>All required conditions established. Execution phase begins.</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">95a386352d1a…</td><td class="td-hash">52fdbae92abf…</td><td class="td-hash"></td></tr>
 <tr class=""><td class="td-hash">n7</td><td>reality_feedback</td><td class="td-type">reality_feedback</td><td></td><td class="td-hash">2026-05-23 16:19:51</td><td>Internet connection established. Shared space operational for 3 participants. Le…</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">0a02d080285d…</td><td class="td-hash">95a386352d1a…</td><td class="td-hash"></td></tr>
 <tr class="row-correction"><td class="td-hash">n8</td><td>negotiations</td><td class="td-type">correction</td><td>did:key:z6Mkcritic001</td><td class="td-hash">2026-05-23 16:36:46</td><td>Previous objection cited wrong section. Correct reference: Land Use Act §12(b), …</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">0d988b34bb75…</td><td class="td-hash">0a02d080285d…</td><td class="td-hash">n1</td></tr>
 <tr class=""><td class="td-hash">n9</td><td>claims</td><td class="td-type">claim_created</td><td>did:key:z6MkproposerHousing</td><td class="td-hash">2026-05-23 17:51:45</td><td>Claim: A vacant house can become a shared creative …</td><td></td><td><span class="sig-badge sig-valid">✓ mock_valid</span></td><td class="td-hash" title="did:key:z6MkTestSigner">did:key:z6MkTestSign…</td><td class="td-hash">92cad7f66906…</td><td class="td-hash">0d988b34bb75…</td><td class="td-hash"></td></tr>
+<tr class=""><td class="td-hash">n10</td><td>plans</td><td class="td-type">plan_tree_created</td><td>did:key:z6MkproposerHousing</td><td class="td-hash">2026-05-24 02:39:40</td><td>Plan: plan-housing-001-v1</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">8cfb1cc602fd…</td><td class="td-hash">92cad7f66906…</td><td class="td-hash"></td></tr>
+<tr class=""><td class="td-hash">n11</td><td>plans</td><td class="td-type">plan_tree_corrected</td><td>did:key:z6MkproposerHousing</td><td class="td-hash">2026-05-24 02:39:40</td><td>missing dignity branch for owner_consent and participant_consent</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">ec2568e71b58…</td><td class="td-hash">8cfb1cc602fd…</td><td class="td-hash"></td></tr>
+<tr class=""><td class="td-hash">n12</td><td>plans</td><td class="td-type">task_bundle_created</td><td></td><td class="td-hash">2026-05-24 02:39:40</td><td>Bundle: bundle-housing-001-v1 (8 tasks, 4 blocked)</td><td></td><td></td><td class="td-hash" title=""></td><td class="td-hash">84216c6d4ce0…</td><td class="td-hash">ec2568e71b58…</td><td class="td-hash"></td></tr>
       </tbody>
     </table>
   </div>
@@ -666,7 +783,7 @@ flowchart TD
 <section>
   <h2>Integrity Notes</h2>
   <div class="integrity-block">
-<div class="integrity-item ok">✓ 10 events across 5 table(s)</div>
+<div class="integrity-item ok">✓ 13 events across 6 table(s)</div>
 <div class="integrity-item warn">↩ 1 correction event(s) — originals preserved in log</div>
 <div class="integrity-item ok">✓ 2 hash-chain link(s) detected</div>
 <div class="integrity-item warn">╌ 1 correction edge(s) in graph</div>
@@ -687,7 +804,7 @@ flowchart TD
 <footer class="page-footer">
   dango-gitsea-bridge · su-table append-only log ·
   claim_id: housing-001 ·
-  2026-05-23 18:41 UTC ·
+  2026-05-24 02:45 UTC ·
   No external dependencies. No network communication.
 </footer>
 

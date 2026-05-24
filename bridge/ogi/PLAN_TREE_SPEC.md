@@ -273,10 +273,69 @@ python ogi/runtime/plan_tree_validator.py ogi/examples/plan-tree.output.json \
 
 ---
 
+## Append-Only Persistence
+
+Plan trees are reasoning artifacts. Like all su-table events, they are
+**never deleted or modified** after they are written. Corrections and
+amendments are appended as new events.
+
+### Storage
+
+Plan tree events are stored in `sutable/plans.jsonl`.
+
+| Event type | Meaning |
+|---|---|
+| `plan_tree_created` | A new plan tree is proposed for a claim |
+| `plan_tree_amended` | A subcomponent is amended; original plan remains active |
+| `plan_tree_corrected` | Full correction: new plan supersedes old structurally |
+
+### Appending a plan tree event
+
+```bash
+# Append a new plan tree event (validates structure before write)
+python runtime/plan_event_append.py examples/plan-event.json
+
+# Dry run (validate + print, no write)
+python runtime/plan_event_append.py examples/plan-event.json --dry-run
+
+# Skip structural validation (not recommended)
+python runtime/plan_event_append.py examples/plan-event.json --no-validate
+```
+
+### Correction and amendment
+
+```bash
+# Issue a correction (full structural replacement)
+python runtime/plan_correction.py examples/plan-event.json \
+  --reason "missing dignity branch for owner_consent"
+
+# Issue an amendment (partial update, original remains active)
+python runtime/plan_correction.py examples/plan-event.json \
+  --amend --reason "added clarifying note to coordination phase"
+```
+
+### Snapshot
+
+```bash
+# View active plan, correction chain, and bundle status
+python runtime/plan_snapshot.py --claim-id housing-001
+python runtime/plan_snapshot.py --claim-id housing-001 --json
+```
+
+### Correction semantics
+
+After a `plan_tree_corrected` event:
+- The original plan still exists in `plans.jsonl` — it is NOT deleted
+- The correction is computed by `plan_snapshot.py` via `corrects_plan_id` reference
+- The active plan is the last plan in the chain not referenced by any correction
+- The graph shows a dashed edge: v1 -.→|corrected_by| v2
+
+See `PLAN_APPEND_ONLY_SPEC.md` for the full append-only persistence specification.
+
+---
+
 ## What This Spec Does Not Cover
 
-- **Plan versioning and amendment** — plans are point-in-time; amendments
-  are new plans, not overwrites
 - **Cross-plan federation** — see `CLAIM_FEDERATION_SPEC.md`
 - **Plan execution** — see the contribution layer
 - **Natural language → plan tree** — not specified; LLM territory

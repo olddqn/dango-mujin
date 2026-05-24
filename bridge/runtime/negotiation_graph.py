@@ -58,7 +58,7 @@ _TRUST_ACCEPTED_TYPES = frozenset({"contribution_accepted", "contribution_comple
 
 # ── Table ordering (tiebreaker when timestamps are equal) ─────
 TABLE_ORDER = {t: i for i, t in enumerate(
-    ["claims", "negotiations", "contributions", "executions", "reality_feedback"]
+    ["claims", "negotiations", "contributions", "executions", "reality_feedback", "plans"]
 )}
 
 # ── Shape hints (used by graph_export.py) ────────────────────
@@ -81,6 +81,14 @@ SHAPE = {
     "execution_completed":       "stadium",
     "execution_blocked":         "stadium",
     "reality_feedback":          "stadium",
+    # Plan events (from plans.jsonl)
+    "plan_tree_created":         "rect",
+    "plan_tree_amended":         "round",
+    "plan_tree_corrected":       "asymmetric",
+    "task_bundle_created":       "para",
+    "task_bundle_blocked":       "para",
+    "task_bundle_ready":         "para",
+    "task_bundle_abandoned":     "para",
 }
 
 # ── Style class names ─────────────────────────────────────────
@@ -114,6 +122,14 @@ def _style_for(event: dict) -> str:
         "execution_paused":      "execution",
         "execution_completed":   "execution",
         "execution_blocked":     "danger",
+        # Plan events
+        "plan_tree_created":     "plan",
+        "plan_tree_amended":     "planAmended",
+        "plan_tree_corrected":   "planCorrected",
+        "task_bundle_created":   "bundle",
+        "task_bundle_blocked":   "bundleBlocked",
+        "task_bundle_ready":     "bundleReady",
+        "task_bundle_abandoned": "bundleAbandoned",
     }.get(et, "default")
 
 
@@ -201,6 +217,39 @@ def _label_for(event: dict, claim_id: str) -> str:
                 label = f"🛑 DIGNITY VIOLATION"
             return label + (f"\n{_trunc(notes, 40)}" if notes else "")
 
+        case "plan_tree_created":
+            pid = event.get("plan_id", "")
+            return f"Plan: {_trunc(pid, 44)}"
+
+        case "plan_tree_amended":
+            pid    = event.get("plan_id", "")
+            reason = event.get("amendment_reason", "")
+            return f"✏ Amended: {_trunc(pid, 38)}" + (f"\n{_trunc(reason, 38)}" if reason else "")
+
+        case "plan_tree_corrected":
+            pid    = event.get("plan_id", "")
+            reason = event.get("correction_reason", "")
+            return f"↩ Corrected: {_trunc(pid, 36)}" + (f"\n{_trunc(reason, 36)}" if reason else "")
+
+        case "task_bundle_created":
+            bid = event.get("bundle_id", "")
+            tc  = event.get("task_count", "?")
+            bc  = event.get("blocked_count", 0)
+            return f"Bundle: {_trunc(bid, 36)} ({tc} tasks, {bc} blocked)"
+
+        case "task_bundle_blocked":
+            bid = event.get("bundle_id", "")
+            return f"🛑 Bundle Blocked: {_trunc(bid, 34)}"
+
+        case "task_bundle_ready":
+            bid = event.get("bundle_id", "")
+            return f"✓ Bundle Ready: {_trunc(bid, 36)}"
+
+        case "task_bundle_abandoned":
+            bid    = event.get("bundle_id", "")
+            reason = event.get("abandoned_reason", "")
+            return f"✗ Abandoned: {_trunc(bid, 38)}" + (f"\n{_trunc(reason, 38)}" if reason else "")
+
         case _:
             return _trunc(et.replace("_", " ").title())
 
@@ -224,6 +273,12 @@ _META_KEYS = {
     "trust_level",
     "decay_factor",
     "trust_detail",
+    # Plan fields
+    "plan_id", "corrects_plan_id", "amends_plan_id",
+    "bundle_id", "derived_from_plan_id",
+    "plan_tree_hash", "task_bundle_hash",
+    "task_count", "blocked_count", "bundle_status",
+    "abandoned_reason", "amendment_reason",
 }
 
 def _meta_for(event: dict) -> dict:
@@ -345,6 +400,46 @@ def build_graph(claim_id: str) -> dict[str, Any]:
                     "from": hash_to_id[original_hash],
                     "to":   node["id"],
                     "kind": "correction",
+                })
+
+    # 2b. Plan correction edges: plan_tree_corrected → plan_tree_created/corrected
+    # Build plan_id → node_id map first
+    plan_id_to_node: dict[str, str] = {}
+    for node in nodes:
+        pid = node["meta"].get("plan_id", "")
+        if pid and node["event_type"] in (
+            "plan_tree_created", "plan_tree_amended", "plan_tree_corrected"
+        ):
+            plan_id_to_node[pid] = node["id"]
+
+    for node in nodes:
+        et = node["event_type"]
+        if et == "plan_tree_corrected":
+            old_pid = node["meta"].get("corrects_plan_id", "")
+            if old_pid and old_pid in plan_id_to_node:
+                edges.append({
+                    "from": plan_id_to_node[old_pid],
+                    "to":   node["id"],
+                    "kind": "plan_correction",
+                    "label": "corrected_by",
+                })
+        elif et == "plan_tree_amended":
+            src_pid = node["meta"].get("amends_plan_id", "")
+            if src_pid and src_pid in plan_id_to_node:
+                edges.append({
+                    "from": plan_id_to_node[src_pid],
+                    "to":   node["id"],
+                    "kind": "plan_amendment",
+                    "label": "amended_by",
+                })
+        elif et == "task_bundle_created":
+            dpid = node["meta"].get("derived_from_plan_id", "")
+            if dpid and dpid in plan_id_to_node:
+                edges.append({
+                    "from": plan_id_to_node[dpid],
+                    "to":   node["id"],
+                    "kind": "bundle_derivation",
+                    "label": "produces",
                 })
 
     # 3. Hash-chain edges within tables (for visual chain verification)
