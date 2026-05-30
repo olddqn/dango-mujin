@@ -162,6 +162,50 @@ python3 globe/runtime/claim_to_directive.py list
 変換結果は `globe/directives/` に JSON と Markdown の両形式で保存されます。
 UIサーバーの Proposal 詳細ページでは Claim・Directive の変換状況が一覧表示されます。
 
+## Phase 25 — Directive Execution Log
+
+フェーズ25では、Directive に対する承認・実行試行・観察・フィードバック・異議・差し戻し要求を
+append-only の JSONL 形式で記録する Execution Log 基盤を追加しました。
+
+**Execution Log は実行の証明ではありません。ログエントリは法的権限を生じさせません。**
+実世界アクションの前には、常に人間の明示的な承認が必要です。
+異議と差し戻し要求は常に記録可能です（人間承認ゲートなし）。
+
+In Phase 25, we added an append-only JSONL Execution Log for each Directive.
+The log records human approvals, execution attempts, observations, feedback,
+objections, and rollback requests — but is never proof of execution and creates
+no legal authority.
+
+> "Execution Log is not proof of execution."
+> "Log entry is not legal authority."
+> "Objection and rollback request must always be recordable."
+> "Append-only: existing entries must never be rewritten."
+
+```bash
+# 人間承認を記録する
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 human_approval human "Masuo Komori" \
+  "試験的実施に向けた人間承認を記録する"
+
+# 観察を記録する（事前の human_approval が必要）
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 observation ai "Dan-Go Agent" \
+  "実行前提条件の確認が必要"
+
+# 異議を記録する（常に記録可能）
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 objection human "founding-member-003" \
+  "合意確認が必要"
+
+# ログ一覧・サマリ・Markdownエクスポート
+python3 globe/runtime/directive_execution_log.py list    directive-claim-proposal-002
+python3 globe/runtime/directive_execution_log.py summary directive-claim-proposal-002
+python3 globe/runtime/directive_execution_log.py export-md directive-claim-proposal-002
+```
+
+ログは `globe/logs/{directive_id}.jsonl` に JSONL 形式で保存されます。
+UIサーバーでは Proposal 詳細ページに Execution Log の状況（エントリ数・承認状況・最終エントリ）が表示されます。
+
 ---
 
 ## Structure
@@ -179,10 +223,11 @@ dango-mujin/
 ├── ROADMAP.md             — Where this goes next
 ├── examples/              — Sample claims
 ├── runtime/               — Minimum viable Python runtime
-├── globe/                 — Phase 22–24: Globe foundation + Claim + Directive
+├── globe/                 — Phase 22–25: Globe foundation + Claim + Directive + Log
 │   ├── data/              — Globe, Proposal, Deliberation JSON data
 │   ├── claims/            — Phase 23: Generated Claim files (JSON + Markdown)
 │   ├── directives/        — Phase 24: Generated Directive files (JSON + Markdown)
+│   ├── logs/              — Phase 25: Execution Logs (JSONL · append-only)
 │   ├── runtime/           — CLI tools + HTTP server (stdlib only)
 │   └── spec/              — Globe specification
 └── bridge/                — Dan-Go bridge layer (GITSEA, OGI, gitlawb)

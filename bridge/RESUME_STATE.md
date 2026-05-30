@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Claim → Directive Conversion Layer
+# RESUME_STATE.md — Directive Execution Log Layer
 
-> **STATUS: IN PROGRESS (feature/phase-24-claim-to-directive)**
+> **STATUS: IN PROGRESS (feature/phase-25-execution-log)**
 
-**Phase:** Claim → Directive Conversion Layer (Phase 24)
-**Branch:** feature/phase-24-claim-to-directive
+**Phase:** Directive Execution Log Layer (Phase 25)
+**Branch:** feature/phase-25-execution-log
 **Started:** 2026-05-30
 
 ---
@@ -42,7 +42,8 @@
 - Commons Need Forecast Memory Layer (Phase 21) — PR #13
 - Globe Foundation Layer (Phase 22) — PR #14
 - Proposal → Claim Conversion Layer (Phase 23) — PR #15
-- **Claim → Directive Conversion Layer (Phase 24)** ← current PR
+- Claim → Directive Conversion Layer (Phase 24) — PR #16
+- **Directive Execution Log Layer (Phase 25)** ← current PR
 
 ---
 
@@ -216,20 +217,24 @@ care_loop_report.py
 | 24 | "Directive creates no legal authority." |
 | 24 | "Directive only describes a proposed executable path." |
 | 24 | "Human approval is required before real-world execution." |
+| 25 | "Execution Log is not proof of execution." |
+| 25 | "Log entry is not legal authority." |
+| 25 | "Objection and rollback request must always be recordable." |
+| 25 | "Append-only: existing entries must never be rewritten." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 24 PR** — after review
-2. **Phase 25: Directive Execution Log** — append-only record of human-approved
-   execution steps; records outcome without certifying resolution
-3. **Directive step approval flow** — record when a human explicitly approves
-   a step (voluntary; non-coercive; append-only)
-4. **Directive cluster view** — aggregate directives by globe into a single
-   advisory execution dashboard
-5. **Reality Feedback bridge** — connect directive step records to Phase 18
-   Relief Case Memory and Phase 19 Care Loop Reopen
+1. **Merge Phase 25 PR** — after review
+2. **Phase 26: Execution Log Cross-Globe Summary** — aggregate execution logs
+   across all globes into an advisory dashboard view
+3. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
+   Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
+4. **Phase 28: Directive UI Routes** — `/globe/<id>/directives/<directive_id>`
+   and `/globe/<id>/logs/<directive_id>` page rendering
+5. **Phase 29: Voluntary Resolution Signal** — record when participants
+   voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
 
 ---
 
@@ -273,6 +278,10 @@ care_loop_report.py
 *Directive creates no legal authority.*
 *Directive only describes a proposed executable path.*
 *Human approval is required before real-world execution.*
+*Execution Log is not proof of execution.*
+*Log entry is not legal authority.*
+*Objection and rollback request must always be recordable.*
+*Append-only: existing entries must never be rewritten.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
