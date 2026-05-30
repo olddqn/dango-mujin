@@ -1,13 +1,28 @@
-["リポジトリ"]
-"名前" = "olddqn/dango-mujin"
-"ライセンス" = "MIT"
+# asset.toml — GITSEA Asset Registration
+#
+# This file is read by the GITSEA platform to register this repository
+# as an on-chain asset. Dan-Go reads it as advisory metadata only.
+#
+# Section names and keys must be ASCII (TOML 1.0 bare key restriction).
+# GITSEA expects: [repo], [splits], [royalties], [insurance]
+#
+# Dan-Go does NOT:
+#   - submit this file to GITSEA
+#   - execute on-chain transactions
+#   - operate wallets
+#   - move funds
+# GITSEA registration is performed separately from the GITSEA UI.
 
-["分割"]
+[repo]
+name = "olddqn/dango-mujin"
+license = "MIT"
+
+[splits]
 "0x89b38ff776565f095b3cd46C5f35EAb27506417C" = 100
 
-["著作権料"]
-"乗数" = 1.0
-"受容度" = 1.0
+[royalties]
+multiplier = 1.0
+acceptance = 1.0
 
-["保険"]
+[insurance]
 merge_insurance = true

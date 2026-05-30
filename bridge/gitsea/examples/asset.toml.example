@@ -3,33 +3,38 @@
 # This file declares GITSEA asset metadata for a repository.
 # Place this file at the repository root as: asset.toml
 #
-# TOML 1.0 note:
-#   Bare keys must be ASCII. Japanese section headers and key names
-#   must be double-quoted. Python 3.11+ tomllib parses quoted Unicode
-#   keys correctly.
+# Section names MUST be ASCII (GITSEA canonical format):
+#   [repo], [splits], [royalties], [insurance]
+#
+# Earlier versions used Japanese quoted section names (["リポジトリ"] etc.).
+# Those are valid TOML 1.0 but GITSEA does NOT recognise them.
+# Always use the English ASCII section names shown here.
+#
+# Wallet address keys (0x...) must be quoted because they start with a digit.
 #
 # NO private keys. NO wallet operations. NO secrets.
 # Dan-Go reads this file as advisory metadata only.
+# GITSEA reads this file from the repository root for on-chain registration.
 
-["リポジトリ"]
+[repo]
 # Repository identifier: "owner/repo"
-"名前" = "your-github-handle/your-repo-name"
+name = "your-github-handle/your-repo-name"
 # SPDX license identifier
-"ライセンス" = "MIT"
+license = "MIT"
 
-["分割"]
+[splits]
 # Wallet address(es) and percentage split. Must sum to 100.
 # Add multiple lines for multiple contributors:
 #   "0xAlice..." = 60
 #   "0xBob..."   = 40
 "0xYOUR_WALLET_ADDRESS_HERE" = 100
 
-["著作権料"]
+[royalties]
 # Royalty multiplier: 1.0 = no scaling, 2.0 = double
-"乗数" = 1.0
+multiplier = 1.0
 # Royalty acceptance rate: 1.0 = full acceptance
-"受容度" = 1.0
+acceptance = 1.0
 
-["保険"]
+[insurance]
 # Merge insurance flag
 merge_insurance = false

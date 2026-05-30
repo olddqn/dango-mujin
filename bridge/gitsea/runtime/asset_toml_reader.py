@@ -4,10 +4,31 @@ asset_toml_reader.py — Read asset.toml and output structured JSON
 Reads the GITSEA asset.toml from the repository root (or a given path)
 and outputs a structured JSON representation suitable for Dan-Go tooling.
 
-Notes on Japanese TOML keys:
-    TOML 1.0 spec requires bare keys to be ASCII. Japanese section headers
-    and key names must be quoted in the file (e.g. ["リポジトリ"] not [リポジトリ]).
-    Python 3.11+ tomllib parses quoted Unicode keys correctly.
+Expected asset.toml format (GITSEA standard — English ASCII section names):
+
+    [repo]
+    name = "owner/repo"
+    license = "MIT"
+
+    [splits]
+    "0xWALLET" = 100
+
+    [royalties]
+    multiplier = 1.0
+    acceptance = 1.0
+
+    [insurance]
+    merge_insurance = true
+
+Note on TOML 1.0:
+    Bare keys must be ASCII. Section headers [repo], [splits], [royalties],
+    [insurance] are all ASCII — no quoting required.
+    Wallet address keys (0x...) must be quoted because they start with a digit.
+
+Note on legacy Japanese keys:
+    Earlier versions of this repo used quoted Japanese section headers
+    (["リポジトリ"], etc.). These are valid TOML 1.0 but GITSEA does not
+    recognise them. The canonical format uses English ASCII section names.
 
 No secrets. No private keys. No wallet operations. No network. stdlib only.
 
@@ -48,22 +69,29 @@ def read_asset_toml(path: str | Path) -> dict[str, Any]:
     with open(path, "rb") as f:
         raw = tomllib.load(f)
 
-    # Extract known sections (Japanese quoted keys)
-    repo_section     = raw.get("リポジトリ", {})
-    split_section    = raw.get("分割", {})
-    royalty_section  = raw.get("著作権料", {})
-    insurance_section = raw.get("保険", {})
+    # Extract known sections.
+    # Canonical format: English ASCII section names ([repo], [splits], etc.)
+    # Legacy fallback: quoted Japanese section names (["リポジトリ"], etc.)
+    # GITSEA only recognises the canonical English format.
+    repo_section      = raw.get("repo", raw.get("リポジトリ", {}))
+    split_section     = raw.get("splits", raw.get("分割", {}))
+    royalty_section   = raw.get("royalties", raw.get("著作権料", {}))
+    insurance_section = raw.get("insurance", raw.get("保険", {}))
 
-    repo_name  = repo_section.get("名前", "")
-    license_   = repo_section.get("ライセンス", "")
-    multiplier = royalty_section.get("乗数", 1.0)
-    acceptance = royalty_section.get("受容度", 1.0)
+    # Canonical English keys, with legacy Japanese fallback
+    repo_name  = repo_section.get("name",       repo_section.get("名前", ""))
+    license_   = repo_section.get("license",    repo_section.get("ライセンス", ""))
+    multiplier = royalty_section.get("multiplier", royalty_section.get("乗数", 1.0))
+    acceptance = royalty_section.get("acceptance", royalty_section.get("受容度", 1.0))
     merge_ins  = insurance_section.get("merge_insurance", False)
+
+    # Detect format for advisory warning
+    _using_legacy = "リポジトリ" in raw or "分割" in raw
 
     # Validate split: must sum to 100
     total_split = sum(split_section.values())
 
-    return {
+    result: dict = {
         "repo_name":          repo_name,
         "license":            license_,
         "split":              split_section,
@@ -73,6 +101,9 @@ def read_asset_toml(path: str | Path) -> dict[str, Any]:
         "royalty_acceptance": acceptance,
         "merge_insurance":    merge_ins,
         "raw":                raw,
+        # Format advisory
+        "format":             "legacy_japanese" if _using_legacy else "canonical_english",
+        "gitsea_format_ok":   not _using_legacy,
         # Invariants
         "execution_allowed":  False,
         "moves_money":        False,
@@ -83,6 +114,14 @@ def read_asset_toml(path: str | Path) -> dict[str, Any]:
             "No GITSEA API is called. No wallet operation is performed."
         ),
     }
+    if _using_legacy:
+        result["format_warning"] = (
+            "asset.toml uses legacy Japanese section names. "
+            "GITSEA expects English ASCII section names: "
+            "[repo], [splits], [royalties], [insurance]. "
+            "Update asset.toml to the canonical format before re-attempting GITSEA registration."
+        )
+    return result
 
 
 # ── CLI display ───────────────────────────────────────────────────────────────
@@ -99,6 +138,10 @@ def _print_asset(asset: dict[str, Any]) -> None:
     print(f"  Royalty multiplier: {asset['royalty_multiplier']}")
     print(f"  Royalty acceptance: {asset['royalty_acceptance']}")
     print(f"  Merge insurance:    {asset['merge_insurance']}")
+    print(f"\n  TOML format:        {asset['format']}")
+    print(f"  GITSEA format OK:   {'✓' if asset['gitsea_format_ok'] else '✗'}")
+    if not asset["gitsea_format_ok"]:
+        print(f"  FORMAT WARNING:     {asset.get('format_warning', '')}")
     print(f"\n  execution_allowed:  {asset['execution_allowed']}")
     print(f"  moves_money:        {asset['moves_money']}")
     print(f"  advisory:           {asset['advisory']}")
@@ -110,10 +153,20 @@ def main() -> None:
         description="Read asset.toml and output GITSEA asset metadata.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Notes:
-  Japanese section headers in asset.toml must be quoted
-  (e.g. ["リポジトリ"]) for compatibility with Python 3.11+ tomllib.
-  The TOML 1.0 spec restricts bare keys to ASCII characters.
+Expected asset.toml format (GITSEA canonical):
+  [repo]
+  name = "owner/repo"
+  license = "MIT"
+
+  [splits]
+  "0xWALLET" = 100
+
+  [royalties]
+  multiplier = 1.0
+  acceptance = 1.0
+
+  [insurance]
+  merge_insurance = true
 
 Examples:
   python bridge/gitsea/runtime/asset_toml_reader.py asset.toml
@@ -138,7 +191,11 @@ Examples:
     except tomllib.TOMLDecodeError as e:
         print(f"ERROR: TOML parse failed: {e}", file=sys.stderr)
         print(
-            "  Hint: Japanese section headers must be quoted, e.g. [\"リポジトリ\"]",
+            "  Hint: Use ASCII section names: [repo], [splits], [royalties], [insurance]",
+            file=sys.stderr,
+        )
+        print(
+            "  Hint: Wallet address keys (0x...) must be quoted: \"0xABC...\" = 100",
             file=sys.stderr,
         )
         sys.exit(1)
