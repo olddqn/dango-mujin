@@ -1,0 +1,65 @@
+{
+  "report_type": "credit_observation_report",
+  "generated_at": "2026-05-30T04:51:23.540580+00:00",
+  "report_id": "obs-report-housing-007-issue-1",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "external_system": "gitsea",
+  "summary": "Contribution candidate exists but no external credit observed.",
+  "candidate_credit": true,
+  "external_credit": false,
+  "credit_issued": false,
+  "advisory": true,
+  "candidate_count": 3,
+  "credit_eligible": 2,
+  "section_count": 4,
+  "sections": [
+    {
+      "section": "Candidate Exists",
+      "summary": "2 of 3 contribution candidate(s) met the credit-eligibility threshold in Phase 11.",
+      "detail": "Dan-Go Phase 11 recorded contribution events as candidates. 2 candidate(s) have candidate_credit=true, meaning they completed accepted work (evidence_reviewed, evidence_accepted, reaffirm_submitted, or plan_correction). This is an advisory classification — it does not trigger any action.",
+      "candidate_credit": true,
+      "credit_issued": false
+    },
+    {
+      "section": "External Credit Absent",
+      "summary": "No external credit observed in gitsea.",
+      "detail": "Dan-Go observed gitsea and found no credit record corresponding to the contribution candidates above. This is not an error. External credit systems are sovereign — gitsea decides independently whether and when to issue credit. Dan-Go does not request, push, or activate credit.",
+      "external_credit": false,
+      "credit_issued": false
+    },
+    {
+      "section": "No Contradiction Exists",
+      "summary": "The gap between candidate credit and external credit is not a protocol contradiction.",
+      "detail": "Dan-Go candidate credit and external credit are different things. A candidate existing in Dan-Go does not mean external credit was issued or is owed. A gap between the two states is expected and by design. External credit systems such as GITSEA are sovereign: they may issue credit at any time, on their own schedule, or not at all. Dan-Go does not guarantee credit. Dan-Go records candidates.",
+      "gap_is_error": false,
+      "credit_issued": false
+    },
+    {
+      "section": "Observation Is Sufficient",
+      "summary": "Dan-Go's role ends at observation. Making contribution legible is the goal — not issuing credit.",
+      "detail": "The Dan-Go protocol is designed to make contribution legible before it becomes economically valuable. Recording candidates, building contribution history, and surfacing them for external system observation is the complete role of Dan-Go in the credit process. Whether value follows is determined by external systems. Observation is not issuance. Dan-Go has fulfilled its role by recording candidates accurately and making them observable.",
+      "observation_sufficient": true,
+      "credit_issued": false
+    }
+  ],
+  "summary_table": {
+    "candidate_exists": true,
+    "external_credit_absent": true,
+    "gap_is_error": false,
+    "observation_sufficient": true,
+    "dango_issues_credit": false,
+    "dango_requests_credit": false,
+    "external_system_sovereign": true
+  },
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "principle_1": "Observation is not issuance.",
+  "principle_2": "Candidate credit is not external credit.",
+  "principle_3": "Contribution becomes legible before it becomes valuable."
+}
