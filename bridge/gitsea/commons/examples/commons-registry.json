@@ -1,0 +1,159 @@
+{
+  "record_type": "commons_registry",
+  "registry_id": "commons-registry-001",
+  "commons_count": 4,
+  "commons": [
+    {
+      "record_type": "commons_registry_entry",
+      "commons_id": "dango-001",
+      "name": "Dan-Go",
+      "description": "The Dan-Go negotiation protocol \u2014 a cooperative, advisory, append-only system.",
+      "commons_type": "project",
+      "type_note": "A cooperative software or creative project.",
+      "active": true,
+      "founded": "2025-01-01",
+      "claim_ids": [
+        "housing-007",
+        "housing-006"
+      ],
+      "issue_ids": [
+        1,
+        2,
+        3
+      ],
+      "authority": "none",
+      "ownership": false,
+      "control": false,
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "commons_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "protocol_phrases": [
+        "Community is not authority.",
+        "Commons is not ownership.",
+        "Participation is not control."
+      ]
+    },
+    {
+      "record_type": "commons_registry_entry",
+      "commons_id": "jammy-house-001",
+      "name": "Jammy House",
+      "description": "A cooperative housing initiative participating in Dan-Go negotiation.",
+      "commons_type": "house",
+      "type_note": "A physical or virtual cooperative living/working space.",
+      "active": true,
+      "founded": "2025-03-01",
+      "claim_ids": [
+        "housing-007"
+      ],
+      "issue_ids": [
+        3
+      ],
+      "authority": "none",
+      "ownership": false,
+      "control": false,
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "commons_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "protocol_phrases": [
+        "Community is not authority.",
+        "Commons is not ownership.",
+        "Participation is not control."
+      ]
+    },
+    {
+      "record_type": "commons_registry_entry",
+      "commons_id": "yacypherpunks-001",
+      "name": "YacypherPunks",
+      "description": "A cypherpunk community engaged in cooperative digital infrastructure.",
+      "commons_type": "community",
+      "type_note": "A shared community of participants with common interests.",
+      "active": true,
+      "founded": "2024-06-01",
+      "claim_ids": [],
+      "issue_ids": [],
+      "authority": "none",
+      "ownership": false,
+      "control": false,
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "commons_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "protocol_phrases": [
+        "Community is not authority.",
+        "Commons is not ownership.",
+        "Participation is not control."
+      ]
+    },
+    {
+      "record_type": "commons_registry_entry",
+      "commons_id": "dra-001",
+      "name": "D.R.A.",
+      "description": "Decentralised Renter Association \u2014 cooperative tenant advocacy initiative.",
+      "commons_type": "initiative",
+      "type_note": "A coordinated collective action or advocacy initiative.",
+      "active": true,
+      "founded": "2025-01-15",
+      "claim_ids": [
+        "housing-006",
+        "housing-007"
+      ],
+      "issue_ids": [
+        1,
+        2,
+        3
+      ],
+      "authority": "none",
+      "ownership": false,
+      "control": false,
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "commons_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "protocol_phrases": [
+        "Community is not authority.",
+        "Commons is not ownership.",
+        "Participation is not control."
+      ]
+    }
+  ],
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "commons_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "ownership": false,
+  "control": false,
+  "protocol_phrases": [
+    "Community is not authority.",
+    "Commons is not ownership.",
+    "Participation is not control.",
+    "Dan-Go records cooperation history; it does not govern communities."
+  ]
+}

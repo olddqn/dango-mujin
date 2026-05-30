@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Recognition Ledger Layer
+# RESUME_STATE.md — Cooperation Commons Layer
 
-> **STATUS: IN PROGRESS (feature/phase-15-recognition-ledger)**
+> **STATUS: IN PROGRESS (feature/phase-16-cooperation-commons)**
 
-**Phase:** Recognition Ledger Layer (Phase 15)
-**Branch:** feature/phase-15-recognition-ledger
+**Phase:** Cooperation Commons Layer (Phase 16)
+**Branch:** feature/phase-16-cooperation-commons
 **Started:** 2026-05-30
 
 ---
@@ -33,19 +33,31 @@
 - External Credit Adapter Layer (Phase 12) — PR #4
 - Credit Reflection Memory Layer (Phase 13) — PR #5
 - Recognition Appeal Layer (Phase 14) — PR #6
-- **Recognition Ledger Layer (Phase 15)** ← current PR
+- Recognition Ledger Layer (Phase 15) — PR #7
+- **Cooperation Commons Layer (Phase 16)** ← current PR
 
 ---
 
-## Phase 15: Recognition Ledger Layer
+## Phase 16: Cooperation Commons Layer
 
 Core principles:
-> "Recognition history is not authority."
-> "Ledger is not judgment."
+> "Community is not authority."
+> "Commons is not ownership."
+> "Participation is not control."
 
-**Purpose:** Links Phase 11–14 records into one combined recognition history
-per contributor per claim. The ledger is the terminal advisory record of the
-contribution→recognition lifecycle. History is complete. Authority is none.
+**Purpose:** Records cooperation within communities, projects, houses, and
+shared initiatives. Dan-Go makes collective cooperation legible alongside
+individual contribution. The commons layer is advisory only. No authority
+is claimed. No ownership is implied. No governance is exercised.
+
+### Registered Commons
+
+| Commons ID | Name | Type |
+|------------|------|------|
+| `dango-001` | Dan-Go | project |
+| `jammy-house-001` | Jammy House | house |
+| `yacypherpunks-001` | YacypherPunks | community |
+| `dra-001` | D.R.A. | initiative |
 
 ### Phase Chain
 
@@ -55,82 +67,84 @@ Phase 12: External Credit Observation → external_credit: false
 Phase 13: Reflection Memory           → reflection_recorded: true
 Phase 14: Recognition Appeal          → appeal_recorded: true
 Phase 15: Recognition Ledger          → recognition_history_complete: true
+Phase 16: Cooperation Commons         → commons_recorded: true
 ```
 
 ### Runtime Results
 
 ```
-ledger_entry_builder.py
-  total_entries: 2
-  ledger-entry-001: external-001 evidence_reviewed
-    events: candidate_created → external_credit_not_observed → reflection_recorded → appeal_recorded
-    complete=True, gap=True, judgment=False
-  ledger-entry-002: external-002 evidence_accepted
-    events: candidate_created → external_credit_not_observed → reflection_recorded → appeal_recorded
-    complete=True, gap=True, judgment=False
-  authority: none, judgment: false, credit_issued: false
+commons_registry.py
+  registry_id: commons-registry-001
+  commons_count: 4
+    dango-001: Dan-Go (project) — active, authority=none, ownership=false
+    jammy-house-001: Jammy House (house) — active, authority=none, ownership=false
+    yacypherpunks-001: YacypherPunks (community) — active, authority=none, ownership=false
+    dra-001: D.R.A. (initiative) — active, authority=none, ownership=false
+  Community is not authority.
 
-recognition_ledger.py
-  ledger_id: recognition-ledger-001
-  issue: #3, claim: housing-007
-  entry_count: 3
-  candidate_count: 3, external_credit_count: 0
-  reflection_count: 3, appeal_count: 3, gap_count: 3
-  recognition_history_complete: true
-  ledger_issues_credit: false, ledger_judges: false
-  judgment: false, authority: none
+commons_membership.py
+  log_id: membership-log-001
+  total_memberships: 9
+  commons_represented: 4
+    jammy-house-001: 3 members
+    dra-001: 2 members
+    yacypherpunks-001: 1 member
+    dango-001: 3 members
+  control=false, ownership=false on all records
+  Participation is not control.
 
-ledger_snapshot.py
-  snapshot_id: ledger-snap-housing-007-issue-3
-  source: recognition-ledger-001
-  ledger_entry_count: 3
-  candidate_count: 3 (100% coverage)
-  external_credit_count: 0 (0% coverage)
-  reflection_count: 3 (100% coverage)
-  appeal_count: 3 (100% coverage)
-  gap_count: 3
-  recognition_history_complete: true
-  judgment: false, authority: none
+commons_snapshot.py
+  snapshot_id: commons-snap-001
+  snapshot_date: 2026-05-30
+  commons_count: 4
+  total_participants: 9
+  total_contributions: 126
+  total_recognition_history: 98
+  total_ledger_entries: 8
+  authority=none, ownership=false, control=false
+  moves_money=false, credit_issued=false
 
-ledger_report.py
-  report_id: ledger-report-housing-007-issue-3
-  5 sections:
-    Why Recognition History Exists — legibility requires record
-    Why the Ledger Does Not Judge — judgment: false invariant
-    Why the Ledger Does Not Issue Credit — credit_issued: false permanent
-    Why the Ledger Does Not Force Recognition — authority: none
-    Why Append-Only History Preserves Reopenability — reopenable: true
+commons_report.py
+  report_id: commons-report-001
+  section_count: 5
+    Why Community Exists and Is Observable — advisory: true
+    Why Participation Is Voluntary — membership_is_voluntary: true
+    Why Community Does Not Create Authority — authority: none
+    Why Cooperation Can Exist Without Ownership — ownership: false
+    Why Dan-Go Records Without Governing — control: false, hard_enforcement: false
   summary_table:
-    ledger_judges: false
-    ledger_issues_credit: false
-    ledger_forces_recognition: false
-    recognition_remains_external: true
+    authority_implied: false
+    ownership_implied: false
+    control_implied: false
+    dan_go_governs_communities: false
+    dan_go_owns_communities: false
+    commons_remains_self_governing: true
 ```
 
 ---
 
-## New Files (Phase 15)
+## New Files (Phase 16)
 
-- bridge/gitsea/ledger/RECOGNITION_LEDGER_SPEC.md
-- bridge/gitsea/ledger/LEDGER_NOT_JUDGMENT.md
-- bridge/gitsea/ledger/HISTORY_NOT_AUTHORITY.md
-- bridge/gitsea/ledger/runtime/recognition_ledger.py
-- bridge/gitsea/ledger/runtime/ledger_snapshot.py
-- bridge/gitsea/ledger/runtime/ledger_entry_builder.py
-- bridge/gitsea/ledger/runtime/ledger_report.py
-- bridge/gitsea/ledger/examples/recognition-ledger.json (generated)
-- bridge/gitsea/ledger/examples/ledger-snapshot.json (generated)
-- bridge/gitsea/ledger/examples/ledger-entry.json (generated)
-- bridge/gitsea/ledger/examples/ledger-report.json (generated)
+- bridge/gitsea/commons/COOPERATION_COMMONS_SPEC.md
+- bridge/gitsea/commons/COMMUNITY_NOT_AUTHORITY.md
+- bridge/gitsea/commons/COMMONS_NOT_OWNERSHIP.md
+- bridge/gitsea/commons/runtime/commons_registry.py
+- bridge/gitsea/commons/runtime/commons_membership.py
+- bridge/gitsea/commons/runtime/commons_snapshot.py
+- bridge/gitsea/commons/runtime/commons_report.py
+- bridge/gitsea/commons/examples/commons-registry.json (generated)
+- bridge/gitsea/commons/examples/commons-membership.json (generated)
+- bridge/gitsea/commons/examples/commons-snapshot.json (generated)
+- bridge/gitsea/commons/examples/commons-report.json (generated)
 
-## Updated Files (Phase 15)
+## Updated Files (Phase 16)
 
-- bridge/gitsea/README.md (Phase 15 section + ledger/ in layout)
+- bridge/gitsea/README.md (Phase 16 section + commons/ in layout + flow diagram)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 15 files)
+## Key Invariants (all Phase 16 files)
 
 | Field | Value |
 |-------|-------|
@@ -139,22 +153,20 @@ ledger_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `ledger_only` | `true` |
+| `commons_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `judgment` | `false` (invariant) |
-| `entry_judges` | `false` (invariant) |
-| `entry_ranks` | `false` (invariant) |
-| `entry_creates_authority` | `false` (invariant) |
-| `ledger_judges` | `false` (invariant) |
-| `ledger_forces_recognition` | `false` (invariant) |
-| `ledger_issues_credit` | `false` (invariant) |
+| `ownership` | `false` (invariant) |
+| `control` | `false` (invariant) |
+| `membership_compels` | `false` (invariant) |
+| `membership_grants_authority` | `false` (invariant) |
+| `membership_is_voluntary` | `true` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–15)
+## Protocol Principle Accumulation (Phases 10–16)
 
 | Phase | Phrase |
 |-------|--------|
@@ -170,16 +182,20 @@ ledger_report.py
 | 14 | "Recognition remains external." |
 | 15 | "Recognition history is not authority." |
 | 15 | "Ledger is not judgment." |
+| 16 | "Community is not authority." |
+| 16 | "Commons is not ownership." |
+| 16 | "Participation is not control." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 15 PR** — after review
-2. **Phase 16: GITSEA Stream Candidate Tracking** — observe stream activation
-3. **Multi-claim ledger** — aggregate recognition history across housing-006, housing-007
-4. **Federation ledger** — cross-node recognition history
-5. **Ledger versioning** — track changes in external credit state over time
+1. **Merge Phase 16 PR** — after review
+2. **Phase 17: GITSEA Stream Candidate Tracking** — observe stream activation
+3. **Commons-linked ledger** — connect Phase 15 ledger entries to their originating commons
+4. **Multi-commons snapshot** — aggregate recognition history across all commons
+5. **Cross-commons cooperation** — record cooperation between different commons
+6. **Federation commons** — cross-node commons visibility
 
 ---
 
@@ -194,6 +210,10 @@ ledger_report.py
 *Recognition remains external.*
 *Recognition history is not authority.*
 *Ledger is not judgment.*
+*Community is not authority.*
+*Commons is not ownership.*
+*Participation is not control.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
+*Dan-Go records commons participation; it does not govern communities.*
 *Contribution becomes legible before it becomes valuable.*
