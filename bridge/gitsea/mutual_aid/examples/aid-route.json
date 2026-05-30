@@ -1,0 +1,297 @@
+{
+  "record_type": "aid_route_log",
+  "log_id": "aid-route-log-001",
+  "log_date": "2026-05-30",
+  "route_count": 5,
+  "status_summary": {
+    "possible": 4,
+    "suggested": 1
+  },
+  "routes": [
+    {
+      "record_type": "aid_route",
+      "route_id": "aid-route-001",
+      "route_date": "2026-05-30",
+      "request_id": "aid-request-001",
+      "offer_id": "aid-offer-001",
+      "commons_id": "jammy-house-001",
+      "route_status": "possible",
+      "status_note": "Request and offer overlap; route is advisory and possible.",
+      "match_reasons": [
+        "type_overlap",
+        "commons_shared"
+      ],
+      "match_reason_notes": {
+        "type_overlap": "Request type and offer type are compatible.",
+        "commons_shared": "Request and offer originate in the same commons."
+      },
+      "route_note": "food_support request may align with meal_preparation offer.",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "mutual_aid_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "need_creates_debt": false,
+      "help_is_command": false,
+      "routing_allocates_resources": false,
+      "route_is_command": false,
+      "route_compels_exchange": false,
+      "route_allocates_capacity": false,
+      "participants_decide": true,
+      "route_may_be_declined": true,
+      "protocol_phrases": [
+        "Need is not debt.",
+        "Help is not command.",
+        "Routing is not allocation."
+      ],
+      "request_summary": {
+        "request_type": "food_support",
+        "urgency": "medium",
+        "commons_id": "jammy-house-001"
+      },
+      "offer_summary": {
+        "offer_type": "meal_preparation",
+        "availability": "weekly",
+        "capacity": 4
+      }
+    },
+    {
+      "record_type": "aid_route",
+      "route_id": "aid-route-002",
+      "route_date": "2026-05-30",
+      "request_id": "aid-request-002",
+      "offer_id": "aid-offer-002",
+      "commons_id": "jammy-house-001",
+      "route_status": "suggested",
+      "status_note": "Route has been surfaced to relevant participants.",
+      "match_reasons": [
+        "type_overlap",
+        "commons_shared",
+        "urgency_compatible"
+      ],
+      "match_reason_notes": {
+        "type_overlap": "Request type and offer type are compatible.",
+        "commons_shared": "Request and offer originate in the same commons.",
+        "urgency_compatible": "Offer availability matches request urgency."
+      },
+      "route_note": "housing_support request may align with housing_advocacy offer.",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "mutual_aid_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "need_creates_debt": false,
+      "help_is_command": false,
+      "routing_allocates_resources": false,
+      "route_is_command": false,
+      "route_compels_exchange": false,
+      "route_allocates_capacity": false,
+      "participants_decide": true,
+      "route_may_be_declined": true,
+      "protocol_phrases": [
+        "Need is not debt.",
+        "Help is not command.",
+        "Routing is not allocation."
+      ],
+      "request_summary": {
+        "request_type": "housing_support",
+        "urgency": "urgent",
+        "commons_id": "dra-001"
+      },
+      "offer_summary": {
+        "offer_type": "housing_advocacy",
+        "availability": "as_needed",
+        "capacity": 2
+      }
+    },
+    {
+      "record_type": "aid_route",
+      "route_id": "aid-route-003",
+      "route_date": "2026-05-30",
+      "request_id": "aid-request-003",
+      "offer_id": "aid-offer-003",
+      "commons_id": "dra-001",
+      "route_status": "possible",
+      "status_note": "Request and offer overlap; route is advisory and possible.",
+      "match_reasons": [
+        "type_overlap",
+        "commons_shared",
+        "urgency_compatible",
+        "capacity_available"
+      ],
+      "match_reason_notes": {
+        "type_overlap": "Request type and offer type are compatible.",
+        "commons_shared": "Request and offer originate in the same commons.",
+        "urgency_compatible": "Offer availability matches request urgency.",
+        "capacity_available": "Offer has capacity that covers the request."
+      },
+      "route_note": "refugee_relief request may align with supply_sharing offer.",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "mutual_aid_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "need_creates_debt": false,
+      "help_is_command": false,
+      "routing_allocates_resources": false,
+      "route_is_command": false,
+      "route_compels_exchange": false,
+      "route_allocates_capacity": false,
+      "participants_decide": true,
+      "route_may_be_declined": true,
+      "protocol_phrases": [
+        "Need is not debt.",
+        "Help is not command.",
+        "Routing is not allocation."
+      ],
+      "request_summary": {
+        "request_type": "refugee_relief",
+        "urgency": "immediate",
+        "commons_id": "dra-001"
+      },
+      "offer_summary": {
+        "offer_type": "supply_sharing",
+        "availability": "immediate",
+        "capacity": 10
+      }
+    },
+    {
+      "record_type": "aid_route",
+      "route_id": "aid-route-004",
+      "route_date": "2026-05-30",
+      "request_id": "aid-request-003",
+      "offer_id": "aid-offer-004",
+      "commons_id": "dra-001",
+      "route_status": "possible",
+      "status_note": "Request and offer overlap; route is advisory and possible.",
+      "match_reasons": [
+        "commons_shared",
+        "urgency_compatible"
+      ],
+      "match_reason_notes": {
+        "commons_shared": "Request and offer originate in the same commons.",
+        "urgency_compatible": "Offer availability matches request urgency."
+      },
+      "route_note": "refugee_relief request may align with shelter_hosting offer.",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "mutual_aid_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "need_creates_debt": false,
+      "help_is_command": false,
+      "routing_allocates_resources": false,
+      "route_is_command": false,
+      "route_compels_exchange": false,
+      "route_allocates_capacity": false,
+      "participants_decide": true,
+      "route_may_be_declined": true,
+      "protocol_phrases": [
+        "Need is not debt.",
+        "Help is not command.",
+        "Routing is not allocation."
+      ],
+      "request_summary": {
+        "request_type": "refugee_relief",
+        "urgency": "immediate",
+        "commons_id": "dra-001"
+      },
+      "offer_summary": {
+        "offer_type": "shelter_hosting",
+        "availability": "one_time",
+        "capacity": 1
+      }
+    },
+    {
+      "record_type": "aid_route",
+      "route_id": "aid-route-005",
+      "route_date": "2026-05-30",
+      "request_id": "aid-request-004",
+      "offer_id": "aid-offer-005",
+      "commons_id": "yacypherpunks-001",
+      "route_status": "possible",
+      "status_note": "Request and offer overlap; route is advisory and possible.",
+      "match_reasons": [
+        "type_overlap",
+        "commons_shared"
+      ],
+      "match_reason_notes": {
+        "type_overlap": "Request type and offer type are compatible.",
+        "commons_shared": "Request and offer originate in the same commons."
+      },
+      "route_note": "skill_exchange request may align with skill_sharing offer.",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "mutual_aid_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "need_creates_debt": false,
+      "help_is_command": false,
+      "routing_allocates_resources": false,
+      "route_is_command": false,
+      "route_compels_exchange": false,
+      "route_allocates_capacity": false,
+      "participants_decide": true,
+      "route_may_be_declined": true,
+      "protocol_phrases": [
+        "Need is not debt.",
+        "Help is not command.",
+        "Routing is not allocation."
+      ],
+      "request_summary": {
+        "request_type": "skill_exchange",
+        "urgency": "low",
+        "commons_id": "yacypherpunks-001"
+      },
+      "offer_summary": {
+        "offer_type": "skill_sharing",
+        "availability": "weekly",
+        "capacity": 3
+      }
+    }
+  ],
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "mutual_aid_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "need_creates_debt": false,
+  "help_is_command": false,
+  "routing_allocates_resources": false,
+  "protocol_phrases": [
+    "Need is not debt.",
+    "Help is not command.",
+    "Routing is not allocation.",
+    "Dan-Go suggests routes; participants decide whether to connect."
+  ]
+}

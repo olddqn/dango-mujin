@@ -11,6 +11,34 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 17 — Mutual Aid Routing Layer
+
+Dan-Go records help requests, voluntary offers, and possible aid routes
+without creating debt, command, or allocation. Participants decide. Routes
+are advisory. Routing is not allocation.
+
+**"Need is not debt."**
+**"Help is not command."**
+**"Routing is not allocation."**
+
+```bash
+# Record help requests inside commons
+python bridge/gitsea/mutual_aid/runtime/aid_request_registry.py --save
+
+# Record voluntary offers of help
+python bridge/gitsea/mutual_aid/runtime/aid_offer_registry.py --save
+
+# Build advisory routes between requests and offers
+python bridge/gitsea/mutual_aid/runtime/aid_route_builder.py --save
+
+# Generate mutual aid report
+python bridge/gitsea/mutual_aid/runtime/mutual_aid_report.py --save
+```
+
+`mutual_aid_only: true`. `need_creates_debt: false`. `help_is_command: false`. `routing_allocates_resources: false`. `authority: none`.
+
+---
+
 ## Phase 16 — Cooperation Commons Layer
 
 Dan-Go records commons participation and cooperation history without
@@ -223,6 +251,7 @@ The `bridge/gitsea/` layer:
 10. Records advisory recognition appeals without enforcing credit (Phase 14)
 11. Links Phases 11–14 records into an advisory recognition ledger (Phase 15)
 12. Records commons participation and cooperation history across communities (Phase 16)
+13. Records mutual aid requests, offers, and possible routes without debt, command, or allocation (Phase 17)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -258,6 +287,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── mutual_aid/                        ← Phase 17: mutual aid routing layer
+│   ├── MUTUAL_AID_ROUTING_SPEC.md
+│   ├── NEED_NOT_DEBT.md
+│   ├── ROUTING_NOT_ALLOCATION.md
+│   ├── examples/
+│   │   ├── aid-request-registry.json
+│   │   ├── aid-offer-registry.json
+│   │   ├── aid-route.json
+│   │   └── mutual-aid-report.json
+│   └── runtime/
+│       ├── aid_request_registry.py
+│       ├── aid_offer_registry.py
+│       ├── aid_route_builder.py
+│       └── mutual_aid_report.py
 ├── commons/                           ← Phase 16: cooperation commons layer
 │   ├── COOPERATION_COMMONS_SPEC.md
 │   ├── COMMUNITY_NOT_AUTHORITY.md
@@ -418,6 +461,12 @@ python bridge/gitsea/commons/runtime/commons_registry.py --save
 python bridge/gitsea/commons/runtime/commons_membership.py --save
 python bridge/gitsea/commons/runtime/commons_snapshot.py --save
 python bridge/gitsea/commons/runtime/commons_report.py --save
+
+# Phase 17: Mutual aid routing
+python bridge/gitsea/mutual_aid/runtime/aid_request_registry.py --save
+python bridge/gitsea/mutual_aid/runtime/aid_offer_registry.py --save
+python bridge/gitsea/mutual_aid/runtime/aid_route_builder.py --save
+python bridge/gitsea/mutual_aid/runtime/mutual_aid_report.py --save
 ```
 
 ---
@@ -503,6 +552,15 @@ Cooperation Commons
        authority: none
        community_recorded: true
     │
+    │  (mutual aid routing — Phase 17)
+    ▼
+Mutual Aid Routing
+       mutual_aid_only: true
+       need_creates_debt: false
+       help_is_command: false
+       routing_allocates_resources: false
+       authority: none
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -510,6 +568,7 @@ GITSEA stream eligibility (optional)
 
 Dan-Go does not activate the stream. Dan-Go observes treasury context.
 Dan-Go records commons participation; it does not govern communities.
+Dan-Go records mutual aid routes; it does not command or allocate.
 Signal is not reward.
 
 ---
@@ -553,3 +612,7 @@ No Base RPC. No contract calls. stdlib only.
 *Commons is not ownership.*
 *Participation is not control.*
 *Dan-Go records commons participation; it does not govern communities.*
+*Need is not debt.*
+*Help is not command.*
+*Routing is not allocation.*
+*Dan-Go records mutual aid routes; it does not command or allocate.*
