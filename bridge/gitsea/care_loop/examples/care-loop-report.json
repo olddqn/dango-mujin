@@ -1,0 +1,90 @@
+{
+  "record_type": "care_loop_report",
+  "report_id": "care-loop-report-001",
+  "report_date": "2026-05-30",
+  "report_subject": "Care Loop Reopen Layer \u2014 Phase 19",
+  "context": {
+    "reopen_count": 4,
+    "followup_count": 4,
+    "loop_count": 4,
+    "complete_count": 4,
+    "source_reopen_registry_id": "care-reopen-registry-001",
+    "source_followup_snapshot_id": "followup-snapshot-001",
+    "source_loop_log_id": "care-loop-log-001"
+  },
+  "section_count": 6,
+  "sections": [
+    {
+      "section_id": "care-case-may-be-reopened",
+      "title": "A Care Case May Be Reopened",
+      "body": "Care situations are not sealed when a case is first recorded. A relief case with outcome_status 'full' still carries reopenable: true. When a follow-up need is observed \u2014 because the need recurred, the outcome was partial, or the situation changed \u2014 Dan-Go records a reopen request. The reopen is an advisory observation. It is not a verdict on the original response. It is the recognition that care is a loop, not a single moment.",
+      "invariant_demonstrated": "reopenable: true, append_only: true"
+    },
+    {
+      "section_id": "reopen-does-not-mean-failure",
+      "title": "Reopen Does Not Mean Failure",
+      "body": "The reopen_is_failure: false invariant is unconditional. A care case being reopened does not mean the original assistance failed. Food was provided \u2014 that was real. Shelter was offered \u2014 that was real. The fact that the need recurred, or that more was needed, does not erase what was done. Dan-Go records both the original outcome and the new observation without using the new observation to retroactively judge the old one. Reopen is continuation, not correction.",
+      "invariant_demonstrated": "reopen_is_failure: false, reopen_judges_prior_response: false"
+    },
+    {
+      "section_id": "followup-does-not-imply-blame",
+      "title": "Follow-Up Does Not Imply Blame",
+      "body": "When a follow-up need is recorded, it is not an accusation against any participant. The helper who provided the original assistance is not at fault for the need recurring. The requester is not at fault for continuing to need help. followup_judges_prior_helper: false and followup_is_blame: false are invariants on every follow-up need record. The follow-up is an observation about a situation, not a judgment about the people in it.",
+      "invariant_demonstrated": "followup_is_blame: false, followup_judges_prior_helper: false"
+    },
+    {
+      "section_id": "no-one-is-compelled-to-help",
+      "title": "No One Is Compelled to Help",
+      "body": "A care loop reopen does not create an obligation for any helper to respond again. The original helper may choose to help again \u2014 voluntarily. A new helper may choose to engage \u2014 voluntarily. Dan-Go records the reopen and the follow-up need so that the community can see the situation. It does not command any participant. reopen_compels_new_aid: false and care_loop_creates_obligation: false are permanent invariants. The loop is observable. The response is voluntary.",
+      "invariant_demonstrated": "reopen_compels_new_aid: false, care_loop_creates_obligation: false"
+    },
+    {
+      "section_id": "care-loop-remains-voluntary",
+      "title": "The Care Loop Remains Voluntary and Contestable",
+      "body": "Every entry in the care loop \u2014 the reopen request, the follow-up need, the loop itself \u2014 carries contestable: true. A participant who disagrees with how a follow-up need was characterised can contest the record. A participant who believes a reopen was wrongly requested can contest it. The append-only property means the original record is preserved, but contestation adds new information to the loop. Care memory grows with the situation. Authority remains none throughout.",
+      "invariant_demonstrated": "contestable: true, authority: none"
+    },
+    {
+      "section_id": "connection-to-jammy-house-and-refugee-relief",
+      "title": "Connection to Jammy House and Refugee Relief",
+      "body": "Jammy House care loops cover recurring food support needs and unresolved housing situations. These are common patterns in cooperative housing: one provision is not a permanent solution. D.R.A. care loops cover ongoing displacement \u2014 where the original supply coordination or shelter hosting was a temporary response to an ongoing situation. The care loop layer makes these recurring, continuing care patterns legible without treating them as failures or creating blame for participants who did what they could at the time. Dan-Go observes the loop; the community decides how to respond.",
+      "invariant_demonstrated": "advisory: true, care_loop_only: true"
+    }
+  ],
+  "summary_table": {
+    "care_case_reopened": true,
+    "reopen_is_failure": false,
+    "followup_implies_blame": false,
+    "any_participant_compelled": false,
+    "care_loop_creates_obligation": false,
+    "original_assistance_erased": false,
+    "loop_judges_participants": false,
+    "loop_certifies_resolution": false,
+    "records_are_voluntary": true,
+    "records_are_contestable": true,
+    "records_are_append_only": true,
+    "loop_is_reopenable": true,
+    "care_history_is_legible": true
+  },
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "care_loop_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "reopen_is_failure": false,
+  "followup_is_blame": false,
+  "care_loop_creates_obligation": false,
+  "judgment": false,
+  "protocol_phrases": [
+    "Reopen is not failure.",
+    "Follow-up is not blame.",
+    "Care loop is not obligation.",
+    "Dan-Go records care loops; it does not compel resolution or judge participants.",
+    "Dan-Go observes recurring care needs; it does not blame or rank them."
+  ]
+}

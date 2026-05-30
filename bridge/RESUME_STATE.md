@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Relief Case Memory Layer
+# RESUME_STATE.md — Care Loop Reopen Layer
 
-> **STATUS: IN PROGRESS (feature/phase-18-relief-case-memory)**
+> **STATUS: IN PROGRESS (feature/phase-19-care-loop-reopen)**
 
-**Phase:** Relief Case Memory Layer (Phase 18)
-**Branch:** feature/phase-18-relief-case-memory
+**Phase:** Care Loop Reopen Layer (Phase 19)
+**Branch:** feature/phase-19-care-loop-reopen
 **Started:** 2026-05-30
 
 ---
@@ -36,105 +36,107 @@
 - Recognition Ledger Layer (Phase 15) — PR #7
 - Cooperation Commons Layer (Phase 16) — PR #8
 - Mutual Aid Routing Layer (Phase 17) — PR #9
-- **Relief Case Memory Layer (Phase 18)** ← current PR
+- Relief Case Memory Layer (Phase 18) — PR #10
+- **Care Loop Reopen Layer (Phase 19)** ← current PR
 
 ---
 
-## Phase 18: Relief Case Memory Layer
+## Phase 19: Care Loop Reopen Layer
 
 Core principles:
-> "Relief is not proof."
-> "Outcome is not judgment."
-> "Care memory is not control."
+> "Reopen is not failure."
+> "Follow-up is not blame."
+> "Care loop is not obligation."
 
-**Purpose:** Records what happened after a mutual aid route (Phase 17) was
-suggested. Dan-Go does not judge outcomes, rank suffering, or certify
-rescue. Dan-Go only records observable relief case memory and builds
-care history from the Phase 17–18 record chain.
+**Purpose:** Records relief cases that may need follow-up, reconsideration,
+or renewed assistance. Dan-Go does not judge failure. Dan-Go does not blame
+participants. Dan-Go does not compel new aid. Dan-Go only records reopenable
+care loops.
 
 ### Phase Chain
 
 ```
-Phase 16: Cooperation Commons  → commons_recorded: true
-Phase 17: Mutual Aid Routing   → aid_route_recorded: true
-Phase 18: Relief Case Memory   → care_history_complete: true
+Phase 17: Mutual Aid Routing  → aid_route_recorded: true
+Phase 18: Relief Case Memory  → care_history_complete: true
+Phase 19: Care Loop Reopen    → care_loop_complete: true
 ```
 
 ### Runtime Results
 
 ```
-relief_case_registry.py
-  registry_id: relief-case-registry-001
-  case_count: 5
-  status_summary: {observed: 2, partial: 1, completed: 1, pending: 1}
-    relief-case-001: food_support_followup (observed) relief_is_proof=false
-    relief-case-002: housing_support_followup (partial) relief_is_proof=false
-    relief-case-003: refugee_relief_followup (observed) relief_is_proof=false
-    relief-case-004: shelter_followup (completed) relief_is_proof=false
-    relief-case-005: skill_exchange_followup (pending) relief_is_proof=false
-  authority=none, moves_money=false
+care_reopen_registry.py
+  registry_id: care-reopen-registry-001
+  reopen_count: 4
+  status_summary: {requested: 2, active: 1, acknowledged: 1}
+    care-reopen-001: partial_outcome_needs_followup (requested) reopen_is_failure=false
+    care-reopen-002: displacement_ongoing (active) reopen_is_failure=false
+    care-reopen-003: need_recurred (requested) reopen_is_failure=false
+    care-reopen-004: case_was_pending (acknowledged) reopen_is_failure=false
+  authority=none, followup_is_blame=false
 
-relief_outcome_snapshot.py
-  log_id: outcome-snapshot-log-001
-  snapshot_count: 5
-  status_summary: {full: 3, partial: 1, pending: 1}
-    outcome-snap-001: meal_was_received (full) outcome_is_judgment=false
-    outcome-snap-002: negotiation_initiated (partial) outcome_is_judgment=false
-    outcome-snap-003: supplies_reached_household (full) outcome_is_judgment=false
-    outcome-snap-004: shelter_was_accepted (full) outcome_is_judgment=false
-    outcome-snap-005: outcome_unknown (pending) outcome_is_judgment=false
-  authority=none, certifies_rescue=absent
+followup_need_snapshot.py
+  snapshot_id: followup-snapshot-001
+  followup_count: 4
+  urgency_summary: {medium: 1, ongoing: 1, low: 2}
+    followup-001: housing_status_check (medium) followup_is_blame=false
+    followup-002: displacement_monitoring (ongoing) followup_is_blame=false
+    followup-003: ongoing_food_coordination (low) followup_is_blame=false
+    followup-004: skill_session_rescheduled (low) followup_is_blame=false
+  ranks_suffering=false on all records
 
-care_memory_builder.py
-  log_id: care-memory-log-001
-  memory_count: 5
-  complete_count: 5
-    care-memory-001 through care-memory-005: all care_memory_controls=false
-    all care_history_complete=true
-  authority=none, care_memory_controls=false
+care_loop_builder.py
+  log_id: care-loop-log-001
+  loop_count: 4
+  complete_count: 4
+  status_summary: {open: 3, ongoing: 1}
+    care-loop-001 through care-loop-004: all loop_complete=true
+    all reopen_is_failure=false, care_loop_creates_obligation=false
+  authority=none
 
-relief_memory_report.py
-  report_id: relief-memory-report-001
+care_loop_report.py
+  report_id: care-loop-report-001
   section_count: 6
-    A Relief Case Was Recorded — certifies_rescue: false
-    An Outcome Was Observed — outcome_is_judgment: false, certifies_success: false
-    No Proof of Rescue Is Claimed — relief_is_proof: false
-    No Suffering Is Ranked — ranks_suffering: false
-    No One Is Controlled — care_memory_controls: false, authority: none
-    The Case Can Be Reopened — reopenable: true, append_only: true
+    A Care Case May Be Reopened — reopenable: true, append_only: true
+    Reopen Does Not Mean Failure — reopen_is_failure: false
+    Follow-Up Does Not Imply Blame — followup_is_blame: false
+    No One Is Compelled to Help — reopen_compels_new_aid: false
+    The Care Loop Remains Voluntary and Contestable — contestable: true
+    Connection to Jammy House and Refugee Relief — advisory: true
   summary_table:
-    proof_of_rescue_claimed: false
-    suffering_ranked: false
-    any_party_controlled: false
-    memory_certifies_outcome: false
-    case_is_reopenable: true
+    reopen_is_failure: false
+    followup_implies_blame: false
+    any_participant_compelled: false
+    care_loop_creates_obligation: false
+    original_assistance_erased: false
+    loop_judges_participants: false
+    loop_is_reopenable: true
     care_history_is_legible: true
 ```
 
 ---
 
-## New Files (Phase 18)
+## New Files (Phase 19)
 
-- bridge/gitsea/relief/RELIEF_CASE_MEMORY_SPEC.md
-- bridge/gitsea/relief/RELIEF_NOT_PROOF.md
-- bridge/gitsea/relief/CARE_MEMORY_NOT_CONTROL.md
-- bridge/gitsea/relief/runtime/relief_case_registry.py
-- bridge/gitsea/relief/runtime/relief_outcome_snapshot.py
-- bridge/gitsea/relief/runtime/care_memory_builder.py
-- bridge/gitsea/relief/runtime/relief_memory_report.py
-- bridge/gitsea/relief/examples/relief-case-registry.json (generated)
-- bridge/gitsea/relief/examples/relief-outcome-snapshot.json (generated)
-- bridge/gitsea/relief/examples/care-memory.json (generated)
-- bridge/gitsea/relief/examples/relief-memory-report.json (generated)
+- bridge/gitsea/care_loop/CARE_LOOP_REOPEN_SPEC.md
+- bridge/gitsea/care_loop/REOPEN_NOT_FAILURE.md
+- bridge/gitsea/care_loop/FOLLOWUP_NOT_BLAME.md
+- bridge/gitsea/care_loop/runtime/care_reopen_registry.py
+- bridge/gitsea/care_loop/runtime/followup_need_snapshot.py
+- bridge/gitsea/care_loop/runtime/care_loop_builder.py
+- bridge/gitsea/care_loop/runtime/care_loop_report.py
+- bridge/gitsea/care_loop/examples/care-reopen-registry.json (generated)
+- bridge/gitsea/care_loop/examples/followup-need-snapshot.json (generated)
+- bridge/gitsea/care_loop/examples/care-loop.json (generated)
+- bridge/gitsea/care_loop/examples/care-loop-report.json (generated)
 
-## Updated Files (Phase 18)
+## Updated Files (Phase 19)
 
-- bridge/gitsea/README.md (Phase 18 section + relief/ in layout + flow diagram)
+- bridge/gitsea/README.md (Phase 19 section + care_loop/ in layout + flow diagram)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 18 files)
+## Key Invariants (all Phase 19 files)
 
 | Field | Value |
 |-------|-------|
@@ -143,23 +145,28 @@ relief_memory_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `relief_memory_only` | `true` |
+| `care_loop_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `relief_is_proof` | `false` (invariant) |
-| `outcome_is_judgment` | `false` (invariant) |
-| `care_memory_controls` | `false` (invariant) |
-| `certifies_rescue` | `false` (invariant) |
-| `certifies_success` | `false` (invariant) |
+| `reopen_is_failure` | `false` (invariant) |
+| `followup_is_blame` | `false` (invariant) |
+| `care_loop_creates_obligation` | `false` (invariant) |
+| `reopen_judges_prior_response` | `false` (invariant) |
+| `reopen_blames_participants` | `false` (invariant) |
+| `reopen_compels_new_aid` | `false` (invariant) |
+| `reopen_certifies_failure` | `false` (invariant) |
+| `followup_judges_prior_helper` | `false` (invariant) |
+| `followup_demands_response` | `false` (invariant) |
 | `ranks_suffering` | `false` (invariant) |
-| `memory_creates_obligation` | `false` (invariant) |
-| `memory_certifies_outcome` | `false` (invariant) |
+| `loop_judges_participants` | `false` (invariant) |
+| `loop_compels_new_aid` | `false` (invariant) |
+| `loop_certifies_resolution` | `false` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–18)
+## Protocol Principle Accumulation (Phases 10–19)
 
 | Phase | Phrase |
 |-------|--------|
@@ -184,20 +191,23 @@ relief_memory_report.py
 | 18 | "Relief is not proof." |
 | 18 | "Outcome is not judgment." |
 | 18 | "Care memory is not control." |
+| 19 | "Reopen is not failure." |
+| 19 | "Follow-up is not blame." |
+| 19 | "Care loop is not obligation." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 18 PR** — after review
-2. **Phase 19: Cooperative Governance Observation** — observe how commons
-   make collective decisions without Dan-Go governing them
-3. **Cross-phase care chain** — link Phase 11–15 contribution records to
-   Phase 16–18 care records per participant
-4. **Relief case clustering** — aggregate refugee relief cases across D.R.A.
-   into an advisory cluster view
-5. **Care history export** — generate community-readable care history
-   summary for Jammy House / D.R.A.
+1. **Merge Phase 19 PR** — after review
+2. **Phase 20: Cross-Phase Care Summary** — aggregate Phase 16–19 care history
+   into a single advisory summary per commons
+3. **Care loop clustering** — aggregate D.R.A. displacement loops into a
+   cluster view
+4. **Jammy House care snapshot** — dedicated summary of Jammy House Phase 16–19
+   activity
+5. **Voluntary resolution signal** — record when participants voluntarily mark
+   a care loop as resolved (without Dan-Go certifying closure)
 
 ---
 
@@ -221,9 +231,13 @@ relief_memory_report.py
 *Relief is not proof.*
 *Outcome is not judgment.*
 *Care memory is not control.*
+*Reopen is not failure.*
+*Follow-up is not blame.*
+*Care loop is not obligation.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
 *Dan-Go records mutual aid routes; it does not command or allocate.*
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
+*Dan-Go records care loops; it does not compel resolution or judge participants.*
 *Contribution becomes legible before it becomes valuable.*
