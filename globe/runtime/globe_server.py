@@ -31,6 +31,7 @@ _GLOBE_DIR = Path(__file__).resolve().parents[1]
 _DATA_DIR = _GLOBE_DIR / "data"
 _CLAIMS_DIR = _GLOBE_DIR / "claims"
 _DIRECTIVES_DIR = _GLOBE_DIR / "directives"
+_LOGS_DIR = _GLOBE_DIR / "logs"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 7422
 
 # ─── Data helpers ──────────────────────────────────────────────────────────────
@@ -66,6 +67,23 @@ def _load_directive(proposal_id: str) -> dict | None:
         return json.loads(directive_path.read_text())
     except Exception:
         return None
+
+
+def _load_exec_log(proposal_id: str) -> list:
+    """Load execution log entries (JSONL) for the directive derived from proposal_id."""
+    directive_id = f"directive-claim-{proposal_id}"
+    log_path = _LOGS_DIR / f"{directive_id}.jsonl"
+    if not log_path.exists():
+        return []
+    entries = []
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            try:
+                entries.append(json.loads(line))
+            except Exception:
+                pass
+    return entries
 
 
 STATUS_BADGE = {
@@ -152,6 +170,15 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .directive-box.not-converted { background: #12141e; border: 1px solid #1e2030; color: #4e5878; }
 .directive-box .dir-id { font-family: monospace; font-size: 0.82rem; color: #c09040; }
 .directive-box .dir-hint { font-size: 0.78rem; color: #3a3828; margin-top: 6px; }
+.log-box { border-radius: 6px; padding: 14px 20px; font-size: 0.85rem;
+           margin-bottom: 4px; }
+.log-box.has-entries { background: #0d1520; border: 1px solid #1e2e50; color: #7090c0; }
+.log-box.approved    { border-color: #1e3858; color: #80b0e0; }
+.log-box.no-entries  { background: #12141e; border: 1px solid #1e2030; color: #4e5878; }
+.log-box .log-hint   { font-size: 0.78rem; color: #2a3858; margin-top: 6px; }
+.log-entry-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px;
+                   background: #1a2a40; color: #5070a0; margin-right: 4px;
+                   display: inline-block; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -398,6 +425,82 @@ def _render_directive_status(proposal_id: str, status: str) -> str:
 </div>"""
 
 
+_EXEC_ENTRY_ICON = {
+    "human_approval":    "✅",
+    "execution_attempt": "▶",
+    "observation":       "👁",
+    "feedback":          "💬",
+    "objection":         "⚠",
+    "rollback_request":  "↩",
+}
+
+
+def _render_execution_log_status(proposal_id: str, status: str) -> str:
+    """Render Execution Log status — only shown when a directive exists."""
+    if status != "accepted":
+        return ""
+    directive = _load_directive(proposal_id)
+    if not directive:
+        return ""
+
+    directive_id = f"directive-claim-{proposal_id}"
+    entries = _load_exec_log(proposal_id)
+    has_approval = any(e.get("entry_type") == "human_approval" for e in entries)
+
+    if not entries:
+        return f"""
+<h3>📋 Execution Log</h3>
+<div class="log-box no-entries">
+  ⬜ ログなし — まだエントリが記録されていません。<br>
+  <code style="font-size:0.8rem;color:#2a3858">
+    python3 globe/runtime/directive_execution_log.py append {_e(directive_id)} human_approval human &lt;name&gt; &lt;content&gt;
+  </code>
+  <div class="log-hint">
+    legal_authority_created: false · log_is_proof_of_execution: false · append_only: true
+  </div>
+</div>"""
+
+    # Count by type
+    counts: dict[str, int] = {}
+    for e in entries:
+        et = e.get("entry_type", "unknown")
+        counts[et] = counts.get(et, 0) + 1
+
+    last = entries[-1]
+    last_icon = _EXEC_ENTRY_ICON.get(last.get("entry_type", ""), "•")
+    last_actor = _e(last.get("actor_name", "?"))
+    last_type = _e(last.get("entry_type", "?"))
+
+    box_class = "log-box approved" if has_approval else "log-box has-entries"
+    approval_html = (
+        '✅ human_approval 記録済み'
+        if has_approval else
+        '⚠ human_approval 未記録 — 実世界アクション前に必要'
+    )
+
+    badges = "".join(
+        f'<span class="log-entry-badge">{_EXEC_ENTRY_ICON.get(et,"•")} {_e(et)}: {n}</span>'
+        for et, n in counts.items()
+    )
+
+    return f"""
+<h3>📋 Execution Log &nbsp;<small style="font-size:0.75rem;color:#2a3858">({len(entries)} entries · {_e(directive_id)})</small></h3>
+<div class="{box_class}">
+  {approval_html}<br>
+  <span style="font-size:0.82rem;color:#3a5070;margin-top:6px;display:block">
+    {badges}
+  </span>
+  <span style="font-size:0.78rem;color:#3a4a68;margin-top:6px;display:block">
+    last entry: {last_icon} {last_type} by {last_actor}
+    ({_e(str(last.get('created_at',''))[:10])})
+  </span>
+  <div class="log-hint">
+    legal_authority_created: false · log_is_proof_of_execution: false ·
+    objection_always_recordable: true · append_only: true
+  </div>
+</div>"""
+
+
 def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
     globes = _globes()
     g = next((x for x in globes if x["globe_id"] == globe_id), None)
@@ -431,15 +534,16 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
         "draft":      ["discussion フェーズに移行する", "提案本文を修正・補足する", "賛同者を募る"],
         "discussion": ["熟議ログにエントリを追加する（python3 globe/runtime/deliberation_log.py append）", "AIメディエーターによる論点整理を実施する", "voting フェーズに移行する"],
         "voting":     ["投票を実施する（Dan-Go 熟議プロセスに従う）", "結果を記録し accepted または rejected に移行する"],
-        "accepted":   ["Dan-Go Claim に変換する（python3 globe/runtime/proposal_to_claim.py convert）", "Claim を Directive に変換する（python3 globe/runtime/claim_to_directive.py convert）", "GITSEA リンクを設定し Git 的に管理する", "実行履歴（Reality Feedback）を記録する"],
+        "accepted":   ["Dan-Go Claim に変換する（python3 globe/runtime/proposal_to_claim.py convert）", "Claim を Directive に変換する（python3 globe/runtime/claim_to_directive.py convert）", "人間の承認を Execution Log に記録する（python3 globe/runtime/directive_execution_log.py append … human_approval）", "実行試行・観察・フィードバック・異議を Execution Log に記録する", "GITSEA リンクを設定し Git 的に管理する"],
         "rejected":   ["反対意見を保存する（すでに保存済み）", "修正提案を新規提案として提出する", "archived に移行する"],
         "archived":   ["履歴として永続保存されています。"],
     }
     next_items = "".join(f"<li>{_e(s)}</li>" for s in next_steps.get(status, []))
 
-    # Claim and Directive conversion status (only rendered for accepted proposals)
+    # Claim, Directive, and Execution Log status (only rendered for accepted proposals)
     claim_status_html = _render_claim_status(proposal_id, status)
     directive_status_html = _render_directive_status(proposal_id, status)
+    exec_log_html = _render_execution_log_status(proposal_id, status)
 
     body = f"""
 <h2>📋 {_e(p['title'])} &nbsp;{_badge(status)}</h2>
@@ -456,6 +560,7 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
 {_gitsea_html(p.get('gitsea_link'))}
 {claim_status_html}
 {directive_status_html}
+{exec_log_html}
 <h3>次の行動案</h3>
 <div class="next-actions"><ul>{next_items}</ul></div>
 
