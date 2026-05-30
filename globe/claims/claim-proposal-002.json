@@ -1,0 +1,46 @@
+{
+  "claim_id": "claim-proposal-002",
+  "source_type": "proposal",
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "append_only": true,
+  "contestable": true,
+  "claim_creates_obligation": false,
+  "conversion_is_allocation": false,
+  "claim_certifies_execution": false,
+  "source_proposal_id": "proposal-002",
+  "globe_id": "globe-001",
+  "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+  "claim_body": "提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。\n\n背景：既存の国家・機関による支援の限界を補完し、自由参加型の草の根支援ネットワークを構築することが第零国家の使命の一部である。\n\nProposal: Formally position refugee and displaced person support as one of the core priority issues of State Zero. Specifically, deepen cooperation with D.R.A. (Displaced Relief Action) and build mutual aid routes for housing, food, legal support, and community integration.",
+  "rationale": "提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。",
+  "deliberation_summary": [
+    {
+      "deliberation_id": "delib-005",
+      "speaker_type": "human",
+      "speaker_name": "founding-member-002",
+      "content_excerpt": "難民支援を優先課題とする理由：既存の国家・NGOの支援には構造的な限界がある。自由参加型の草の根ネットワークは、そのギャップを埋めることができる。D.R.A.との連携はすでにPhase 17-19で実績がある。",
+      "created_at": "2026-05-30T01:10:00Z"
+    },
+    {
+      "deliberation_id": "delib-006",
+      "speaker_type": "ai",
+      "speaker_name": "Dan-Go AI Mediator",
+      "content_excerpt": "投票フェーズに移行する前に、以下の論点を確認します。\n\n【合意点】\n- 難民支援の必要性（全員が認識）\n- D.R.A.との既存連携の継続\n\n【未解決点】\n- 「優先課題」の定義：他の課題との優先順位付けをどう行うか\n- リソース配分：コミ…",
+      "created_at": "2026-05-30T01:15:00Z"
+    }
+  ],
+  "deliberation_count": 2,
+  "gitsea_link": {
+    "gitsea_repo_url": null,
+    "gitsea_issue_url": null,
+    "gitsea_pr_url": null,
+    "commit_hash": null,
+    "linked_rule_path": null
+  },
+  "status": "claim_draft",
+  "created_at": "2026-05-30T14:17:24.870045+00:00",
+  "updated_at": "2026-05-30T14:25:41.111957+00:00"
+}

@@ -22,7 +22,7 @@
     "title": "難民・避難民支援を第零国家の優先課題として位置づける",
     "body": "提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。\n\n背景：既存の国家・機関による支援の限界を補完し、自由参加型の草の根支援ネットワークを構築することが第零国家の使命の一部である。\n\nProposal: Formally position refugee and displaced person support as one of the core priority issues of State Zero. Specifically, deepen cooperation with D.R.A. (Displaced Relief Action) and build mutual aid routes for housing, food, legal support, and community integration.",
     "proposer": "founding-member-002",
-    "status": "voting",
+    "status": "accepted",
     "gitsea_link": {
       "gitsea_repo_url": null,
       "gitsea_issue_url": null,
@@ -31,7 +31,24 @@
       "linked_rule_path": null
     },
     "created_at": "2026-05-30T01:00:00Z",
-    "updated_at": "2026-05-30T01:00:00Z"
+    "updated_at": "2026-05-30T14:12:25.656960+00:00"
+  },
+  {
+    "proposal_id": "proposal-005",
+    "globe_id": "globe-003",
+    "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+    "body": "提案：Jammy Houseにおけるテナンシー問題を、個別対応から合意形成プロセスへと移行する。具体的には、住居問題が発生した場合に熟議→提案→実行のフローを通じて対応する仕組みを確立する。\n\nPhase 17-20で観察された未解決テナンシーパターン（aid-pattern-003）を踏まえ、再発防止のための合意形成フローを定める。\n\nProposal: Establish a consensus-formation process for housing advocacy in Jammy House, transitioning from ad hoc responses to a deliberation → proposal → execution flow for housing issues.",
+    "proposer": "jammy-house-member-002",
+    "status": "accepted",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T04:00:00Z",
+    "updated_at": "2026-05-30T12:00:00Z"
   },
   {
     "proposal_id": "proposal-003",
