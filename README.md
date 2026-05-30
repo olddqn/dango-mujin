@@ -134,6 +134,34 @@ python3 globe/runtime/proposal_to_claim.py list
 変換結果は `globe/claims/` に JSON と Markdown の両形式で保存されます。
 UIサーバー（`/globe/<id>/proposals/<proposal_id>`）では Claim 変換状況が確認できます。
 
+## Phase 24 — Claim → Directive 変換
+
+フェーズ24では、Claim を Dan-Go Directive（実行ディレクティブ）形式へ変換する基盤を追加しました。
+Directive は実行への提案パスを記述しますが、それ自体は実行ではなく、いかなる法的権限も生じません。
+実世界アクションの開始には、すべてのステップで人間の明示的な承認が必要です。
+
+In Phase 24, we added the ability to convert Claim documents into Dan-Go Directive format.
+A Directive describes a proposed executable path — it is not execution, it creates no legal authority,
+and human approval is required before any real-world action begins.
+
+> "Claim is not execution. Directive is not coercion. Directive creates no legal authority."
+> "Directive only describes a proposed executable path."
+> "Human approval is required before real-world execution."
+
+```bash
+# claim_draft Claim を Directive に変換する
+python3 globe/runtime/claim_to_directive.py convert claim-proposal-002
+
+# Globe 内の claim_draft Claim を一括変換する
+python3 globe/runtime/claim_to_directive.py convert-globe globe-001
+
+# 変換済み Directive の一覧を見る
+python3 globe/runtime/claim_to_directive.py list
+```
+
+変換結果は `globe/directives/` に JSON と Markdown の両形式で保存されます。
+UIサーバーの Proposal 詳細ページでは Claim・Directive の変換状況が一覧表示されます。
+
 ---
 
 ## Structure
@@ -151,9 +179,10 @@ dango-mujin/
 ├── ROADMAP.md             — Where this goes next
 ├── examples/              — Sample claims
 ├── runtime/               — Minimum viable Python runtime
-├── globe/                 — Phase 22–23: Globe foundation + Claim conversion
+├── globe/                 — Phase 22–24: Globe foundation + Claim + Directive
 │   ├── data/              — Globe, Proposal, Deliberation JSON data
 │   ├── claims/            — Phase 23: Generated Claim files (JSON + Markdown)
+│   ├── directives/        — Phase 24: Generated Directive files (JSON + Markdown)
 │   ├── runtime/           — CLI tools + HTTP server (stdlib only)
 │   └── spec/              — Globe specification
 └── bridge/                — Dan-Go bridge layer (GITSEA, OGI, gitlawb)

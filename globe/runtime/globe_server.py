@@ -30,6 +30,7 @@ from pathlib import Path
 _GLOBE_DIR = Path(__file__).resolve().parents[1]
 _DATA_DIR = _GLOBE_DIR / "data"
 _CLAIMS_DIR = _GLOBE_DIR / "claims"
+_DIRECTIVES_DIR = _GLOBE_DIR / "directives"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 7422
 
 # ─── Data helpers ──────────────────────────────────────────────────────────────
@@ -51,6 +52,18 @@ def _load_claim(proposal_id: str) -> dict | None:
         return None
     try:
         return json.loads(claim_path.read_text())
+    except Exception:
+        return None
+
+
+def _load_directive(proposal_id: str) -> dict | None:
+    """Load a generated directive for the given proposal_id chain, or None."""
+    claim_id = f"claim-{proposal_id}"
+    directive_path = _DIRECTIVES_DIR / f"directive-{claim_id}.json"
+    if not directive_path.exists():
+        return None
+    try:
+        return json.loads(directive_path.read_text())
     except Exception:
         return None
 
@@ -133,6 +146,12 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .claim-box.not-converted { background: #12141e; border: 1px solid #1e2030; color: #4e5878; }
 .claim-box .claim-id { font-family: monospace; font-size: 0.82rem; color: #5ab880; }
 .claim-box .claim-hint { font-size: 0.78rem; color: #3a4a5a; margin-top: 6px; }
+.directive-box { border-radius: 6px; padding: 14px 20px; font-size: 0.85rem;
+                 margin-bottom: 4px; }
+.directive-box.converted { background: #12100e; border: 1px solid #3a2e14; color: #c0a050; }
+.directive-box.not-converted { background: #12141e; border: 1px solid #1e2030; color: #4e5878; }
+.directive-box .dir-id { font-family: monospace; font-size: 0.82rem; color: #c09040; }
+.directive-box .dir-hint { font-size: 0.78rem; color: #3a3828; margin-top: 6px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -336,6 +355,49 @@ def _render_claim_status(proposal_id: str, status: str) -> str:
 </div>"""
 
 
+def _render_directive_status(proposal_id: str, status: str) -> str:
+    """Render the Directive conversion status box — only shown when a claim exists."""
+    if status != "accepted":
+        return ""
+    # Directive only meaningful once a claim exists
+    claim = _load_claim(proposal_id)
+    if not claim:
+        return ""
+    claim_id = f"claim-{proposal_id}"
+    directive = _load_directive(proposal_id)
+    if directive:
+        did = _e(directive.get("directive_id", ""))
+        steps = directive.get("execution_steps", [])
+        created = _e(str(directive.get("created_at", ""))[:10])
+        return f"""
+<h3>🗂️ Dan-Go Directive 変換状況</h3>
+<div class="directive-box converted">
+  ✅ Directive 変換済み &nbsp;
+  <span class="dir-id">{did}</span><br>
+  <span style="font-size:0.8rem;color:#806030">
+    実行ステップ: {len(steps)} &nbsp;·&nbsp; 変換日: {created}
+    &nbsp;·&nbsp; status: directive_draft
+  </span>
+  <div class="dir-hint">
+    globe/directives/{did}.json &nbsp;/&nbsp; globe/directives/{did}.md<br>
+    authority: none · directive_creates_legal_authority: false · human_approval_required: true
+  </div>
+</div>"""
+    else:
+        return f"""
+<h3>🗂️ Dan-Go Directive 変換状況</h3>
+<div class="directive-box not-converted">
+  ⬜ 未変換 — Claim はありますが、まだ Directive に変換されていません。<br>
+  <code style="font-size:0.8rem;color:#3a3828">
+    python3 globe/runtime/claim_to_directive.py convert {_e(claim_id)}
+  </code>
+  <div class="dir-hint">
+    claim_draft 状態の Claim のみ Directive に変換できます。<br>
+    Claim is not execution. Directive is not coercion. Directive creates no legal authority.
+  </div>
+</div>"""
+
+
 def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
     globes = _globes()
     g = next((x for x in globes if x["globe_id"] == globe_id), None)
@@ -369,14 +431,15 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
         "draft":      ["discussion フェーズに移行する", "提案本文を修正・補足する", "賛同者を募る"],
         "discussion": ["熟議ログにエントリを追加する（python3 globe/runtime/deliberation_log.py append）", "AIメディエーターによる論点整理を実施する", "voting フェーズに移行する"],
         "voting":     ["投票を実施する（Dan-Go 熟議プロセスに従う）", "結果を記録し accepted または rejected に移行する"],
-        "accepted":   ["Dan-Go Claim に変換する（python3 globe/runtime/proposal_to_claim.py convert）", "GITSEA リンクを設定し Git 的に管理する", "実行履歴（Reality Feedback）を記録する"],
+        "accepted":   ["Dan-Go Claim に変換する（python3 globe/runtime/proposal_to_claim.py convert）", "Claim を Directive に変換する（python3 globe/runtime/claim_to_directive.py convert）", "GITSEA リンクを設定し Git 的に管理する", "実行履歴（Reality Feedback）を記録する"],
         "rejected":   ["反対意見を保存する（すでに保存済み）", "修正提案を新規提案として提出する", "archived に移行する"],
         "archived":   ["履歴として永続保存されています。"],
     }
     next_items = "".join(f"<li>{_e(s)}</li>" for s in next_steps.get(status, []))
 
-    # Claim conversion status (only rendered for accepted proposals)
+    # Claim and Directive conversion status (only rendered for accepted proposals)
     claim_status_html = _render_claim_status(proposal_id, status)
+    directive_status_html = _render_directive_status(proposal_id, status)
 
     body = f"""
 <h2>📋 {_e(p['title'])} &nbsp;{_badge(status)}</h2>
@@ -392,6 +455,7 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
 <h3>GITSEA 連携情報</h3>
 {_gitsea_html(p.get('gitsea_link'))}
 {claim_status_html}
+{directive_status_html}
 <h3>次の行動案</h3>
 <div class="next-actions"><ul>{next_items}</ul></div>
 
