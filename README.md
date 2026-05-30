@@ -89,6 +89,7 @@ python runtime/reality_feedback.py
 ```
 dango-mujin/
 ├── README.md              — This file
+├── asset.toml             — GITSEA asset registration (split, royalty, insurance)
 ├── CONSTITUTION.md        — The one law
 ├── MUJIN_PROTOCOL.md      — Full protocol specification
 ├── CLAIM_FORMAT.md        — How to write a Claim
@@ -97,8 +98,19 @@ dango-mujin/
 ├── SUTABLE_SPEC.md        — The open state table format
 ├── ROADMAP.md             — Where this goes next
 ├── examples/              — Sample claims
-└── runtime/               — Minimum viable Python runtime
+├── runtime/               — Minimum viable Python runtime
+└── bridge/                — Dan-Go bridge layer (GITSEA, OGI, gitlawb)
+    └── gitsea/            — GITSEA asset registration bridge (advisory only)
 ```
+
+## GITSEA Asset
+
+This repository declares itself as a GITSEA asset via `asset.toml`.
+GITSEA can make repository contribution economically legible.
+Dan-Go makes contribution negotiable before it becomes economic.
+
+No private keys. No wallet operations. No on-chain submissions from Dan-Go tooling.
+See `bridge/gitsea/` for the advisory bridge layer.
 
 ## Principles
 

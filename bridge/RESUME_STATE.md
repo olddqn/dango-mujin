@@ -1,10 +1,10 @@
-# RESUME_STATE.md — Reopenable PR Negotiation
+# RESUME_STATE.md — GITSEA Asset Registration
 
 > **STATUS: COMPLETE**
 
-**Phase:** Reopenable PR Negotiation Lifecycle (Issue #1)
+**Phase:** GITSEA Asset Registration (Phase 8)
 **Branch:** main
-**Completed:** 2026-05-24
+**Completed:** 2026-05-30
 
 ---
 
@@ -24,148 +24,114 @@
 - Scoped Issue Markdown Rendering (commit d3bbc5e)
 - Issue Markdown Canonical Format Rewrite (commit a904afb)
 - GitHub Issue #1 Created (https://github.com/olddqn/dango-mujin/issues/1)
-- **Reopenable PR Negotiation Lifecycle** (this commit)
+- Reopenable PR Negotiation Lifecycle (commit 4533c13)
+- **GITSEA Asset Registration** (this commit)
 
 ---
 
-## Reopenable PR Negotiation: Results
+## GITSEA Asset Registration: Results
 
-Core principle: A merged PR is evidence. Not authority.
+Core principle: GITSEA can make repository contribution economically legible.
+Dan-Go makes contribution negotiable before it becomes economic.
 
-### PR Draft Result
+### asset.toml (repo root)
 
-```
-issue-001.pr-draft.md
-  Condition Addressed: space_safety_assessed
-  Evidence:
-    - local structural review
-    - safety inspection notes
-    - community access risk assessment
-  Negotiation Context table included
-  Reopenability section: 4 reopen conditions listed
-  Dignity Guard: participant_consent, revocable_consent
-  "A merged PR is evidence. Not authority."
-```
+```toml
+["リポジトリ"]
+"名前" = "olddqn/dango-mujin"
+"ライセンス" = "MIT"
 
-### Reopen Event Result
+["分割"]
+"0x89b38ff776565f095b3cd46C5f35EAb27506417C" = 100
 
-```
-issue-001.reopen-event.json
-  event_type: "negotiation_reopened"
-  claim_id:   housing-007
-  condition:  space_safety_assessed
-  reopens_issue: 1
-  reason:     counter_evidence
-  authority:  none
-  contestable: true
-  append_only: true
-  reopenable: true
-  reopen_reason_examples: [counter_evidence, bypass_equivalence,
-                           dignity_violation, prerequisite_deprecation]
+["著作権料"]
+"乗数" = 1.0
+"受容度" = 1.0
+
+["保険"]
+merge_insurance = true
 ```
 
-### Plan Correction Result
+**TOML 1.0 note:** Japanese bare keys fail Python tomllib.
+All Japanese section headers and key names must be quoted (`["リポジトリ"]` not `[リポジトリ]`).
+
+### Runtime Results
 
 ```
-issue-001.plan-correction.json
-  event_type:   "plan_correction_proposed"
-  claim_id:     housing-007
-  corrects_plan: plan-housing-007-v1
-  proposed_plan: plan-housing-007-v2
-  original_plan_preserved: true
-  append_only: true
-  proposed_plan_changes:
-    - Re-evaluate space_safety_assessed evidence node
-    - Attach counter-evidence as a sibling assertion
-    - Branch: if counter-evidence invalidates original → abstain
-```
+asset_toml_reader.py
+  repo_name:          olddqn/dango-mujin
+  license:            MIT
+  split_total:        100  ✓
+  split_valid:        true
+  royalty_multiplier: 1.0
+  royalty_acceptance: 1.0
+  merge_insurance:    true
+  execution_allowed:  false
+  moves_money:        false
+  advisory:           true
 
-### Negotiation History Result
+asset_registration_snapshot.py
+  gitsea_registration_ready: true
+  snapshot saved to: bridge/gitsea/examples/asset-registration.snapshot.json
+  keccak256_note: advisory only — not computed by Dan-Go
 
-```
-issue-001.negotiation-history.md
-  5 sections:
-    1. Issue Created
-    2. PR Draft Submitted
-    3. PR Feedback (pr_opened → pr_reviewed → pr_merged)
-    4. Negotiation Reopened
-    5. Plan Correction Proposed
-  Summary table: all steps authority=none, append_only=true
-```
-
-### Timeline Result
-
-```
-issue-001.timeline.json
-  7 steps:
-    Step 1: issue_created
-    Step 2: pr_draft_submitted
-    Step 3: pr_feedback:pr_opened
-    Step 4: pr_feedback:pr_reviewed
-    Step 5: pr_feedback:pr_merged   (gitsea_eligible: true)
-    Step 6: negotiation_reopened
-    Step 7: plan_correction_proposed
-  Invariants: authority=none, execution_allowed=false, append_only=true
+dango_asset_mapper.py
+  10 concept pairs mapped
+  core_insight: "GITSEA can make repository contribution economically legible.
+                 Dan-Go makes contribution negotiable before it becomes economic."
+  saved to: bridge/gitsea/examples/dango-to-gitsea-asset.json
 ```
 
 ---
 
 ## New Files
 
-- gitlawb/runtime/pr_draft_renderer.py
-- gitlawb/runtime/negotiation_reopen.py
-- gitlawb/runtime/plan_correction_renderer.py
-- gitlawb/runtime/negotiation_history_renderer.py
-- gitlawb/runtime/negotiation_timeline.py
-- gitlawb/PR_NEGOTIATION_REOPEN_SPEC.md
-- gitlawb/examples/issue-001.pr-draft.md
-- gitlawb/examples/issue-001.pr-feedback.json
-- gitlawb/examples/issue-001.reopen-event.json
-- gitlawb/examples/issue-001.plan-correction.json
-- gitlawb/examples/issue-001.negotiation-history.md
-- gitlawb/examples/issue-001.timeline.json
+- asset.toml (repo root)
+- bridge/gitsea/README.md
+- bridge/gitsea/DANGO_GITSEA_INTEGRATION_SPEC.md
+- bridge/gitsea/GITSEA_ASSET_REGISTRATION.md
+- bridge/gitsea/ASSET_TOML_MAPPING.md
+- bridge/gitsea/examples/asset.toml.example
+- bridge/gitsea/examples/asset-registration.snapshot.json (generated)
+- bridge/gitsea/examples/dango-to-gitsea-asset.json (generated)
+- bridge/gitsea/runtime/asset_toml_reader.py
+- bridge/gitsea/runtime/asset_registration_snapshot.py
+- bridge/gitsea/runtime/dango_asset_mapper.py
 
 ## Updated Files
 
-- gitlawb/runtime/scoped_pr_feedback.py (reopenable, reopen_reason_examples)
-- runtime/negotiation_graph.py (new edge kinds: pr_draft, pr_feedback, negotiation_reopen, plan_correction)
-- runtime/graph_export.py (new edge arrows and labels)
-- README.md (Reopenable PR Negotiation section + directory tree)
-- RESUME_STATE.md (this file)
+- README.md (GITSEA Asset section + directory tree)
+- bridge/README.md (GITSEA Asset Registration section + gitsea/ in Structure + Specs table)
+- bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all negotiation steps)
+## Key Invariants (all GITSEA bridge files)
 
 | Field | Value |
 |-------|-------|
-| `authority` | `none` |
 | `execution_allowed` | `false` |
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `contestable` | `true` |
-| `append_only` | `true` |
-| `reopenable` | `true` |
-| `negotiation_reopen_allowed` | `true` |
+| `authority` | `none` |
 
 ---
 
 ## Known Limitations
 
-- DID signatures still mock
-- GITSEA still hypothetical (no stream activates)
-- Negotiation timeline is generated from example files (not live su-table)
-- `plan_correction_proposed` is a proposal — not yet integrated into plan tree (intentional)
-- PR draft does not auto-submit to GitHub (intentional)
-- Reopen event does not modify GitHub Issue #1 (intentional)
+- No actual GITSEA API connection (intentional)
+- No on-chain registration performed (intentional)
+- keccak256 not computed (advisory note only)
+- Royalty yield computation is a GITSEA operation, not a Dan-Go operation
+- Merge insurance activation depends on GITSEA, not Dan-Go
 
 ---
 
 ## Next Step Candidates
 
-1. **Post negotiation_reopened comment on Issue #1** — use `gh issue comment` to add the reopen event to the live GitHub issue
-2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite with a better plan tree
+1. **Post negotiation comment on Issue #1** — update with Phase 8 summary
+2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
 3. **Multi-agent negotiation rendering** — render negotiation between multiple claims side by side
 4. **GITSEA stream candidate Markdown** — human-readable stream candidate preview
 5. **Public negotiation dashboard** — HTML render of full negotiation lifecycle
@@ -174,4 +140,6 @@ issue-001.timeline.json
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
+*GITSEA can make repository contribution economically legible.*
+*Dan-Go makes contribution negotiable before it becomes economic.*
 *A merged PR is evidence. Not authority.*

@@ -604,6 +604,47 @@ python bridge/gitlawb/runtime/stream_candidate_preview.py bridge/gitlawb/example
 
 ---
 
+## GITSEA Asset Registration
+
+`asset.toml` at the repository root declares this repository as a GITSEA asset.
+
+```toml
+["リポジトリ"]
+"名前" = "olddqn/dango-mujin"
+"ライセンス" = "MIT"
+
+["分割"]
+"0x89b38ff776565f095b3cd46C5f35EAb27506417C" = 100
+
+["著作権料"]
+"乗数" = 1.0
+"受容度" = 1.0
+
+["保険"]
+merge_insurance = true
+```
+
+**GITSEA can make repository contribution economically legible.
+Dan-Go makes contribution negotiable before it becomes economic.**
+
+Dan-Go reads `asset.toml` as advisory metadata only. No GITSEA API is called.
+No funds are moved. No on-chain operation is performed.
+
+```bash
+# Validate asset.toml
+python bridge/gitsea/runtime/asset_toml_reader.py asset.toml
+
+# Generate advisory registration snapshot (not submitted)
+python bridge/gitsea/runtime/asset_registration_snapshot.py asset.toml --save
+
+# Generate Dan-Go → GITSEA concept mapping
+python bridge/gitsea/runtime/dango_asset_mapper.py --save
+```
+
+See `bridge/gitsea/` for the full GITSEA bridge layer.
+
+---
+
 ## Structure
 
 ```
@@ -694,6 +735,20 @@ dango-gitsea-bridge/
 │   ├── scoped_world_model.py        ← Scoped prior_knowledge integration
 │   └── scoped_prerequisite_snapshot.py ← Full scoped lifecycle query
 │
+│
+├── gitsea/                          ← GITSEA asset registration bridge
+│   ├── README.md                    ← Entry point
+│   ├── DANGO_GITSEA_INTEGRATION_SPEC.md ← Integration spec + required phrase
+│   ├── GITSEA_ASSET_REGISTRATION.md ← Step-by-step registration guide
+│   ├── ASSET_TOML_MAPPING.md        ← Field-by-field asset.toml explanation
+│   ├── examples/
+│   │   ├── asset.toml.example                 ← Example asset.toml template
+│   │   ├── asset-registration.snapshot.json   ← Advisory snapshot (not submitted)
+│   │   └── dango-to-gitsea-asset.json         ← Concept mapping document
+│   └── runtime/
+│       ├── asset_toml_reader.py               ← Read + validate asset.toml
+│       ├── asset_registration_snapshot.py     ← Convert to registration snapshot JSON
+│       └── dango_asset_mapper.py              ← Map Dan-Go → GITSEA concepts
 │
 ├── gitlawb/                         ← Gitlawb / GITSEA bountyless PR market demo
 │   ├── README.md                    ← Entry point
@@ -825,6 +880,9 @@ All runtime modules:
 | `gitlawb/SCOPED_ISSUE_GENERATION_SPEC.md` | Scoped issue generation pipeline |
 | `gitlawb/ISSUE_MARKDOWN_RENDERING_SPEC.md` | GitHub-compatible Markdown rendering |
 | `gitlawb/PR_NEGOTIATION_REOPEN_SPEC.md` | Reopenable PR negotiation lifecycle |
+| `gitsea/DANGO_GITSEA_INTEGRATION_SPEC.md` | Dan-Go × GITSEA integration spec |
+| `gitsea/GITSEA_ASSET_REGISTRATION.md` | Step-by-step GITSEA registration guide |
+| `gitsea/ASSET_TOML_MAPPING.md` | asset.toml field-by-field explanation |
 | `ogi/SCOPED_PLAN_TREE_INTEGRATION.md` | Scoped prerequisite plan tree integration |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |

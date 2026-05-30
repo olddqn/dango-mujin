@@ -1,0 +1,29 @@
+{
+  "snapshot_type": "gitsea_asset_registration",
+  "generated_at": "2026-05-30T02:29:26.065468+00:00",
+  "repo_name": "olddqn/dango-mujin",
+  "license": "MIT",
+  "split": {
+    "entries": [
+      {
+        "address": "0x89b38ff776565f095b3cd46C5f35EAb27506417C",
+        "percent": 100,
+        "note": "This address is declared in asset.toml. No funds are moved by this snapshot."
+      }
+    ],
+    "total_percent": 100,
+    "valid": true
+  },
+  "royalty": {
+    "multiplier": 1.0,
+    "acceptance": 1.0
+  },
+  "merge_insurance": true,
+  "gitsea_registration_ready": true,
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "keccak256_note": "GITSEA may use keccak256 for address or content hashing internally. This snapshot does NOT compute keccak256. Verify on-chain address hashes with a trusted local tool, never this file.",
+  "note": "This snapshot is advisory only. It is not submitted to GITSEA. No API is called. No wallet operation is performed. No transaction is signed. No funds are moved."
+}
