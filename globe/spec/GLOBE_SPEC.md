@@ -135,6 +135,215 @@ Dan-Go は単なる投票システムではない。
 7. 必要ならGit的に修正・分岐・統合する (Fork, modify, merge as needed)
 ```
 
+## Proposal → Claim 変換 / Proposal-to-Claim Conversion (Phase 23)
+
+`accepted` 状態になった Proposal は、Dan-Go Claim 形式に変換できる。
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py
+Dan-Go Claim (claim_draft)
+       ↓  contribution_router.py / claim_matcher.py
+実行交渉・Contribution募集
+```
+
+### Claim JSON 形式
+
+```json
+{
+  "claim_id":              "claim-proposal-002",
+  "source_type":           "proposal",
+  "source_proposal_id":    "proposal-002",
+  "globe_id":              "globe-001",
+  "title":                 "...",
+  "claim_body":            "... (Proposal の body 全文)",
+  "rationale":             "... (body から抽出した理由・背景)",
+  "deliberation_summary":  [
+    {
+      "deliberation_id":   "delib-005",
+      "speaker_type":      "human",
+      "speaker_name":      "founding-member-002",
+      "content_excerpt":   "最初の120文字...",
+      "created_at":        "2026-05-30T01:10:00Z"
+    }
+  ],
+  "deliberation_count":    2,
+  "gitsea_link":           { ... },
+  "status":                "claim_draft",
+  "authority":             "none",
+  "claim_creates_obligation": false,
+  "conversion_is_allocation": false,
+  "created_at":            "2026-05-30T...",
+  "updated_at":            "2026-05-30T..."
+}
+```
+
+### 変換の原則 / Conversion Principles
+
+- **accepted 状態のみ変換可能。** draft / discussion / voting / rejected は変換不可。
+- **変換は強制ではない。** Claim への変換はあくまで任意の次ステップ。
+- **Claim は命令ではない。** Proposal is not execution. Claim is not command.
+- **変換は配分ではない。** Conversion is not allocation.
+- **Claim はappend-only。** 生成後のClaimは新しいファイルとして保存される。
+
+### 出力先 / Output
+
+```
+globe/claims/
+├── claim-proposal-002.json   — Claim JSON
+├── claim-proposal-002.md     — Claim Markdown
+├── claim-proposal-005.json
+└── claim-proposal-005.md
+```
+
+## Claim → Directive 変換 / Claim-to-Directive Conversion (Phase 24)
+
+`claim_draft` 状態の Claim は、Dan-Go Directive 形式に変換できる。
+Directive は実行への提案パスを記述するが、実行そのものではない。
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py          (Phase 23)
+Dan-Go Claim (claim_draft)
+       ↓  claim_to_directive.py         (Phase 24)
+Dan-Go Directive (directive_draft)
+       ↓  人間の承認 (Human approval)
+実行ステップ (Execution steps — voluntary, non-coercive)
+       ↓
+Reality Feedback（実行フィードバック記録）
+```
+
+### Directive JSON 形式
+
+```json
+{
+  "directive_id":                   "directive-claim-proposal-002",
+  "source_type":                    "claim",
+  "source_claim_id":                "claim-proposal-002",
+  "source_proposal_id":             "proposal-002",
+  "globe_id":                       "globe-001",
+  "title":                          "...",
+  "objective":                      "...",
+  "scope": {
+    "in_scope":                     ["..."],
+    "out_of_scope":                 ["..."]
+  },
+  "non_authority_clause":           "...",
+  "execution_steps": [
+    {
+      "step_id":                    "step-001",
+      "description":                "...",
+      "description_en":             "...",
+      "required_contributions":     ["..."],
+      "status":                     "pending",
+      "human_approval_required":    true,
+      "execution_allowed":          false
+    }
+  ],
+  "required_evidence":              ["..."],
+  "status":                         "directive_draft",
+  "authority":                      "none",
+  "directive_creates_legal_authority": false,
+  "directive_is_coercion":          false,
+  "directive_creates_obligation":   false,
+  "human_approval_required":        true,
+  "created_at":                     "2026-05-30T...",
+  "updated_at":                     "2026-05-30T..."
+}
+```
+
+### Directive の原則 / Directive Principles
+
+- **claim_draft 状態のみ変換可能。** accepted/rejected Claim は変換不可。
+- **Claim is not execution.** Directive is not coercion.
+- **Directive creates no legal authority.** 法的権限は一切生じない。
+- **Human approval is required.** 実世界アクションの前に人間の明示的承認が必要。
+- **Directive only describes a proposed executable path.** 実行経路の提案に過ぎない。
+- **Directive はappend-only。** 修正は新しいファイルとして記録される。
+
+### 出力先 / Output
+
+```
+globe/directives/
+├── directive-claim-proposal-002.json   — Directive JSON
+├── directive-claim-proposal-002.md     — Directive Markdown
+├── directive-claim-proposal-005.json
+└── directive-claim-proposal-005.md
+```
+
+## Directive Execution Log（Phase 25）
+
+Directive に対する承認・実行試行・観察・フィードバック・異議・差し戻し要求を
+append-only の JSONL 形式で記録する基盤。
+
+### 変換チェーン全体 / Full Conversion Chain
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py          (Phase 23)
+Dan-Go Claim (claim_draft)
+       ↓  claim_to_directive.py         (Phase 24)
+Dan-Go Directive (directive_draft)
+       ↓  directive_execution_log.py    (Phase 25)
+Execution Log (JSONL · append-only)
+       ↓  human approval per step
+実世界アクション (voluntary · non-coercive · human-approved)
+       ↓
+Reality Feedback
+```
+
+### Execution Log Entry（ログエントリ）形式
+
+```json
+{
+  "log_id":                 "log-001",
+  "directive_id":           "directive-claim-proposal-002",
+  "globe_id":               "globe-001",
+  "entry_type":             "human_approval",
+  "actor_type":             "human",
+  "actor_name":             "Masuo Komori",
+  "content":                "試験的実施に向けた人間承認を記録する",
+  "evidence_refs":          [],
+  "non_coercion_confirmed": true,
+  "legal_authority_created": false,
+  "log_is_proof_of_execution": false,
+  "log_certifies_outcome":  false,
+  "log_compels_action":     false,
+  "append_only":            true,
+  "created_at":             "2026-05-30T..."
+}
+```
+
+### Entry Types（エントリ種別）
+
+| entry_type | 説明 | 承認ゲート |
+|------------|------|-----------|
+| `human_approval` | 人間による明示的承認 | 不要（常に記録可） |
+| `execution_attempt` | 実行試行の記録 | 事前の human_approval が必要（WARNING） |
+| `observation` | 実行中・後の観察 | 事前の human_approval が必要（WARNING） |
+| `feedback` | フィードバック | 事前の human_approval が必要（WARNING） |
+| `objection` | 異議申し立て | **常に記録可（承認不要）** |
+| `rollback_request` | 差し戻し要求 | **常に記録可（承認不要）** |
+
+### Execution Log の原則
+
+- **Execution Log is not proof of execution.** ログは実行の証明ではない。
+- **Log entry is not legal authority.** エントリはいかなる法的権限も生じさせない。
+- **Human approval is required before real-world execution.** 実世界アクション前に人間の承認が必要。
+- **Objection and rollback request must always be recordable.** 異議・差し戻し要求は常に記録可能。
+- **Append-only: existing entries must never be rewritten.** 既存エントリは書き換え不可。
+- **Warning, not block.** 承認なしの execution_attempt 等は警告を出すが記録は行う（強制しない）。
+
+### 出力先 / Output
+
+```
+globe/logs/
+├── directive-claim-proposal-002.jsonl  — Execution Log (JSONL · append-only)
+├── directive-claim-proposal-002.md     — Exported Markdown (export-md コマンド)
+├── directive-claim-proposal-005.jsonl
+└── directive-claim-proposal-005.md
+```
+
 ## UIルート / UI Routes
 
 サーバー起動: `python3 globe/runtime/globe_server.py`
@@ -173,6 +382,37 @@ python3 globe/runtime/deliberation_log.py summary proposal-001
 # 熟議エントリを追加
 python3 globe/runtime/deliberation_log.py append proposal-001
 
+# Proposal → Claim 変換（accepted のみ）
+python3 globe/runtime/proposal_to_claim.py convert proposal-002
+
+# Globe 内の accepted Proposal を一括変換
+python3 globe/runtime/proposal_to_claim.py convert-globe globe-001
+
+# 変換済み Claim の一覧
+python3 globe/runtime/proposal_to_claim.py list
+
+# Claim → Directive 変換（claim_draft のみ）
+python3 globe/runtime/claim_to_directive.py convert claim-proposal-002
+
+# Globe 内の claim_draft Claim を一括変換
+python3 globe/runtime/claim_to_directive.py convert-globe globe-001
+
+# 変換済み Directive の一覧
+python3 globe/runtime/claim_to_directive.py list
+
+# Execution Log にエントリを追加
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 human_approval human "Masuo Komori" "承認を記録"
+
+# Execution Log の全エントリを表示
+python3 globe/runtime/directive_execution_log.py list directive-claim-proposal-002
+
+# Execution Log のサマリ
+python3 globe/runtime/directive_execution_log.py summary directive-claim-proposal-002
+
+# Execution Log を Markdown にエクスポート
+python3 globe/runtime/directive_execution_log.py export-md directive-claim-proposal-002
+
 # UIサーバーを起動
 python3 globe/runtime/globe_server.py
 ```
@@ -185,11 +425,23 @@ globe/
 │   ├── globes.json        — Globe records
 │   ├── proposals.json     — Proposal records
 │   └── deliberations.json — Deliberation log (append-only)
+├── claims/                — Generated Claim files (Phase 23)
+│   ├── claim-proposal-NNN.json
+│   └── claim-proposal-NNN.md
+├── directives/            — Generated Directive files (Phase 24)
+│   ├── directive-claim-proposal-NNN.json
+│   └── directive-claim-proposal-NNN.md
+├── logs/                  — Directive Execution Logs (Phase 25 · append-only JSONL)
+│   ├── directive-claim-proposal-NNN.jsonl
+│   └── directive-claim-proposal-NNN.md
 ├── runtime/
 │   ├── globe_registry.py
 │   ├── proposal_manager.py
 │   ├── deliberation_log.py
-│   └── globe_server.py
+│   ├── globe_server.py
+│   ├── proposal_to_claim.py           — Phase 23: Proposal → Claim conversion
+│   ├── claim_to_directive.py          — Phase 24: Claim → Directive conversion
+│   └── directive_execution_log.py     — Phase 25: Directive Execution Log
 └── spec/
     └── GLOBE_SPEC.md      — this file
 ```

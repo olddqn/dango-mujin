@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Commons Need Forecast Memory Layer
+# RESUME_STATE.md — Directive Execution Log Layer
 
-> **STATUS: IN PROGRESS (feature/phase-21-need-forecast-memory)**
+> **STATUS: IN PROGRESS (feature/phase-25-execution-log)**
 
-**Phase:** Commons Need Forecast Memory Layer (Phase 21)
-**Branch:** feature/phase-21-need-forecast-memory
+**Phase:** Directive Execution Log Layer (Phase 25)
+**Branch:** feature/phase-25-execution-log
 **Started:** 2026-05-30
 
 ---
@@ -39,7 +39,11 @@
 - Relief Case Memory Layer (Phase 18) — PR #10
 - Care Loop Reopen Layer (Phase 19) — PR #11
 - Aid Pattern Learning Layer (Phase 20) — PR #12, merged
-- **Commons Need Forecast Memory Layer (Phase 21)** ← current PR
+- Commons Need Forecast Memory Layer (Phase 21) — PR #13, merged
+- Globe Foundation Layer (Phase 22) — PR #14, merged
+- Proposal → Claim Conversion Layer (Phase 23) — PR #15, merged
+- Claim → Directive Conversion Layer (Phase 24) — PR #16, merged
+- **Directive Execution Log Layer (Phase 25)** ← current PR
 
 ---
 
@@ -283,7 +287,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–21)
+## Protocol Principle Accumulation (Phases 10–24)
 
 | Phase | Phrase |
 |-------|--------|
@@ -317,21 +321,35 @@ need_forecast_report.py
 | 21 | "Forecast is not certainty." |
 | 21 | "Preparedness is not command." |
 | 21 | "Hint is not allocation." |
+| 22 | "Globe is not state." |
+| 22 | "Deliberation is not majority rule." |
+| 22 | "Membership is not obligation." |
+| 23 | "Proposal is not execution." |
+| 23 | "Claim is not command." |
+| 23 | "Conversion is not allocation." |
+| 24 | "Claim is not execution." |
+| 24 | "Directive is not coercion." |
+| 24 | "Directive creates no legal authority." |
+| 24 | "Directive only describes a proposed executable path." |
+| 24 | "Human approval is required before real-world execution." |
+| 25 | "Execution Log is not proof of execution." |
+| 25 | "Log entry is not legal authority." |
+| 25 | "Objection and rollback request must always be recordable." |
+| 25 | "Append-only: existing entries must never be rewritten." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 21 PR** — after review
-2. **Phase 22: Cross-Phase Commons Summary** — aggregate Phase 16–21 care
-   history and forecast memory into a single advisory summary per commons
-3. **Forecast memory clustering** — aggregate D.R.A. displacement forecast
-   memories into a cluster view across commons
-4. **Jammy House preparedness snapshot** — dedicated summary of Jammy House
-   Phase 16–21 activity with forecast memory and preparedness hints
-5. **Voluntary preparedness annotation** — allow participants to annotate
-   forecast memory records with their own preparedness notes (without Dan-Go
-   certifying readiness)
+1. **Merge Phase 25 PR** — after review
+2. **Phase 26: Execution Log Cross-Globe Summary** — aggregate execution logs
+   across all globes into an advisory dashboard view
+3. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
+   Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
+4. **Phase 28: Directive UI Routes** — `/globe/<id>/directives/<directive_id>`
+   and `/globe/<id>/logs/<directive_id>` page rendering
+5. **Phase 29: Voluntary Resolution Signal** — record when participants
+   voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
 
 ---
 
@@ -361,6 +379,21 @@ need_forecast_report.py
 *Pattern is not prediction.*
 *Learning is not prescription.*
 *Recurrence is not ranking.*
+*Globe is not state.*
+*Deliberation is not majority rule.*
+*Membership is not obligation.*
+*Proposal is not execution.*
+*Claim is not command.*
+*Conversion is not allocation.*
+*Claim is not execution.*
+*Directive is not coercion.*
+*Directive creates no legal authority.*
+*Directive only describes a proposed executable path.*
+*Human approval is required before real-world execution.*
+*Execution Log is not proof of execution.*
+*Log entry is not legal authority.*
+*Objection and rollback request must always be recordable.*
+*Append-only: existing entries must never be rewritten.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
