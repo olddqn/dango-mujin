@@ -1,0 +1,42 @@
+{
+  "bridge_type": "cooperation_treasury_bridge",
+  "generated_at": "2026-05-30T03:55:14.152636+00:00",
+  "issue_id": 1,
+  "claim_id": "housing-007",
+  "cooperation_signal": 0.88,
+  "dissent_present": true,
+  "participants": [
+    "alice",
+    "bob",
+    "carol"
+  ],
+  "participant_count": 3,
+  "event_count": 6,
+  "events": {
+    "evidence": 2,
+    "contest": 1,
+    "reaffirm": 1,
+    "pr_submitted": 1,
+    "pr_merged": 1
+  },
+  "treasury_address": "0x3F9c96A429697B458Fe0a16502A050E5AB50bB00",
+  "repo_id": "B93829F8829E2FFD13EF10ABA0B8442233BCF80172321B951C50E2E0C4C30D08",
+  "treasury_visible": true,
+  "treasury_linked": true,
+  "chain": "Base",
+  "recommended_allocation": null,
+  "economic_action": false,
+  "signal_becomes_reward": false,
+  "treasury_operated": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "signal_note": "Signal is not reward.",
+  "treasury_note": "Dan-Go observes treasury context; it does not operate the treasury. The RepoVault address is visible for cooperation history context. No funds are allocated or moved by this bridge record.",
+  "principle": "Cooperation signals make contribution legible. Treasury visibility makes economic context legible. Neither action moves money. Signal is not reward."
+}

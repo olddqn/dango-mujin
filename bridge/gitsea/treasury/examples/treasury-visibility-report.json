@@ -1,0 +1,64 @@
+{
+  "report_type": "treasury_visibility_report",
+  "generated_at": "2026-05-30T03:55:14.205127+00:00",
+  "repo": "olddqn/dango-mujin",
+  "chain": "Base",
+  "repovault_address": "0x3F9c96A429697B458Fe0a16502A050E5AB50bB00",
+  "owner_wallet": "0x89b38ff776565f095b3cd46C5f35EAb27506417C",
+  "section_count": 5,
+  "sections": [
+    {
+      "section": "RepoVault Exists",
+      "summary": "The GITSEA RepoVault for olddqn/dango-mujin is live on Base.",
+      "detail": "The RepoVault contract (0x3F9c96A429697B458Fe0a16502A050E5AB50bB00) was registered via the GITSEA 'Link on Base' UI. The RepoLinked event confirmed successful on-chain registration. The repository owner executed this transaction from their own wallet via MetaMask. Dan-Go did not execute it.",
+      "dango_action": "observe",
+      "economic_action": false
+    },
+    {
+      "section": "Treasury Is Visible",
+      "summary": "Dan-Go can reference the treasury address for cooperation context.",
+      "detail": "Treasury visibility means the RepoVault address and repo_id are recorded in Dan-Go advisory snapshots. This allows cooperation signals to reference treasury context without triggering economic actions. Visibility ≠ control.",
+      "dango_action": "observe",
+      "economic_action": false
+    },
+    {
+      "section": "Dan-Go Does Not Control Funds",
+      "summary": "Dan-Go has no signing authority over the RepoVault.",
+      "detail": "The RepoVault is a GITSEA smart contract. It is NOT a user wallet. Dan-Go does not hold any private key that could operate it. Dan-Go does not call the RepoVault contract. Dan-Go does not withdraw, stake, or distribute from it. All economic operations require the owner wallet (0x89b38ff776565f095b3cd46C5f35EAb27506417C) via GITSEA UI.",
+      "dango_action": "none",
+      "economic_action": false
+    },
+    {
+      "section": "Cooperation Signals Reference Treasury Context",
+      "summary": "Phase 9 cooperation signals are linked to the treasury for legibility.",
+      "detail": "The cooperation_treasury_bridge.py module links Phase 9 cooperation signals (participation patterns, event coverage, diversity) to the treasury address for context. This makes it visible that the negotiation history and the on-chain treasury belong to the same repository. Signal is not reward. No allocation is triggered. The recommended_allocation field is always null.",
+      "dango_action": "link_context",
+      "economic_action": false
+    },
+    {
+      "section": "Economic Value Remains Optional",
+      "summary": "Whether cooperation signals translate to economic value is GITSEA's decision.",
+      "detail": "GITSEA may read cooperation context when determining stream eligibility. Dan-Go does not push signals to GITSEA. Dan-Go does not activate streams. Economic value is optional: a high cooperation signal does not guarantee a stream event. A low signal does not block one. Dan-Go records cooperation before value emerges.",
+      "dango_action": "observe",
+      "economic_action": false
+    }
+  ],
+  "summary_table": {
+    "repovault_exists": true,
+    "treasury_visible": true,
+    "dango_controls_funds": false,
+    "dango_executes_actions": false,
+    "cooperation_signals_linked": true,
+    "economic_value_automatic": false,
+    "recommended_allocation": null
+  },
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "authority": "none",
+  "append_only": true,
+  "principle_1": "Dan-Go observes treasury context; it does not operate the treasury.",
+  "principle_2": "Signal is not reward.",
+  "principle_3": "Contribution becomes legible before it becomes valuable."
+}
