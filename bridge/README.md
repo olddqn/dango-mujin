@@ -645,6 +645,37 @@ See `bridge/gitsea/` for the full GITSEA bridge layer.
 
 ---
 
+## GITSEA Asset Lifecycle Bridge (Phase 9)
+
+Phase 9 extends the lifecycle beyond repository asset declaration:
+
+```
+Claim → Negotiation → Contest → Reaffirm → Contribution
+  → Cooperation Signal → Asset Signal → Economic Value (optional)
+```
+
+**Contribution becomes legible before it becomes valuable.**
+
+Dan-Go does NOT create economic value. Dan-Go records cooperation before value emerges.
+
+```bash
+# Build lifecycle snapshot for a claim
+python bridge/gitsea/lifecycle/runtime/asset_lifecycle.py --claim housing-007 --save
+
+# Link issue to asset signal (advisory)
+python bridge/gitsea/lifecycle/runtime/issue_asset_linker.py --save
+
+# Generate advisory cooperation metrics
+python bridge/gitsea/lifecycle/runtime/contribution_evaluator.py --save
+
+# Convert negotiation history to asset snapshot
+python bridge/gitsea/lifecycle/runtime/negotiation_asset_snapshot.py --save
+```
+
+See `bridge/gitsea/lifecycle/` for the full lifecycle layer.
+
+---
+
 ## Structure
 
 ```
@@ -745,10 +776,24 @@ dango-gitsea-bridge/
 │   │   ├── asset.toml.example                 ← Example asset.toml template
 │   │   ├── asset-registration.snapshot.json   ← Advisory snapshot (not submitted)
 │   │   └── dango-to-gitsea-asset.json         ← Concept mapping document
-│   └── runtime/
-│       ├── asset_toml_reader.py               ← Read + validate asset.toml
-│       ├── asset_registration_snapshot.py     ← Convert to registration snapshot JSON
-│       └── dango_asset_mapper.py              ← Map Dan-Go → GITSEA concepts
+│   ├── runtime/
+│   │   ├── asset_toml_reader.py               ← Read + validate asset.toml
+│   │   ├── asset_registration_snapshot.py     ← Convert to registration snapshot JSON
+│   │   └── dango_asset_mapper.py              ← Map Dan-Go → GITSEA concepts
+│   └── lifecycle/                   ← Phase 9: GITSEA asset lifecycle bridge
+│       ├── DANGO_GITSEA_LIFECYCLE_SPEC.md     ← Lifecycle spec
+│       ├── CONTRIBUTION_SIGNAL_SPEC.md        ← Cooperation signal spec
+│       ├── NEGOTIATION_TO_ASSET_FLOW.md       ← Flow diagrams
+│       ├── examples/
+│       │   ├── asset-lifecycle-housing-007.json  ← Lifecycle snapshot
+│       │   ├── issue-to-asset.json               ← Issue → asset link (append-only)
+│       │   ├── contribution-signal.json           ← Advisory cooperation metrics
+│       │   └── negotiation-snapshot.json          ← Negotiation → asset snapshot
+│       └── runtime/
+│           ├── asset_lifecycle.py             ← Claim → asset lifecycle snapshot
+│           ├── issue_asset_linker.py          ← Link issue to asset signal
+│           ├── contribution_evaluator.py      ← Advisory cooperation metrics
+│           └── negotiation_asset_snapshot.py  ← Negotiation history → asset snapshot
 │
 ├── gitlawb/                         ← Gitlawb / GITSEA bountyless PR market demo
 │   ├── README.md                    ← Entry point
@@ -883,6 +928,9 @@ All runtime modules:
 | `gitsea/DANGO_GITSEA_INTEGRATION_SPEC.md` | Dan-Go × GITSEA integration spec |
 | `gitsea/GITSEA_ASSET_REGISTRATION.md` | Step-by-step GITSEA registration guide |
 | `gitsea/ASSET_TOML_MAPPING.md` | asset.toml field-by-field explanation |
+| `gitsea/lifecycle/DANGO_GITSEA_LIFECYCLE_SPEC.md` | Phase 9 asset lifecycle spec |
+| `gitsea/lifecycle/CONTRIBUTION_SIGNAL_SPEC.md` | Advisory cooperation signal spec |
+| `gitsea/lifecycle/NEGOTIATION_TO_ASSET_FLOW.md` | Negotiation → asset flow diagrams |
 | `ogi/SCOPED_PLAN_TREE_INTEGRATION.md` | Scoped prerequisite plan tree integration |
 | `DID_SIGNATURE_SPEC.md` | DID signature (mock) |
 | `TEMPORAL_TRUST_DECAY_SPEC.md` | Trust decay |

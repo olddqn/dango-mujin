@@ -1,0 +1,42 @@
+{
+  "evaluation_type": "cooperation_evaluation",
+  "generated_at": "2026-05-30T02:59:49.028189+00:00",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "participants": [
+    "alice",
+    "bob",
+    "carol"
+  ],
+  "participant_count": 3,
+  "events": {
+    "evidence": 2,
+    "contest": 1,
+    "reaffirm": 1,
+    "pr_submitted": 1,
+    "pr_merged": 1
+  },
+  "total_events": 6,
+  "cooperation_signal": 0.88,
+  "signal_components": {
+    "event_coverage": 1.0,
+    "diversity_multiplier": 0.6
+  },
+  "healthy_negotiation": {
+    "evidence_count": 2,
+    "contest_count": 1,
+    "reaffirm_count": 1,
+    "dissent_present": true,
+    "note": "Contest events are a sign of healthy negotiation, not failure. Dissent is part of the protocol."
+  },
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "economic_value": false,
+  "cooperation_note": "This cooperation signal is advisory. It is not a reputation score. It is not a reward. It is not enforced by any authority. Participants are not penalized for low signals. Contribution becomes legible before it becomes valuable."
+}

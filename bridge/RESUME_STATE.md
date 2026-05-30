@@ -1,8 +1,8 @@
-# RESUME_STATE.md — GITSEA Asset Registration
+# RESUME_STATE.md — GITSEA Asset Lifecycle Bridge
 
 > **STATUS: COMPLETE**
 
-**Phase:** GITSEA Asset Registration (Phase 8)
+**Phase:** GITSEA Asset Lifecycle Bridge (Phase 9)
 **Branch:** main
 **Completed:** 2026-05-30
 
@@ -25,121 +25,125 @@
 - Issue Markdown Canonical Format Rewrite (commit a904afb)
 - GitHub Issue #1 Created (https://github.com/olddqn/dango-mujin/issues/1)
 - Reopenable PR Negotiation Lifecycle (commit 4533c13)
-- **GITSEA Asset Registration** (this commit)
+- GITSEA Asset Registration (commit 9363bf2)
+- **GITSEA Asset Lifecycle Bridge** (this commit)
 
 ---
 
-## GITSEA Asset Registration: Results
+## Phase 9: GITSEA Asset Lifecycle Bridge — Results
 
-Core principle: GITSEA can make repository contribution economically legible.
-Dan-Go makes contribution negotiable before it becomes economic.
+Core principle: Contribution becomes legible before it becomes valuable.
 
-### asset.toml (repo root)
+Required phrase confirmed:
+> "GITSEA can make repository contribution economically legible.
+>  Dan-Go makes contribution negotiable before it becomes economic."
 
-```toml
-["リポジトリ"]
-"名前" = "olddqn/dango-mujin"
-"ライセンス" = "MIT"
+### Lifecycle Stages
 
-["分割"]
-"0x89b38ff776565f095b3cd46C5f35EAb27506417C" = 100
-
-["著作権料"]
-"乗数" = 1.0
-"受容度" = 1.0
-
-["保険"]
-merge_insurance = true
 ```
-
-**TOML 1.0 note:** Japanese bare keys fail Python tomllib.
-All Japanese section headers and key names must be quoted (`["リポジトリ"]` not `[リポジトリ]`).
+Claim
+  → Issue (negotiation invitation)
+  → Negotiation (evidence, contest, reaffirm)
+  → Contribution (append-only log)
+  → Cooperation Signal (advisory, not a score)
+  → Asset Signal (GITSEA-observable)
+  → Economic Value (optional — not set by Dan-Go)
+```
 
 ### Runtime Results
 
 ```
-asset_toml_reader.py
-  repo_name:          olddqn/dango-mujin
-  license:            MIT
-  split_total:        100  ✓
-  split_valid:        true
-  royalty_multiplier: 1.0
-  royalty_acceptance: 1.0
-  merge_insurance:    true
-  execution_allowed:  false
-  moves_money:        false
-  advisory:           true
+asset_lifecycle.py (housing-007, stage: cooperation_signal_generated)
+  completed_stages: 7 of 8
+  cooperation_signal: 0.75
+  asset_signal: false (pending)
+  economic_value: false
+  advisory: true, authority: none
 
-asset_registration_snapshot.py
-  gitsea_registration_ready: true
-  snapshot saved to: bridge/gitsea/examples/asset-registration.snapshot.json
-  keccak256_note: advisory only — not computed by Dan-Go
+issue_asset_linker.py (housing-007, issue #1)
+  scope_status: applicable
+  negotiation_status: negotiation_invited
+  asset_signal_eligible: true
+  economic_value: false
 
-dango_asset_mapper.py
-  10 concept pairs mapped
-  core_insight: "GITSEA can make repository contribution economically legible.
-                 Dan-Go makes contribution negotiable before it becomes economic."
-  saved to: bridge/gitsea/examples/dango-to-gitsea-asset.json
+contribution_evaluator.py (3 participants, 6 events)
+  cooperation_signal: 0.88
+  event_coverage: 1.0
+  diversity_multiplier: 0.6
+  dissent_present: true (contest: 1)
+  economic_value: false
+
+negotiation_asset_snapshot.py (housing-007, issue #1)
+  events: [pr_opened, pr_reviewed, pr_merged, negotiation_reopened, plan_correction_proposed]
+  gitsea_eligible: true (at pr_merged)
+  was_reopened: true
+  plan_corrected: true
+  cooperation_signal: true
+  economic_value: false
 ```
 
 ---
 
 ## New Files
 
-- asset.toml (repo root)
-- bridge/gitsea/README.md
-- bridge/gitsea/DANGO_GITSEA_INTEGRATION_SPEC.md
-- bridge/gitsea/GITSEA_ASSET_REGISTRATION.md
-- bridge/gitsea/ASSET_TOML_MAPPING.md
-- bridge/gitsea/examples/asset.toml.example
-- bridge/gitsea/examples/asset-registration.snapshot.json (generated)
-- bridge/gitsea/examples/dango-to-gitsea-asset.json (generated)
-- bridge/gitsea/runtime/asset_toml_reader.py
-- bridge/gitsea/runtime/asset_registration_snapshot.py
-- bridge/gitsea/runtime/dango_asset_mapper.py
+- bridge/gitsea/lifecycle/DANGO_GITSEA_LIFECYCLE_SPEC.md
+- bridge/gitsea/lifecycle/CONTRIBUTION_SIGNAL_SPEC.md
+- bridge/gitsea/lifecycle/NEGOTIATION_TO_ASSET_FLOW.md
+- bridge/gitsea/lifecycle/runtime/asset_lifecycle.py
+- bridge/gitsea/lifecycle/runtime/issue_asset_linker.py
+- bridge/gitsea/lifecycle/runtime/contribution_evaluator.py
+- bridge/gitsea/lifecycle/runtime/negotiation_asset_snapshot.py
+- bridge/gitsea/lifecycle/examples/asset-lifecycle-housing-007.json (generated)
+- bridge/gitsea/lifecycle/examples/issue-to-asset.json (generated)
+- bridge/gitsea/lifecycle/examples/contribution-signal.json (generated)
+- bridge/gitsea/lifecycle/examples/negotiation-snapshot.json (generated)
 
 ## Updated Files
 
-- README.md (GITSEA Asset section + directory tree)
-- bridge/README.md (GITSEA Asset Registration section + gitsea/ in Structure + Specs table)
+- bridge/README.md (Phase 9 sections + lifecycle/ in Structure + Specs table)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all GITSEA bridge files)
+## Key Invariants (all Phase 9 files)
 
 | Field | Value |
 |-------|-------|
+| `authority` | `none` |
 | `execution_allowed` | `false` |
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `authority` | `none` |
+| `append_only` | `true` |
+| `contestable` | `true` |
+| `reopenable` | `true` |
+| `economic_value` | `false` (Dan-Go never sets this to true) |
 
 ---
 
 ## Known Limitations
 
-- No actual GITSEA API connection (intentional)
-- No on-chain registration performed (intentional)
-- keccak256 not computed (advisory note only)
-- Royalty yield computation is a GITSEA operation, not a Dan-Go operation
-- Merge insurance activation depends on GITSEA, not Dan-Go
+- Cooperation signal weights are advisory heuristics, not calibrated measures
+- Participant identifiers are pseudonymous stubs (not real DIDs)
+- `issue_asset_linker.py` uses `issue_number` from scoped issue JSON (may be None if not set)
+- Economic activation is entirely GITSEA's decision — Dan-Go produces signals only
+- No real-time event collection (reads from static example files)
 
 ---
 
 ## Next Step Candidates
 
-1. **Post negotiation comment on Issue #1** — update with Phase 8 summary
-2. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
-3. **Multi-agent negotiation rendering** — render negotiation between multiple claims side by side
-4. **GITSEA stream candidate Markdown** — human-readable stream candidate preview
-5. **Public negotiation dashboard** — HTML render of full negotiation lifecycle
-6. **Federated negotiation snapshots** — aggregate Issue history across multiple gitlawb nodes
+1. **Live su-table event ingestion** — `contribution_evaluator.py` reading from live `bridge/sutable/` JSONL
+2. **Multi-claim lifecycle dashboard** — aggregate lifecycle snapshots across housing-006, housing-007, etc.
+3. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
+4. **Federation negotiation snapshot** — aggregate Issue history across multiple gitlawb nodes
+5. **Public negotiation dashboard** — HTML render of full negotiation + lifecycle
+6. **gitlawb MCP integration** — expose lifecycle snapshots via `gl mcp`
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
+*Contribution becomes legible before it becomes valuable.*
 *GITSEA can make repository contribution economically legible.*
 *Dan-Go makes contribution negotiable before it becomes economic.*
 *A merged PR is evidence. Not authority.*

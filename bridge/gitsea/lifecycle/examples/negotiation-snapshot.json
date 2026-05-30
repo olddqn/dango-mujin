@@ -1,0 +1,57 @@
+{
+  "snapshot_type": "negotiation_asset_snapshot",
+  "generated_at": "2026-05-30T03:00:13.706331+00:00",
+  "append_only": true,
+  "issue": 1,
+  "claim": "housing-007",
+  "events": [
+    "pr_opened",
+    "pr_reviewed",
+    "pr_merged",
+    "negotiation_reopened",
+    "plan_correction_proposed"
+  ],
+  "event_count": 5,
+  "event_detail": [
+    {
+      "type": "pr_opened",
+      "source": "issue-001.pr-feedback.json",
+      "gitsea_eligible": false
+    },
+    {
+      "type": "pr_reviewed",
+      "source": "issue-001.pr-feedback.json",
+      "gitsea_eligible": false
+    },
+    {
+      "type": "pr_merged",
+      "source": "issue-001.pr-feedback.json",
+      "gitsea_eligible": true
+    },
+    {
+      "type": "negotiation_reopened",
+      "source": "issue-001.reopen-event.json",
+      "reason": "counter_evidence"
+    },
+    {
+      "type": "plan_correction_proposed",
+      "source": "issue-001.plan-correction.json",
+      "corrects_plan": "plan-housing-007-v1",
+      "proposed_plan": "plan-housing-007-v2"
+    }
+  ],
+  "gitsea_eligible": true,
+  "was_reopened": true,
+  "plan_corrected": true,
+  "negotiation_reopen_allowed": true,
+  "cooperation_signal": true,
+  "economic_value": false,
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "contestable": true,
+  "reopenable": true,
+  "note": "This snapshot converts Dan-Go negotiation history into an advisory GITSEA asset signal record. No stream is activated. No funds are moved. A merged PR is evidence. Not authority. Contribution becomes legible before it becomes valuable."
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "link_type": "issue_to_asset_link",
+    "generated_at": "2026-05-30T02:59:42.111760+00:00",
+    "append_only": true,
+    "claim_id": "housing-007",
+    "condition": "space_safety_assessed",
+    "scope_status": "applicable",
+    "issue_candidate": true,
+    "issue_number": null,
+    "issue_url": null,
+    "negotiation_status": "negotiation_invited",
+    "negotiation_reopen_allowed": true,
+    "contestable": true,
+    "asset_signal_eligible": true,
+    "economic_value": false,
+    "authority": "none",
+    "execution_allowed": false,
+    "moves_money": false,
+    "hard_enforcement": false,
+    "advisory": true,
+    "note": "This link record is advisory only. No GITSEA stream is activated. No funds are moved. No wallet operation is performed. Contribution becomes legible before it becomes valuable."
+  }
+]
