@@ -110,6 +110,30 @@ python3 globe/runtime/globe_server.py
 # → http://localhost:7422/globe
 ```
 
+## Phase 23 — Proposal → Claim 変換
+
+フェーズ23では、採択（accepted）された Proposal を Dan-Go Claim 形式へ変換する仕組みを追加しました。
+変換は強制ではなく、実行の起点となる任意のステップです。
+
+In Phase 23, we added the ability to convert accepted Globe Proposals into Dan-Go Claim format.
+Conversion is optional and advisory — it creates no obligation and allocates no resources.
+
+> "Proposal is not execution. Claim is not command. Conversion is not allocation."
+
+```bash
+# accepted Proposal を Claim に変換する
+python3 globe/runtime/proposal_to_claim.py convert proposal-002
+
+# Globe 内の accepted Proposal を一括変換する
+python3 globe/runtime/proposal_to_claim.py convert-globe globe-001
+
+# 変換済み Claim の一覧を見る
+python3 globe/runtime/proposal_to_claim.py list
+```
+
+変換結果は `globe/claims/` に JSON と Markdown の両形式で保存されます。
+UIサーバー（`/globe/<id>/proposals/<proposal_id>`）では Claim 変換状況が確認できます。
+
 ---
 
 ## Structure
@@ -127,8 +151,9 @@ dango-mujin/
 ├── ROADMAP.md             — Where this goes next
 ├── examples/              — Sample claims
 ├── runtime/               — Minimum viable Python runtime
-├── globe/                 — Phase 22: Globe foundation layer
+├── globe/                 — Phase 22–23: Globe foundation + Claim conversion
 │   ├── data/              — Globe, Proposal, Deliberation JSON data
+│   ├── claims/            — Phase 23: Generated Claim files (JSON + Markdown)
 │   ├── runtime/           — CLI tools + HTTP server (stdlib only)
 │   └── spec/              — Globe specification
 └── bridge/                — Dan-Go bridge layer (GITSEA, OGI, gitlawb)

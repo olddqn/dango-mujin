@@ -27,7 +27,9 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
-_DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+_GLOBE_DIR = Path(__file__).resolve().parents[1]
+_DATA_DIR = _GLOBE_DIR / "data"
+_CLAIMS_DIR = _GLOBE_DIR / "claims"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 7422
 
 # ─── Data helpers ──────────────────────────────────────────────────────────────
@@ -40,6 +42,17 @@ def _load(filename: str) -> list:
 def _globes():       return _load("globes.json")
 def _proposals():    return _load("proposals.json")
 def _deliberations(): return _load("deliberations.json")
+
+
+def _load_claim(proposal_id: str) -> dict | None:
+    """Load a generated claim for the given proposal_id, or None if not yet converted."""
+    claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
+    if not claim_path.exists():
+        return None
+    try:
+        return json.loads(claim_path.read_text())
+    except Exception:
+        return None
 
 
 STATUS_BADGE = {
@@ -114,6 +127,12 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .next-actions { background: #0e1820; border: 1px solid #1e3040; border-radius: 6px;
                 padding: 14px 18px; font-size: 0.85rem; color: #6a8aaa; }
 .next-actions ul { margin: 8px 0 0 18px; line-height: 2; }
+.claim-box { border-radius: 6px; padding: 14px 20px; font-size: 0.85rem;
+             margin-bottom: 4px; }
+.claim-box.converted { background: #0c1e14; border: 1px solid #1e4028; color: #50a870; }
+.claim-box.not-converted { background: #12141e; border: 1px solid #1e2030; color: #4e5878; }
+.claim-box .claim-id { font-family: monospace; font-size: 0.82rem; color: #5ab880; }
+.claim-box .claim-hint { font-size: 0.78rem; color: #3a4a5a; margin-top: 6px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -279,6 +298,44 @@ def render_proposals_list(globe_id: str) -> str | None:
     )
 
 
+def _render_claim_status(proposal_id: str, status: str) -> str:
+    """Render the Claim conversion status box for a proposal detail page."""
+    if status != "accepted":
+        return ""
+    claim = _load_claim(proposal_id)
+    if claim:
+        claim_id = _e(claim.get("claim_id", ""))
+        delib_count = claim.get("deliberation_count", 0)
+        created = _e(str(claim.get("created_at", ""))[:10])
+        return f"""
+<h3>🔖 Dan-Go Claim 変換状況</h3>
+<div class="claim-box converted">
+  ✅ Claim 変換済み &nbsp;
+  <span class="claim-id">{claim_id}</span><br>
+  <span style="font-size:0.8rem;color:#3a6a50">
+    熟議エントリ: {delib_count} &nbsp;·&nbsp; 変換日: {created}
+    &nbsp;·&nbsp; status: claim_draft
+  </span>
+  <div class="claim-hint">
+    globe/claims/{claim_id}.json &nbsp;/&nbsp; globe/claims/{claim_id}.md<br>
+    authority: none · claim_creates_obligation: false
+  </div>
+</div>"""
+    else:
+        return f"""
+<h3>🔖 Dan-Go Claim 変換状況</h3>
+<div class="claim-box not-converted">
+  ⬜ 未変換 — この Proposal はまだ Claim に変換されていません。<br>
+  <code style="font-size:0.8rem;color:#3a4a5a">
+    python3 globe/runtime/proposal_to_claim.py convert {_e(proposal_id)}
+  </code>
+  <div class="claim-hint">
+    accepted 状態の Proposal のみ Claim に変換できます。<br>
+    Proposal is not execution. Claim is not command. Conversion is not allocation.
+  </div>
+</div>"""
+
+
 def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
     globes = _globes()
     g = next((x for x in globes if x["globe_id"] == globe_id), None)
@@ -312,11 +369,14 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
         "draft":      ["discussion フェーズに移行する", "提案本文を修正・補足する", "賛同者を募る"],
         "discussion": ["熟議ログにエントリを追加する（python3 globe/runtime/deliberation_log.py append）", "AIメディエーターによる論点整理を実施する", "voting フェーズに移行する"],
         "voting":     ["投票を実施する（Dan-Go 熟議プロセスに従う）", "結果を記録し accepted または rejected に移行する"],
-        "accepted":   ["実行計画に変換する", "GITSEA リンクを設定し Git 的に管理する", "実行履歴を記録する"],
+        "accepted":   ["Dan-Go Claim に変換する（python3 globe/runtime/proposal_to_claim.py convert）", "GITSEA リンクを設定し Git 的に管理する", "実行履歴（Reality Feedback）を記録する"],
         "rejected":   ["反対意見を保存する（すでに保存済み）", "修正提案を新規提案として提出する", "archived に移行する"],
         "archived":   ["履歴として永続保存されています。"],
     }
     next_items = "".join(f"<li>{_e(s)}</li>" for s in next_steps.get(status, []))
+
+    # Claim conversion status (only rendered for accepted proposals)
+    claim_status_html = _render_claim_status(proposal_id, status)
 
     body = f"""
 <h2>📋 {_e(p['title'])} &nbsp;{_badge(status)}</h2>
@@ -331,7 +391,7 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
 
 <h3>GITSEA 連携情報</h3>
 {_gitsea_html(p.get('gitsea_link'))}
-
+{claim_status_html}
 <h3>次の行動案</h3>
 <div class="next-actions"><ul>{next_items}</ul></div>
 

@@ -135,6 +135,67 @@ Dan-Go は単なる投票システムではない。
 7. 必要ならGit的に修正・分岐・統合する (Fork, modify, merge as needed)
 ```
 
+## Proposal → Claim 変換 / Proposal-to-Claim Conversion (Phase 23)
+
+`accepted` 状態になった Proposal は、Dan-Go Claim 形式に変換できる。
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py
+Dan-Go Claim (claim_draft)
+       ↓  contribution_router.py / claim_matcher.py
+実行交渉・Contribution募集
+```
+
+### Claim JSON 形式
+
+```json
+{
+  "claim_id":              "claim-proposal-002",
+  "source_type":           "proposal",
+  "source_proposal_id":    "proposal-002",
+  "globe_id":              "globe-001",
+  "title":                 "...",
+  "claim_body":            "... (Proposal の body 全文)",
+  "rationale":             "... (body から抽出した理由・背景)",
+  "deliberation_summary":  [
+    {
+      "deliberation_id":   "delib-005",
+      "speaker_type":      "human",
+      "speaker_name":      "founding-member-002",
+      "content_excerpt":   "最初の120文字...",
+      "created_at":        "2026-05-30T01:10:00Z"
+    }
+  ],
+  "deliberation_count":    2,
+  "gitsea_link":           { ... },
+  "status":                "claim_draft",
+  "authority":             "none",
+  "claim_creates_obligation": false,
+  "conversion_is_allocation": false,
+  "created_at":            "2026-05-30T...",
+  "updated_at":            "2026-05-30T..."
+}
+```
+
+### 変換の原則 / Conversion Principles
+
+- **accepted 状態のみ変換可能。** draft / discussion / voting / rejected は変換不可。
+- **変換は強制ではない。** Claim への変換はあくまで任意の次ステップ。
+- **Claim は命令ではない。** Proposal is not execution. Claim is not command.
+- **変換は配分ではない。** Conversion is not allocation.
+- **Claim はappend-only。** 生成後のClaimは新しいファイルとして保存される。
+
+### 出力先 / Output
+
+```
+globe/claims/
+├── claim-proposal-002.json   — Claim JSON
+├── claim-proposal-002.md     — Claim Markdown
+├── claim-proposal-005.json
+└── claim-proposal-005.md
+```
+
 ## UIルート / UI Routes
 
 サーバー起動: `python3 globe/runtime/globe_server.py`
@@ -173,6 +234,15 @@ python3 globe/runtime/deliberation_log.py summary proposal-001
 # 熟議エントリを追加
 python3 globe/runtime/deliberation_log.py append proposal-001
 
+# Proposal → Claim 変換（accepted のみ）
+python3 globe/runtime/proposal_to_claim.py convert proposal-002
+
+# Globe 内の accepted Proposal を一括変換
+python3 globe/runtime/proposal_to_claim.py convert-globe globe-001
+
+# 変換済み Claim の一覧
+python3 globe/runtime/proposal_to_claim.py list
+
 # UIサーバーを起動
 python3 globe/runtime/globe_server.py
 ```
@@ -185,11 +255,15 @@ globe/
 │   ├── globes.json        — Globe records
 │   ├── proposals.json     — Proposal records
 │   └── deliberations.json — Deliberation log (append-only)
+├── claims/                — Generated Claim files (Phase 23)
+│   ├── claim-proposal-NNN.json
+│   └── claim-proposal-NNN.md
 ├── runtime/
 │   ├── globe_registry.py
 │   ├── proposal_manager.py
 │   ├── deliberation_log.py
-│   └── globe_server.py
+│   ├── globe_server.py
+│   └── proposal_to_claim.py  — Phase 23: Proposal → Claim conversion
 └── spec/
     └── GLOBE_SPEC.md      — this file
 ```
