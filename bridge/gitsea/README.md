@@ -11,6 +11,33 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 14 — Recognition Appeal Layer
+
+Dan-Go records advisory recognition appeals without enforcing credit.
+Contributors may request reconsideration of unrecognized contributions.
+No appeal compels any external system to act.
+
+**"Appeal is not enforcement."**
+**"Recognition remains external."**
+
+```bash
+# Record advisory recognition appeal
+python bridge/gitsea/appeal/runtime/recognition_appeal.py --save
+
+# Assemble self-contained appeal packet (Phase 11-13 records combined)
+python bridge/gitsea/appeal/runtime/appeal_packet_builder.py --save
+
+# Snapshot appeal lifecycle status
+python bridge/gitsea/appeal/runtime/appeal_status_snapshot.py --save
+
+# Generate appeal reflection report
+python bridge/gitsea/appeal/runtime/appeal_reflection_report.py --save
+```
+
+`appeal_only: true`. `hard_enforcement: false`. `credit_issued: false`. Dan-Go records; external systems decide.
+
+---
+
 ## Phase 13 — Credit Reflection Memory Layer
 
 Dan-Go records credit gaps and unrecognized contribution as reflection memory.
@@ -139,6 +166,7 @@ The `bridge/gitsea/` layer:
 7. Records contributor credit candidates for GITSEA observability (Phase 11)
 8. Observes external credit systems and documents the candidate/credit gap (Phase 12)
 9. Records credit gaps and unrecognized contribution as reflection memory (Phase 13)
+10. Records advisory recognition appeals without enforcing credit (Phase 14)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -174,6 +202,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── appeal/                            ← Phase 14: recognition appeal layer
+│   ├── RECOGNITION_APPEAL_SPEC.md
+│   ├── APPEAL_NOT_ENFORCEMENT.md
+│   ├── RECOGNITION_REMAINS_EXTERNAL.md
+│   ├── examples/
+│   │   ├── recognition-appeal.json
+│   │   ├── appeal-packet.json
+│   │   ├── appeal-status-snapshot.json
+│   │   └── appeal-reflection-report.json
+│   └── runtime/
+│       ├── recognition_appeal.py
+│       ├── appeal_packet_builder.py
+│       ├── appeal_status_snapshot.py
+│       └── appeal_reflection_report.py
 ├── reflection/                        ← Phase 13: credit reflection memory layer
 │   ├── CREDIT_REFLECTION_MEMORY_SPEC.md
 │   ├── UNRECOGNIZED_CONTRIBUTION_SPEC.md
@@ -274,6 +316,12 @@ python bridge/gitsea/reflection/runtime/credit_reflection_memory.py --save
 python bridge/gitsea/reflection/runtime/unrecognized_contribution.py --save
 python bridge/gitsea/reflection/runtime/reflection_gap_snapshot.py --save
 python bridge/gitsea/reflection/runtime/credit_reflection_report.py --save
+
+# Phase 14: Recognition appeals
+python bridge/gitsea/appeal/runtime/recognition_appeal.py --save
+python bridge/gitsea/appeal/runtime/appeal_packet_builder.py --save
+python bridge/gitsea/appeal/runtime/appeal_status_snapshot.py --save
+python bridge/gitsea/appeal/runtime/appeal_reflection_report.py --save
 ```
 
 ---
@@ -335,6 +383,13 @@ Reflection Memory
     │  gaps observed, not judged
     │  contribution_lost: false
     │
+    │  (recognition appeals — Phase 14)
+    ▼
+Advisory Appeal
+    │  appeal_only: true
+    │  hard_enforcement: false
+    │  appeal_compels_response: false
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -372,5 +427,7 @@ No Base RPC. No contract calls. stdlib only.
 *Candidate credit is not external credit.*
 *Unrecognized contribution is still observable.*
 *Reflection is not judgment.*
+*Appeal is not enforcement.*
+*Recognition remains external.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
