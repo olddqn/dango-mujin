@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Cooperation Treasury Bridge
+# RESUME_STATE.md — Contributor Credit Candidate Layer
 
-> **STATUS: IN PROGRESS (feature/phase-10-treasury-visibility)**
+> **STATUS: IN PROGRESS (feature/phase-11-credit-candidate)**
 
-**Phase:** Cooperation Treasury Bridge (Phase 10)
-**Branch:** feature/phase-10-treasury-visibility
+**Phase:** Contributor Credit Candidate Layer (Phase 11)
+**Branch:** feature/phase-11-credit-candidate
 **Started:** 2026-05-30
 
 ---
@@ -28,17 +28,96 @@
 - GITSEA Asset Registration (commit 9363bf2)
 - GITSEA Asset Lifecycle Bridge (commit e68b9de)
 - GITSEA Registration Failure Fix / asset.toml canonical format (commit d53ee21)
-- **Cooperation Treasury Bridge (Phase 10)** ← current PR
+- Cooperation Treasury Bridge (Phase 10) — PR #2, merged
+- **Contributor Credit Candidate Layer (Phase 11)** ← current PR
 
 ---
 
-## Phase 10: Cooperation Treasury Bridge
+## Phase 11: Contributor Credit Candidate Layer
 
 Core principles:
-> "Signal is not reward."
-> "Dan-Go observes treasury context; it does not operate the treasury."
+> "Contribution history is not credit."
+> "Dan-Go records contribution candidates; external systems may issue credit."
 
-### On-Chain Facts (observed, not executed by Dan-Go)
+`credit_issued: false` is a permanent protocol invariant. It is never changed by Dan-Go.
+
+### Runtime Results
+
+```
+contributor_registry.py
+  contributors: 3 (external-001 reviewer, external-002 author, external-003 contester)
+  credit_issued: false
+  advisory: true
+  authority: none
+
+contribution_candidate.py
+  total_candidates: 3
+  credit_eligible: 2  (candidate status only)
+  credit_issued: false  (permanent: never by Dan-Go)
+  advisory: true
+
+credit_candidate_snapshot.py
+  snapshot_id: snapshot-housing-007-issue-1
+  candidate_count: 3
+  credit_eligible: 2
+  credit_issued: false
+  external_system: gitsea
+  advisory: true
+
+contribution_history.py
+  history_id: history-001
+  issue: #3  pr: 2
+  merged: true
+  reopened: false
+  entry_count: 7
+  contributors: external-001, external-002, external-003
+  credit_issued: false
+  append_only: true
+```
+
+---
+
+## New Files (Phase 11)
+
+- bridge/gitsea/credit/CONTRIBUTOR_CREDIT_SPEC.md
+- bridge/gitsea/credit/CREDIT_CANDIDATE_SPEC.md
+- bridge/gitsea/credit/CONTRIBUTION_HISTORY_SPEC.md
+- bridge/gitsea/credit/runtime/contributor_registry.py
+- bridge/gitsea/credit/runtime/contribution_candidate.py
+- bridge/gitsea/credit/runtime/credit_candidate_snapshot.py
+- bridge/gitsea/credit/runtime/contribution_history.py
+- bridge/gitsea/credit/examples/contributor-registry.json (generated)
+- bridge/gitsea/credit/examples/contribution-candidate.json (generated)
+- bridge/gitsea/credit/examples/credit-candidate-snapshot.json (generated)
+- bridge/gitsea/credit/examples/contribution-history.json (generated)
+
+## Updated Files (Phase 11)
+
+- bridge/gitsea/README.md (Phase 11 section + credit/ in layout)
+- bridge/RESUME_STATE.md (this file)
+
+---
+
+## Key Invariants (all Phase 11 files)
+
+| Field | Value |
+|-------|-------|
+| `authority` | `none` |
+| `execution_allowed` | `false` |
+| `moves_money` | `false` |
+| `hard_enforcement` | `false` |
+| `advisory` | `true` |
+| `append_only` | `true` |
+| `contestable` | `true` |
+| `reopenable` | `true` |
+| `credit_issued` | `false` (always — permanent invariant) |
+| `external_system` | `"gitsea"` |
+
+---
+
+## Previous Phase Context
+
+### Phase 10 On-Chain Facts (observed, not executed by Dan-Go)
 
 | Field | Value |
 |-------|-------|
@@ -50,89 +129,21 @@ Core principles:
 | Event | RepoLinked |
 | Status | linked |
 
-### Runtime Results
-
-```
-treasury_snapshot.py
-  treasury_visible: true
-  dango_controls_treasury: false
-  moves_money: false
-  advisory: true
-
-cooperation_treasury_bridge.py
-  cooperation_signal: 0.88 (from Phase 9)
-  dissent_present: true
-  treasury_address: 0x3F9c96A429697B458Fe0a16502A050E5AB50bB00
-  recommended_allocation: null (always)
-  signal_becomes_reward: false
-  economic_action: false
-
-repovault_reader.py
-  observation_status: linked
-  source: observed_basescan
-  dango_controls_vault: false
-  dango_executes_vault: false
-
-treasury_visibility_report.py
-  5 sections: RepoVault Exists, Treasury Is Visible,
-              Dan-Go Does Not Control Funds,
-              Cooperation Signals Reference Treasury Context,
-              Economic Value Remains Optional
-  economic_value_automatic: false
-  recommended_allocation: null
-```
-
----
-
-## New Files (Phase 10)
-
-- bridge/gitsea/treasury/DANGO_TREASURY_VISIBILITY_SPEC.md
-- bridge/gitsea/treasury/COOPERATION_TREASURY_BRIDGE_SPEC.md
-- bridge/gitsea/treasury/REPOVAULT_OBSERVATION_NOTES.md
-- bridge/gitsea/treasury/runtime/treasury_snapshot.py
-- bridge/gitsea/treasury/runtime/cooperation_treasury_bridge.py
-- bridge/gitsea/treasury/runtime/repovault_reader.py
-- bridge/gitsea/treasury/runtime/treasury_visibility_report.py
-- bridge/gitsea/treasury/examples/treasury-snapshot.json (generated)
-- bridge/gitsea/treasury/examples/cooperation-treasury-bridge.json (generated)
-- bridge/gitsea/treasury/examples/treasury-visibility-report.json (generated)
-
-## Updated Files (Phase 10)
-
-- bridge/gitsea/README.md (Phase 10 section + treasury/ in layout)
-- bridge/RESUME_STATE.md (this file)
-
----
-
-## Key Invariants (all Phase 10 files)
-
-| Field | Value |
-|-------|-------|
-| `authority` | `none` |
-| `execution_allowed` | `false` |
-| `moves_money` | `false` |
-| `hard_enforcement` | `false` |
-| `advisory` | `true` |
-| `append_only` | `true` |
-| `dango_controls_treasury` | `false` |
-| `dango_executes_treasury` | `false` |
-| `recommended_allocation` | `null` (always) |
-| `signal_becomes_reward` | `false` (always) |
-| `economic_action` | `false` (always) |
-
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 10 PR** — after review
-2. **Live su-table event ingestion** — real-time cooperation signal updates
-3. **Multi-claim treasury dashboard** — aggregate across housing-006, housing-007
-4. **Federation negotiation snapshot** — aggregate Issue history across gitlawb nodes
-5. **GITSEA stream candidate tracking** — monitor when/if streams activate
+1. **Merge Phase 11 PR** — after review
+2. **Phase 12: GITSEA Stream Candidate Tracking** — monitor when/if streams activate
+3. **Live event ingestion** — real-time cooperation signal updates
+4. **Multi-claim credit dashboard** — aggregate across housing-006, housing-007
+5. **Federation negotiation snapshot** — aggregate Issue history across gitlawb nodes
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
 *Signal is not reward.*
+*Contribution history is not credit.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
+*Dan-Go records contribution candidates; external systems may issue credit.*
 *Contribution becomes legible before it becomes valuable.*

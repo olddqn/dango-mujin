@@ -1,0 +1,33 @@
+{
+  "snapshot_type": "credit_candidate_snapshot",
+  "generated_at": "2026-05-30T04:31:12.711481+00:00",
+  "snapshot_id": "snapshot-housing-007-issue-1",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "source": "contribution_candidate.py",
+  "candidate_count": 3,
+  "credit_eligible": 2,
+  "contributor_count": 3,
+  "contributors": [
+    "external-001",
+    "external-002",
+    "external-003"
+  ],
+  "contribution_types": [
+    "contest_raised",
+    "evidence_accepted",
+    "evidence_reviewed"
+  ],
+  "credit_issued": false,
+  "external_system": "gitsea",
+  "credit_note": "GITSEA may observe this snapshot when assessing stream credit. Dan-Go does not activate or confirm credit. Dan-Go records contribution candidates; external systems may issue credit.",
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "contribution_note": "Contribution history is not credit."
+}
