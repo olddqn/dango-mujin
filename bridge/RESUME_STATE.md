@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Care Loop Reopen Layer
+# RESUME_STATE.md — Commons Need Forecast Memory Layer
 
-> **STATUS: IN PROGRESS (feature/phase-19-care-loop-reopen)**
+> **STATUS: IN PROGRESS (feature/phase-21-need-forecast-memory)**
 
-**Phase:** Care Loop Reopen Layer (Phase 19)
-**Branch:** feature/phase-19-care-loop-reopen
+**Phase:** Commons Need Forecast Memory Layer (Phase 21)
+**Branch:** feature/phase-21-need-forecast-memory
 **Started:** 2026-05-30
 
 ---
@@ -37,106 +37,117 @@
 - Cooperation Commons Layer (Phase 16) — PR #8
 - Mutual Aid Routing Layer (Phase 17) — PR #9
 - Relief Case Memory Layer (Phase 18) — PR #10
-- **Care Loop Reopen Layer (Phase 19)** ← current PR
+- Care Loop Reopen Layer (Phase 19) — PR #11
+- Aid Pattern Learning Layer (Phase 20) — PR #12
+- **Commons Need Forecast Memory Layer (Phase 21)** ← current PR
 
 ---
 
-## Phase 19: Care Loop Reopen Layer
+## Phase 21: Commons Need Forecast Memory Layer
 
 Core principles:
-> "Reopen is not failure."
-> "Follow-up is not blame."
-> "Care loop is not obligation."
+> "Forecast is not certainty."
+> "Preparedness is not command."
+> "Hint is not allocation."
 
-**Purpose:** Records relief cases that may need follow-up, reconsideration,
-or renewed assistance. Dan-Go does not judge failure. Dan-Go does not blame
-participants. Dan-Go does not compel new aid. Dan-Go only records reopenable
-care loops.
+**Purpose:** Records preparedness memories derived from recurring aid
+patterns observed in Phase 20. Dan-Go does not predict need. Dan-Go does
+not command preparation. Dan-Go does not allocate resources. Dan-Go only
+records observable preparedness hints for commons, grounded in observed
+care history.
 
 ### Phase Chain
 
 ```
-Phase 17: Mutual Aid Routing  → aid_route_recorded: true
-Phase 18: Relief Case Memory  → care_history_complete: true
-Phase 19: Care Loop Reopen    → care_loop_complete: true
+Phase 17: Mutual Aid Routing      → aid_route_recorded: true
+Phase 18: Relief Case Memory      → care_history_complete: true
+Phase 19: Care Loop Reopen        → care_loop_complete: true
+Phase 20: Aid Pattern Learning    → pattern_learning_only: true
+Phase 21: Need Forecast Memory    → forecast_memory_only: true
 ```
 
 ### Runtime Results
 
 ```
-care_reopen_registry.py
-  registry_id: care-reopen-registry-001
-  reopen_count: 4
-  status_summary: {requested: 2, active: 1, acknowledged: 1}
-    care-reopen-001: partial_outcome_needs_followup (requested) reopen_is_failure=false
-    care-reopen-002: displacement_ongoing (active) reopen_is_failure=false
-    care-reopen-003: need_recurred (requested) reopen_is_failure=false
-    care-reopen-004: case_was_pending (acknowledged) reopen_is_failure=false
-  authority=none, followup_is_blame=false
+need_forecast_registry.py
+  registry_id: need-forecast-registry-001
+  forecast_count: 4
+  commons_represented: [dra-001, jammy-house-001, yacypherpunks-001]
+    need-forecast-001: recurring_food_support_possible (observed_count=3)
+      confidence=observed_pattern_only forecast_is_certainty=false
+    need-forecast-002: ongoing_displacement_relief_possible (observed_count=4)
+      confidence=four_plus_observations forecast_is_certainty=false
+    need-forecast-003: unresolved_tenancy_followup_possible (observed_count=2)
+      confidence=two_observations forecast_is_certainty=false
+    need-forecast-004: skill_exchange_rescheduling_possible (observed_count=1)
+      confidence=single_observation forecast_is_certainty=false
+  forecast_allocates_resources=false
 
-followup_need_snapshot.py
-  snapshot_id: followup-snapshot-001
-  followup_count: 4
-  urgency_summary: {medium: 1, ongoing: 1, low: 2}
-    followup-001: housing_status_check (medium) followup_is_blame=false
-    followup-002: displacement_monitoring (ongoing) followup_is_blame=false
-    followup-003: ongoing_food_coordination (low) followup_is_blame=false
-    followup-004: skill_session_rescheduled (low) followup_is_blame=false
-  ranks_suffering=false on all records
+preparedness_hint_snapshot.py
+  snapshot_id: preparedness-hint-snapshot-001
+  hint_count: 4
+    preparedness-hint-001: meal_capacity_awareness (jammy-house-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-002: displacement_relief_readiness_awareness (dra-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-003: housing_advocacy_continuation_awareness (jammy-house-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-004: skill_exchange_rescheduling_awareness (yacypherpunks-001)
+      preparedness_is_command=false hint_is_allocation=false
+  hint_assigns_resources=false
 
-care_loop_builder.py
-  log_id: care-loop-log-001
-  loop_count: 4
-  complete_count: 4
-  status_summary: {open: 3, ongoing: 1}
-    care-loop-001 through care-loop-004: all loop_complete=true
-    all reopen_is_failure=false, care_loop_creates_obligation=false
-  authority=none
+forecast_memory_builder.py
+  log_id: forecast-memory-log-001
+  memory_count: 4
+  status_summary: {recorded: 4}
+    forecast-memory-001 through forecast-memory-004: all memory_status=recorded
+    all forecast_is_certainty=false, memory_compels_preparation=false
+    all memory_certifies_resolution=false, memory_allocates_resources=false
 
-care_loop_report.py
-  report_id: care-loop-report-001
-  section_count: 6
-    A Care Case May Be Reopened — reopenable: true, append_only: true
-    Reopen Does Not Mean Failure — reopen_is_failure: false
-    Follow-Up Does Not Imply Blame — followup_is_blame: false
-    No One Is Compelled to Help — reopen_compels_new_aid: false
-    The Care Loop Remains Voluntary and Contestable — contestable: true
-    Connection to Jammy House and Refugee Relief — advisory: true
+need_forecast_report.py
+  report_id: need-forecast-report-001
+  section_count: 5
+    A: Forecast-Like Memory Exists — and What It Is Not
+    B: Pattern Does Not Prove Future Need
+    C: Preparedness Hint Does Not Command Action
+    D: No Allocation Is Enforced — Commons Retain Full Resource Autonomy
+    E: Connection to Jammy House and Refugee Relief
   summary_table:
-    reopen_is_failure: false
-    followup_implies_blame: false
+    forecast_is_certainty: false
+    preparedness_is_command: false
+    hint_is_allocation: false
     any_participant_compelled: false
-    care_loop_creates_obligation: false
-    original_assistance_erased: false
-    loop_judges_participants: false
-    loop_is_reopenable: true
-    care_history_is_legible: true
+    commons_retain_autonomy: true
+    forecast_history_is_legible: true
+    forecasts_recorded: 4
+    hints_recorded: 4
+    memories_recorded: 4
 ```
 
 ---
 
-## New Files (Phase 19)
+## New Files (Phase 21)
 
-- bridge/gitsea/care_loop/CARE_LOOP_REOPEN_SPEC.md
-- bridge/gitsea/care_loop/REOPEN_NOT_FAILURE.md
-- bridge/gitsea/care_loop/FOLLOWUP_NOT_BLAME.md
-- bridge/gitsea/care_loop/runtime/care_reopen_registry.py
-- bridge/gitsea/care_loop/runtime/followup_need_snapshot.py
-- bridge/gitsea/care_loop/runtime/care_loop_builder.py
-- bridge/gitsea/care_loop/runtime/care_loop_report.py
-- bridge/gitsea/care_loop/examples/care-reopen-registry.json (generated)
-- bridge/gitsea/care_loop/examples/followup-need-snapshot.json (generated)
-- bridge/gitsea/care_loop/examples/care-loop.json (generated)
-- bridge/gitsea/care_loop/examples/care-loop-report.json (generated)
+- bridge/gitsea/need_forecast/COMMONS_NEED_FORECAST_SPEC.md
+- bridge/gitsea/need_forecast/FORECAST_NOT_CERTAINTY.md
+- bridge/gitsea/need_forecast/PREPAREDNESS_NOT_COMMAND.md
+- bridge/gitsea/need_forecast/runtime/need_forecast_registry.py
+- bridge/gitsea/need_forecast/runtime/preparedness_hint_snapshot.py
+- bridge/gitsea/need_forecast/runtime/forecast_memory_builder.py
+- bridge/gitsea/need_forecast/runtime/need_forecast_report.py
+- bridge/gitsea/need_forecast/examples/need-forecast-registry.json (generated)
+- bridge/gitsea/need_forecast/examples/preparedness-hint-snapshot.json (generated)
+- bridge/gitsea/need_forecast/examples/forecast-memory.json (generated)
+- bridge/gitsea/need_forecast/examples/need-forecast-report.json (generated)
 
-## Updated Files (Phase 19)
+## Updated Files (Phase 21)
 
-- bridge/gitsea/README.md (Phase 19 section + care_loop/ in layout + flow diagram)
+- bridge/gitsea/README.md (Phase 21 section + need_forecast/ in layout + flow diagram + footer)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 19 files)
+## Key Invariants (all Phase 21 files)
 
 | Field | Value |
 |-------|-------|
@@ -145,28 +156,27 @@ care_loop_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `care_loop_only` | `true` |
+| `forecast_memory_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `reopen_is_failure` | `false` (invariant) |
-| `followup_is_blame` | `false` (invariant) |
-| `care_loop_creates_obligation` | `false` (invariant) |
-| `reopen_judges_prior_response` | `false` (invariant) |
-| `reopen_blames_participants` | `false` (invariant) |
-| `reopen_compels_new_aid` | `false` (invariant) |
-| `reopen_certifies_failure` | `false` (invariant) |
-| `followup_judges_prior_helper` | `false` (invariant) |
-| `followup_demands_response` | `false` (invariant) |
-| `ranks_suffering` | `false` (invariant) |
-| `loop_judges_participants` | `false` (invariant) |
-| `loop_compels_new_aid` | `false` (invariant) |
-| `loop_certifies_resolution` | `false` (invariant) |
+| `forecast_is_certainty` | `false` (invariant) |
+| `preparedness_is_command` | `false` (invariant) |
+| `hint_is_allocation` | `false` (invariant) |
+| `forecast_allocates_resources` | `false` (invariant) |
+| `forecast_compels_preparation` | `false` (invariant) |
+| `hint_compels_action` | `false` (invariant) |
+| `hint_assigns_resources` | `false` (invariant) |
+| `hint_creates_obligation` | `false` (invariant) |
+| `memory_certifies_resolution` | `false` (invariant) |
+| `memory_compels_preparation` | `false` (invariant) |
+| `memory_allocates_resources` | `false` (invariant) |
+| `memory_judges_commons` | `false` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–19)
+## Protocol Principle Accumulation (Phases 10–21)
 
 | Phase | Phrase |
 |-------|--------|
@@ -194,20 +204,27 @@ care_loop_report.py
 | 19 | "Reopen is not failure." |
 | 19 | "Follow-up is not blame." |
 | 19 | "Care loop is not obligation." |
+| 20 | "Pattern is not prediction." |
+| 20 | "Learning is not prescription." |
+| 20 | "Recurrence is not ranking." |
+| 21 | "Forecast is not certainty." |
+| 21 | "Preparedness is not command." |
+| 21 | "Hint is not allocation." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 19 PR** — after review
-2. **Phase 20: Cross-Phase Care Summary** — aggregate Phase 16–19 care history
-   into a single advisory summary per commons
-3. **Care loop clustering** — aggregate D.R.A. displacement loops into a
-   cluster view
-4. **Jammy House care snapshot** — dedicated summary of Jammy House Phase 16–19
-   activity
-5. **Voluntary resolution signal** — record when participants voluntarily mark
-   a care loop as resolved (without Dan-Go certifying closure)
+1. **Merge Phase 21 PR** — after review
+2. **Phase 22: Cross-Phase Commons Summary** — aggregate Phase 16–21 care
+   history and forecast memory into a single advisory summary per commons
+3. **Forecast memory clustering** — aggregate D.R.A. displacement forecast
+   memories into a cluster view across commons
+4. **Jammy House preparedness snapshot** — dedicated summary of Jammy House
+   Phase 16–21 activity with forecast memory and preparedness hints
+5. **Voluntary preparedness annotation** — allow participants to annotate
+   forecast memory records with their own preparedness notes (without Dan-Go
+   certifying readiness)
 
 ---
 
@@ -240,4 +257,8 @@ care_loop_report.py
 *Dan-Go records mutual aid routes; it does not command or allocate.*
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
 *Dan-Go records care loops; it does not compel resolution or judge participants.*
+*Forecast is not certainty.*
+*Preparedness is not command.*
+*Hint is not allocation.*
+*Dan-Go records preparedness hints; it does not predict, command, or allocate.*
 *Contribution becomes legible before it becomes valuable.*

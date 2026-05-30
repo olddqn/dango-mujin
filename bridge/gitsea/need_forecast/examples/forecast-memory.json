@@ -1,0 +1,196 @@
+{
+  "record_type": "forecast_memory_log",
+  "log_id": "forecast-memory-log-001",
+  "memory_count": 4,
+  "status_summary": {
+    "recorded": 4
+  },
+  "memories": [
+    {
+      "forecast_memory_id": "forecast-memory-001",
+      "forecast_id": "need-forecast-001",
+      "hint_id": "preparedness-hint-001",
+      "commons_id": "jammy-house-001",
+      "source_patterns": [
+        "aid-pattern-001"
+      ],
+      "source_loops": [
+        "care-loop-001",
+        "care-loop-003"
+      ],
+      "source_cases": [
+        "relief-case-001"
+      ],
+      "source_routes": [
+        "aid-route-001"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Food support forecast memory for Jammy House. Three observed instances across Phase 17\u201320.",
+      "record_type": "forecast_memory",
+      "forecast_type": "recurring_food_support_possible",
+      "confidence_label": "observed_pattern_only",
+      "observed_count": 3,
+      "hint_type": "meal_capacity_awareness",
+      "generated_at": "2026-05-30T12:28:20.493834+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "forecast_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "forecast_is_certainty": false,
+      "preparedness_is_command": false,
+      "hint_is_allocation": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_preparation": false,
+      "memory_allocates_resources": false,
+      "memory_judges_commons": false
+    },
+    {
+      "forecast_memory_id": "forecast-memory-002",
+      "forecast_id": "need-forecast-002",
+      "hint_id": "preparedness-hint-002",
+      "commons_id": "dra-001",
+      "source_patterns": [
+        "aid-pattern-002"
+      ],
+      "source_loops": [
+        "care-loop-002"
+      ],
+      "source_cases": [
+        "relief-case-003",
+        "relief-case-004"
+      ],
+      "source_routes": [
+        "aid-route-003",
+        "aid-route-004"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Displacement relief forecast memory for D.R.A. Four observed instances across Phase 17\u201320.",
+      "record_type": "forecast_memory",
+      "forecast_type": "ongoing_displacement_relief_possible",
+      "confidence_label": "four_plus_observations",
+      "observed_count": 4,
+      "hint_type": "displacement_relief_readiness_awareness",
+      "generated_at": "2026-05-30T12:28:20.493965+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "forecast_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "forecast_is_certainty": false,
+      "preparedness_is_command": false,
+      "hint_is_allocation": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_preparation": false,
+      "memory_allocates_resources": false,
+      "memory_judges_commons": false
+    },
+    {
+      "forecast_memory_id": "forecast-memory-003",
+      "forecast_id": "need-forecast-003",
+      "hint_id": "preparedness-hint-003",
+      "commons_id": "jammy-house-001",
+      "source_patterns": [
+        "aid-pattern-003"
+      ],
+      "source_loops": [
+        "care-loop-001"
+      ],
+      "source_cases": [
+        "relief-case-002"
+      ],
+      "source_routes": [
+        "aid-route-002"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Tenancy advocacy forecast memory for Jammy House. Two observed instances across Phase 17\u201320.",
+      "record_type": "forecast_memory",
+      "forecast_type": "unresolved_tenancy_followup_possible",
+      "confidence_label": "two_observations",
+      "observed_count": 2,
+      "hint_type": "housing_advocacy_continuation_awareness",
+      "generated_at": "2026-05-30T12:28:20.493967+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "forecast_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "forecast_is_certainty": false,
+      "preparedness_is_command": false,
+      "hint_is_allocation": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_preparation": false,
+      "memory_allocates_resources": false,
+      "memory_judges_commons": false
+    },
+    {
+      "forecast_memory_id": "forecast-memory-004",
+      "forecast_id": "need-forecast-004",
+      "hint_id": "preparedness-hint-004",
+      "commons_id": "yacypherpunks-001",
+      "source_patterns": [
+        "aid-pattern-004"
+      ],
+      "source_loops": [
+        "care-loop-004"
+      ],
+      "source_cases": [
+        "relief-case-005"
+      ],
+      "source_routes": [
+        "aid-route-005"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Skill exchange forecast memory for YaCypherpunks. One observed instance; low confidence.",
+      "record_type": "forecast_memory",
+      "forecast_type": "skill_exchange_rescheduling_possible",
+      "confidence_label": "single_observation",
+      "observed_count": 1,
+      "hint_type": "skill_exchange_rescheduling_awareness",
+      "generated_at": "2026-05-30T12:28:20.493970+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "forecast_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "forecast_is_certainty": false,
+      "preparedness_is_command": false,
+      "hint_is_allocation": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_preparation": false,
+      "memory_allocates_resources": false,
+      "memory_judges_commons": false
+    }
+  ],
+  "authority": "none",
+  "forecast_is_certainty": false,
+  "preparedness_is_command": false,
+  "hint_is_allocation": false,
+  "memory_certifies_resolution": false,
+  "memory_compels_preparation": false,
+  "generated_at": "2026-05-30T12:28:20.493973+00:00",
+  "phase": 21,
+  "phase_phrase_1": "Forecast is not certainty.",
+  "phase_phrase_2": "Preparedness is not command.",
+  "phase_phrase_3": "Hint is not allocation."
+}
