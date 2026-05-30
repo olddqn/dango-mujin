@@ -1,0 +1,31 @@
+{
+  "claim_id": "claim-proposal-005",
+  "source_type": "proposal",
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "append_only": true,
+  "contestable": true,
+  "claim_creates_obligation": false,
+  "conversion_is_allocation": false,
+  "claim_certifies_execution": false,
+  "source_proposal_id": "proposal-005",
+  "globe_id": "globe-003",
+  "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+  "claim_body": "提案：Jammy Houseにおけるテナンシー問題を、個別対応から合意形成プロセスへと移行する。具体的には、住居問題が発生した場合に熟議→提案→実行のフローを通じて対応する仕組みを確立する。\n\nPhase 17-20で観察された未解決テナンシーパターン（aid-pattern-003）を踏まえ、再発防止のための合意形成フローを定める。\n\nProposal: Establish a consensus-formation process for housing advocacy in Jammy House, transitioning from ad hoc responses to a deliberation → proposal → execution flow for housing issues.",
+  "rationale": "提案：Jammy Houseにおけるテナンシー問題を、個別対応から合意形成プロセスへと移行する。具体的には、住居問題が発生した場合に熟議→提案→実行のフローを通じて対応する仕組みを確立する。",
+  "deliberation_summary": [],
+  "deliberation_count": 0,
+  "gitsea_link": {
+    "gitsea_repo_url": null,
+    "gitsea_issue_url": null,
+    "gitsea_pr_url": null,
+    "commit_hash": null,
+    "linked_rule_path": null
+  },
+  "status": "claim_draft",
+  "created_at": "2026-05-30T14:20:52.498591+00:00",
+  "updated_at": "2026-05-30T14:20:52.498591+00:00"
+}
