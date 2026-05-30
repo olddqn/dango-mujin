@@ -1,0 +1,76 @@
+{
+  "report_type": "ledger_report",
+  "generated_at": "2026-05-30T05:32:37.828690+00:00",
+  "report_id": "ledger-report-housing-007-issue-3",
+  "claim_id": "housing-007",
+  "issue_id": 3,
+  "external_system": "gitsea",
+  "ledger_entry_count": 3,
+  "candidate_count": 3,
+  "external_credit_count": 0,
+  "reflection_count": 3,
+  "appeal_count": 3,
+  "gap_count": 3,
+  "section_count": 5,
+  "sections": [
+    {
+      "section": "Why Recognition History Exists",
+      "summary": "A complete history of what occurred — candidate, observation, reflection, appeal — is more legible than any single phase alone.",
+      "detail": "Phases 11–14 each produced separate advisory records: contribution candidates, external credit observations, reflection memory, and recognition appeals. Phase 15 links these into one recognition ledger so that the full lifecycle of a contributor's participation is visible in one place. History makes contribution legible. Legibility is the goal of the Dan-Go protocol.",
+      "history_useful": true,
+      "credit_issued": false
+    },
+    {
+      "section": "Why the Ledger Does Not Judge",
+      "summary": "A ledger records events. It does not evaluate whether outcomes were fair, appropriate, or deserved.",
+      "detail": "The judgment: false invariant appears on every ledger record. This means the ledger does not classify contributions as good or bad, successful or failed, worthy or unworthy. It records what occurred: a candidate was created, credit was or wasn't observed, reflection was stored, an appeal was filed. These are observable facts. Whether the outcomes were just is not a question the ledger answers.",
+      "judgment": false,
+      "credit_issued": false
+    },
+    {
+      "section": "Why the Ledger Does Not Issue Credit",
+      "summary": "credit_issued: false is a permanent invariant inherited from all prior phases. The ledger is a read-only view of what happened.",
+      "detail": "From Phase 11 onward, credit_issued: false is a permanent protocol invariant. The ledger does not change this. Even if every ledger entry shows candidate_credit: true and appeal_recorded: true, the ledger itself does not issue credit. Credit is issued by external systems, on their own schedule, according to their own eligibility criteria. The ledger preserves this boundary by being read-only with respect to external credit state.",
+      "credit_issued": false,
+      "permanent": true
+    },
+    {
+      "section": "Why the Ledger Does Not Force Recognition",
+      "summary": "The ledger has authority: none. It is an observer of recognition history, not a participant in recognition decisions.",
+      "detail": "The authority: none invariant means the ledger cannot compel any external system to recognize a contribution. A ledger entry showing appeal_recorded: true and external_credit: false does not create an obligation for GITSEA or any other system to issue credit. The ledger makes history observable. Forcing recognition would require authority the Dan-Go protocol explicitly disclaims. Recognition remains external.",
+      "authority": "none",
+      "credit_issued": false
+    },
+    {
+      "section": "Why Append-Only History Preserves Reopenability",
+      "summary": "Because the ledger never deletes or modifies entries, it can always receive new entries — including future credit observations.",
+      "detail": "The append_only: true and reopenable: true invariants work together. Append-only means no existing ledger entry is ever changed. Reopenable means a new entry can always be appended — for example, if external credit is later issued, or if a new appeal is filed. The recognition history is never permanently closed. A contributor whose contribution was not credited today can still have a new ledger entry added tomorrow. History grows; it does not close.",
+      "append_only": true,
+      "reopenable": true
+    }
+  ],
+  "summary_table": {
+    "history_exists": true,
+    "ledger_judges": false,
+    "ledger_issues_credit": false,
+    "ledger_forces_recognition": false,
+    "reopenable": true,
+    "append_only": true,
+    "history_complete": true,
+    "recognition_remains_external": true
+  },
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "ledger_only": true,
+  "authority": "none",
+  "judgment": false,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "principle_1": "Recognition history is not authority.",
+  "principle_2": "Ledger is not judgment.",
+  "principle_3": "Contribution becomes legible before it becomes valuable."
+}

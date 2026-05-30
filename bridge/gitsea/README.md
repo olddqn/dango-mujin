@@ -11,6 +11,32 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 15 — Recognition Ledger Layer
+
+Dan-Go links candidate, observation, reflection, and appeal records into
+an advisory recognition ledger. History is complete. Authority is none.
+
+**"Recognition history is not authority."**
+**"Ledger is not judgment."**
+
+```bash
+# Build ledger entries (one per contributor, covering Phases 11–14)
+python bridge/gitsea/ledger/runtime/ledger_entry_builder.py --save
+
+# Build the combined recognition ledger for a claim
+python bridge/gitsea/ledger/runtime/recognition_ledger.py --save
+
+# Snapshot aggregate ledger counts
+python bridge/gitsea/ledger/runtime/ledger_snapshot.py --save
+
+# Generate ledger report
+python bridge/gitsea/ledger/runtime/ledger_report.py --save
+```
+
+`ledger_only: true`. `judgment: false`. `authority: none`. `credit_issued: false`. Append-only history; recognition remains external.
+
+---
+
 ## Phase 14 — Recognition Appeal Layer
 
 Dan-Go records advisory recognition appeals without enforcing credit.
@@ -167,6 +193,7 @@ The `bridge/gitsea/` layer:
 8. Observes external credit systems and documents the candidate/credit gap (Phase 12)
 9. Records credit gaps and unrecognized contribution as reflection memory (Phase 13)
 10. Records advisory recognition appeals without enforcing credit (Phase 14)
+11. Links Phases 11–14 records into an advisory recognition ledger (Phase 15)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -202,6 +229,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── ledger/                            ← Phase 15: recognition ledger layer
+│   ├── RECOGNITION_LEDGER_SPEC.md
+│   ├── LEDGER_NOT_JUDGMENT.md
+│   ├── HISTORY_NOT_AUTHORITY.md
+│   ├── examples/
+│   │   ├── recognition-ledger.json
+│   │   ├── ledger-snapshot.json
+│   │   ├── ledger-entry.json
+│   │   └── ledger-report.json
+│   └── runtime/
+│       ├── recognition_ledger.py
+│       ├── ledger_snapshot.py
+│       ├── ledger_entry_builder.py
+│       └── ledger_report.py
 ├── appeal/                            ← Phase 14: recognition appeal layer
 │   ├── RECOGNITION_APPEAL_SPEC.md
 │   ├── APPEAL_NOT_ENFORCEMENT.md
@@ -322,6 +363,12 @@ python bridge/gitsea/appeal/runtime/recognition_appeal.py --save
 python bridge/gitsea/appeal/runtime/appeal_packet_builder.py --save
 python bridge/gitsea/appeal/runtime/appeal_status_snapshot.py --save
 python bridge/gitsea/appeal/runtime/appeal_reflection_report.py --save
+
+# Phase 15: Recognition ledger
+python bridge/gitsea/ledger/runtime/ledger_entry_builder.py --save
+python bridge/gitsea/ledger/runtime/recognition_ledger.py --save
+python bridge/gitsea/ledger/runtime/ledger_snapshot.py --save
+python bridge/gitsea/ledger/runtime/ledger_report.py --save
 ```
 
 ---
@@ -390,6 +437,14 @@ Advisory Appeal
     │  hard_enforcement: false
     │  appeal_compels_response: false
     │
+    │  (recognition ledger — Phase 15)
+    ▼
+Recognition Ledger
+       ledger_only: true
+       judgment: false
+       authority: none
+       recognition_history_complete: true
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -429,5 +484,7 @@ No Base RPC. No contract calls. stdlib only.
 *Reflection is not judgment.*
 *Appeal is not enforcement.*
 *Recognition remains external.*
+*Recognition history is not authority.*
+*Ledger is not judgment.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
