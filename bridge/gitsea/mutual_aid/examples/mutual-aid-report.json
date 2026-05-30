@@ -1,0 +1,90 @@
+{
+  "record_type": "mutual_aid_report",
+  "report_id": "mutual-aid-report-001",
+  "report_date": "2026-05-30",
+  "report_subject": "Mutual Aid Routing Layer \u2014 Phase 17",
+  "context": {
+    "request_count": 4,
+    "offer_count": 5,
+    "route_count": 5,
+    "source_route_log_id": "aid-route-log-001",
+    "source_request_registry": "aid-request-registry-001",
+    "source_offer_registry": "aid-offer-registry-001"
+  },
+  "section_count": 6,
+  "sections": [
+    {
+      "section_id": "help-was-requested",
+      "title": "Help Was Requested",
+      "body": "Help requests exist in the record. Participants in Jammy House, D.R.A., and YacypherPunks have surfaced needs: food support, housing advocacy, refugee relief, skill exchange. These requests are advisory observations \u2014 Dan-Go records that a need was expressed. Recording a need does not rank it, prioritise it over others, or impose any obligation on any party. The request is a signal, not a command.",
+      "invariant_demonstrated": "need_creates_debt: false"
+    },
+    {
+      "section_id": "help-was-offered",
+      "title": "Help Was Offered",
+      "body": "Offers of help exist in the record. Participants have volunteered meal preparation, housing advocacy, supply coordination, shelter hosting, and skill sharing. All offers are voluntary. Recording an offer does not bind the offerer to fulfil it, give Dan-Go authority over the offerer's capacity, or create a commitment that can be enforced. The offerer may withdraw at any time. The offer is a signal of willingness, not a contract.",
+      "invariant_demonstrated": "voluntary: true, offer_creates_obligation: false"
+    },
+    {
+      "section_id": "a-route-is-possible",
+      "title": "A Route Is Possible",
+      "body": "Where requests and offers share compatible types, availability, and commons membership, Dan-Go records a possible route. A route is an advisory observation: this request and this offer appear to overlap. Dan-Go surfaces the overlap. Whether the participants connect is their decision entirely. The route does not allocate the offerer's capacity to the requester. The route does not schedule an exchange. The route does not compel contact.",
+      "invariant_demonstrated": "routing_allocates_resources: false, route_compels_exchange: false"
+    },
+    {
+      "section_id": "no-one-is-commanded",
+      "title": "No One Is Commanded",
+      "body": "Dan-Go has no authority over any participant. It cannot command a helper to fulfil an offer. It cannot require a requester to accept a particular route. It cannot mandate that any exchange take place. The help_is_command: false invariant is permanent and unconditional. Mutual aid is defined by its voluntary character. The moment a system commands assistance, it becomes something other than mutual aid. Dan-Go preserves the voluntary character of every exchange it observes.",
+      "invariant_demonstrated": "help_is_command: false, authority: none"
+    },
+    {
+      "section_id": "no-debt-is-created",
+      "title": "No Debt Is Created",
+      "body": "Receiving help through a mutual aid route does not create a debt. The need_creates_debt: false invariant on every request record makes this explicit. Mutual aid is not a loan, not a credit, and not a transaction that produces an obligation for later repayment. A person who requested food support and received it does not owe help to the person who provided it. They may choose to participate in other ways \u2014 but that participation is voluntary, not owed. Dan-Go records help received without recording obligation created.",
+      "invariant_demonstrated": "need_creates_debt: false, requester_owes_help_received: false"
+    },
+    {
+      "section_id": "no-allocation-is-enforced",
+      "title": "No Allocation Is Enforced",
+      "body": "Dan-Go does not allocate resources. It does not assign a helper's capacity to a requester. It does not decide who receives help first. It does not queue requests by urgency and dispatch helpers against them. The routing_allocates_resources: false invariant is permanent. Allocation decisions \u2014 if any are made \u2014 belong to the participants and communities themselves. Dan-Go records what was requested, what was offered, and where a possible route exists. The rest is the commons deciding for itself.",
+      "invariant_demonstrated": "routing_allocates_resources: false, execution_allowed: false"
+    }
+  ],
+  "summary_table": {
+    "help_requested": true,
+    "help_offered": true,
+    "routes_possible": true,
+    "any_party_commanded": false,
+    "debt_created": false,
+    "allocation_enforced": false,
+    "resources_moved": false,
+    "exchange_compelled": false,
+    "participants_decide": true,
+    "offers_are_voluntary": true,
+    "records_are_advisory": true,
+    "records_are_append_only": true,
+    "records_are_contestable": true,
+    "commons_remain_self_governing": true
+  },
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "mutual_aid_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "need_creates_debt": false,
+  "help_is_command": false,
+  "routing_allocates_resources": false,
+  "judgment": false,
+  "protocol_phrases": [
+    "Need is not debt.",
+    "Help is not command.",
+    "Routing is not allocation.",
+    "Dan-Go records mutual aid routes; it does not command or allocate.",
+    "Dan-Go observes voluntary cooperation; it does not enforce exchange."
+  ]
+}
