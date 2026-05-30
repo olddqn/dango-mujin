@@ -1,0 +1,80 @@
+{
+  "record_type": "commons_report",
+  "report_id": "commons-report-001",
+  "report_date": "2026-05-30",
+  "report_subject": "Cooperation Commons Layer \u2014 Phase 16",
+  "context": {
+    "source_snapshot_id": "commons-snap-001",
+    "commons_count": 4,
+    "total_participants": 9,
+    "total_contributions": 126,
+    "total_recognition_history": 98
+  },
+  "section_count": 5,
+  "sections": [
+    {
+      "section_id": "why-community-exists",
+      "title": "Why Community Exists and Is Observable",
+      "body": "Communities form when people cooperate over time around shared interests, spaces, or initiatives. Jammy House, YacypherPunks, D.R.A., and Dan-Go itself are observable facts \u2014 they have participants, activities, and histories. Dan-Go makes this cooperation legible by recording it in an advisory, append-only commons registry. Observability requires a record. A record does not create authority.",
+      "invariant_demonstrated": "advisory: true"
+    },
+    {
+      "section_id": "why-participation-is-voluntary",
+      "title": "Why Participation Is Voluntary",
+      "body": "Participation in a commons is a voluntary act. Dan-Go records that participation occurred \u2014 when someone joined, in what role, in which commons. The record is not a contract. It does not bind the participant to obligations beyond what they chose. The membership_is_voluntary: true field in every membership record makes this explicit. Recording participation is not imposing participation.",
+      "invariant_demonstrated": "membership_is_voluntary: true"
+    },
+    {
+      "section_id": "why-community-does-not-create-authority",
+      "title": "Why Community Does Not Create Authority",
+      "body": "The existence of a community \u2014 even a well-organised, active, historically documented one \u2014 does not create authority over its members or over external systems. Dan-Go records that Jammy House exists, that D.R.A. exists, that Dan-Go itself exists as a cooperative project. None of these records give Dan-Go the authority to govern those communities, override their decisions, or compel any outcome on their behalf. authority: none applies to every commons record without exception.",
+      "invariant_demonstrated": "authority: none"
+    },
+    {
+      "section_id": "why-cooperation-exists-without-ownership",
+      "title": "Why Cooperation Can Exist Without Ownership",
+      "body": "A commons is defined by the absence of individual ownership. Participants cooperate within shared structures without claiming those structures as property. Dan-Go respects this by maintaining ownership: false across every commons record. Dan-Go does not own the communities it records. Participants do not own the commons by virtue of their participation record. The commons is shared. The record is advisory. Ownership is not implied at any layer.",
+      "invariant_demonstrated": "ownership: false"
+    },
+    {
+      "section_id": "why-dan-go-records-without-governing",
+      "title": "Why Dan-Go Records Without Governing",
+      "body": "Dan-Go is an advisory, append-only protocol. Its role is to make cooperation legible \u2014 to produce a neutral, contestable, historical record of what occurred. It does not decide who belongs in a community. It does not adjudicate disputes between communities. It does not tell communities what their next action should be. Jammy House, YacypherPunks, D.R.A., and future commons govern themselves. Dan-Go records what they do, not what they must do. control: false and hard_enforcement: false are permanent invariants.",
+      "invariant_demonstrated": "control: false, hard_enforcement: false"
+    }
+  ],
+  "summary_table": {
+    "commons_observed": true,
+    "participation_recorded": true,
+    "authority_implied": false,
+    "ownership_implied": false,
+    "control_implied": false,
+    "dan_go_governs_communities": false,
+    "dan_go_owns_communities": false,
+    "participation_is_voluntary": true,
+    "records_are_advisory": true,
+    "records_are_contestable": true,
+    "records_are_append_only": true,
+    "commons_remains_self_governing": true
+  },
+  "authority": "none",
+  "ownership": false,
+  "control": false,
+  "judgment": false,
+  "advisory": true,
+  "commons_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "moves_money": false,
+  "credit_issued": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "protocol_phrases": [
+    "Community is not authority.",
+    "Commons is not ownership.",
+    "Participation is not control.",
+    "Dan-Go records cooperation history; it does not govern communities.",
+    "Dan-Go observes commons; it does not own them."
+  ]
+}

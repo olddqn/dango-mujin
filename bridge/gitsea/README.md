@@ -11,6 +11,34 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 16 — Cooperation Commons Layer
+
+Dan-Go records commons participation and cooperation history without
+ownership, control, or authority. Communities, projects, houses, and
+shared initiatives are made legible — not governed.
+
+**"Community is not authority."**
+**"Commons is not ownership."**
+**"Participation is not control."**
+
+```bash
+# Register advisory commons (communities, projects, houses, initiatives)
+python bridge/gitsea/commons/runtime/commons_registry.py --save
+
+# Record participation relationships
+python bridge/gitsea/commons/runtime/commons_membership.py --save
+
+# Aggregate commons activity snapshot
+python bridge/gitsea/commons/runtime/commons_snapshot.py --save
+
+# Generate commons report
+python bridge/gitsea/commons/runtime/commons_report.py --save
+```
+
+`commons_only: true`. `ownership: false`. `control: false`. `authority: none`. Community is not authority.
+
+---
+
 ## Phase 15 — Recognition Ledger Layer
 
 Dan-Go links candidate, observation, reflection, and appeal records into
@@ -194,6 +222,7 @@ The `bridge/gitsea/` layer:
 9. Records credit gaps and unrecognized contribution as reflection memory (Phase 13)
 10. Records advisory recognition appeals without enforcing credit (Phase 14)
 11. Links Phases 11–14 records into an advisory recognition ledger (Phase 15)
+12. Records commons participation and cooperation history across communities (Phase 16)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -229,6 +258,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── commons/                           ← Phase 16: cooperation commons layer
+│   ├── COOPERATION_COMMONS_SPEC.md
+│   ├── COMMUNITY_NOT_AUTHORITY.md
+│   ├── COMMONS_NOT_OWNERSHIP.md
+│   ├── examples/
+│   │   ├── commons-registry.json
+│   │   ├── commons-membership.json
+│   │   ├── commons-snapshot.json
+│   │   └── commons-report.json
+│   └── runtime/
+│       ├── commons_registry.py
+│       ├── commons_membership.py
+│       ├── commons_snapshot.py
+│       └── commons_report.py
 ├── ledger/                            ← Phase 15: recognition ledger layer
 │   ├── RECOGNITION_LEDGER_SPEC.md
 │   ├── LEDGER_NOT_JUDGMENT.md
@@ -369,6 +412,12 @@ python bridge/gitsea/ledger/runtime/ledger_entry_builder.py --save
 python bridge/gitsea/ledger/runtime/recognition_ledger.py --save
 python bridge/gitsea/ledger/runtime/ledger_snapshot.py --save
 python bridge/gitsea/ledger/runtime/ledger_report.py --save
+
+# Phase 16: Cooperation commons
+python bridge/gitsea/commons/runtime/commons_registry.py --save
+python bridge/gitsea/commons/runtime/commons_membership.py --save
+python bridge/gitsea/commons/runtime/commons_snapshot.py --save
+python bridge/gitsea/commons/runtime/commons_report.py --save
 ```
 
 ---
@@ -445,12 +494,22 @@ Recognition Ledger
        authority: none
        recognition_history_complete: true
     │
+    │  (cooperation commons — Phase 16)
+    ▼
+Cooperation Commons
+       commons_only: true
+       ownership: false
+       control: false
+       authority: none
+       community_recorded: true
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
 ```
 
 Dan-Go does not activate the stream. Dan-Go observes treasury context.
+Dan-Go records commons participation; it does not govern communities.
 Signal is not reward.
 
 ---
@@ -469,6 +528,8 @@ Every file in this directory maintains:
 | `dango_controls_treasury` | `false` |
 | `recommended_allocation` | `null` (always) |
 | `credit_issued` | `false` (always) |
+| `ownership` | `false` (always) |
+| `control` | `false` (always) |
 
 No private keys. No wallet operations. No GITSEA API calls.
 No Base RPC. No contract calls. stdlib only.
@@ -488,3 +549,7 @@ No Base RPC. No contract calls. stdlib only.
 *Ledger is not judgment.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
+*Community is not authority.*
+*Commons is not ownership.*
+*Participation is not control.*
+*Dan-Go records commons participation; it does not govern communities.*
