@@ -11,6 +11,34 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 19 — Care Loop Reopen Layer
+
+Dan-Go records reopenable care loops after relief cases without judging
+failure, assigning blame, or creating obligations. Reopen is continuation.
+Follow-up is observation. The loop remains voluntary.
+
+**"Reopen is not failure."**
+**"Follow-up is not blame."**
+**"Care loop is not obligation."**
+
+```bash
+# Record relief cases that may need reopening or follow-up
+python bridge/gitsea/care_loop/runtime/care_reopen_registry.py --save
+
+# Record observed follow-up needs without blame
+python bridge/gitsea/care_loop/runtime/followup_need_snapshot.py --save
+
+# Build care loop from Phase 17–19 records
+python bridge/gitsea/care_loop/runtime/care_loop_builder.py --save
+
+# Generate care loop report
+python bridge/gitsea/care_loop/runtime/care_loop_report.py --save
+```
+
+`care_loop_only: true`. `reopen_is_failure: false`. `followup_is_blame: false`. `care_loop_creates_obligation: false`. `authority: none`.
+
+---
+
 ## Phase 18 — Relief Case Memory Layer
 
 Dan-Go records observable relief case memory after mutual aid routes without
@@ -281,6 +309,7 @@ The `bridge/gitsea/` layer:
 12. Records commons participation and cooperation history across communities (Phase 16)
 13. Records mutual aid requests, offers, and possible routes without debt, command, or allocation (Phase 17)
 14. Records observable relief case memory after aid routes without certifying rescue or judging outcomes (Phase 18)
+15. Records reopenable care loops after relief cases without judging failure, assigning blame, or creating obligations (Phase 19)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -316,6 +345,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── care_loop/                         ← Phase 19: care loop reopen layer
+│   ├── CARE_LOOP_REOPEN_SPEC.md
+│   ├── REOPEN_NOT_FAILURE.md
+│   ├── FOLLOWUP_NOT_BLAME.md
+│   ├── examples/
+│   │   ├── care-reopen-registry.json
+│   │   ├── followup-need-snapshot.json
+│   │   ├── care-loop.json
+│   │   └── care-loop-report.json
+│   └── runtime/
+│       ├── care_reopen_registry.py
+│       ├── followup_need_snapshot.py
+│       ├── care_loop_builder.py
+│       └── care_loop_report.py
 ├── relief/                            ← Phase 18: relief case memory layer
 │   ├── RELIEF_CASE_MEMORY_SPEC.md
 │   ├── RELIEF_NOT_PROOF.md
@@ -516,6 +559,12 @@ python bridge/gitsea/relief/runtime/relief_case_registry.py --save
 python bridge/gitsea/relief/runtime/relief_outcome_snapshot.py --save
 python bridge/gitsea/relief/runtime/care_memory_builder.py --save
 python bridge/gitsea/relief/runtime/relief_memory_report.py --save
+
+# Phase 19: Care loop reopen
+python bridge/gitsea/care_loop/runtime/care_reopen_registry.py --save
+python bridge/gitsea/care_loop/runtime/followup_need_snapshot.py --save
+python bridge/gitsea/care_loop/runtime/care_loop_builder.py --save
+python bridge/gitsea/care_loop/runtime/care_loop_report.py --save
 ```
 
 ---
@@ -619,6 +668,15 @@ Relief Case Memory
        care_memory_controls: false
        authority: none
     │
+    │  (care loop reopen — Phase 19)
+    ▼
+Care Loop Reopen
+       care_loop_only: true
+       reopen_is_failure: false
+       followup_is_blame: false
+       care_loop_creates_obligation: false
+       authority: none
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -678,3 +736,7 @@ No Base RPC. No contract calls. stdlib only.
 *Outcome is not judgment.*
 *Care memory is not control.*
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
+*Reopen is not failure.*
+*Follow-up is not blame.*
+*Care loop is not obligation.*
+*Dan-Go records care loops; it does not compel resolution or judge participants.*

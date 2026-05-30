@@ -1,0 +1,276 @@
+{
+  "record_type": "care_loop_log",
+  "log_id": "care-loop-log-001",
+  "log_date": "2026-05-30",
+  "loop_count": 4,
+  "complete_count": 4,
+  "status_summary": {
+    "open": 3,
+    "ongoing": 1
+  },
+  "loops": [
+    {
+      "record_type": "care_loop",
+      "care_loop_id": "care-loop-001",
+      "loop_date": "2026-05-30",
+      "reopen_id": "care-reopen-001",
+      "relief_case_id": "relief-case-002",
+      "route_id": "aid-route-002",
+      "followup_id": "followup-001",
+      "commons_id": "jammy-house-001",
+      "loop_status": "open",
+      "status_note": "Care loop is open; reopen or follow-up is in progress.",
+      "events": [
+        "route_suggested",
+        "relief_case_recorded",
+        "outcome_observed",
+        "care_memory_built",
+        "followup_need_observed",
+        "reopen_requested"
+      ],
+      "event_notes": {
+        "route_suggested": "Aid route suggested (Phase 17)",
+        "relief_case_recorded": "Relief case recorded (Phase 18)",
+        "outcome_observed": "Outcome observed (Phase 18)",
+        "care_memory_built": "Care memory built (Phase 18)",
+        "followup_need_observed": "Follow-up need observed (Phase 19)",
+        "reopen_requested": "Reopen requested (Phase 19)"
+      },
+      "loop_complete": true,
+      "reopen_summary": {
+        "reopen_reason": "partial_outcome_needs_followup",
+        "reopen_status": "requested"
+      },
+      "followup_summary": {
+        "need_type": "housing_status_check",
+        "urgency": "medium"
+      },
+      "case_summary": {},
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "care_loop_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "reopen_is_failure": false,
+      "followup_is_blame": false,
+      "care_loop_creates_obligation": false,
+      "loop_judges_participants": false,
+      "loop_compels_new_aid": false,
+      "loop_creates_debt": false,
+      "loop_certifies_resolution": false,
+      "protocol_phrases": [
+        "Reopen is not failure.",
+        "Follow-up is not blame.",
+        "Care loop is not obligation."
+      ]
+    },
+    {
+      "record_type": "care_loop",
+      "care_loop_id": "care-loop-002",
+      "loop_date": "2026-05-30",
+      "reopen_id": "care-reopen-002",
+      "relief_case_id": "relief-case-003",
+      "route_id": "aid-route-003",
+      "followup_id": "followup-002",
+      "commons_id": "dra-001",
+      "loop_status": "ongoing",
+      "status_note": "Care loop is ongoing; need is recurring or continuous.",
+      "events": [
+        "route_suggested",
+        "relief_case_recorded",
+        "outcome_observed",
+        "care_memory_built",
+        "followup_need_observed",
+        "reopen_requested",
+        "reopen_active"
+      ],
+      "event_notes": {
+        "route_suggested": "Aid route suggested (Phase 17)",
+        "relief_case_recorded": "Relief case recorded (Phase 18)",
+        "outcome_observed": "Outcome observed (Phase 18)",
+        "care_memory_built": "Care memory built (Phase 18)",
+        "followup_need_observed": "Follow-up need observed (Phase 19)",
+        "reopen_requested": "Reopen requested (Phase 19)",
+        "reopen_active": "Reopen active (Phase 19)"
+      },
+      "loop_complete": true,
+      "reopen_summary": {
+        "reopen_reason": "displacement_ongoing",
+        "reopen_status": "active"
+      },
+      "followup_summary": {
+        "need_type": "displacement_monitoring",
+        "urgency": "ongoing"
+      },
+      "case_summary": {},
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "care_loop_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "reopen_is_failure": false,
+      "followup_is_blame": false,
+      "care_loop_creates_obligation": false,
+      "loop_judges_participants": false,
+      "loop_compels_new_aid": false,
+      "loop_creates_debt": false,
+      "loop_certifies_resolution": false,
+      "protocol_phrases": [
+        "Reopen is not failure.",
+        "Follow-up is not blame.",
+        "Care loop is not obligation."
+      ]
+    },
+    {
+      "record_type": "care_loop",
+      "care_loop_id": "care-loop-003",
+      "loop_date": "2026-05-30",
+      "reopen_id": "care-reopen-003",
+      "relief_case_id": "relief-case-001",
+      "route_id": "aid-route-001",
+      "followup_id": "followup-003",
+      "commons_id": "jammy-house-001",
+      "loop_status": "open",
+      "status_note": "Care loop is open; reopen or follow-up is in progress.",
+      "events": [
+        "route_suggested",
+        "relief_case_recorded",
+        "outcome_observed",
+        "care_memory_built",
+        "followup_need_observed",
+        "reopen_requested"
+      ],
+      "event_notes": {
+        "route_suggested": "Aid route suggested (Phase 17)",
+        "relief_case_recorded": "Relief case recorded (Phase 18)",
+        "outcome_observed": "Outcome observed (Phase 18)",
+        "care_memory_built": "Care memory built (Phase 18)",
+        "followup_need_observed": "Follow-up need observed (Phase 19)",
+        "reopen_requested": "Reopen requested (Phase 19)"
+      },
+      "loop_complete": true,
+      "reopen_summary": {
+        "reopen_reason": "need_recurred",
+        "reopen_status": "requested"
+      },
+      "followup_summary": {
+        "need_type": "ongoing_food_coordination",
+        "urgency": "low"
+      },
+      "case_summary": {},
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "care_loop_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "reopen_is_failure": false,
+      "followup_is_blame": false,
+      "care_loop_creates_obligation": false,
+      "loop_judges_participants": false,
+      "loop_compels_new_aid": false,
+      "loop_creates_debt": false,
+      "loop_certifies_resolution": false,
+      "protocol_phrases": [
+        "Reopen is not failure.",
+        "Follow-up is not blame.",
+        "Care loop is not obligation."
+      ]
+    },
+    {
+      "record_type": "care_loop",
+      "care_loop_id": "care-loop-004",
+      "loop_date": "2026-05-30",
+      "reopen_id": "care-reopen-004",
+      "relief_case_id": "relief-case-005",
+      "route_id": "aid-route-005",
+      "followup_id": "followup-004",
+      "commons_id": "yacypherpunks-001",
+      "loop_status": "open",
+      "status_note": "Care loop is open; reopen or follow-up is in progress.",
+      "events": [
+        "route_suggested",
+        "relief_case_recorded",
+        "outcome_observed",
+        "care_memory_built",
+        "followup_need_observed",
+        "reopen_requested",
+        "reopen_acknowledged"
+      ],
+      "event_notes": {
+        "route_suggested": "Aid route suggested (Phase 17)",
+        "relief_case_recorded": "Relief case recorded (Phase 18)",
+        "outcome_observed": "Outcome observed (Phase 18)",
+        "care_memory_built": "Care memory built (Phase 18)",
+        "followup_need_observed": "Follow-up need observed (Phase 19)",
+        "reopen_requested": "Reopen requested (Phase 19)",
+        "reopen_acknowledged": "Reopen acknowledged (Phase 19)"
+      },
+      "loop_complete": true,
+      "reopen_summary": {
+        "reopen_reason": "case_was_pending",
+        "reopen_status": "acknowledged"
+      },
+      "followup_summary": {
+        "need_type": "skill_session_rescheduled",
+        "urgency": "low"
+      },
+      "case_summary": {},
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "care_loop_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "reopen_is_failure": false,
+      "followup_is_blame": false,
+      "care_loop_creates_obligation": false,
+      "loop_judges_participants": false,
+      "loop_compels_new_aid": false,
+      "loop_creates_debt": false,
+      "loop_certifies_resolution": false,
+      "protocol_phrases": [
+        "Reopen is not failure.",
+        "Follow-up is not blame.",
+        "Care loop is not obligation."
+      ]
+    }
+  ],
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "care_loop_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "reopen_is_failure": false,
+  "followup_is_blame": false,
+  "care_loop_creates_obligation": false,
+  "protocol_phrases": [
+    "Reopen is not failure.",
+    "Follow-up is not blame.",
+    "Care loop is not obligation.",
+    "Dan-Go builds care loops from Phase 17\u201319 records; it does not compel resolution."
+  ]
+}
