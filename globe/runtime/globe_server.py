@@ -1,0 +1,432 @@
+#!/usr/bin/env python3
+"""
+globe_server.py — Globe UI Server (Phase 22)
+Dan-Go × GITSEA — Globe Foundation Layer
+
+Local HTTP server that serves the Globe pages.
+Stdlib only — no external dependencies.
+
+Routes:
+    /              → redirect to /globe
+    /globe         → Globe list page
+    /globe/<id>    → Globe detail page (proposals + GITSEA link)
+    /globe/<id>/proposals               → Proposals list for a Globe
+    /globe/<id>/proposals/<proposal_id> → Proposal detail + deliberation log
+
+Usage:
+    python3 globe/runtime/globe_server.py [port]
+    # Default port: 7422
+    # Then open http://localhost:7422/globe
+"""
+
+import html
+import json
+import re
+import sys
+from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
+
+_DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 7422
+
+# ─── Data helpers ──────────────────────────────────────────────────────────────
+
+def _load(filename: str) -> list:
+    p = _DATA_DIR / filename
+    return json.loads(p.read_text()) if p.exists() else []
+
+
+def _globes():       return _load("globes.json")
+def _proposals():    return _load("proposals.json")
+def _deliberations(): return _load("deliberations.json")
+
+
+STATUS_BADGE = {
+    "draft":      ('<span class="badge draft">draft</span>',      "badge-draft"),
+    "discussion": ('<span class="badge disc">discussion</span>',   "badge-disc"),
+    "voting":     ('<span class="badge vote">voting</span>',       "badge-vote"),
+    "accepted":   ('<span class="badge acc">accepted</span>',      "badge-acc"),
+    "rejected":   ('<span class="badge rej">rejected</span>',      "badge-rej"),
+    "archived":   ('<span class="badge arch">archived</span>',     "badge-arch"),
+}
+
+SPEAKER_ICON = {"human": "👤", "ai": "🤖", "system": "⚙️"}
+
+# ─── CSS / Layout ──────────────────────────────────────────────────────────────
+
+CSS = """
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+       background: #0d0f14; color: #d4d8e0; min-height: 100vh; }
+a { color: #6ab0f5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { background: #161a24; border-bottom: 1px solid #2a2f3f;
+         padding: 14px 28px; display: flex; align-items: center; gap: 16px; }
+header h1 { font-size: 1.15rem; color: #a0b8e0; font-weight: 600; }
+header .subtitle { font-size: 0.78rem; color: #5a6480; }
+.breadcrumb { font-size: 0.82rem; padding: 10px 28px; color: #5a6480;
+              border-bottom: 1px solid #1e2230; }
+.breadcrumb a { color: #5a8fc0; }
+main { max-width: 900px; margin: 32px auto; padding: 0 24px 64px; }
+h2 { font-size: 1.25rem; color: #c0cce0; margin-bottom: 18px; font-weight: 600; }
+h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
+     text-transform: uppercase; letter-spacing: 0.04em; }
+.card { background: #161a24; border: 1px solid #252b3a; border-radius: 8px;
+        padding: 18px 22px; margin-bottom: 14px; }
+.card h4 { font-size: 1rem; color: #c8d8f0; margin-bottom: 6px; }
+.card .meta { font-size: 0.78rem; color: #4e5a78; margin-top: 8px; }
+.card .desc { font-size: 0.88rem; color: #8898b0; margin-top: 8px; line-height: 1.55; }
+.badge { font-size: 0.72rem; padding: 2px 8px; border-radius: 4px;
+         font-weight: 600; letter-spacing: 0.02em; vertical-align: middle; }
+.badge.draft   { background: #2a3040; color: #8090a8; }
+.badge.disc    { background: #1e2e4a; color: #6ab0f5; }
+.badge.vote    { background: #2a2040; color: #a07af0; }
+.badge.acc     { background: #102a18; color: #50c878; }
+.badge.rej     { background: #2a1010; color: #f07878; }
+.badge.arch    { background: #1e1e1e; color: #606070; }
+.tag { font-size: 0.75rem; color: #4e5a78; background: #1e2230;
+       border: 1px solid #2a3040; border-radius: 4px; padding: 2px 8px;
+       display: inline-block; margin-right: 6px; }
+.field-row { display: grid; grid-template-columns: 180px 1fr;
+             gap: 8px 16px; font-size: 0.86rem; margin-bottom: 8px; }
+.field-row .label { color: #4e5a78; font-weight: 600; }
+.field-row .value { color: #a0b0c8; }
+.founding { background: #0e1420; border-left: 3px solid #2a4a6a;
+            padding: 14px 18px; border-radius: 0 6px 6px 0; margin: 12px 0;
+            font-size: 0.88rem; color: #8898b0; line-height: 1.65;
+            white-space: pre-wrap; word-break: break-word; }
+.deliberation { border: 1px solid #1e2430; border-radius: 6px; padding: 14px 18px;
+                margin-bottom: 10px; font-size: 0.86rem; }
+.deliberation.human  { background: #12181e; border-left: 3px solid #2a4a6a; }
+.deliberation.ai     { background: #0e1418; border-left: 3px solid #2a3a5a; }
+.deliberation.system { background: #101012; border-left: 3px solid #2a2a3a; }
+.deliberation .speaker { font-weight: 600; color: #8898b0; margin-bottom: 6px; }
+.deliberation .content { color: #9aa8c0; line-height: 1.65; white-space: pre-wrap;
+                          word-break: break-word; }
+.gitsea-box { background: #0e1018; border: 1px solid #1e2430; border-radius: 6px;
+              padding: 14px 18px; font-size: 0.82rem; color: #5a6878; }
+.gitsea-box a { color: #4a7aa8; }
+.empty { color: #3a4258; font-style: italic; font-size: 0.88rem; }
+.body-block { background: #0e1018; border: 1px solid #1e2430; border-radius: 6px;
+              padding: 16px 20px; font-size: 0.88rem; color: #8898b0;
+              line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+.next-actions { background: #0e1820; border: 1px solid #1e3040; border-radius: 6px;
+                padding: 14px 18px; font-size: 0.85rem; color: #6a8aaa; }
+.next-actions ul { margin: 8px 0 0 18px; line-height: 2; }
+footer { text-align: center; font-size: 0.72rem; color: #2a3040;
+         padding: 32px 0 16px; }
+"""
+
+def _page(title: str, breadcrumb: str, body: str) -> str:
+    return f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{html.escape(title)} — Dan-Go Globe</title>
+<style>{CSS}</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🌐 Dan-Go Globe</h1>
+    <div class="subtitle">自由参加型共同体 · Deliberative Consensus · Phase 22</div>
+  </div>
+</header>
+<div class="breadcrumb">{breadcrumb}</div>
+<main>
+{body}
+</main>
+<footer>Dan-Go Mujin Protocol · authority: none · append-only · stdlib only<br>
+AI is not a governor. AI is a mediator, missionary, and recorder.</footer>
+</body>
+</html>"""
+
+def _e(s) -> str:
+    return html.escape(str(s)) if s else ""
+
+def _badge(status: str) -> str:
+    return STATUS_BADGE.get(status, (f'<span class="badge">{_e(status)}</span>', ""))[0]
+
+def _gitsea_html(link: dict | None) -> str:
+    if not link:
+        return '<p class="empty">GITSEA link not yet configured.</p>'
+    rows = []
+    for field in ["gitsea_repo_url", "gitsea_issue_url", "gitsea_pr_url", "commit_hash", "linked_rule_path"]:
+        val = link.get(field)
+        if val:
+            label = field.replace("_", " ")
+            if field.endswith("_url"):
+                val_html = f'<a href="{_e(val)}" target="_blank">{_e(val)}</a>'
+            else:
+                val_html = f'<code>{_e(val)}</code>'
+            rows.append(f'<div class="field-row"><span class="label">{_e(label)}</span>'
+                        f'<span class="value">{val_html}</span></div>')
+    if not rows:
+        return '<p class="empty">GITSEA link fields not yet populated.</p>'
+    return '<div class="gitsea-box">' + "".join(rows) + "</div>"
+
+# ─── Page renderers ────────────────────────────────────────────────────────────
+
+def render_globe_list() -> str:
+    globes = _globes()
+    if not globes:
+        items = '<p class="empty">グローブがまだ登録されていません。<br>globe/runtime/globe_registry.py create で追加できます。</p>'
+    else:
+        items = ""
+        for g in globes:
+            proposals_for = [p for p in _proposals() if p.get("globe_id") == g["globe_id"]]
+            items += f"""
+<div class="card">
+  <h4><a href="/globe/{_e(g['globe_id'])}">{_e(g['name'])}</a></h4>
+  <div class="desc">{_e(g.get('description',''))}</div>
+  <div class="meta">
+    <span class="tag">{_e(g.get('governance_model',''))}</span>
+    <span class="tag">membership: {_e(g.get('membership_policy',''))}</span>
+    <span class="tag">{len(proposals_for)} proposals</span>
+    <span style="margin-left:8px;color:#3a4258">Created {_e(g.get('created_at','')[:10])}</span>
+    &nbsp;·&nbsp; <a href="/globe/{_e(g['globe_id'])}">詳細 →</a>
+  </div>
+</div>"""
+    return _page(
+        "Globe 一覧",
+        '<a href="/globe">Globe</a>',
+        f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small></h2>'
+        + items
+        + '<p style="margin-top:24px;font-size:0.8rem;color:#3a4258">'
+        + 'Globe = 自由参加型共同体の単位。国家・自治体・DAO・コミュニティ・プロジェクトを包含できる。</p>'
+    )
+
+
+def render_globe_detail(globe_id: str) -> str | None:
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+    proposals_for = [p for p in _proposals() if p.get("globe_id") == globe_id]
+    proposal_html = ""
+    for p in proposals_for:
+        delibs = [d for d in _deliberations() if d.get("proposal_id") == p["proposal_id"]]
+        proposal_html += f"""
+<div class="card">
+  <h4><a href="/globe/{_e(globe_id)}/proposals/{_e(p['proposal_id'])}">{_e(p['title'])}</a>
+    &nbsp;{_badge(p.get('status','draft'))}</h4>
+  <div class="meta">
+    提案者: {_e(p.get('proposer','?'))} &nbsp;·&nbsp;
+    熟議: {len(delibs)} entries &nbsp;·&nbsp;
+    {_e(p.get('created_at','')[:10])}
+    &nbsp;·&nbsp; <a href="/globe/{_e(globe_id)}/proposals/{_e(p['proposal_id'])}">詳細 →</a>
+  </div>
+</div>"""
+    if not proposal_html:
+        proposal_html = '<p class="empty">まだ提案がありません。</p>'
+
+    body = f"""
+<h2>🌐 {_e(g['name'])}</h2>
+<div class="desc" style="margin-bottom:16px">{_e(g.get('description',''))}</div>
+
+<h3>基本情報</h3>
+<div class="card">
+  <div class="field-row"><span class="label">governance_model</span>
+    <span class="value">{_e(g.get('governance_model',''))}</span></div>
+  <div class="field-row"><span class="label">membership_policy</span>
+    <span class="value">{_e(g.get('membership_policy',''))}</span></div>
+  <div class="field-row"><span class="label">created_at</span>
+    <span class="value">{_e(g.get('created_at','')[:10])}</span></div>
+</div>
+
+<h3>founding_statement</h3>
+<div class="founding">{_e(g.get('founding_statement',''))}</div>
+
+<h3>GITSEA 連携情報</h3>
+{_gitsea_html(g.get('gitsea_link'))}
+
+<h3>Proposal 一覧 &nbsp;<a href="/globe/{_e(globe_id)}/proposals" style="font-size:0.8rem">すべて見る →</a></h3>
+{proposal_html}
+"""
+    return _page(
+        g["name"],
+        f'<a href="/globe">Globe</a> › {_e(g["name"])}',
+        body
+    )
+
+
+def render_proposals_list(globe_id: str) -> str | None:
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+    proposals_for = [p for p in _proposals() if p.get("globe_id") == globe_id]
+    items = ""
+    for p in proposals_for:
+        delibs = [d for d in _deliberations() if d.get("proposal_id") == p["proposal_id"]]
+        items += f"""
+<div class="card">
+  <h4><a href="/globe/{_e(globe_id)}/proposals/{_e(p['proposal_id'])}">{_e(p['title'])}</a>
+    &nbsp;{_badge(p.get('status','draft'))}</h4>
+  <div class="meta">
+    提案者: {_e(p.get('proposer','?'))} &nbsp;·&nbsp;
+    熟議ログ: {len(delibs)} &nbsp;·&nbsp; {_e(p.get('created_at','')[:10])}
+  </div>
+</div>"""
+    if not items:
+        items = '<p class="empty">まだ提案がありません。</p>'
+    return _page(
+        f"Proposals — {g['name']}",
+        f'<a href="/globe">Globe</a> › <a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › Proposals',
+        f'<h2>📋 Proposals — {_e(g["name"])}</h2>' + items
+    )
+
+
+def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+    proposals_for = _proposals()
+    p = next((x for x in proposals_for if x["proposal_id"] == proposal_id), None)
+    if not p:
+        return None
+    delibs = [d for d in _deliberations() if d.get("proposal_id") == proposal_id]
+
+    delib_html = ""
+    for d in delibs:
+        stype = d.get("speaker_type", "human")
+        icon = SPEAKER_ICON.get(stype, "")
+        delib_html += f"""
+<div class="deliberation {_e(stype)}">
+  <div class="speaker">{icon} {_e(d.get('speaker_name','?'))}
+    <span style="font-size:0.75rem;color:#3a4258;font-weight:400;margin-left:8px">
+      {_e(d.get('created_at','')[:19])} [{_e(d.get('deliberation_id',''))}]
+    </span>
+  </div>
+  <div class="content">{_e(d.get('content',''))}</div>
+</div>"""
+    if not delib_html:
+        delib_html = '<p class="empty">まだ熟議エントリがありません。</p>'
+
+    # Next actions
+    status = p.get("status", "draft")
+    next_steps = {
+        "draft":      ["discussion フェーズに移行する", "提案本文を修正・補足する", "賛同者を募る"],
+        "discussion": ["熟議ログにエントリを追加する（python3 globe/runtime/deliberation_log.py append）", "AIメディエーターによる論点整理を実施する", "voting フェーズに移行する"],
+        "voting":     ["投票を実施する（Dan-Go 熟議プロセスに従う）", "結果を記録し accepted または rejected に移行する"],
+        "accepted":   ["実行計画に変換する", "GITSEA リンクを設定し Git 的に管理する", "実行履歴を記録する"],
+        "rejected":   ["反対意見を保存する（すでに保存済み）", "修正提案を新規提案として提出する", "archived に移行する"],
+        "archived":   ["履歴として永続保存されています。"],
+    }
+    next_items = "".join(f"<li>{_e(s)}</li>" for s in next_steps.get(status, []))
+
+    body = f"""
+<h2>📋 {_e(p['title'])} &nbsp;{_badge(status)}</h2>
+<div class="meta" style="margin-bottom:16px">
+  Globe: <a href="/globe/{_e(globe_id)}">{_e(g['name'])}</a> &nbsp;·&nbsp;
+  提案者: {_e(p.get('proposer','?'))} &nbsp;·&nbsp;
+  {_e(p.get('created_at','')[:10])}
+</div>
+
+<h3>提案本文</h3>
+<div class="body-block">{_e(p.get('body',''))}</div>
+
+<h3>GITSEA 連携情報</h3>
+{_gitsea_html(p.get('gitsea_link'))}
+
+<h3>次の行動案</h3>
+<div class="next-actions"><ul>{next_items}</ul></div>
+
+<h3>熟議ログ ({len(delibs)} entries) — append-only · 少数意見保存</h3>
+{delib_html}
+"""
+    return _page(
+        p["title"],
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › '
+        f'<a href="/globe/{_e(globe_id)}/proposals">Proposals</a> › '
+        f'{_e(p["proposal_id"])}',
+        body
+    )
+
+
+# ─── HTTP Handler ───────────────────────────────────────────────────────────────
+
+class GlobeHandler(BaseHTTPRequestHandler):
+    def log_message(self, fmt, *args):
+        pass  # Quiet by default; uncomment below for verbose
+        # sys.stderr.write(f"[globe] {self.address_string()} {fmt % args}\n")
+
+    def _send_html(self, content: str, status: int = 200):
+        encoded = content.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(encoded)))
+        self.end_headers()
+        self.wfile.write(encoded)
+
+    def _send_redirect(self, location: str):
+        self.send_response(302)
+        self.send_header("Location", location)
+        self.end_headers()
+
+    def _404(self):
+        self._send_html(
+            _page("404", "404", '<h2>404 — Not Found</h2><p><a href="/globe">← Globe 一覧へ</a></p>'),
+            404
+        )
+
+    def do_GET(self):
+        path = self.path.split("?")[0].rstrip("/") or "/"
+
+        if path == "/" or path == "":
+            self._send_redirect("/globe")
+            return
+
+        if path == "/globe":
+            self._send_html(render_globe_list())
+            return
+
+        m = re.fullmatch(r"/globe/([^/]+)", path)
+        if m:
+            content = render_globe_detail(m.group(1))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        m = re.fullmatch(r"/globe/([^/]+)/proposals", path)
+        if m:
+            content = render_proposals_list(m.group(1))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        m = re.fullmatch(r"/globe/([^/]+)/proposals/([^/]+)", path)
+        if m:
+            content = render_proposal_detail(m.group(1), m.group(2))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        self._404()
+
+
+# ─── Main ───────────────────────────────────────────────────────────────────────
+
+def main():
+    server = HTTPServer(("127.0.0.1", PORT), GlobeHandler)
+    print(f"Dan-Go Globe Server")
+    print(f"  → http://localhost:{PORT}/globe")
+    print(f"  Ctrl+C to stop")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nServer stopped.")
+
+
+if __name__ == "__main__":
+    main()
