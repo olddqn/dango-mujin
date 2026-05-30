@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Recognition Appeal Layer
+# RESUME_STATE.md — Recognition Ledger Layer
 
-> **STATUS: IN PROGRESS (feature/phase-14-recognition-appeal)**
+> **STATUS: IN PROGRESS (feature/phase-15-recognition-ledger)**
 
-**Phase:** Recognition Appeal Layer (Phase 14)
-**Branch:** feature/phase-14-recognition-appeal
+**Phase:** Recognition Ledger Layer (Phase 15)
+**Branch:** feature/phase-15-recognition-ledger
 **Started:** 2026-05-30
 
 ---
@@ -32,88 +32,105 @@
 - Contributor Credit Candidate Layer (Phase 11) — PR #3
 - External Credit Adapter Layer (Phase 12) — PR #4
 - Credit Reflection Memory Layer (Phase 13) — PR #5
-- **Recognition Appeal Layer (Phase 14)** ← current PR
+- Recognition Appeal Layer (Phase 14) — PR #6
+- **Recognition Ledger Layer (Phase 15)** ← current PR
 
 ---
 
-## Phase 14: Recognition Appeal Layer
+## Phase 15: Recognition Ledger Layer
 
 Core principles:
-> "Appeal is not enforcement."
-> "Recognition remains external."
+> "Recognition history is not authority."
+> "Ledger is not judgment."
 
-**Purpose:** Provides a structured protocol path for contributors to request
-reconsideration of unrecognized contributions. No appeal compels any external
-system to act. Dan-Go records the appeal; external systems decide independently.
+**Purpose:** Links Phase 11–14 records into one combined recognition history
+per contributor per claim. The ledger is the terminal advisory record of the
+contribution→recognition lifecycle. History is complete. Authority is none.
+
+### Phase Chain
+
+```
+Phase 11: Contribution Candidate      → candidate_credit: true/false
+Phase 12: External Credit Observation → external_credit: false
+Phase 13: Reflection Memory           → reflection_recorded: true
+Phase 14: Recognition Appeal          → appeal_recorded: true
+Phase 15: Recognition Ledger          → recognition_history_complete: true
+```
 
 ### Runtime Results
 
 ```
-recognition_appeal.py
-  total_appeals: 2
-  ↑ external-001: evidence_reviewed — grounds: review_completed
-      enforceable=False, compels_credit=False
-  ↑ external-002: evidence_accepted — grounds: evidence_complete
-      enforceable=False, compels_credit=False
-  credit_issued: false, appeal_only: true, hard_enforcement: false
+ledger_entry_builder.py
+  total_entries: 2
+  ledger-entry-001: external-001 evidence_reviewed
+    events: candidate_created → external_credit_not_observed → reflection_recorded → appeal_recorded
+    complete=True, gap=True, judgment=False
+  ledger-entry-002: external-002 evidence_accepted
+    events: candidate_created → external_credit_not_observed → reflection_recorded → appeal_recorded
+    complete=True, gap=True, judgment=False
+  authority: none, judgment: false, credit_issued: false
 
-appeal_packet_builder.py
-  total_packets: 2
-  ↑ external-001: phase_11 candidate_credit=True + phase_12 external_credit=False
-      is_submission=False, compels_response=False
-  ↑ external-002: phase_11 candidate_credit=True + phase_12 external_credit=False
-      is_submission=False, compels_response=False
-  credit_issued: false, appeal_only: true
+recognition_ledger.py
+  ledger_id: recognition-ledger-001
+  issue: #3, claim: housing-007
+  entry_count: 3
+  candidate_count: 3, external_credit_count: 0
+  reflection_count: 3, appeal_count: 3, gap_count: 3
+  recognition_history_complete: true
+  ledger_issues_credit: false, ledger_judges: false
+  judgment: false, authority: none
 
-appeal_status_snapshot.py
-  snapshot_id: appeal-snap-housing-007-issue-1
-  total_appeals: 2, pending: 2, acknowledged: 0, credited: 0
-  overall_status: pending
-  credit_issued: false
-  credit_issued_via_appeal: false
-  compels_response: false
-  hard_enforcement: false
+ledger_snapshot.py
+  snapshot_id: ledger-snap-housing-007-issue-3
+  source: recognition-ledger-001
+  ledger_entry_count: 3
+  candidate_count: 3 (100% coverage)
+  external_credit_count: 0 (0% coverage)
+  reflection_count: 3 (100% coverage)
+  appeal_count: 3 (100% coverage)
+  gap_count: 3
+  recognition_history_complete: true
+  judgment: false, authority: none
 
-appeal_reflection_report.py
-  report_id: appeal-report-housing-007-issue-1
+ledger_report.py
+  report_id: ledger-report-housing-007-issue-3
   5 sections:
-    Why Appeal Exists — appeal is a voice, not a lever
-    Why Appeal Does Not Compel GITSEA — authority: none
-    Why Dan-Go Cannot Issue Credit — credit_issued: false, permanent
-    Why Reopenability Matters — reopenable: true
-    Why Request Without Authority — appeal_is_demand: false
+    Why Recognition History Exists — legibility requires record
+    Why the Ledger Does Not Judge — judgment: false invariant
+    Why the Ledger Does Not Issue Credit — credit_issued: false permanent
+    Why the Ledger Does Not Force Recognition — authority: none
+    Why Append-Only History Preserves Reopenability — reopenable: true
   summary_table:
-    appeal_is_enforcement: false
-    appeal_compels_gitsea: false
-    dango_can_issue_credit: false
-    authority_exists: false
+    ledger_judges: false
+    ledger_issues_credit: false
+    ledger_forces_recognition: false
     recognition_remains_external: true
 ```
 
 ---
 
-## New Files (Phase 14)
+## New Files (Phase 15)
 
-- bridge/gitsea/appeal/RECOGNITION_APPEAL_SPEC.md
-- bridge/gitsea/appeal/APPEAL_NOT_ENFORCEMENT.md
-- bridge/gitsea/appeal/RECOGNITION_REMAINS_EXTERNAL.md
-- bridge/gitsea/appeal/runtime/recognition_appeal.py
-- bridge/gitsea/appeal/runtime/appeal_packet_builder.py
-- bridge/gitsea/appeal/runtime/appeal_status_snapshot.py
-- bridge/gitsea/appeal/runtime/appeal_reflection_report.py
-- bridge/gitsea/appeal/examples/recognition-appeal.json (generated)
-- bridge/gitsea/appeal/examples/appeal-packet.json (generated)
-- bridge/gitsea/appeal/examples/appeal-status-snapshot.json (generated)
-- bridge/gitsea/appeal/examples/appeal-reflection-report.json (generated)
+- bridge/gitsea/ledger/RECOGNITION_LEDGER_SPEC.md
+- bridge/gitsea/ledger/LEDGER_NOT_JUDGMENT.md
+- bridge/gitsea/ledger/HISTORY_NOT_AUTHORITY.md
+- bridge/gitsea/ledger/runtime/recognition_ledger.py
+- bridge/gitsea/ledger/runtime/ledger_snapshot.py
+- bridge/gitsea/ledger/runtime/ledger_entry_builder.py
+- bridge/gitsea/ledger/runtime/ledger_report.py
+- bridge/gitsea/ledger/examples/recognition-ledger.json (generated)
+- bridge/gitsea/ledger/examples/ledger-snapshot.json (generated)
+- bridge/gitsea/ledger/examples/ledger-entry.json (generated)
+- bridge/gitsea/ledger/examples/ledger-report.json (generated)
 
-## Updated Files (Phase 14)
+## Updated Files (Phase 15)
 
-- bridge/gitsea/README.md (Phase 14 section + appeal/ in layout)
+- bridge/gitsea/README.md (Phase 15 section + ledger/ in layout)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 14 files)
+## Key Invariants (all Phase 15 files)
 
 | Field | Value |
 |-------|-------|
@@ -122,23 +139,22 @@ appeal_reflection_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `appeal_only` | `true` |
+| `ledger_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `appeal_is_enforceable` | `false` (invariant) |
-| `appeal_compels_credit` | `false` (invariant) |
-| `appeal_creates_authority` | `false` (invariant) |
-| `packet_is_submission` | `false` (invariant) |
-| `packet_compels_response` | `false` (invariant) |
-| `compels_response` | `false` (invariant) |
+| `judgment` | `false` (invariant) |
+| `entry_judges` | `false` (invariant) |
+| `entry_ranks` | `false` (invariant) |
+| `entry_creates_authority` | `false` (invariant) |
+| `ledger_judges` | `false` (invariant) |
+| `ledger_forces_recognition` | `false` (invariant) |
+| `ledger_issues_credit` | `false` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation
-
-Each phase added a new invariant phrase:
+## Protocol Principle Accumulation (Phases 10–15)
 
 | Phase | Phrase |
 |-------|--------|
@@ -152,16 +168,18 @@ Each phase added a new invariant phrase:
 | 13 | "Reflection is not judgment." |
 | 14 | "Appeal is not enforcement." |
 | 14 | "Recognition remains external." |
+| 15 | "Recognition history is not authority." |
+| 15 | "Ledger is not judgment." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 14 PR** — after review
-2. **Phase 15: GITSEA Stream Candidate Tracking** — observe stream activation events
-3. **Multi-claim appeal dashboard** — aggregate appeal state across claims
-4. **Federation appeal layer** — record appeals across gitlawb nodes
-5. **Appeal response observation** — if external systems respond, record the response
+1. **Merge Phase 15 PR** — after review
+2. **Phase 16: GITSEA Stream Candidate Tracking** — observe stream activation
+3. **Multi-claim ledger** — aggregate recognition history across housing-006, housing-007
+4. **Federation ledger** — cross-node recognition history
+5. **Ledger versioning** — track changes in external credit state over time
 
 ---
 
@@ -174,6 +192,8 @@ Each phase added a new invariant phrase:
 *Reflection is not judgment.*
 *Appeal is not enforcement.*
 *Recognition remains external.*
+*Recognition history is not authority.*
+*Ledger is not judgment.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Contribution becomes legible before it becomes valuable.*
