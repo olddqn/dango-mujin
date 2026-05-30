@@ -11,6 +11,32 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 13 — Credit Reflection Memory Layer
+
+Dan-Go records credit gaps and unrecognized contribution as reflection memory.
+Contribution that was not credited is still observable. Gaps are not failures.
+
+**"Unrecognized contribution is still observable."**
+**"Reflection is not judgment."**
+
+```bash
+# Record full contribution lifecycle as reflection memory
+python bridge/gitsea/reflection/runtime/credit_reflection_memory.py --save
+
+# Record contributions without external credit
+python bridge/gitsea/reflection/runtime/unrecognized_contribution.py --save
+
+# Snapshot gap state across contributors
+python bridge/gitsea/reflection/runtime/reflection_gap_snapshot.py --save
+
+# Generate reflection report
+python bridge/gitsea/reflection/runtime/credit_reflection_report.py --save
+```
+
+`credit_issued: false`. `reflection_only: true`. `gap_is_failure: false`. Dan-Go remembers.
+
+---
+
 ## Phase 12 — External Credit Adapter Layer
 
 Dan-Go now explicitly distinguishes contribution candidates from external
@@ -112,6 +138,7 @@ The `bridge/gitsea/` layer:
 6. Observes the RepoVault treasury context for cooperation history (Phase 10)
 7. Records contributor credit candidates for GITSEA observability (Phase 11)
 8. Observes external credit systems and documents the candidate/credit gap (Phase 12)
+9. Records credit gaps and unrecognized contribution as reflection memory (Phase 13)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -147,6 +174,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── reflection/                        ← Phase 13: credit reflection memory layer
+│   ├── CREDIT_REFLECTION_MEMORY_SPEC.md
+│   ├── UNRECOGNIZED_CONTRIBUTION_SPEC.md
+│   ├── REFLECTION_NOT_JUDGMENT.md
+│   ├── examples/
+│   │   ├── credit-reflection-memory.json
+│   │   ├── unrecognized-contribution.json
+│   │   ├── reflection-gap-snapshot.json
+│   │   └── credit-reflection-report.json
+│   └── runtime/
+│       ├── credit_reflection_memory.py
+│       ├── unrecognized_contribution.py
+│       ├── reflection_gap_snapshot.py
+│       └── credit_reflection_report.py
 ├── external_credit/                   ← Phase 12: external credit adapter layer
 │   ├── EXTERNAL_CREDIT_SPEC.md
 │   ├── OBSERVATION_NOT_ISSUANCE.md
@@ -227,6 +268,12 @@ python bridge/gitsea/external_credit/runtime/external_credit_adapter.py --save
 python bridge/gitsea/external_credit/runtime/external_credit_snapshot.py --save
 python bridge/gitsea/external_credit/runtime/candidate_vs_external.py --save
 python bridge/gitsea/external_credit/runtime/credit_observation_report.py --save
+
+# Phase 13: Credit reflection memory
+python bridge/gitsea/reflection/runtime/credit_reflection_memory.py --save
+python bridge/gitsea/reflection/runtime/unrecognized_contribution.py --save
+python bridge/gitsea/reflection/runtime/reflection_gap_snapshot.py --save
+python bridge/gitsea/reflection/runtime/credit_reflection_report.py --save
 ```
 
 ---
@@ -280,6 +327,14 @@ External Credit Observation
     │  gap_is_error: false
     │  observation_only: true
     │
+    │
+    │  (credit reflection memory — Phase 13)
+    ▼
+Reflection Memory
+    │  unrecognized contributions recorded
+    │  gaps observed, not judged
+    │  contribution_lost: false
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -315,5 +370,7 @@ No Base RPC. No contract calls. stdlib only.
 *Contribution history is not credit.*
 *Observation is not issuance.*
 *Candidate credit is not external credit.*
+*Unrecognized contribution is still observable.*
+*Reflection is not judgment.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*

@@ -1,0 +1,85 @@
+{
+  "report_type": "credit_reflection_report",
+  "generated_at": "2026-05-30T05:04:02.691881+00:00",
+  "report_id": "reflect-report-housing-007-issue-1",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "external_system": "gitsea",
+  "candidate_count": 3,
+  "credit_eligible": 2,
+  "externally_credited": 0,
+  "gap_count": 2,
+  "contributors": [
+    "external-001",
+    "external-002",
+    "external-003"
+  ],
+  "section_count": 6,
+  "sections": [
+    {
+      "section": "Contribution Happened",
+      "summary": "Contributions were recorded in Dan-Go regardless of external credit. They are observable here.",
+      "detail": "The Dan-Go protocol recorded contribution events during negotiation of claim housing-007, Issue #1. Evidence was reviewed, accepted, and contested. These events are stored in the append-only contribution history (Phase 11). They are not erased by the absence of external credit. A contribution that occurred is always observable in Dan-Go memory.",
+      "contribution_permanent": true,
+      "credit_issued": false
+    },
+    {
+      "section": "External Credit Was Not Observed",
+      "summary": "GITSEA was observed after Phase 11 and 12. No corresponding credit record was detected.",
+      "detail": "Phase 12 observed GITSEA and found no credit record corresponding to the Dan-Go contribution candidates. This observation was recorded in the external credit adapter and snapshot. The absence of credit is an observation — not a judgment on the quality of contributions or a failure of any party.",
+      "external_credit": false,
+      "credit_issued": false
+    },
+    {
+      "section": "The Gap Is Not a Failure",
+      "summary": "Missing GITSEA credit is not a Dan-Go failure, a contributor failure, or a protocol failure.",
+      "detail": "External credit systems such as GITSEA are sovereign over their own credit decisions. They may issue credit at any time, on their own schedule, according to their own eligibility logic — or not at all. Dan-Go does not control this process. A gap between Dan-Go candidates and GITSEA credit is expected and architecturally by design. Phase 12 established gap_is_error: false as a permanent invariant.",
+      "gap_is_failure": false,
+      "credit_issued": false
+    },
+    {
+      "section": "Gaps Are Not Accusations",
+      "summary": "Unrecognized contribution records do not accuse external systems, contributors, or maintainers.",
+      "detail": "Phase 13 records unrecognized contributions as observation facts. The is_accusation: false invariant makes this explicit in every record. Recording that a contribution exists without external credit is not a complaint, dispute, or appeal. It is a factual record of what was observed. Dan-Go does not evaluate why credit was or wasn't issued. Dan-Go records what happened.",
+      "is_accusation": false,
+      "credit_issued": false
+    },
+    {
+      "section": "External Systems Remain Sovereign",
+      "summary": "GITSEA may credit these contributions at any time. Dan-Go will not prevent, delay, or trigger that decision.",
+      "detail": "The reflection memory stored in Phase 13 does not limit or extend the window for external credit issuance. GITSEA may observe Dan-Go reflection records and may use them in future eligibility decisions. Dan-Go does not push, request, or activate this process. External system sovereignty is preserved. Dan-Go observes and remembers.",
+      "external_system_sovereign": true,
+      "credit_issued": false
+    },
+    {
+      "section": "Contribution Memory Matters",
+      "summary": "Remembering contribution — even without credit — is the purpose of the Dan-Go reflection layer.",
+      "detail": "Contribution becomes legible before it becomes valuable. Reflection memory makes contribution permanently observable, even when economic recognition does not follow. This matters because: (1) Contribution history is a public record of negotiation participation. (2) Future credit systems may observe historical contribution records. (3) The Dan-Go protocol's value is in legibility, not in economic outcome. Unrecognized contribution is still observable. That is sufficient.",
+      "memory_sufficient": true,
+      "credit_issued": false
+    }
+  ],
+  "summary_table": {
+    "contribution_happened": true,
+    "external_credit_observed": false,
+    "gap_is_failure": false,
+    "gap_is_accusation": false,
+    "external_system_sovereign": true,
+    "memory_sufficient": true,
+    "dango_judges_contributors": false,
+    "dango_escalates_gaps": false
+  },
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "reflection_only": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "principle_1": "Unrecognized contribution is still observable.",
+  "principle_2": "Reflection is not judgment.",
+  "principle_3": "Contribution becomes legible before it becomes valuable."
+}
