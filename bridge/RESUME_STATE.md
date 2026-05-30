@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Mutual Aid Routing Layer
+# RESUME_STATE.md — Relief Case Memory Layer
 
-> **STATUS: IN PROGRESS (feature/phase-17-mutual-aid-routing)**
+> **STATUS: IN PROGRESS (feature/phase-18-relief-case-memory)**
 
-**Phase:** Mutual Aid Routing Layer (Phase 17)
-**Branch:** feature/phase-17-mutual-aid-routing
+**Phase:** Relief Case Memory Layer (Phase 18)
+**Branch:** feature/phase-18-relief-case-memory
 **Started:** 2026-05-30
 
 ---
@@ -35,117 +35,106 @@
 - Recognition Appeal Layer (Phase 14) — PR #6
 - Recognition Ledger Layer (Phase 15) — PR #7
 - Cooperation Commons Layer (Phase 16) — PR #8
-- **Mutual Aid Routing Layer (Phase 17)** ← current PR
+- Mutual Aid Routing Layer (Phase 17) — PR #9
+- **Relief Case Memory Layer (Phase 18)** ← current PR
 
 ---
 
-## Phase 17: Mutual Aid Routing Layer
+## Phase 18: Relief Case Memory Layer
 
 Core principles:
-> "Need is not debt."
-> "Help is not command."
-> "Routing is not allocation."
+> "Relief is not proof."
+> "Outcome is not judgment."
+> "Care memory is not control."
 
-**Purpose:** Records requests for help, voluntary offers of help, and
-possible cooperation routes inside commons. Dan-Go does not command
-assistance. Dan-Go does not allocate resources. Dan-Go does not rank need.
-Dan-Go only records observable aid routes and surfaces possible connections
-between requests and offers.
+**Purpose:** Records what happened after a mutual aid route (Phase 17) was
+suggested. Dan-Go does not judge outcomes, rank suffering, or certify
+rescue. Dan-Go only records observable relief case memory and builds
+care history from the Phase 17–18 record chain.
 
 ### Phase Chain
 
 ```
-Phase 11: Contribution Candidate      → candidate_credit: true/false
-Phase 12: External Credit Observation → external_credit: false
-Phase 13: Reflection Memory           → reflection_recorded: true
-Phase 14: Recognition Appeal          → appeal_recorded: true
-Phase 15: Recognition Ledger          → recognition_history_complete: true
-Phase 16: Cooperation Commons         → commons_recorded: true
-Phase 17: Mutual Aid Routing          → aid_route_recorded: true
+Phase 16: Cooperation Commons  → commons_recorded: true
+Phase 17: Mutual Aid Routing   → aid_route_recorded: true
+Phase 18: Relief Case Memory   → care_history_complete: true
 ```
 
 ### Runtime Results
 
 ```
-aid_request_registry.py
-  registry_id: aid-request-registry-001
-  request_count: 4
-  urgency_summary: {medium: 1, urgent: 1, immediate: 1, low: 1}
-    aid-request-001: jammy-house-001 — food_support (urgency=medium)
-    aid-request-002: dra-001 — housing_support (urgency=urgent)
-    aid-request-003: dra-001 — refugee_relief (urgency=immediate)
-    aid-request-004: yacypherpunks-001 — skill_exchange (urgency=low)
-  need_creates_debt=false on all records
+relief_case_registry.py
+  registry_id: relief-case-registry-001
+  case_count: 5
+  status_summary: {observed: 2, partial: 1, completed: 1, pending: 1}
+    relief-case-001: food_support_followup (observed) relief_is_proof=false
+    relief-case-002: housing_support_followup (partial) relief_is_proof=false
+    relief-case-003: refugee_relief_followup (observed) relief_is_proof=false
+    relief-case-004: shelter_followup (completed) relief_is_proof=false
+    relief-case-005: skill_exchange_followup (pending) relief_is_proof=false
   authority=none, moves_money=false
 
-aid_offer_registry.py
-  registry_id: aid-offer-registry-001
-  offer_count: 5
-  offer_type_summary: {meal_preparation: 1, housing_advocacy: 1,
-                       supply_sharing: 1, shelter_hosting: 1, skill_sharing: 1}
-    aid-offer-001: jammy-house-001 — meal_preparation, voluntary=true, control=false
-    aid-offer-002: jammy-house-001 — housing_advocacy, voluntary=true, control=false
-    aid-offer-003: dra-001 — supply_sharing, voluntary=true, control=false
-    aid-offer-004: dra-001 — shelter_hosting, voluntary=true, control=false
-    aid-offer-005: yacypherpunks-001 — skill_sharing, voluntary=true, control=false
-  help_is_command=false on all records
-  authority=none, moves_money=false
+relief_outcome_snapshot.py
+  log_id: outcome-snapshot-log-001
+  snapshot_count: 5
+  status_summary: {full: 3, partial: 1, pending: 1}
+    outcome-snap-001: meal_was_received (full) outcome_is_judgment=false
+    outcome-snap-002: negotiation_initiated (partial) outcome_is_judgment=false
+    outcome-snap-003: supplies_reached_household (full) outcome_is_judgment=false
+    outcome-snap-004: shelter_was_accepted (full) outcome_is_judgment=false
+    outcome-snap-005: outcome_unknown (pending) outcome_is_judgment=false
+  authority=none, certifies_rescue=absent
 
-aid_route_builder.py
-  log_id: aid-route-log-001
-  route_count: 5
-  status_summary: {possible: 4, suggested: 1}
-    aid-route-001: aid-request-001 → aid-offer-001 (possible)
-    aid-route-002: aid-request-002 → aid-offer-002 (suggested)
-    aid-route-003: aid-request-003 → aid-offer-003 (possible)
-    aid-route-004: aid-request-003 → aid-offer-004 (possible)
-    aid-route-005: aid-request-004 → aid-offer-005 (possible)
-  routing_allocates_resources=false on all records
-  authority=none, moves_money=false
+care_memory_builder.py
+  log_id: care-memory-log-001
+  memory_count: 5
+  complete_count: 5
+    care-memory-001 through care-memory-005: all care_memory_controls=false
+    all care_history_complete=true
+  authority=none, care_memory_controls=false
 
-mutual_aid_report.py
-  report_id: mutual-aid-report-001
+relief_memory_report.py
+  report_id: relief-memory-report-001
   section_count: 6
-    Help Was Requested — need_creates_debt: false
-    Help Was Offered — voluntary: true, offer_creates_obligation: false
-    A Route Is Possible — routing_allocates_resources: false, route_compels_exchange: false
-    No One Is Commanded — help_is_command: false, authority: none
-    No Debt Is Created — need_creates_debt: false, requester_owes_help_received: false
-    No Allocation Is Enforced — routing_allocates_resources: false, execution_allowed: false
+    A Relief Case Was Recorded — certifies_rescue: false
+    An Outcome Was Observed — outcome_is_judgment: false, certifies_success: false
+    No Proof of Rescue Is Claimed — relief_is_proof: false
+    No Suffering Is Ranked — ranks_suffering: false
+    No One Is Controlled — care_memory_controls: false, authority: none
+    The Case Can Be Reopened — reopenable: true, append_only: true
   summary_table:
-    any_party_commanded: false
-    debt_created: false
-    allocation_enforced: false
-    resources_moved: false
-    exchange_compelled: false
-    participants_decide: true
-    commons_remain_self_governing: true
+    proof_of_rescue_claimed: false
+    suffering_ranked: false
+    any_party_controlled: false
+    memory_certifies_outcome: false
+    case_is_reopenable: true
+    care_history_is_legible: true
 ```
 
 ---
 
-## New Files (Phase 17)
+## New Files (Phase 18)
 
-- bridge/gitsea/mutual_aid/MUTUAL_AID_ROUTING_SPEC.md
-- bridge/gitsea/mutual_aid/NEED_NOT_DEBT.md
-- bridge/gitsea/mutual_aid/ROUTING_NOT_ALLOCATION.md
-- bridge/gitsea/mutual_aid/runtime/aid_request_registry.py
-- bridge/gitsea/mutual_aid/runtime/aid_offer_registry.py
-- bridge/gitsea/mutual_aid/runtime/aid_route_builder.py
-- bridge/gitsea/mutual_aid/runtime/mutual_aid_report.py
-- bridge/gitsea/mutual_aid/examples/aid-request-registry.json (generated)
-- bridge/gitsea/mutual_aid/examples/aid-offer-registry.json (generated)
-- bridge/gitsea/mutual_aid/examples/aid-route.json (generated)
-- bridge/gitsea/mutual_aid/examples/mutual-aid-report.json (generated)
+- bridge/gitsea/relief/RELIEF_CASE_MEMORY_SPEC.md
+- bridge/gitsea/relief/RELIEF_NOT_PROOF.md
+- bridge/gitsea/relief/CARE_MEMORY_NOT_CONTROL.md
+- bridge/gitsea/relief/runtime/relief_case_registry.py
+- bridge/gitsea/relief/runtime/relief_outcome_snapshot.py
+- bridge/gitsea/relief/runtime/care_memory_builder.py
+- bridge/gitsea/relief/runtime/relief_memory_report.py
+- bridge/gitsea/relief/examples/relief-case-registry.json (generated)
+- bridge/gitsea/relief/examples/relief-outcome-snapshot.json (generated)
+- bridge/gitsea/relief/examples/care-memory.json (generated)
+- bridge/gitsea/relief/examples/relief-memory-report.json (generated)
 
-## Updated Files (Phase 17)
+## Updated Files (Phase 18)
 
-- bridge/gitsea/README.md (Phase 17 section + mutual_aid/ in layout + flow diagram)
+- bridge/gitsea/README.md (Phase 18 section + relief/ in layout + flow diagram)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 17 files)
+## Key Invariants (all Phase 18 files)
 
 | Field | Value |
 |-------|-------|
@@ -154,21 +143,23 @@ mutual_aid_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `mutual_aid_only` | `true` |
+| `relief_memory_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `need_creates_debt` | `false` (invariant) |
-| `help_is_command` | `false` (invariant) |
-| `routing_allocates_resources` | `false` (invariant) |
-| `route_compels_exchange` | `false` (invariant) |
-| `offer_creates_obligation` | `false` (invariant) |
-| `requester_owes_help_received` | `false` (invariant) |
+| `relief_is_proof` | `false` (invariant) |
+| `outcome_is_judgment` | `false` (invariant) |
+| `care_memory_controls` | `false` (invariant) |
+| `certifies_rescue` | `false` (invariant) |
+| `certifies_success` | `false` (invariant) |
+| `ranks_suffering` | `false` (invariant) |
+| `memory_creates_obligation` | `false` (invariant) |
+| `memory_certifies_outcome` | `false` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–17)
+## Protocol Principle Accumulation (Phases 10–18)
 
 | Phase | Phrase |
 |-------|--------|
@@ -190,17 +181,23 @@ mutual_aid_report.py
 | 17 | "Need is not debt." |
 | 17 | "Help is not command." |
 | 17 | "Routing is not allocation." |
+| 18 | "Relief is not proof." |
+| 18 | "Outcome is not judgment." |
+| 18 | "Care memory is not control." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 17 PR** — after review
-2. **Phase 18: Aid Outcome Memory** — record outcomes of accepted aid routes
-3. **Commons-linked aid** — connect Phase 17 routes to Phase 16 commons membership
-4. **Cross-commons routing** — routes spanning two different commons
-5. **Aid history ledger** — append-only history of all aid exchanges per participant
-6. **Refugee relief cluster** — aggregate D.R.A. refugee relief routes into advisory cluster view
+1. **Merge Phase 18 PR** — after review
+2. **Phase 19: Cooperative Governance Observation** — observe how commons
+   make collective decisions without Dan-Go governing them
+3. **Cross-phase care chain** — link Phase 11–15 contribution records to
+   Phase 16–18 care records per participant
+4. **Relief case clustering** — aggregate refugee relief cases across D.R.A.
+   into an advisory cluster view
+5. **Care history export** — generate community-readable care history
+   summary for Jammy House / D.R.A.
 
 ---
 
@@ -221,8 +218,12 @@ mutual_aid_report.py
 *Need is not debt.*
 *Help is not command.*
 *Routing is not allocation.*
+*Relief is not proof.*
+*Outcome is not judgment.*
+*Care memory is not control.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
 *Dan-Go records mutual aid routes; it does not command or allocate.*
+*Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
 *Contribution becomes legible before it becomes valuable.*

@@ -1,0 +1,89 @@
+{
+  "record_type": "relief_memory_report",
+  "report_id": "relief-memory-report-001",
+  "report_date": "2026-05-30",
+  "report_subject": "Relief Case Memory Layer \u2014 Phase 18",
+  "context": {
+    "case_count": 5,
+    "snapshot_count": 5,
+    "memory_count": 5,
+    "complete_count": 5,
+    "source_registry_id": "relief-case-registry-001",
+    "source_outcome_log_id": "outcome-snapshot-log-001",
+    "source_memory_log_id": "care-memory-log-001"
+  },
+  "section_count": 6,
+  "sections": [
+    {
+      "section_id": "relief-case-was-recorded",
+      "title": "A Relief Case Was Recorded",
+      "body": "When a mutual aid route is suggested and acted upon, Dan-Go records a relief case as a follow-up observation. The relief case links the Phase 17 route to what happened next. This creates a continuous chain: request \u2192 offer \u2192 route \u2192 case \u2192 outcome \u2192 care memory. The chain is advisory at every link. Recording a case does not certify the assistance, create a liability, or produce an obligation on any party.",
+      "invariant_demonstrated": "advisory: true, certifies_rescue: false"
+    },
+    {
+      "section_id": "outcome-was-observed",
+      "title": "An Outcome Was Observed",
+      "body": "Outcomes are observable facts: a meal was received, shelter was accepted, supplies reached a household, a negotiation was initiated. Dan-Go records these observations. It does not certify them as proof of anything beyond what was directly observed. An observed outcome of 'full' means the assistance appeared to address the request \u2014 not that the underlying need is permanently resolved, not that the recipient is no longer vulnerable, not that the situation is closed.",
+      "invariant_demonstrated": "outcome_is_judgment: false, certifies_success: false"
+    },
+    {
+      "section_id": "no-proof-of-rescue-claimed",
+      "title": "No Proof of Rescue Is Claimed",
+      "body": "The relief_is_proof: false invariant is permanent. Dan-Go's record of a relief case and its outcome is not a certificate of rescue. It is not evidence to be used in claims about who was saved, who saved them, or whether a sufficient response was provided. The record exists for community legibility \u2014 so that mutual aid history is observable \u2014 not for external certification. Any party who attempts to use a Dan-Go relief case record as proof of rescue or sufficiency is misusing the record.",
+      "invariant_demonstrated": "relief_is_proof: false"
+    },
+    {
+      "section_id": "no-suffering-is-ranked",
+      "title": "No Suffering Is Ranked",
+      "body": "The relief case registry records urgency (from the Phase 17 request) without converting urgency into a ranking of whose suffering matters more. A refugee_relief case marked 'immediate' is not positioned above a food_support case marked 'medium' in any authoritative queue. Dan-Go makes urgency visible to participants; it does not rank suffering or adjudicate who deserves priority response. ranks_suffering: false is an invariant on every case record.",
+      "invariant_demonstrated": "ranks_suffering: false, outcome_is_judgment: false"
+    },
+    {
+      "section_id": "no-one-is-controlled",
+      "title": "No One Is Controlled",
+      "body": "Care memory does not control any participant. The person who received food support is not in a relationship of obligation to the commons that provided it. The person who offered shelter is not accountable to Dan-Go for whether they offer again. The commons is not governed by its care memory records. care_memory_controls: false applies to every memory entry. The record observes what happened; it does not prescribe what must happen next.",
+      "invariant_demonstrated": "care_memory_controls: false, authority: none"
+    },
+    {
+      "section_id": "case-can-be-reopened",
+      "title": "The Case Can Be Reopened",
+      "body": "Every relief case carries reopenable: true. A case marked 'completed' can be reopened if circumstances change \u2014 if the assistance did not hold, if the need recurred, if new information becomes available about what actually occurred. The append-only constraint means the original record is never deleted, but new entries can be appended that update the observable picture. Care memory grows with the situation. It does not lock the situation into a single past observation.",
+      "invariant_demonstrated": "reopenable: true, append_only: true"
+    }
+  ],
+  "summary_table": {
+    "relief_case_recorded": true,
+    "outcome_observed": true,
+    "proof_of_rescue_claimed": false,
+    "suffering_ranked": false,
+    "any_party_controlled": false,
+    "case_creates_obligation": false,
+    "memory_certifies_outcome": false,
+    "record_is_advisory": true,
+    "record_is_append_only": true,
+    "record_is_contestable": true,
+    "case_is_reopenable": true,
+    "care_history_is_legible": true
+  },
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "credit_issued": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "relief_memory_only": true,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "relief_is_proof": false,
+  "outcome_is_judgment": false,
+  "care_memory_controls": false,
+  "judgment": false,
+  "protocol_phrases": [
+    "Relief is not proof.",
+    "Outcome is not judgment.",
+    "Care memory is not control.",
+    "Dan-Go records relief case memory; it does not certify rescue or rank suffering.",
+    "Dan-Go observes care history; it does not control any party."
+  ]
+}
