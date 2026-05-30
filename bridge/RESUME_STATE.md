@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Care Loop Reopen Layer
+# RESUME_STATE.md — Commons Need Forecast Memory Layer
 
-> **STATUS: IN PROGRESS (feature/phase-20-aid-pattern-learning)**
+> **STATUS: IN PROGRESS (feature/phase-21-need-forecast-memory)**
 
-**Phase:** Aid Pattern Learning Layer (Phase 20)
-**Branch:** feature/phase-20-aid-pattern-learning
+**Phase:** Commons Need Forecast Memory Layer (Phase 21)
+**Branch:** feature/phase-21-need-forecast-memory
 **Started:** 2026-05-30
 
 ---
@@ -38,7 +38,8 @@
 - Mutual Aid Routing Layer (Phase 17) — PR #9
 - Relief Case Memory Layer (Phase 18) — PR #10
 - Care Loop Reopen Layer (Phase 19) — PR #11
-- **Aid Pattern Learning Layer (Phase 20)** ← current PR
+- Aid Pattern Learning Layer (Phase 20) — PR #12, merged
+- **Commons Need Forecast Memory Layer (Phase 21)** ← current PR
 
 ---
 
@@ -54,13 +55,29 @@ care histories. Dan-Go does not predict future need. Dan-Go does not
 rank suffering. Dan-Go does not prescribe responses. Dan-Go only records
 observable patterns and cross-phase pattern memory.
 
+---
+
+## Phase 21: Commons Need Forecast Memory Layer
+
+Core principles:
+> "Forecast is not certainty."
+> "Preparedness is not command."
+> "Hint is not allocation."
+
+**Purpose:** Records preparedness memories derived from recurring aid
+patterns observed in Phase 20. Dan-Go does not predict need. Dan-Go does
+not command preparation. Dan-Go does not allocate resources. Dan-Go only
+records observable preparedness hints for commons, grounded in observed
+care history.
+
 ### Phase Chain
 
 ```
-Phase 17: Mutual Aid Routing   → aid_route_recorded: true
-Phase 18: Relief Case Memory   → care_history_complete: true
-Phase 19: Care Loop Reopen     → care_loop_complete: true
-Phase 20: Aid Pattern Learning → pattern_learning_only: true
+Phase 17: Mutual Aid Routing      → aid_route_recorded: true
+Phase 18: Relief Case Memory      → care_history_complete: true
+Phase 19: Care Loop Reopen        → care_loop_complete: true
+Phase 20: Aid Pattern Learning    → pattern_learning_only: true
+Phase 21: Need Forecast Memory    → forecast_memory_only: true
 ```
 
 ### Runtime Results
@@ -112,6 +129,59 @@ aid_pattern_report.py
     loops_referenced: 4
     patterns_recorded: 4
     recurrences_recorded: 4
+
+need_forecast_registry.py
+  registry_id: need-forecast-registry-001
+  forecast_count: 4
+  commons_represented: [dra-001, jammy-house-001, yacypherpunks-001]
+    need-forecast-001: recurring_food_support_possible (observed_count=3)
+      confidence=observed_pattern_only forecast_is_certainty=false
+    need-forecast-002: ongoing_displacement_relief_possible (observed_count=4)
+      confidence=four_plus_observations forecast_is_certainty=false
+    need-forecast-003: unresolved_tenancy_followup_possible (observed_count=2)
+      confidence=two_observations forecast_is_certainty=false
+    need-forecast-004: skill_exchange_rescheduling_possible (observed_count=1)
+      confidence=single_observation forecast_is_certainty=false
+  forecast_allocates_resources=false
+
+preparedness_hint_snapshot.py
+  snapshot_id: preparedness-hint-snapshot-001
+  hint_count: 4
+    preparedness-hint-001: meal_capacity_awareness (jammy-house-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-002: displacement_relief_readiness_awareness (dra-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-003: housing_advocacy_continuation_awareness (jammy-house-001)
+      preparedness_is_command=false hint_is_allocation=false
+    preparedness-hint-004: skill_exchange_rescheduling_awareness (yacypherpunks-001)
+      preparedness_is_command=false hint_is_allocation=false
+  hint_assigns_resources=false
+
+forecast_memory_builder.py
+  log_id: forecast-memory-log-001
+  memory_count: 4
+  status_summary: {recorded: 4}
+    forecast-memory-001 through forecast-memory-004: all memory_status=recorded
+    all forecast_is_certainty=false, memory_compels_preparation=false
+    all memory_certifies_resolution=false, memory_allocates_resources=false
+
+need_forecast_report.py
+  report_id: need-forecast-report-001
+  section_count: 5
+    A: Forecast-Like Memory Exists — and What It Is Not
+    B: Pattern Does Not Prove Future Need
+    C: Preparedness Hint Does Not Command Action
+    D: No Allocation Is Enforced — Commons Retain Full Resource Autonomy
+    E: Connection to Jammy House and Refugee Relief
+  summary_table:
+    forecast_is_certainty: false
+    preparedness_is_command: false
+    hint_is_allocation: false
+    any_participant_compelled: false
+    commons_retain_autonomy: true
+    forecast_history_is_legible: true
+    forecasts_recorded: 4
+    hints_recorded: 4
     memories_recorded: 4
 ```
 
@@ -134,6 +204,24 @@ aid_pattern_report.py
 ## Updated Files (Phase 20)
 
 - bridge/gitsea/README.md (Phase 20 section + aid_patterns/ in layout + flow diagram + footer)
+
+## New Files (Phase 21)
+
+- bridge/gitsea/need_forecast/COMMONS_NEED_FORECAST_SPEC.md
+- bridge/gitsea/need_forecast/FORECAST_NOT_CERTAINTY.md
+- bridge/gitsea/need_forecast/PREPAREDNESS_NOT_COMMAND.md
+- bridge/gitsea/need_forecast/runtime/need_forecast_registry.py
+- bridge/gitsea/need_forecast/runtime/preparedness_hint_snapshot.py
+- bridge/gitsea/need_forecast/runtime/forecast_memory_builder.py
+- bridge/gitsea/need_forecast/runtime/need_forecast_report.py
+- bridge/gitsea/need_forecast/examples/need-forecast-registry.json (generated)
+- bridge/gitsea/need_forecast/examples/preparedness-hint-snapshot.json (generated)
+- bridge/gitsea/need_forecast/examples/forecast-memory.json (generated)
+- bridge/gitsea/need_forecast/examples/need-forecast-report.json (generated)
+
+## Updated Files (Phase 21)
+
+- bridge/gitsea/README.md (Phase 21 section + need_forecast/ in layout + flow diagram + footer)
 - bridge/RESUME_STATE.md (this file)
 
 ---
@@ -147,7 +235,7 @@ aid_pattern_report.py
 | `moves_money` | `false` |
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
-| `care_loop_only` | `true` |
+| `pattern_learning_only` | `true` |
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
@@ -155,7 +243,6 @@ aid_pattern_report.py
 | `pattern_is_prediction` | `false` (invariant) |
 | `learning_is_prescription` | `false` (invariant) |
 | `recurrence_is_ranking` | `false` (invariant) |
-| `pattern_learning_only` | `true` |
 | `pattern_ranks_commons` | `false` (invariant) |
 | `pattern_compels_response` | `false` (invariant) |
 | `memory_prescribes_response` | `false` (invariant) |
@@ -167,9 +254,36 @@ aid_pattern_report.py
 | `recurrence_demands_new_response` | `false` (invariant) |
 | `recurrence_certifies_failure` | `false` (invariant) |
 
+## Key Invariants (all Phase 21 files)
+
+| Field | Value |
+|-------|-------|
+| `authority` | `none` |
+| `execution_allowed` | `false` |
+| `moves_money` | `false` |
+| `hard_enforcement` | `false` |
+| `advisory` | `true` |
+| `forecast_memory_only` | `true` |
+| `append_only` | `true` |
+| `contestable` | `true` |
+| `reopenable` | `true` |
+| `credit_issued` | `false` (permanent) |
+| `forecast_is_certainty` | `false` (invariant) |
+| `preparedness_is_command` | `false` (invariant) |
+| `hint_is_allocation` | `false` (invariant) |
+| `forecast_allocates_resources` | `false` (invariant) |
+| `forecast_compels_preparation` | `false` (invariant) |
+| `hint_compels_action` | `false` (invariant) |
+| `hint_assigns_resources` | `false` (invariant) |
+| `hint_creates_obligation` | `false` (invariant) |
+| `memory_certifies_resolution` | `false` (invariant) |
+| `memory_compels_preparation` | `false` (invariant) |
+| `memory_allocates_resources` | `false` (invariant) |
+| `memory_judges_commons` | `false` (invariant) |
+
 ---
 
-## Protocol Principle Accumulation (Phases 10–20)
+## Protocol Principle Accumulation (Phases 10–21)
 
 | Phase | Phrase |
 |-------|--------|
@@ -200,20 +314,24 @@ aid_pattern_report.py
 | 20 | "Pattern is not prediction." |
 | 20 | "Learning is not prescription." |
 | 20 | "Recurrence is not ranking." |
+| 21 | "Forecast is not certainty." |
+| 21 | "Preparedness is not command." |
+| 21 | "Hint is not allocation." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 20 PR** — after review
-2. **Phase 21: Cross-Phase Care Summary** — aggregate Phase 16–20 care history
-   and pattern memory into a single advisory summary per commons
-3. **Pattern clustering** — aggregate D.R.A. displacement patterns into a
-   cluster view across commons
-4. **Jammy House pattern snapshot** — dedicated summary of Jammy House Phase 16–20
-   activity with pattern memory
-5. **Voluntary pattern annotation** — allow participants to annotate pattern
-   memory records with their own observations (without Dan-Go certifying accuracy)
+1. **Merge Phase 21 PR** — after review
+2. **Phase 22: Cross-Phase Commons Summary** — aggregate Phase 16–21 care
+   history and forecast memory into a single advisory summary per commons
+3. **Forecast memory clustering** — aggregate D.R.A. displacement forecast
+   memories into a cluster view across commons
+4. **Jammy House preparedness snapshot** — dedicated summary of Jammy House
+   Phase 16–21 activity with forecast memory and preparedness hints
+5. **Voluntary preparedness annotation** — allow participants to annotate
+   forecast memory records with their own preparedness notes (without Dan-Go
+   certifying readiness)
 
 ---
 
@@ -250,4 +368,8 @@ aid_pattern_report.py
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
 *Dan-Go records care loops; it does not compel resolution or judge participants.*
 *Dan-Go records aid patterns; it does not predict, prescribe, or rank.*
+*Forecast is not certainty.*
+*Preparedness is not command.*
+*Hint is not allocation.*
+*Dan-Go records preparedness hints; it does not predict, command, or allocate.*
 *Contribution becomes legible before it becomes valuable.*

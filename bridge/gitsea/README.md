@@ -40,6 +40,35 @@ python bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py --save
 
 ---
 
+## Phase 21 — Commons Need Forecast Memory Layer
+
+Dan-Go records preparedness hints from recurring aid patterns without
+predicting need, commanding preparation, or allocating resources. A hint
+is information for voluntary consideration. The commons retains full
+authority over its response.
+
+**"Forecast is not certainty."**
+**"Preparedness is not command."**
+**"Hint is not allocation."**
+
+```bash
+# Record forecast-like preparedness memories from Phase 20 patterns
+python3 bridge/gitsea/need_forecast/runtime/need_forecast_registry.py --save
+
+# Record preparedness hints without command or allocation
+python3 bridge/gitsea/need_forecast/runtime/preparedness_hint_snapshot.py --save
+
+# Build cross-phase forecast memory from Phase 17–20 records
+python3 bridge/gitsea/need_forecast/runtime/forecast_memory_builder.py --save
+
+# Generate need forecast report
+python3 bridge/gitsea/need_forecast/runtime/need_forecast_report.py --save
+```
+
+`forecast_memory_only: true`. `forecast_is_certainty: false`. `preparedness_is_command: false`. `hint_is_allocation: false`. `authority: none`.
+
+---
+
 ## Phase 19 — Care Loop Reopen Layer
 
 Dan-Go records reopenable care loops after relief cases without judging
@@ -340,6 +369,7 @@ The `bridge/gitsea/` layer:
 14. Records observable relief case memory after aid routes without certifying rescue or judging outcomes (Phase 18)
 15. Records reopenable care loops after relief cases without judging failure, assigning blame, or creating obligations (Phase 19)
 16. Records recurring aid patterns across Phase 17–19 care histories without predicting, ranking, or prescribing (Phase 20)
+17. Records preparedness hints from recurring aid patterns without predicting need, commanding preparation, or allocating resources (Phase 21)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -389,6 +419,20 @@ bridge/gitsea/
 │       ├── recurrence_snapshot.py
 │       ├── pattern_memory_builder.py
 │       └── aid_pattern_report.py
+├── need_forecast/                     ← Phase 21: commons need forecast memory layer
+│   ├── COMMONS_NEED_FORECAST_SPEC.md
+│   ├── FORECAST_NOT_CERTAINTY.md
+│   ├── PREPAREDNESS_NOT_COMMAND.md
+│   ├── examples/
+│   │   ├── need-forecast-registry.json
+│   │   ├── preparedness-hint-snapshot.json
+│   │   ├── forecast-memory.json
+│   │   └── need-forecast-report.json
+│   └── runtime/
+│       ├── need_forecast_registry.py
+│       ├── preparedness_hint_snapshot.py
+│       ├── forecast_memory_builder.py
+│       └── need_forecast_report.py
 ├── care_loop/                         ← Phase 19: care loop reopen layer
 │   ├── CARE_LOOP_REOPEN_SPEC.md
 │   ├── REOPEN_NOT_FAILURE.md
@@ -615,6 +659,12 @@ python bridge/gitsea/aid_patterns/runtime/aid_pattern_registry.py --save
 python bridge/gitsea/aid_patterns/runtime/recurrence_snapshot.py --save
 python bridge/gitsea/aid_patterns/runtime/pattern_memory_builder.py --save
 python bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py --save
+
+# Phase 21: Commons need forecast memory
+python3 bridge/gitsea/need_forecast/runtime/need_forecast_registry.py --save
+python3 bridge/gitsea/need_forecast/runtime/preparedness_hint_snapshot.py --save
+python3 bridge/gitsea/need_forecast/runtime/forecast_memory_builder.py --save
+python3 bridge/gitsea/need_forecast/runtime/need_forecast_report.py --save
 ```
 
 ---
@@ -736,6 +786,15 @@ Aid Pattern Learning
        recurrence_is_ranking: false
        authority: none
     │
+    │  (need forecast memory — Phase 21)
+    ▼
+Need Forecast Memory
+       forecast_memory_only: true
+       forecast_is_certainty: false
+       preparedness_is_command: false
+       hint_is_allocation: false
+       authority: none
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -803,3 +862,7 @@ No Base RPC. No contract calls. stdlib only.
 *Learning is not prescription.*
 *Recurrence is not ranking.*
 *Dan-Go records aid patterns; it does not predict, prescribe, or rank.*
+*Forecast is not certainty.*
+*Preparedness is not command.*
+*Hint is not allocation.*
+*Dan-Go records preparedness hints; it does not predict, command, or allocate.*
