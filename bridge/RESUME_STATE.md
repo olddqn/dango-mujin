@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Care Loop Reopen Layer
+# RESUME_STATE.md — Claim → Directive Conversion Layer
 
-> **STATUS: IN PROGRESS (feature/phase-19-care-loop-reopen)**
+> **STATUS: IN PROGRESS (feature/phase-24-claim-to-directive)**
 
-**Phase:** Care Loop Reopen Layer (Phase 19)
-**Branch:** feature/phase-19-care-loop-reopen
+**Phase:** Claim → Directive Conversion Layer (Phase 24)
+**Branch:** feature/phase-24-claim-to-directive
 **Started:** 2026-05-30
 
 ---
@@ -37,7 +37,12 @@
 - Cooperation Commons Layer (Phase 16) — PR #8
 - Mutual Aid Routing Layer (Phase 17) — PR #9
 - Relief Case Memory Layer (Phase 18) — PR #10
-- **Care Loop Reopen Layer (Phase 19)** ← current PR
+- Care Loop Reopen Layer (Phase 19) — PR #11
+- Aid Pattern Learning Layer (Phase 20) — PR #12
+- Commons Need Forecast Memory Layer (Phase 21) — PR #13
+- Globe Foundation Layer (Phase 22) — PR #14
+- Proposal → Claim Conversion Layer (Phase 23) — PR #15
+- **Claim → Directive Conversion Layer (Phase 24)** ← current PR
 
 ---
 
@@ -166,7 +171,7 @@ care_loop_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–19)
+## Protocol Principle Accumulation (Phases 10–24)
 
 | Phase | Phrase |
 |-------|--------|
@@ -194,20 +199,37 @@ care_loop_report.py
 | 19 | "Reopen is not failure." |
 | 19 | "Follow-up is not blame." |
 | 19 | "Care loop is not obligation." |
+| 20 | "Pattern is not prediction." |
+| 20 | "Learning is not prescription." |
+| 20 | "Recurrence is not ranking." |
+| 21 | "Forecast is not certainty." |
+| 21 | "Preparedness is not command." |
+| 21 | "Hint is not allocation." |
+| 22 | "Globe is not state." |
+| 22 | "Deliberation is not majority rule." |
+| 22 | "Membership is not obligation." |
+| 23 | "Proposal is not execution." |
+| 23 | "Claim is not command." |
+| 23 | "Conversion is not allocation." |
+| 24 | "Claim is not execution." |
+| 24 | "Directive is not coercion." |
+| 24 | "Directive creates no legal authority." |
+| 24 | "Directive only describes a proposed executable path." |
+| 24 | "Human approval is required before real-world execution." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 19 PR** — after review
-2. **Phase 20: Cross-Phase Care Summary** — aggregate Phase 16–19 care history
-   into a single advisory summary per commons
-3. **Care loop clustering** — aggregate D.R.A. displacement loops into a
-   cluster view
-4. **Jammy House care snapshot** — dedicated summary of Jammy House Phase 16–19
-   activity
-5. **Voluntary resolution signal** — record when participants voluntarily mark
-   a care loop as resolved (without Dan-Go certifying closure)
+1. **Merge Phase 24 PR** — after review
+2. **Phase 25: Directive Execution Log** — append-only record of human-approved
+   execution steps; records outcome without certifying resolution
+3. **Directive step approval flow** — record when a human explicitly approves
+   a step (voluntary; non-coercive; append-only)
+4. **Directive cluster view** — aggregate directives by globe into a single
+   advisory execution dashboard
+5. **Reality Feedback bridge** — connect directive step records to Phase 18
+   Relief Case Memory and Phase 19 Care Loop Reopen
 
 ---
 
@@ -234,6 +256,23 @@ care_loop_report.py
 *Reopen is not failure.*
 *Follow-up is not blame.*
 *Care loop is not obligation.*
+*Pattern is not prediction.*
+*Learning is not prescription.*
+*Recurrence is not ranking.*
+*Forecast is not certainty.*
+*Preparedness is not command.*
+*Hint is not allocation.*
+*Globe is not state.*
+*Deliberation is not majority rule.*
+*Membership is not obligation.*
+*Proposal is not execution.*
+*Claim is not command.*
+*Conversion is not allocation.*
+*Claim is not execution.*
+*Directive is not coercion.*
+*Directive creates no legal authority.*
+*Directive only describes a proposed executable path.*
+*Human approval is required before real-world execution.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*

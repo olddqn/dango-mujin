@@ -196,6 +196,81 @@ globe/claims/
 └── claim-proposal-005.md
 ```
 
+## Claim → Directive 変換 / Claim-to-Directive Conversion (Phase 24)
+
+`claim_draft` 状態の Claim は、Dan-Go Directive 形式に変換できる。
+Directive は実行への提案パスを記述するが、実行そのものではない。
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py          (Phase 23)
+Dan-Go Claim (claim_draft)
+       ↓  claim_to_directive.py         (Phase 24)
+Dan-Go Directive (directive_draft)
+       ↓  人間の承認 (Human approval)
+実行ステップ (Execution steps — voluntary, non-coercive)
+       ↓
+Reality Feedback（実行フィードバック記録）
+```
+
+### Directive JSON 形式
+
+```json
+{
+  "directive_id":                   "directive-claim-proposal-002",
+  "source_type":                    "claim",
+  "source_claim_id":                "claim-proposal-002",
+  "source_proposal_id":             "proposal-002",
+  "globe_id":                       "globe-001",
+  "title":                          "...",
+  "objective":                      "...",
+  "scope": {
+    "in_scope":                     ["..."],
+    "out_of_scope":                 ["..."]
+  },
+  "non_authority_clause":           "...",
+  "execution_steps": [
+    {
+      "step_id":                    "step-001",
+      "description":                "...",
+      "description_en":             "...",
+      "required_contributions":     ["..."],
+      "status":                     "pending",
+      "human_approval_required":    true,
+      "execution_allowed":          false
+    }
+  ],
+  "required_evidence":              ["..."],
+  "status":                         "directive_draft",
+  "authority":                      "none",
+  "directive_creates_legal_authority": false,
+  "directive_is_coercion":          false,
+  "directive_creates_obligation":   false,
+  "human_approval_required":        true,
+  "created_at":                     "2026-05-30T...",
+  "updated_at":                     "2026-05-30T..."
+}
+```
+
+### Directive の原則 / Directive Principles
+
+- **claim_draft 状態のみ変換可能。** accepted/rejected Claim は変換不可。
+- **Claim is not execution.** Directive is not coercion.
+- **Directive creates no legal authority.** 法的権限は一切生じない。
+- **Human approval is required.** 実世界アクションの前に人間の明示的承認が必要。
+- **Directive only describes a proposed executable path.** 実行経路の提案に過ぎない。
+- **Directive はappend-only。** 修正は新しいファイルとして記録される。
+
+### 出力先 / Output
+
+```
+globe/directives/
+├── directive-claim-proposal-002.json   — Directive JSON
+├── directive-claim-proposal-002.md     — Directive Markdown
+├── directive-claim-proposal-005.json
+└── directive-claim-proposal-005.md
+```
+
 ## UIルート / UI Routes
 
 サーバー起動: `python3 globe/runtime/globe_server.py`
@@ -243,6 +318,15 @@ python3 globe/runtime/proposal_to_claim.py convert-globe globe-001
 # 変換済み Claim の一覧
 python3 globe/runtime/proposal_to_claim.py list
 
+# Claim → Directive 変換（claim_draft のみ）
+python3 globe/runtime/claim_to_directive.py convert claim-proposal-002
+
+# Globe 内の claim_draft Claim を一括変換
+python3 globe/runtime/claim_to_directive.py convert-globe globe-001
+
+# 変換済み Directive の一覧
+python3 globe/runtime/claim_to_directive.py list
+
 # UIサーバーを起動
 python3 globe/runtime/globe_server.py
 ```
@@ -258,12 +342,16 @@ globe/
 ├── claims/                — Generated Claim files (Phase 23)
 │   ├── claim-proposal-NNN.json
 │   └── claim-proposal-NNN.md
+├── directives/            — Generated Directive files (Phase 24)
+│   ├── directive-claim-proposal-NNN.json
+│   └── directive-claim-proposal-NNN.md
 ├── runtime/
 │   ├── globe_registry.py
 │   ├── proposal_manager.py
 │   ├── deliberation_log.py
 │   ├── globe_server.py
-│   └── proposal_to_claim.py  — Phase 23: Proposal → Claim conversion
+│   ├── proposal_to_claim.py     — Phase 23: Proposal → Claim conversion
+│   └── claim_to_directive.py    — Phase 24: Claim → Directive conversion
 └── spec/
     └── GLOBE_SPEC.md      — this file
 ```
