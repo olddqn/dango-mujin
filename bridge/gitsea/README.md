@@ -11,6 +11,34 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 18 — Relief Case Memory Layer
+
+Dan-Go records observable relief case memory after mutual aid routes without
+certifying rescue, judging outcomes, or controlling care. Cases are
+reopenable. Memory is advisory.
+
+**"Relief is not proof."**
+**"Outcome is not judgment."**
+**"Care memory is not control."**
+
+```bash
+# Record relief cases linked to Phase 17 aid routes
+python bridge/gitsea/relief/runtime/relief_case_registry.py --save
+
+# Record observable outcomes without judging them
+python bridge/gitsea/relief/runtime/relief_outcome_snapshot.py --save
+
+# Build care memory from route + case + outcome records
+python bridge/gitsea/relief/runtime/care_memory_builder.py --save
+
+# Generate relief memory report
+python bridge/gitsea/relief/runtime/relief_memory_report.py --save
+```
+
+`relief_memory_only: true`. `relief_is_proof: false`. `outcome_is_judgment: false`. `care_memory_controls: false`. `authority: none`.
+
+---
+
 ## Phase 17 — Mutual Aid Routing Layer
 
 Dan-Go records help requests, voluntary offers, and possible aid routes
@@ -252,6 +280,7 @@ The `bridge/gitsea/` layer:
 11. Links Phases 11–14 records into an advisory recognition ledger (Phase 15)
 12. Records commons participation and cooperation history across communities (Phase 16)
 13. Records mutual aid requests, offers, and possible routes without debt, command, or allocation (Phase 17)
+14. Records observable relief case memory after aid routes without certifying rescue or judging outcomes (Phase 18)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -287,6 +316,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── relief/                            ← Phase 18: relief case memory layer
+│   ├── RELIEF_CASE_MEMORY_SPEC.md
+│   ├── RELIEF_NOT_PROOF.md
+│   ├── CARE_MEMORY_NOT_CONTROL.md
+│   ├── examples/
+│   │   ├── relief-case-registry.json
+│   │   ├── relief-outcome-snapshot.json
+│   │   ├── care-memory.json
+│   │   └── relief-memory-report.json
+│   └── runtime/
+│       ├── relief_case_registry.py
+│       ├── relief_outcome_snapshot.py
+│       ├── care_memory_builder.py
+│       └── relief_memory_report.py
 ├── mutual_aid/                        ← Phase 17: mutual aid routing layer
 │   ├── MUTUAL_AID_ROUTING_SPEC.md
 │   ├── NEED_NOT_DEBT.md
@@ -467,6 +510,12 @@ python bridge/gitsea/mutual_aid/runtime/aid_request_registry.py --save
 python bridge/gitsea/mutual_aid/runtime/aid_offer_registry.py --save
 python bridge/gitsea/mutual_aid/runtime/aid_route_builder.py --save
 python bridge/gitsea/mutual_aid/runtime/mutual_aid_report.py --save
+
+# Phase 18: Relief case memory
+python bridge/gitsea/relief/runtime/relief_case_registry.py --save
+python bridge/gitsea/relief/runtime/relief_outcome_snapshot.py --save
+python bridge/gitsea/relief/runtime/care_memory_builder.py --save
+python bridge/gitsea/relief/runtime/relief_memory_report.py --save
 ```
 
 ---
@@ -561,6 +610,15 @@ Mutual Aid Routing
        routing_allocates_resources: false
        authority: none
     │
+    │  (relief case memory — Phase 18)
+    ▼
+Relief Case Memory
+       relief_memory_only: true
+       relief_is_proof: false
+       outcome_is_judgment: false
+       care_memory_controls: false
+       authority: none
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -616,3 +674,7 @@ No Base RPC. No contract calls. stdlib only.
 *Help is not command.*
 *Routing is not allocation.*
 *Dan-Go records mutual aid routes; it does not command or allocate.*
+*Relief is not proof.*
+*Outcome is not judgment.*
+*Care memory is not control.*
+*Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
