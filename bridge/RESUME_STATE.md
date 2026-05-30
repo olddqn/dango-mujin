@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Commons Need Forecast Memory Layer
+# RESUME_STATE.md — Claim → Directive Conversion Layer
 
-> **STATUS: IN PROGRESS (feature/phase-21-need-forecast-memory)**
+> **STATUS: IN PROGRESS (feature/phase-24-claim-to-directive)**
 
-**Phase:** Commons Need Forecast Memory Layer (Phase 21)
-**Branch:** feature/phase-21-need-forecast-memory
+**Phase:** Claim → Directive Conversion Layer (Phase 24)
+**Branch:** feature/phase-24-claim-to-directive
 **Started:** 2026-05-30
 
 ---
@@ -39,7 +39,10 @@
 - Relief Case Memory Layer (Phase 18) — PR #10
 - Care Loop Reopen Layer (Phase 19) — PR #11
 - Aid Pattern Learning Layer (Phase 20) — PR #12, merged
-- **Commons Need Forecast Memory Layer (Phase 21)** ← current PR
+- Commons Need Forecast Memory Layer (Phase 21) — PR #13, merged
+- Globe Foundation Layer (Phase 22) — PR #14, merged
+- Proposal → Claim Conversion Layer (Phase 23) — PR #15, merged
+- **Claim → Directive Conversion Layer (Phase 24)** ← current PR
 
 ---
 
@@ -283,7 +286,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–21)
+## Protocol Principle Accumulation (Phases 10–24)
 
 | Phase | Phrase |
 |-------|--------|
@@ -317,21 +320,31 @@ need_forecast_report.py
 | 21 | "Forecast is not certainty." |
 | 21 | "Preparedness is not command." |
 | 21 | "Hint is not allocation." |
+| 22 | "Globe is not state." |
+| 22 | "Deliberation is not majority rule." |
+| 22 | "Membership is not obligation." |
+| 23 | "Proposal is not execution." |
+| 23 | "Claim is not command." |
+| 23 | "Conversion is not allocation." |
+| 24 | "Claim is not execution." |
+| 24 | "Directive is not coercion." |
+| 24 | "Directive creates no legal authority." |
+| 24 | "Directive only describes a proposed executable path." |
+| 24 | "Human approval is required before real-world execution." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 21 PR** — after review
-2. **Phase 22: Cross-Phase Commons Summary** — aggregate Phase 16–21 care
-   history and forecast memory into a single advisory summary per commons
-3. **Forecast memory clustering** — aggregate D.R.A. displacement forecast
-   memories into a cluster view across commons
-4. **Jammy House preparedness snapshot** — dedicated summary of Jammy House
-   Phase 16–21 activity with forecast memory and preparedness hints
-5. **Voluntary preparedness annotation** — allow participants to annotate
-   forecast memory records with their own preparedness notes (without Dan-Go
-   certifying readiness)
+1. **Merge Phase 24 PR** — after review
+2. **Phase 25: Directive Execution Log** — append-only record of human-approved
+   execution steps; records outcome without certifying resolution
+3. **Directive step approval flow** — record when a human explicitly approves
+   a step (voluntary; non-coercive; append-only)
+4. **Directive cluster view** — aggregate directives by globe into a single
+   advisory execution dashboard
+5. **Reality Feedback bridge** — connect directive step records to Phase 18
+   Relief Case Memory and Phase 19 Care Loop Reopen
 
 ---
 
@@ -361,6 +374,17 @@ need_forecast_report.py
 *Pattern is not prediction.*
 *Learning is not prescription.*
 *Recurrence is not ranking.*
+*Globe is not state.*
+*Deliberation is not majority rule.*
+*Membership is not obligation.*
+*Proposal is not execution.*
+*Claim is not command.*
+*Conversion is not allocation.*
+*Claim is not execution.*
+*Directive is not coercion.*
+*Directive creates no legal authority.*
+*Directive only describes a proposed executable path.*
+*Human approval is required before real-world execution.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
