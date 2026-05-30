@@ -1,9 +1,9 @@
 # RESUME_STATE.md — Care Loop Reopen Layer
 
-> **STATUS: IN PROGRESS (feature/phase-19-care-loop-reopen)**
+> **STATUS: IN PROGRESS (feature/phase-20-aid-pattern-learning)**
 
-**Phase:** Care Loop Reopen Layer (Phase 19)
-**Branch:** feature/phase-19-care-loop-reopen
+**Phase:** Aid Pattern Learning Layer (Phase 20)
+**Branch:** feature/phase-20-aid-pattern-learning
 **Started:** 2026-05-30
 
 ---
@@ -37,106 +37,108 @@
 - Cooperation Commons Layer (Phase 16) — PR #8
 - Mutual Aid Routing Layer (Phase 17) — PR #9
 - Relief Case Memory Layer (Phase 18) — PR #10
-- **Care Loop Reopen Layer (Phase 19)** ← current PR
+- Care Loop Reopen Layer (Phase 19) — PR #11
+- **Aid Pattern Learning Layer (Phase 20)** ← current PR
 
 ---
 
-## Phase 19: Care Loop Reopen Layer
+## Phase 20: Aid Pattern Learning Layer
 
 Core principles:
-> "Reopen is not failure."
-> "Follow-up is not blame."
-> "Care loop is not obligation."
+> "Pattern is not prediction."
+> "Learning is not prescription."
+> "Recurrence is not ranking."
 
-**Purpose:** Records relief cases that may need follow-up, reconsideration,
-or renewed assistance. Dan-Go does not judge failure. Dan-Go does not blame
-participants. Dan-Go does not compel new aid. Dan-Go only records reopenable
-care loops.
+**Purpose:** Records recurring aid patterns observed across Phase 17–19
+care histories. Dan-Go does not predict future need. Dan-Go does not
+rank suffering. Dan-Go does not prescribe responses. Dan-Go only records
+observable patterns and cross-phase pattern memory.
 
 ### Phase Chain
 
 ```
-Phase 17: Mutual Aid Routing  → aid_route_recorded: true
-Phase 18: Relief Case Memory  → care_history_complete: true
-Phase 19: Care Loop Reopen    → care_loop_complete: true
+Phase 17: Mutual Aid Routing   → aid_route_recorded: true
+Phase 18: Relief Case Memory   → care_history_complete: true
+Phase 19: Care Loop Reopen     → care_loop_complete: true
+Phase 20: Aid Pattern Learning → pattern_learning_only: true
 ```
 
 ### Runtime Results
 
 ```
-care_reopen_registry.py
-  registry_id: care-reopen-registry-001
-  reopen_count: 4
-  status_summary: {requested: 2, active: 1, acknowledged: 1}
-    care-reopen-001: partial_outcome_needs_followup (requested) reopen_is_failure=false
-    care-reopen-002: displacement_ongoing (active) reopen_is_failure=false
-    care-reopen-003: need_recurred (requested) reopen_is_failure=false
-    care-reopen-004: case_was_pending (acknowledged) reopen_is_failure=false
-  authority=none, followup_is_blame=false
+aid_pattern_registry.py
+  registry_id: aid-pattern-registry-001
+  pattern_count: 4
+  commons_represented: [dra-001, jammy-house-001, yacypherpunks-001]
+    aid-pattern-001: recurring_food_support (observed_count=3) pattern_is_prediction=false
+    aid-pattern-002: ongoing_displacement_relief (observed_count=4) pattern_is_prediction=false
+    aid-pattern-003: unresolved_tenancy_pattern (observed_count=2) pattern_is_prediction=false
+    aid-pattern-004: pending_skill_exchange (observed_count=1) pattern_is_prediction=false
+  pattern_ranks_commons=false
 
-followup_need_snapshot.py
-  snapshot_id: followup-snapshot-001
-  followup_count: 4
-  urgency_summary: {medium: 1, ongoing: 1, low: 2}
-    followup-001: housing_status_check (medium) followup_is_blame=false
-    followup-002: displacement_monitoring (ongoing) followup_is_blame=false
-    followup-003: ongoing_food_coordination (low) followup_is_blame=false
-    followup-004: skill_session_rescheduled (low) followup_is_blame=false
-  ranks_suffering=false on all records
+recurrence_snapshot.py
+  snapshot_id: recurrence-snapshot-001
+  recurrence_count: 4
+    recurrence-001: food_need_reappeared (count=3) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-002: displacement_relief_ongoing (count=4) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-003: tenancy_unresolved_continued (count=2) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-004: skill_exchange_deferred (count=1) recurrence_is_ranking=false ranks_suffering=false
+  urgency_note: No urgency ranking applied — recurrence_is_ranking: false on all records
 
-care_loop_builder.py
-  log_id: care-loop-log-001
-  loop_count: 4
-  complete_count: 4
-  status_summary: {open: 3, ongoing: 1}
-    care-loop-001 through care-loop-004: all loop_complete=true
-    all reopen_is_failure=false, care_loop_creates_obligation=false
-  authority=none
+pattern_memory_builder.py
+  log_id: pattern-memory-log-001
+  memory_count: 4
+  status_summary: {recorded: 4}
+    pattern-memory-001: recurring_food_support (jammy-house-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-002: ongoing_displacement_relief (dra-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-003: unresolved_tenancy_pattern (jammy-house-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-004: pending_skill_exchange (yacypherpunks-001) memory_status=recorded learning_is_prescription=false
+  memory_prescribes_response=false
 
-care_loop_report.py
-  report_id: care-loop-report-001
-  section_count: 6
-    A Care Case May Be Reopened — reopenable: true, append_only: true
-    Reopen Does Not Mean Failure — reopen_is_failure: false
-    Follow-Up Does Not Imply Blame — followup_is_blame: false
-    No One Is Compelled to Help — reopen_compels_new_aid: false
-    The Care Loop Remains Voluntary and Contestable — contestable: true
-    Connection to Jammy House and Refugee Relief — advisory: true
+aid_pattern_report.py
+  report_id: aid-pattern-report-001
+  section_count: 4
+    A: A Pattern Is an Observation, Not a Prediction
+    B: Recurrence Does Not Rank Suffering
+    C: Learning Does Not Prescribe a Response
+    D: Connection to Jammy House and D.R.A. Care Histories
   summary_table:
-    reopen_is_failure: false
-    followup_implies_blame: false
+    pattern_is_prediction: false
+    recurrence_is_ranking: false
+    learning_is_prescription: false
+    ranks_suffering: false
     any_participant_compelled: false
-    care_loop_creates_obligation: false
-    original_assistance_erased: false
-    loop_judges_participants: false
-    loop_is_reopenable: true
-    care_history_is_legible: true
+    pattern_history_is_legible: true
+    loops_referenced: 4
+    patterns_recorded: 4
+    recurrences_recorded: 4
+    memories_recorded: 4
 ```
 
 ---
 
-## New Files (Phase 19)
+## New Files (Phase 20)
 
-- bridge/gitsea/care_loop/CARE_LOOP_REOPEN_SPEC.md
-- bridge/gitsea/care_loop/REOPEN_NOT_FAILURE.md
-- bridge/gitsea/care_loop/FOLLOWUP_NOT_BLAME.md
-- bridge/gitsea/care_loop/runtime/care_reopen_registry.py
-- bridge/gitsea/care_loop/runtime/followup_need_snapshot.py
-- bridge/gitsea/care_loop/runtime/care_loop_builder.py
-- bridge/gitsea/care_loop/runtime/care_loop_report.py
-- bridge/gitsea/care_loop/examples/care-reopen-registry.json (generated)
-- bridge/gitsea/care_loop/examples/followup-need-snapshot.json (generated)
-- bridge/gitsea/care_loop/examples/care-loop.json (generated)
-- bridge/gitsea/care_loop/examples/care-loop-report.json (generated)
+- bridge/gitsea/aid_patterns/AID_PATTERN_LEARNING_SPEC.md
+- bridge/gitsea/aid_patterns/PATTERN_NOT_PREDICTION.md
+- bridge/gitsea/aid_patterns/LEARNING_NOT_PRESCRIPTION.md
+- bridge/gitsea/aid_patterns/runtime/aid_pattern_registry.py
+- bridge/gitsea/aid_patterns/runtime/recurrence_snapshot.py
+- bridge/gitsea/aid_patterns/runtime/pattern_memory_builder.py
+- bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py
+- bridge/gitsea/aid_patterns/examples/aid-pattern-registry.json (generated)
+- bridge/gitsea/aid_patterns/examples/recurrence-snapshot.json (generated)
+- bridge/gitsea/aid_patterns/examples/pattern-memory.json (generated)
+- bridge/gitsea/aid_patterns/examples/aid-pattern-report.json (generated)
 
-## Updated Files (Phase 19)
+## Updated Files (Phase 20)
 
-- bridge/gitsea/README.md (Phase 19 section + care_loop/ in layout + flow diagram)
+- bridge/gitsea/README.md (Phase 20 section + aid_patterns/ in layout + flow diagram + footer)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 19 files)
+## Key Invariants (all Phase 20 files)
 
 | Field | Value |
 |-------|-------|
@@ -150,23 +152,24 @@ care_loop_report.py
 | `contestable` | `true` |
 | `reopenable` | `true` |
 | `credit_issued` | `false` (permanent) |
-| `reopen_is_failure` | `false` (invariant) |
-| `followup_is_blame` | `false` (invariant) |
-| `care_loop_creates_obligation` | `false` (invariant) |
-| `reopen_judges_prior_response` | `false` (invariant) |
-| `reopen_blames_participants` | `false` (invariant) |
-| `reopen_compels_new_aid` | `false` (invariant) |
-| `reopen_certifies_failure` | `false` (invariant) |
-| `followup_judges_prior_helper` | `false` (invariant) |
-| `followup_demands_response` | `false` (invariant) |
+| `pattern_is_prediction` | `false` (invariant) |
+| `learning_is_prescription` | `false` (invariant) |
+| `recurrence_is_ranking` | `false` (invariant) |
+| `pattern_learning_only` | `true` |
+| `pattern_ranks_commons` | `false` (invariant) |
+| `pattern_compels_response` | `false` (invariant) |
+| `memory_prescribes_response` | `false` (invariant) |
+| `memory_certifies_resolution` | `false` (invariant) |
+| `memory_compels_new_aid` | `false` (invariant) |
+| `memory_judges_participants` | `false` (invariant) |
 | `ranks_suffering` | `false` (invariant) |
-| `loop_judges_participants` | `false` (invariant) |
-| `loop_compels_new_aid` | `false` (invariant) |
-| `loop_certifies_resolution` | `false` (invariant) |
+| `recurrence_judges_prior_response` | `false` (invariant) |
+| `recurrence_demands_new_response` | `false` (invariant) |
+| `recurrence_certifies_failure` | `false` (invariant) |
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–19)
+## Protocol Principle Accumulation (Phases 10–20)
 
 | Phase | Phrase |
 |-------|--------|
@@ -194,20 +197,23 @@ care_loop_report.py
 | 19 | "Reopen is not failure." |
 | 19 | "Follow-up is not blame." |
 | 19 | "Care loop is not obligation." |
+| 20 | "Pattern is not prediction." |
+| 20 | "Learning is not prescription." |
+| 20 | "Recurrence is not ranking." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 19 PR** — after review
-2. **Phase 20: Cross-Phase Care Summary** — aggregate Phase 16–19 care history
-   into a single advisory summary per commons
-3. **Care loop clustering** — aggregate D.R.A. displacement loops into a
-   cluster view
-4. **Jammy House care snapshot** — dedicated summary of Jammy House Phase 16–19
-   activity
-5. **Voluntary resolution signal** — record when participants voluntarily mark
-   a care loop as resolved (without Dan-Go certifying closure)
+1. **Merge Phase 20 PR** — after review
+2. **Phase 21: Cross-Phase Care Summary** — aggregate Phase 16–20 care history
+   and pattern memory into a single advisory summary per commons
+3. **Pattern clustering** — aggregate D.R.A. displacement patterns into a
+   cluster view across commons
+4. **Jammy House pattern snapshot** — dedicated summary of Jammy House Phase 16–20
+   activity with pattern memory
+5. **Voluntary pattern annotation** — allow participants to annotate pattern
+   memory records with their own observations (without Dan-Go certifying accuracy)
 
 ---
 
@@ -234,10 +240,14 @@ care_loop_report.py
 *Reopen is not failure.*
 *Follow-up is not blame.*
 *Care loop is not obligation.*
+*Pattern is not prediction.*
+*Learning is not prescription.*
+*Recurrence is not ranking.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
 *Dan-Go records mutual aid routes; it does not command or allocate.*
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
 *Dan-Go records care loops; it does not compel resolution or judge participants.*
+*Dan-Go records aid patterns; it does not predict, prescribe, or rank.*
 *Contribution becomes legible before it becomes valuable.*

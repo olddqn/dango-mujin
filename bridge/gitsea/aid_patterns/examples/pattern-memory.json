@@ -1,0 +1,201 @@
+{
+  "record_type": "pattern_memory_log",
+  "log_id": "pattern-memory-log-001",
+  "memory_count": 4,
+  "status_summary": {
+    "recorded": 4
+  },
+  "memories": [
+    {
+      "pattern_memory_id": "pattern-memory-001",
+      "pattern_id": "aid-pattern-001",
+      "commons_id": "jammy-house-001",
+      "source_loops": [
+        "care-loop-001",
+        "care-loop-003"
+      ],
+      "source_cases": [
+        "relief-case-001"
+      ],
+      "source_routes": [
+        "aid-route-001"
+      ],
+      "source_recurrences": [
+        "recurrence-001"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Recurring food support pattern in Jammy House. Three observations across Phase 17\u201319.",
+      "record_type": "pattern_memory",
+      "pattern_type": "recurring_food_support",
+      "observed_count": 3,
+      "total_recurrence_count": 3,
+      "source_loop_statuses": [
+        "open",
+        "open"
+      ],
+      "generated_at": "2026-05-30T09:46:03.155095+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false,
+      "recurrence_is_ranking": false,
+      "memory_prescribes_response": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_new_aid": false,
+      "memory_judges_participants": false
+    },
+    {
+      "pattern_memory_id": "pattern-memory-002",
+      "pattern_id": "aid-pattern-002",
+      "commons_id": "dra-001",
+      "source_loops": [
+        "care-loop-002"
+      ],
+      "source_cases": [
+        "relief-case-003",
+        "relief-case-004"
+      ],
+      "source_routes": [
+        "aid-route-003",
+        "aid-route-004"
+      ],
+      "source_recurrences": [
+        "recurrence-002"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Ongoing displacement relief pattern in D.R.A. Four observations across Phase 17\u201319.",
+      "record_type": "pattern_memory",
+      "pattern_type": "ongoing_displacement_relief",
+      "observed_count": 4,
+      "total_recurrence_count": 4,
+      "source_loop_statuses": [
+        "ongoing"
+      ],
+      "generated_at": "2026-05-30T09:46:03.155290+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false,
+      "recurrence_is_ranking": false,
+      "memory_prescribes_response": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_new_aid": false,
+      "memory_judges_participants": false
+    },
+    {
+      "pattern_memory_id": "pattern-memory-003",
+      "pattern_id": "aid-pattern-003",
+      "commons_id": "jammy-house-001",
+      "source_loops": [
+        "care-loop-001"
+      ],
+      "source_cases": [
+        "relief-case-002"
+      ],
+      "source_routes": [
+        "aid-route-002"
+      ],
+      "source_recurrences": [
+        "recurrence-003"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Unresolved tenancy pattern in Jammy House. Two observations; housing advocacy ongoing.",
+      "record_type": "pattern_memory",
+      "pattern_type": "unresolved_tenancy_pattern",
+      "observed_count": 2,
+      "total_recurrence_count": 2,
+      "source_loop_statuses": [
+        "open"
+      ],
+      "generated_at": "2026-05-30T09:46:03.155296+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false,
+      "recurrence_is_ranking": false,
+      "memory_prescribes_response": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_new_aid": false,
+      "memory_judges_participants": false
+    },
+    {
+      "pattern_memory_id": "pattern-memory-004",
+      "pattern_id": "aid-pattern-004",
+      "commons_id": "yacypherpunks-001",
+      "source_loops": [
+        "care-loop-004"
+      ],
+      "source_cases": [
+        "relief-case-005"
+      ],
+      "source_routes": [
+        "aid-route-005"
+      ],
+      "source_recurrences": [
+        "recurrence-004"
+      ],
+      "memory_status": "recorded",
+      "memory_note": "Pending skill exchange in YaCypherpunks. Single observation; not yet a recurrence.",
+      "record_type": "pattern_memory",
+      "pattern_type": "pending_skill_exchange",
+      "observed_count": 1,
+      "total_recurrence_count": 1,
+      "source_loop_statuses": [
+        "open"
+      ],
+      "generated_at": "2026-05-30T09:46:03.155299+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false,
+      "recurrence_is_ranking": false,
+      "memory_prescribes_response": false,
+      "memory_certifies_resolution": false,
+      "memory_compels_new_aid": false,
+      "memory_judges_participants": false
+    }
+  ],
+  "authority": "none",
+  "pattern_is_prediction": false,
+  "learning_is_prescription": false,
+  "recurrence_is_ranking": false,
+  "memory_prescribes_response": false,
+  "memory_certifies_resolution": false,
+  "generated_at": "2026-05-30T09:46:03.155302+00:00",
+  "phase": 20,
+  "phase_phrase_1": "Pattern is not prediction.",
+  "phase_phrase_2": "Learning is not prescription.",
+  "phase_phrase_3": "Recurrence is not ranking."
+}
