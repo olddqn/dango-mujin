@@ -1,0 +1,195 @@
+{
+  "list_type": "credit_reflection_memory_list",
+  "generated_at": "2026-05-30T05:03:30.020019+00:00",
+  "total_memories": 3,
+  "gap_count": 2,
+  "memories": [
+    {
+      "memory_type": "credit_reflection_memory",
+      "generated_at": "2026-05-30T05:03:30.019853+00:00",
+      "memory_id": "mem-housing-007-issue-1-external-001",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "contributor_id": "external-001",
+      "contribution_type": "evidence_reviewed",
+      "contribution_label": "Evidence reviewed and approved",
+      "candidate_credit": true,
+      "external_system": "gitsea",
+      "external_credit": false,
+      "stages": [
+        {
+          "stage": "candidate_created",
+          "label": "Contribution candidate recorded in Dan-Go (Phase 11)",
+          "completed": true
+        },
+        {
+          "stage": "external_credit_checked",
+          "label": "External credit system observed (Phase 12)",
+          "completed": true
+        },
+        {
+          "stage": "credit_not_observed",
+          "label": "No external credit detected in observed system",
+          "completed": true
+        },
+        {
+          "stage": "gap_recorded",
+          "label": "Gap between candidate and external credit documented",
+          "completed": true
+        },
+        {
+          "stage": "reflection_stored",
+          "label": "Reflection memory stored (Phase 13)",
+          "completed": true
+        }
+      ],
+      "stages_completed": 5,
+      "stages_total": 5,
+      "reflection_complete": true,
+      "gap_present": true,
+      "gap_is_failure": false,
+      "contribution_lost": false,
+      "credit_issued": false,
+      "moves_money": false,
+      "execution_allowed": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "reflection_only": true,
+      "authority": "none",
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "principle_1": "Unrecognized contribution is still observable.",
+      "principle_2": "Reflection is not judgment.",
+      "memory_note": "Dan-Go records contribution reflection memory. Gaps are observable facts, not accusations. External systems remain sovereign over credit decisions."
+    },
+    {
+      "memory_type": "credit_reflection_memory",
+      "generated_at": "2026-05-30T05:03:30.020011+00:00",
+      "memory_id": "mem-housing-007-issue-1-external-002",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "contributor_id": "external-002",
+      "contribution_type": "evidence_accepted",
+      "contribution_label": "Evidence accepted via PR merge",
+      "candidate_credit": true,
+      "external_system": "gitsea",
+      "external_credit": false,
+      "stages": [
+        {
+          "stage": "candidate_created",
+          "label": "Contribution candidate recorded in Dan-Go (Phase 11)",
+          "completed": true
+        },
+        {
+          "stage": "external_credit_checked",
+          "label": "External credit system observed (Phase 12)",
+          "completed": true
+        },
+        {
+          "stage": "credit_not_observed",
+          "label": "No external credit detected in observed system",
+          "completed": true
+        },
+        {
+          "stage": "gap_recorded",
+          "label": "Gap between candidate and external credit documented",
+          "completed": true
+        },
+        {
+          "stage": "reflection_stored",
+          "label": "Reflection memory stored (Phase 13)",
+          "completed": true
+        }
+      ],
+      "stages_completed": 5,
+      "stages_total": 5,
+      "reflection_complete": true,
+      "gap_present": true,
+      "gap_is_failure": false,
+      "contribution_lost": false,
+      "credit_issued": false,
+      "moves_money": false,
+      "execution_allowed": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "reflection_only": true,
+      "authority": "none",
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "principle_1": "Unrecognized contribution is still observable.",
+      "principle_2": "Reflection is not judgment.",
+      "memory_note": "Dan-Go records contribution reflection memory. Gaps are observable facts, not accusations. External systems remain sovereign over credit decisions."
+    },
+    {
+      "memory_type": "credit_reflection_memory",
+      "generated_at": "2026-05-30T05:03:30.020015+00:00",
+      "memory_id": "mem-housing-007-issue-1-external-003",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "contributor_id": "external-003",
+      "contribution_type": "contest_raised",
+      "contribution_label": "Legitimate contest raised",
+      "candidate_credit": false,
+      "external_system": "gitsea",
+      "external_credit": false,
+      "stages": [
+        {
+          "stage": "candidate_created",
+          "label": "Contribution candidate recorded in Dan-Go (Phase 11)",
+          "completed": true
+        },
+        {
+          "stage": "external_credit_checked",
+          "label": "External credit system observed (Phase 12)",
+          "completed": true
+        },
+        {
+          "stage": "credit_not_observed",
+          "label": "No external credit detected in observed system",
+          "completed": true
+        },
+        {
+          "stage": "gap_recorded",
+          "label": "Gap between candidate and external credit documented",
+          "completed": true
+        },
+        {
+          "stage": "reflection_stored",
+          "label": "Reflection memory stored (Phase 13)",
+          "completed": true
+        }
+      ],
+      "stages_completed": 5,
+      "stages_total": 5,
+      "reflection_complete": true,
+      "gap_present": false,
+      "gap_is_failure": false,
+      "contribution_lost": false,
+      "credit_issued": false,
+      "moves_money": false,
+      "execution_allowed": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "reflection_only": true,
+      "authority": "none",
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "principle_1": "Unrecognized contribution is still observable.",
+      "principle_2": "Reflection is not judgment.",
+      "memory_note": "Dan-Go records contribution reflection memory. Gaps are observable facts, not accusations. External systems remain sovereign over credit decisions."
+    }
+  ],
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "reflection_only": true,
+  "authority": "none",
+  "append_only": true,
+  "principle_1": "Unrecognized contribution is still observable.",
+  "principle_2": "Reflection is not judgment."
+}
