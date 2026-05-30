@@ -1,0 +1,57 @@
+{
+  "registry_type": "contributor_registry",
+  "generated_at": "2026-05-30T04:31:06.890585+00:00",
+  "contributor_count": 3,
+  "contributors": [
+    {
+      "contributor_id": "external-001",
+      "name": "example_contributor",
+      "role": "reviewer",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "active": true,
+      "registered_at": "2026-05-30T00:00:00+00:00",
+      "pseudonymous": true
+    },
+    {
+      "contributor_id": "external-002",
+      "name": "evidence_author",
+      "role": "author",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "active": true,
+      "registered_at": "2026-05-30T00:00:00+00:00",
+      "pseudonymous": true
+    },
+    {
+      "contributor_id": "external-003",
+      "name": "dissent_contributor",
+      "role": "contester",
+      "claim_id": "housing-007",
+      "issue_id": 1,
+      "active": true,
+      "registered_at": "2026-05-30T00:00:00+00:00",
+      "pseudonymous": true
+    }
+  ],
+  "known_roles": {
+    "author": "Submitted original evidence or PR",
+    "reviewer": "Reviewed submitted evidence or PR",
+    "contester": "Contested a claim or plan (healthy dissent)",
+    "reaffirmer": "Reaffirmed a position with new context",
+    "observer": "Observed the negotiation without direct contribution",
+    "corrector": "Proposed a plan correction"
+  },
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "contribution_note": "Contribution history is not credit.",
+  "credit_note": "Dan-Go records contribution candidates; external systems may issue credit.",
+  "identity_note": "All contributor identifiers are pseudonymous. No real-world identity linkage. No personal data stored."
+}

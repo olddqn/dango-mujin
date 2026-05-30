@@ -11,6 +11,33 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 11 — Contributor Credit Candidate Layer
+
+Dan-Go now records contributor activity and credit candidates for GITSEA
+credit observability. Contribution candidates surface *who* participated and
+*what* they contributed — without issuing credit.
+
+**Contribution history is not credit.**
+**Dan-Go records contribution candidates; external systems may issue credit.**
+
+```bash
+# Record contributors and roles (pseudonymous)
+python bridge/gitsea/credit/runtime/contributor_registry.py --save
+
+# Record contribution events as credit candidates
+python bridge/gitsea/credit/runtime/contribution_candidate.py --save
+
+# Aggregate candidates into advisory snapshot
+python bridge/gitsea/credit/runtime/credit_candidate_snapshot.py --save
+
+# Build append-only contribution history
+python bridge/gitsea/credit/runtime/contribution_history.py --save
+```
+
+`credit_issued` is always `false`. Dan-Go never issues credit.
+
+---
+
 ## Phase 10 — Cooperation Treasury Bridge
 
 Dan-Go now observes the GITSEA RepoVault treasury context for
@@ -56,6 +83,7 @@ The `bridge/gitsea/` layer:
 4. Documents how Dan-Go negotiation output relates to GITSEA stream eligibility (Phase 8)
 5. Extends the lifecycle: Claim → Cooperation Signal → Asset Signal (Phase 9)
 6. Observes the RepoVault treasury context for cooperation history (Phase 10)
+7. Records contributor credit candidates for GITSEA observability (Phase 11)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -91,6 +119,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── credit/                            ← Phase 11: contributor credit candidates
+│   ├── CONTRIBUTOR_CREDIT_SPEC.md
+│   ├── CREDIT_CANDIDATE_SPEC.md
+│   ├── CONTRIBUTION_HISTORY_SPEC.md
+│   ├── examples/
+│   │   ├── contributor-registry.json
+│   │   ├── contribution-candidate.json
+│   │   ├── credit-candidate-snapshot.json
+│   │   └── contribution-history.json
+│   └── runtime/
+│       ├── contributor_registry.py
+│       ├── contribution_candidate.py
+│       ├── credit_candidate_snapshot.py
+│       └── contribution_history.py
 └── treasury/                          ← Phase 10: cooperation treasury bridge
     ├── DANGO_TREASURY_VISIBILITY_SPEC.md
     ├── COOPERATION_TREASURY_BRIDGE_SPEC.md
@@ -131,6 +173,12 @@ python bridge/gitsea/treasury/runtime/treasury_snapshot.py --save
 python bridge/gitsea/treasury/runtime/cooperation_treasury_bridge.py --save
 python bridge/gitsea/treasury/runtime/repovault_reader.py
 python bridge/gitsea/treasury/runtime/treasury_visibility_report.py --save
+
+# Phase 11: Contributor credit candidates
+python bridge/gitsea/credit/runtime/contributor_registry.py --save
+python bridge/gitsea/credit/runtime/contribution_candidate.py --save
+python bridge/gitsea/credit/runtime/credit_candidate_snapshot.py --save
+python bridge/gitsea/credit/runtime/contribution_history.py --save
 ```
 
 ---
@@ -172,6 +220,11 @@ Cooperation Signal
     ▼
 Treasury Visibility ──────────────────► RepoVault (Base)
     │                                   (observed, not operated)
+    │
+    │  (credit candidates — Phase 11)
+    ▼
+Contribution Candidates ──────────────► GITSEA (observes, may issue credit)
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -195,6 +248,7 @@ Every file in this directory maintains:
 | `authority` | `none` |
 | `dango_controls_treasury` | `false` |
 | `recommended_allocation` | `null` (always) |
+| `credit_issued` | `false` (always) |
 
 No private keys. No wallet operations. No GITSEA API calls.
 No Base RPC. No contract calls. stdlib only.
@@ -203,4 +257,6 @@ No Base RPC. No contract calls. stdlib only.
 
 *dango-gitsea-bridge · authority: none · advisory · append-only · stdlib only*
 *Signal is not reward.*
+*Contribution history is not credit.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
+*Dan-Go records contribution candidates; external systems may issue credit.*
