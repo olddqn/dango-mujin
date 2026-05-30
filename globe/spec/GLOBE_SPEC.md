@@ -271,6 +271,79 @@ globe/directives/
 └── directive-claim-proposal-005.md
 ```
 
+## Directive Execution Log（Phase 25）
+
+Directive に対する承認・実行試行・観察・フィードバック・異議・差し戻し要求を
+append-only の JSONL 形式で記録する基盤。
+
+### 変換チェーン全体 / Full Conversion Chain
+
+```
+Proposal (accepted)
+       ↓  proposal_to_claim.py          (Phase 23)
+Dan-Go Claim (claim_draft)
+       ↓  claim_to_directive.py         (Phase 24)
+Dan-Go Directive (directive_draft)
+       ↓  directive_execution_log.py    (Phase 25)
+Execution Log (JSONL · append-only)
+       ↓  human approval per step
+実世界アクション (voluntary · non-coercive · human-approved)
+       ↓
+Reality Feedback
+```
+
+### Execution Log Entry（ログエントリ）形式
+
+```json
+{
+  "log_id":                 "log-001",
+  "directive_id":           "directive-claim-proposal-002",
+  "globe_id":               "globe-001",
+  "entry_type":             "human_approval",
+  "actor_type":             "human",
+  "actor_name":             "Masuo Komori",
+  "content":                "試験的実施に向けた人間承認を記録する",
+  "evidence_refs":          [],
+  "non_coercion_confirmed": true,
+  "legal_authority_created": false,
+  "log_is_proof_of_execution": false,
+  "log_certifies_outcome":  false,
+  "log_compels_action":     false,
+  "append_only":            true,
+  "created_at":             "2026-05-30T..."
+}
+```
+
+### Entry Types（エントリ種別）
+
+| entry_type | 説明 | 承認ゲート |
+|------------|------|-----------|
+| `human_approval` | 人間による明示的承認 | 不要（常に記録可） |
+| `execution_attempt` | 実行試行の記録 | 事前の human_approval が必要（WARNING） |
+| `observation` | 実行中・後の観察 | 事前の human_approval が必要（WARNING） |
+| `feedback` | フィードバック | 事前の human_approval が必要（WARNING） |
+| `objection` | 異議申し立て | **常に記録可（承認不要）** |
+| `rollback_request` | 差し戻し要求 | **常に記録可（承認不要）** |
+
+### Execution Log の原則
+
+- **Execution Log is not proof of execution.** ログは実行の証明ではない。
+- **Log entry is not legal authority.** エントリはいかなる法的権限も生じさせない。
+- **Human approval is required before real-world execution.** 実世界アクション前に人間の承認が必要。
+- **Objection and rollback request must always be recordable.** 異議・差し戻し要求は常に記録可能。
+- **Append-only: existing entries must never be rewritten.** 既存エントリは書き換え不可。
+- **Warning, not block.** 承認なしの execution_attempt 等は警告を出すが記録は行う（強制しない）。
+
+### 出力先 / Output
+
+```
+globe/logs/
+├── directive-claim-proposal-002.jsonl  — Execution Log (JSONL · append-only)
+├── directive-claim-proposal-002.md     — Exported Markdown (export-md コマンド)
+├── directive-claim-proposal-005.jsonl
+└── directive-claim-proposal-005.md
+```
+
 ## UIルート / UI Routes
 
 サーバー起動: `python3 globe/runtime/globe_server.py`
@@ -327,6 +400,19 @@ python3 globe/runtime/claim_to_directive.py convert-globe globe-001
 # 変換済み Directive の一覧
 python3 globe/runtime/claim_to_directive.py list
 
+# Execution Log にエントリを追加
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 human_approval human "Masuo Komori" "承認を記録"
+
+# Execution Log の全エントリを表示
+python3 globe/runtime/directive_execution_log.py list directive-claim-proposal-002
+
+# Execution Log のサマリ
+python3 globe/runtime/directive_execution_log.py summary directive-claim-proposal-002
+
+# Execution Log を Markdown にエクスポート
+python3 globe/runtime/directive_execution_log.py export-md directive-claim-proposal-002
+
 # UIサーバーを起動
 python3 globe/runtime/globe_server.py
 ```
@@ -345,13 +431,17 @@ globe/
 ├── directives/            — Generated Directive files (Phase 24)
 │   ├── directive-claim-proposal-NNN.json
 │   └── directive-claim-proposal-NNN.md
+├── logs/                  — Directive Execution Logs (Phase 25 · append-only JSONL)
+│   ├── directive-claim-proposal-NNN.jsonl
+│   └── directive-claim-proposal-NNN.md
 ├── runtime/
 │   ├── globe_registry.py
 │   ├── proposal_manager.py
 │   ├── deliberation_log.py
 │   ├── globe_server.py
-│   ├── proposal_to_claim.py     — Phase 23: Proposal → Claim conversion
-│   └── claim_to_directive.py    — Phase 24: Claim → Directive conversion
+│   ├── proposal_to_claim.py           — Phase 23: Proposal → Claim conversion
+│   ├── claim_to_directive.py          — Phase 24: Claim → Directive conversion
+│   └── directive_execution_log.py     — Phase 25: Directive Execution Log
 └── spec/
     └── GLOBE_SPEC.md      — this file
 ```
