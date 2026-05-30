@@ -1,14 +1,14 @@
-# RESUME_STATE.md — GITSEA Asset Lifecycle Bridge
+# RESUME_STATE.md — Cooperation Treasury Bridge
 
-> **STATUS: COMPLETE**
+> **STATUS: IN PROGRESS (feature/phase-10-treasury-visibility)**
 
-**Phase:** GITSEA Asset Lifecycle Bridge (Phase 9)
-**Branch:** main
-**Completed:** 2026-05-30
+**Phase:** Cooperation Treasury Bridge (Phase 10)
+**Branch:** feature/phase-10-treasury-visibility
+**Started:** 2026-05-30
 
 ---
 
-## All Phases Complete
+## All Phases
 
 - Reflective Memory Loop (commits 3e3d4e7..7d328c2)
 - Documentation Phase (commits 64fecb1..dc2691d)
@@ -26,86 +26,85 @@
 - GitHub Issue #1 Created (https://github.com/olddqn/dango-mujin/issues/1)
 - Reopenable PR Negotiation Lifecycle (commit 4533c13)
 - GITSEA Asset Registration (commit 9363bf2)
-- **GITSEA Asset Lifecycle Bridge** (this commit)
+- GITSEA Asset Lifecycle Bridge (commit e68b9de)
+- GITSEA Registration Failure Fix / asset.toml canonical format (commit d53ee21)
+- **Cooperation Treasury Bridge (Phase 10)** ← current PR
 
 ---
 
-## Phase 9: GITSEA Asset Lifecycle Bridge — Results
+## Phase 10: Cooperation Treasury Bridge
 
-Core principle: Contribution becomes legible before it becomes valuable.
+Core principles:
+> "Signal is not reward."
+> "Dan-Go observes treasury context; it does not operate the treasury."
 
-Required phrase confirmed:
-> "GITSEA can make repository contribution economically legible.
->  Dan-Go makes contribution negotiable before it becomes economic."
+### On-Chain Facts (observed, not executed by Dan-Go)
 
-### Lifecycle Stages
-
-```
-Claim
-  → Issue (negotiation invitation)
-  → Negotiation (evidence, contest, reaffirm)
-  → Contribution (append-only log)
-  → Cooperation Signal (advisory, not a score)
-  → Asset Signal (GITSEA-observable)
-  → Economic Value (optional — not set by Dan-Go)
-```
+| Field | Value |
+|-------|-------|
+| Chain | Base (chain_id 8453) |
+| RepoVault | `0x3F9c96A429697B458Fe0a16502A050E5AB50bB00` |
+| Owner wallet | `0x89b38ff776565f095b3cd46C5f35EAb27506417C` |
+| Repo ID | `B93829F8829E2FFD13EF10ABA0B8442233BCF80172321B951C50E2E0C4C30D08` |
+| Splits root | `DA309748EA18E9C8C99B7FC50828251D30EB65EB1817FFF6507EC6AB5895B959` |
+| Event | RepoLinked |
+| Status | linked |
 
 ### Runtime Results
 
 ```
-asset_lifecycle.py (housing-007, stage: cooperation_signal_generated)
-  completed_stages: 7 of 8
-  cooperation_signal: 0.75
-  asset_signal: false (pending)
-  economic_value: false
-  advisory: true, authority: none
+treasury_snapshot.py
+  treasury_visible: true
+  dango_controls_treasury: false
+  moves_money: false
+  advisory: true
 
-issue_asset_linker.py (housing-007, issue #1)
-  scope_status: applicable
-  negotiation_status: negotiation_invited
-  asset_signal_eligible: true
-  economic_value: false
+cooperation_treasury_bridge.py
+  cooperation_signal: 0.88 (from Phase 9)
+  dissent_present: true
+  treasury_address: 0x3F9c96A429697B458Fe0a16502A050E5AB50bB00
+  recommended_allocation: null (always)
+  signal_becomes_reward: false
+  economic_action: false
 
-contribution_evaluator.py (3 participants, 6 events)
-  cooperation_signal: 0.88
-  event_coverage: 1.0
-  diversity_multiplier: 0.6
-  dissent_present: true (contest: 1)
-  economic_value: false
+repovault_reader.py
+  observation_status: linked
+  source: observed_basescan
+  dango_controls_vault: false
+  dango_executes_vault: false
 
-negotiation_asset_snapshot.py (housing-007, issue #1)
-  events: [pr_opened, pr_reviewed, pr_merged, negotiation_reopened, plan_correction_proposed]
-  gitsea_eligible: true (at pr_merged)
-  was_reopened: true
-  plan_corrected: true
-  cooperation_signal: true
-  economic_value: false
+treasury_visibility_report.py
+  5 sections: RepoVault Exists, Treasury Is Visible,
+              Dan-Go Does Not Control Funds,
+              Cooperation Signals Reference Treasury Context,
+              Economic Value Remains Optional
+  economic_value_automatic: false
+  recommended_allocation: null
 ```
 
 ---
 
-## New Files
+## New Files (Phase 10)
 
-- bridge/gitsea/lifecycle/DANGO_GITSEA_LIFECYCLE_SPEC.md
-- bridge/gitsea/lifecycle/CONTRIBUTION_SIGNAL_SPEC.md
-- bridge/gitsea/lifecycle/NEGOTIATION_TO_ASSET_FLOW.md
-- bridge/gitsea/lifecycle/runtime/asset_lifecycle.py
-- bridge/gitsea/lifecycle/runtime/issue_asset_linker.py
-- bridge/gitsea/lifecycle/runtime/contribution_evaluator.py
-- bridge/gitsea/lifecycle/runtime/negotiation_asset_snapshot.py
-- bridge/gitsea/lifecycle/examples/asset-lifecycle-housing-007.json (generated)
-- bridge/gitsea/lifecycle/examples/issue-to-asset.json (generated)
-- bridge/gitsea/lifecycle/examples/contribution-signal.json (generated)
-- bridge/gitsea/lifecycle/examples/negotiation-snapshot.json (generated)
+- bridge/gitsea/treasury/DANGO_TREASURY_VISIBILITY_SPEC.md
+- bridge/gitsea/treasury/COOPERATION_TREASURY_BRIDGE_SPEC.md
+- bridge/gitsea/treasury/REPOVAULT_OBSERVATION_NOTES.md
+- bridge/gitsea/treasury/runtime/treasury_snapshot.py
+- bridge/gitsea/treasury/runtime/cooperation_treasury_bridge.py
+- bridge/gitsea/treasury/runtime/repovault_reader.py
+- bridge/gitsea/treasury/runtime/treasury_visibility_report.py
+- bridge/gitsea/treasury/examples/treasury-snapshot.json (generated)
+- bridge/gitsea/treasury/examples/cooperation-treasury-bridge.json (generated)
+- bridge/gitsea/treasury/examples/treasury-visibility-report.json (generated)
 
-## Updated Files
+## Updated Files (Phase 10)
 
-- bridge/README.md (Phase 9 sections + lifecycle/ in Structure + Specs table)
+- bridge/gitsea/README.md (Phase 10 section + treasury/ in layout)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 9 files)
+## Key Invariants (all Phase 10 files)
 
 | Field | Value |
 |-------|-------|
@@ -115,35 +114,25 @@ negotiation_asset_snapshot.py (housing-007, issue #1)
 | `hard_enforcement` | `false` |
 | `advisory` | `true` |
 | `append_only` | `true` |
-| `contestable` | `true` |
-| `reopenable` | `true` |
-| `economic_value` | `false` (Dan-Go never sets this to true) |
-
----
-
-## Known Limitations
-
-- Cooperation signal weights are advisory heuristics, not calibrated measures
-- Participant identifiers are pseudonymous stubs (not real DIDs)
-- `issue_asset_linker.py` uses `issue_number` from scoped issue JSON (may be None if not set)
-- Economic activation is entirely GITSEA's decision — Dan-Go produces signals only
-- No real-time event collection (reads from static example files)
+| `dango_controls_treasury` | `false` |
+| `dango_executes_treasury` | `false` |
+| `recommended_allocation` | `null` (always) |
+| `signal_becomes_reward` | `false` (always) |
+| `economic_action` | `false` (always) |
 
 ---
 
 ## Next Step Candidates
 
-1. **Live su-table event ingestion** — `contribution_evaluator.py` reading from live `bridge/sutable/` JSONL
-2. **Multi-claim lifecycle dashboard** — aggregate lifecycle snapshots across housing-006, housing-007, etc.
-3. **Contest protocol rendering** — structured Markdown for contesting a scoped prerequisite
-4. **Federation negotiation snapshot** — aggregate Issue history across multiple gitlawb nodes
-5. **Public negotiation dashboard** — HTML render of full negotiation + lifecycle
-6. **gitlawb MCP integration** — expose lifecycle snapshots via `gl mcp`
+1. **Merge Phase 10 PR** — after review
+2. **Live su-table event ingestion** — real-time cooperation signal updates
+3. **Multi-claim treasury dashboard** — aggregate across housing-006, housing-007
+4. **Federation negotiation snapshot** — aggregate Issue history across gitlawb nodes
+5. **GITSEA stream candidate tracking** — monitor when/if streams activate
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
+*Signal is not reward.*
+*Dan-Go observes treasury context; it does not operate the treasury.*
 *Contribution becomes legible before it becomes valuable.*
-*GITSEA can make repository contribution economically legible.*
-*Dan-Go makes contribution negotiable before it becomes economic.*
-*A merged PR is evidence. Not authority.*
