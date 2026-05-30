@@ -1,0 +1,70 @@
+{
+  "report_type": "appeal_reflection_report",
+  "generated_at": "2026-05-30T05:18:21.605448+00:00",
+  "report_id": "appeal-report-housing-007-issue-1",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "external_system": "gitsea",
+  "total_appeals": 2,
+  "appeals_pending": 2,
+  "section_count": 5,
+  "sections": [
+    {
+      "section": "Why Appeal Exists",
+      "summary": "Appeal provides a protocol path for contributors to request reconsideration of unrecognized contributions without creating authority.",
+      "detail": "Phase 13 recorded that contribution candidates exist without external credit. Phase 14 provides a structured way to record that a contributor or observer requests reconsideration. This is the difference between passive observation (Phase 13) and an active — but still advisory — request (Phase 14). Appeal is a voice, not a lever. It is recorded; it is not enforced.",
+      "appeal_is_enforcement": false
+    },
+    {
+      "section": "Why Appeal Does Not Compel GITSEA",
+      "summary": "Dan-Go has no authority over GITSEA. An advisory appeal cannot compel a sovereign external system.",
+      "detail": "GITSEA is sovereign over its own credit decisions. Dan-Go's authority is explicitly none. An appeal recorded in Dan-Go is visible to any observer who reads Dan-Go records — including GITSEA. But GITSEA is not bound to respond, acknowledge, or act on any Dan-Go appeal. The appeal_compels_response: false invariant makes this permanent. Recognition remains external — always.",
+      "compels_response": false,
+      "authority": "none"
+    },
+    {
+      "section": "Why Dan-Go Cannot Issue Credit",
+      "summary": "Dan-Go is a negotiation protocol. It records contribution candidates. It is not a credit system. credit_issued is a permanent false invariant.",
+      "detail": "The Dan-Go protocol was designed from Phase 11 forward with credit_issued: false as a permanent invariant. This means: even if Dan-Go records an appeal, even if an external system acknowledges it, even if credit is subsequently issued — Dan-Go's own record will still show credit_issued: false, because Dan-Go did not issue it. Dan-Go records contributions. External systems issue credit. These roles are permanently separated.",
+      "credit_issued": false,
+      "permanent_invariant": true
+    },
+    {
+      "section": "Why Reopenability Matters",
+      "summary": "Contribution records being reopenable means appeals can always be recorded. No contribution is permanently closed to reconsideration.",
+      "detail": "The reopenable: true invariant on all Dan-Go records means that a contribution which was once observed without credit is never permanently foreclosed. A new appeal can be recorded at any time. A new external credit observation can be appended. The contribution history is append-only but never closed. Reopenability is the protocol's way of acknowledging that credit recognition is a process that may continue beyond a single observation window.",
+      "reopenable": true,
+      "append_only": true
+    },
+    {
+      "section": "Why Request Without Authority",
+      "summary": "Contributors can request reconsideration precisely because the request carries no authority. Authority would change the protocol's nature.",
+      "detail": "If an appeal could compel credit, then Dan-Go would have authority over external systems. That would make Dan-Go an enforcement system, not a negotiation protocol. The authority: none invariant is not a limitation — it is the design. By having no authority, Dan-Go can record appeals freely without the records becoming weapons, levers, or claims. A request without authority is an expression of interest, not a demand. External systems can respond to interest without being compelled to.",
+      "authority": "none",
+      "appeal_is_demand": false
+    }
+  ],
+  "summary_table": {
+    "appeal_exists": true,
+    "appeal_is_enforcement": false,
+    "appeal_compels_gitsea": false,
+    "dango_can_issue_credit": false,
+    "records_reopenable": true,
+    "authority_exists": false,
+    "appeal_is_demand": false,
+    "recognition_remains_external": true
+  },
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "appeal_only": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "principle_1": "Appeal is not enforcement.",
+  "principle_2": "Recognition remains external.",
+  "principle_3": "Contribution becomes legible before it becomes valuable."
+}
