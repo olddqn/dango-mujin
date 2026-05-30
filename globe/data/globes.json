@@ -1,0 +1,53 @@
+[
+  {
+    "globe_id": "globe-001",
+    "name": "第零国家 (State Zero)",
+    "description": "既存の国家の上に重ねて存在する第二の帰属先。自由参加・自由離脱。暴力・搾取・強制を手段としない。A second-affiliation voluntary community layered on top of existing states. Free to join, free to leave. No violence, exploitation, or coercion.",
+    "founding_statement": "既存の法や国家を破壊せず、その上に自由に重ねることができる第二の帰属を探求する。Dan-Goの談合・熟議・合意形成の仕組みにより、政治家中心ではなく、民意・実行履歴・AIとの協働によって共同体を動かす。We explore a second affiliation that can be freely layered on top of existing law and states without destroying them. Through Dan-Go's deliberation and consensus-building mechanisms, the community is moved not by politicians but by public will, execution history, and AI collaboration.",
+    "membership_policy": "open",
+    "governance_model": "deliberative_consensus",
+    "gitsea_link": {
+      "gitsea_repo_url": "https://gitlawb.com/z6MkpWP3c2xE5Veu5xSJxviWUrM69SDX4offMifsVXAs31Ts/dango-mujin",
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": "CONSTITUTION.md"
+    },
+    "created_at": "2026-05-30T00:00:00Z",
+    "updated_at": "2026-05-30T00:00:00Z"
+  },
+  {
+    "globe_id": "globe-002",
+    "name": "YaCypherpunks Commons",
+    "description": "国家・機関の境界を超えた協働コミュニティ。暗号技術・プライバシー・分散化を基盤にした自由参加型共同体。A cooperative community beyond national and institutional boundaries, grounded in cryptography, privacy, and decentralization.",
+    "founding_statement": "YaCypherpunksは技術と倫理によって国境を超え、プライバシー・自由・協働を実現する。技術は人間の尊厳を守るために使われるべきだ。",
+    "membership_policy": "open",
+    "governance_model": "deliberative_consensus",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T00:00:00Z",
+    "updated_at": "2026-05-30T00:00:00Z"
+  },
+  {
+    "globe_id": "globe-003",
+    "name": "Jammy House Commons",
+    "description": "協同住宅・相互扶助・ケアの実践共同体。住まいをただの建物ではなく、協働と相互支援の場として運営する。A cooperative housing and mutual aid community that operates shelter not as mere property but as a space for care and cooperation.",
+    "founding_statement": "住まいは共有財だ。家賃ではなく、ケアと協働によって維持される場を作る。Shelter is a commons. We build a place maintained not by rent alone but by care and mutual aid.",
+    "membership_policy": "open",
+    "governance_model": "deliberative_consensus",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T00:00:00Z",
+    "updated_at": "2026-05-30T00:00:00Z"
+  }
+]

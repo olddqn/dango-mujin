@@ -11,6 +11,35 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 20 — Aid Pattern Learning Layer
+
+Dan-Go records recurring aid patterns observed across care loops,
+relief cases, and aid routes without predicting future need, ranking
+suffering, or prescribing any response. Pattern observation is history.
+Learning is information. Recurrence is a count, not a priority score.
+
+**"Pattern is not prediction."**
+**"Learning is not prescription."**
+**"Recurrence is not ranking."**
+
+```bash
+# Record recurring aid patterns with observed counts
+python bridge/gitsea/aid_patterns/runtime/aid_pattern_registry.py --save
+
+# Snapshot individual recurrence observations without ranking
+python bridge/gitsea/aid_patterns/runtime/recurrence_snapshot.py --save
+
+# Build cross-phase pattern memory from care loop / relief / route records
+python bridge/gitsea/aid_patterns/runtime/pattern_memory_builder.py --save
+
+# Generate aid pattern report
+python bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py --save
+```
+
+`pattern_learning_only: true`. `pattern_is_prediction: false`. `recurrence_is_ranking: false`. `learning_is_prescription: false`. `authority: none`.
+
+---
+
 ## Phase 21 — Commons Need Forecast Memory Layer
 
 Dan-Go records preparedness hints from recurring aid patterns without
@@ -339,7 +368,8 @@ The `bridge/gitsea/` layer:
 13. Records mutual aid requests, offers, and possible routes without debt, command, or allocation (Phase 17)
 14. Records observable relief case memory after aid routes without certifying rescue or judging outcomes (Phase 18)
 15. Records reopenable care loops after relief cases without judging failure, assigning blame, or creating obligations (Phase 19)
-16. Records preparedness hints from recurring aid patterns without predicting need, commanding preparation, or allocating resources (Phase 21)
+16. Records recurring aid patterns across Phase 17–19 care histories without predicting, ranking, or prescribing (Phase 20)
+17. Records preparedness hints from recurring aid patterns without predicting need, commanding preparation, or allocating resources (Phase 21)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -375,6 +405,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── aid_patterns/                      ← Phase 20: aid pattern learning layer
+│   ├── AID_PATTERN_LEARNING_SPEC.md
+│   ├── PATTERN_NOT_PREDICTION.md
+│   ├── LEARNING_NOT_PRESCRIPTION.md
+│   ├── examples/
+│   │   ├── aid-pattern-registry.json
+│   │   ├── recurrence-snapshot.json
+│   │   ├── pattern-memory.json
+│   │   └── aid-pattern-report.json
+│   └── runtime/
+│       ├── aid_pattern_registry.py
+│       ├── recurrence_snapshot.py
+│       ├── pattern_memory_builder.py
+│       └── aid_pattern_report.py
 ├── need_forecast/                     ← Phase 21: commons need forecast memory layer
 │   ├── COMMONS_NEED_FORECAST_SPEC.md
 │   ├── FORECAST_NOT_CERTAINTY.md
@@ -610,6 +654,12 @@ python bridge/gitsea/care_loop/runtime/followup_need_snapshot.py --save
 python bridge/gitsea/care_loop/runtime/care_loop_builder.py --save
 python bridge/gitsea/care_loop/runtime/care_loop_report.py --save
 
+# Phase 20: Aid pattern learning
+python bridge/gitsea/aid_patterns/runtime/aid_pattern_registry.py --save
+python bridge/gitsea/aid_patterns/runtime/recurrence_snapshot.py --save
+python bridge/gitsea/aid_patterns/runtime/pattern_memory_builder.py --save
+python bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py --save
+
 # Phase 21: Commons need forecast memory
 python3 bridge/gitsea/need_forecast/runtime/need_forecast_registry.py --save
 python3 bridge/gitsea/need_forecast/runtime/preparedness_hint_snapshot.py --save
@@ -727,6 +777,15 @@ Care Loop Reopen
        care_loop_creates_obligation: false
        authority: none
     │
+    │  (aid pattern learning — Phase 20)
+    ▼
+Aid Pattern Learning
+       pattern_learning_only: true
+       pattern_is_prediction: false
+       learning_is_prescription: false
+       recurrence_is_ranking: false
+       authority: none
+    │
     │  (need forecast memory — Phase 21)
     ▼
 Need Forecast Memory
@@ -799,6 +858,10 @@ No Base RPC. No contract calls. stdlib only.
 *Follow-up is not blame.*
 *Care loop is not obligation.*
 *Dan-Go records care loops; it does not compel resolution or judge participants.*
+*Pattern is not prediction.*
+*Learning is not prescription.*
+*Recurrence is not ranking.*
+*Dan-Go records aid patterns; it does not predict, prescribe, or rank.*
 *Forecast is not certainty.*
 *Preparedness is not command.*
 *Hint is not allocation.*

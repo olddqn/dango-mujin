@@ -38,8 +38,22 @@
 - Mutual Aid Routing Layer (Phase 17) — PR #9
 - Relief Case Memory Layer (Phase 18) — PR #10
 - Care Loop Reopen Layer (Phase 19) — PR #11
-- Aid Pattern Learning Layer (Phase 20) — PR #12
+- Aid Pattern Learning Layer (Phase 20) — PR #12, merged
 - **Commons Need Forecast Memory Layer (Phase 21)** ← current PR
+
+---
+
+## Phase 20: Aid Pattern Learning Layer
+
+Core principles:
+> "Pattern is not prediction."
+> "Learning is not prescription."
+> "Recurrence is not ranking."
+
+**Purpose:** Records recurring aid patterns observed across Phase 17–19
+care histories. Dan-Go does not predict future need. Dan-Go does not
+rank suffering. Dan-Go does not prescribe responses. Dan-Go only records
+observable patterns and cross-phase pattern memory.
 
 ---
 
@@ -69,6 +83,53 @@ Phase 21: Need Forecast Memory    → forecast_memory_only: true
 ### Runtime Results
 
 ```
+aid_pattern_registry.py
+  registry_id: aid-pattern-registry-001
+  pattern_count: 4
+  commons_represented: [dra-001, jammy-house-001, yacypherpunks-001]
+    aid-pattern-001: recurring_food_support (observed_count=3) pattern_is_prediction=false
+    aid-pattern-002: ongoing_displacement_relief (observed_count=4) pattern_is_prediction=false
+    aid-pattern-003: unresolved_tenancy_pattern (observed_count=2) pattern_is_prediction=false
+    aid-pattern-004: pending_skill_exchange (observed_count=1) pattern_is_prediction=false
+  pattern_ranks_commons=false
+
+recurrence_snapshot.py
+  snapshot_id: recurrence-snapshot-001
+  recurrence_count: 4
+    recurrence-001: food_need_reappeared (count=3) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-002: displacement_relief_ongoing (count=4) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-003: tenancy_unresolved_continued (count=2) recurrence_is_ranking=false ranks_suffering=false
+    recurrence-004: skill_exchange_deferred (count=1) recurrence_is_ranking=false ranks_suffering=false
+  urgency_note: No urgency ranking applied — recurrence_is_ranking: false on all records
+
+pattern_memory_builder.py
+  log_id: pattern-memory-log-001
+  memory_count: 4
+  status_summary: {recorded: 4}
+    pattern-memory-001: recurring_food_support (jammy-house-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-002: ongoing_displacement_relief (dra-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-003: unresolved_tenancy_pattern (jammy-house-001) memory_status=recorded learning_is_prescription=false
+    pattern-memory-004: pending_skill_exchange (yacypherpunks-001) memory_status=recorded learning_is_prescription=false
+  memory_prescribes_response=false
+
+aid_pattern_report.py
+  report_id: aid-pattern-report-001
+  section_count: 4
+    A: A Pattern Is an Observation, Not a Prediction
+    B: Recurrence Does Not Rank Suffering
+    C: Learning Does Not Prescribe a Response
+    D: Connection to Jammy House and D.R.A. Care Histories
+  summary_table:
+    pattern_is_prediction: false
+    recurrence_is_ranking: false
+    learning_is_prescription: false
+    ranks_suffering: false
+    any_participant_compelled: false
+    pattern_history_is_legible: true
+    loops_referenced: 4
+    patterns_recorded: 4
+    recurrences_recorded: 4
+
 need_forecast_registry.py
   registry_id: need-forecast-registry-001
   forecast_count: 4
@@ -126,6 +187,24 @@ need_forecast_report.py
 
 ---
 
+## New Files (Phase 20)
+
+- bridge/gitsea/aid_patterns/AID_PATTERN_LEARNING_SPEC.md
+- bridge/gitsea/aid_patterns/PATTERN_NOT_PREDICTION.md
+- bridge/gitsea/aid_patterns/LEARNING_NOT_PRESCRIPTION.md
+- bridge/gitsea/aid_patterns/runtime/aid_pattern_registry.py
+- bridge/gitsea/aid_patterns/runtime/recurrence_snapshot.py
+- bridge/gitsea/aid_patterns/runtime/pattern_memory_builder.py
+- bridge/gitsea/aid_patterns/runtime/aid_pattern_report.py
+- bridge/gitsea/aid_patterns/examples/aid-pattern-registry.json (generated)
+- bridge/gitsea/aid_patterns/examples/recurrence-snapshot.json (generated)
+- bridge/gitsea/aid_patterns/examples/pattern-memory.json (generated)
+- bridge/gitsea/aid_patterns/examples/aid-pattern-report.json (generated)
+
+## Updated Files (Phase 20)
+
+- bridge/gitsea/README.md (Phase 20 section + aid_patterns/ in layout + flow diagram + footer)
+
 ## New Files (Phase 21)
 
 - bridge/gitsea/need_forecast/COMMONS_NEED_FORECAST_SPEC.md
@@ -146,6 +225,34 @@ need_forecast_report.py
 - bridge/RESUME_STATE.md (this file)
 
 ---
+
+## Key Invariants (all Phase 20 files)
+
+| Field | Value |
+|-------|-------|
+| `authority` | `none` |
+| `execution_allowed` | `false` |
+| `moves_money` | `false` |
+| `hard_enforcement` | `false` |
+| `advisory` | `true` |
+| `pattern_learning_only` | `true` |
+| `append_only` | `true` |
+| `contestable` | `true` |
+| `reopenable` | `true` |
+| `credit_issued` | `false` (permanent) |
+| `pattern_is_prediction` | `false` (invariant) |
+| `learning_is_prescription` | `false` (invariant) |
+| `recurrence_is_ranking` | `false` (invariant) |
+| `pattern_ranks_commons` | `false` (invariant) |
+| `pattern_compels_response` | `false` (invariant) |
+| `memory_prescribes_response` | `false` (invariant) |
+| `memory_certifies_resolution` | `false` (invariant) |
+| `memory_compels_new_aid` | `false` (invariant) |
+| `memory_judges_participants` | `false` (invariant) |
+| `ranks_suffering` | `false` (invariant) |
+| `recurrence_judges_prior_response` | `false` (invariant) |
+| `recurrence_demands_new_response` | `false` (invariant) |
+| `recurrence_certifies_failure` | `false` (invariant) |
 
 ## Key Invariants (all Phase 21 files)
 
@@ -251,12 +358,16 @@ need_forecast_report.py
 *Reopen is not failure.*
 *Follow-up is not blame.*
 *Care loop is not obligation.*
+*Pattern is not prediction.*
+*Learning is not prescription.*
+*Recurrence is not ranking.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
 *Dan-Go records mutual aid routes; it does not command or allocate.*
 *Dan-Go records relief case memory; it does not certify rescue or rank suffering.*
 *Dan-Go records care loops; it does not compel resolution or judge participants.*
+*Dan-Go records aid patterns; it does not predict, prescribe, or rank.*
 *Forecast is not certainty.*
 *Preparedness is not command.*
 *Hint is not allocation.*
