@@ -11,6 +11,33 @@ No on-chain operation is performed. stdlib only.
 
 ---
 
+## Phase 12 — External Credit Adapter Layer
+
+Dan-Go now explicitly distinguishes contribution candidates from external
+credit outcomes. The gap between candidate credit and external credit is
+documented, observable, and by design.
+
+**"Observation is not issuance."**
+**"Candidate credit is not external credit."**
+
+```bash
+# Observe external credit systems (no credit issued)
+python bridge/gitsea/external_credit/runtime/external_credit_adapter.py --save
+
+# Snapshot external credit observation state
+python bridge/gitsea/external_credit/runtime/external_credit_snapshot.py --save
+
+# Compare Dan-Go candidates against external outcomes
+python bridge/gitsea/external_credit/runtime/candidate_vs_external.py --save
+
+# Generate human-readable observation report
+python bridge/gitsea/external_credit/runtime/credit_observation_report.py --save
+```
+
+`external_credit_detected: false`. `credit_issued: false`. Dan-Go observes only.
+
+---
+
 ## Phase 11 — Contributor Credit Candidate Layer
 
 Dan-Go now records contributor activity and credit candidates for GITSEA
@@ -84,6 +111,7 @@ The `bridge/gitsea/` layer:
 5. Extends the lifecycle: Claim → Cooperation Signal → Asset Signal (Phase 9)
 6. Observes the RepoVault treasury context for cooperation history (Phase 10)
 7. Records contributor credit candidates for GITSEA observability (Phase 11)
+8. Observes external credit systems and documents the candidate/credit gap (Phase 12)
 
 It does **not** submit to GITSEA, sign transactions, or move funds.
 
@@ -119,6 +147,20 @@ bridge/gitsea/
 │       ├── issue_asset_linker.py
 │       ├── contribution_evaluator.py
 │       └── negotiation_asset_snapshot.py
+├── external_credit/                   ← Phase 12: external credit adapter layer
+│   ├── EXTERNAL_CREDIT_SPEC.md
+│   ├── OBSERVATION_NOT_ISSUANCE.md
+│   ├── CANDIDATE_VS_EXTERNAL_CREDIT.md
+│   ├── examples/
+│   │   ├── credit-adapter.json
+│   │   ├── external-credit-snapshot.json
+│   │   ├── candidate-vs-external.json
+│   │   └── credit-observation-report.json
+│   └── runtime/
+│       ├── external_credit_adapter.py
+│       ├── external_credit_snapshot.py
+│       ├── candidate_vs_external.py
+│       └── credit_observation_report.py
 ├── credit/                            ← Phase 11: contributor credit candidates
 │   ├── CONTRIBUTOR_CREDIT_SPEC.md
 │   ├── CREDIT_CANDIDATE_SPEC.md
@@ -179,6 +221,12 @@ python bridge/gitsea/credit/runtime/contributor_registry.py --save
 python bridge/gitsea/credit/runtime/contribution_candidate.py --save
 python bridge/gitsea/credit/runtime/credit_candidate_snapshot.py --save
 python bridge/gitsea/credit/runtime/contribution_history.py --save
+
+# Phase 12: External credit observation
+python bridge/gitsea/external_credit/runtime/external_credit_adapter.py --save
+python bridge/gitsea/external_credit/runtime/external_credit_snapshot.py --save
+python bridge/gitsea/external_credit/runtime/candidate_vs_external.py --save
+python bridge/gitsea/external_credit/runtime/credit_observation_report.py --save
 ```
 
 ---
@@ -225,6 +273,13 @@ Treasury Visibility ──────────────────► Re
     ▼
 Contribution Candidates ──────────────► GITSEA (observes, may issue credit)
     │
+    │  (external credit observation — Phase 12)
+    ▼
+External Credit Observation
+    │  candidate_credit ≠ external_credit
+    │  gap_is_error: false
+    │  observation_only: true
+    │
     │  (GITSEA process, not Dan-Go)
     ▼
 GITSEA stream eligibility (optional)
@@ -258,5 +313,7 @@ No Base RPC. No contract calls. stdlib only.
 *dango-gitsea-bridge · authority: none · advisory · append-only · stdlib only*
 *Signal is not reward.*
 *Contribution history is not credit.*
+*Observation is not issuance.*
+*Candidate credit is not external credit.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*

@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Contributor Credit Candidate Layer
+# RESUME_STATE.md — External Credit Adapter Layer
 
-> **STATUS: IN PROGRESS (feature/phase-11-credit-candidate)**
+> **STATUS: IN PROGRESS (feature/phase-12-external-credit)**
 
-**Phase:** Contributor Credit Candidate Layer (Phase 11)
-**Branch:** feature/phase-11-credit-candidate
+**Phase:** External Credit Adapter Layer (Phase 12)
+**Branch:** feature/phase-12-external-credit
 **Started:** 2026-05-30
 
 ---
@@ -29,76 +29,92 @@
 - GITSEA Asset Lifecycle Bridge (commit e68b9de)
 - GITSEA Registration Failure Fix / asset.toml canonical format (commit d53ee21)
 - Cooperation Treasury Bridge (Phase 10) — PR #2, merged
-- **Contributor Credit Candidate Layer (Phase 11)** ← current PR
+- Contributor Credit Candidate Layer (Phase 11) — PR #3
+- **External Credit Adapter Layer (Phase 12)** ← current PR
 
 ---
 
-## Phase 11: Contributor Credit Candidate Layer
+## Phase 12: External Credit Adapter Layer
 
 Core principles:
-> "Contribution history is not credit."
-> "Dan-Go records contribution candidates; external systems may issue credit."
+> "Observation is not issuance."
+> "Candidate credit is not external credit."
 
-`credit_issued: false` is a permanent protocol invariant. It is never changed by Dan-Go.
+**Key discovery addressed:** Phase 11 produced valid contribution candidates.
+External systems did not automatically issue credit. This distinction is now
+explicit in the architecture. The gap between candidate credit and external
+credit is documented, observable, and by design.
 
 ### Runtime Results
 
 ```
-contributor_registry.py
-  contributors: 3 (external-001 reviewer, external-002 author, external-003 contester)
+external_credit_adapter.py
+  system: gitsea
+  observed: true
+  credit_visible: false
+  observation_status: no_credit_detected
   credit_issued: false
   advisory: true
-  authority: none
 
-contribution_candidate.py
-  total_candidates: 3
-  credit_eligible: 2  (candidate status only)
-  credit_issued: false  (permanent: never by Dan-Go)
-  advisory: true
-
-credit_candidate_snapshot.py
-  snapshot_id: snapshot-housing-007-issue-1
-  candidate_count: 3
+external_credit_snapshot.py
+  snapshot_id: ext-snapshot-housing-007-issue-1
+  candidate_count: 3 (from Phase 11)
   credit_eligible: 2
-  credit_issued: false
-  external_system: gitsea
-  advisory: true
+  external_credit_detected: false
+  observation_only: true
+  gap_note: "2 candidate(s) exist but no external credit detected.
+             This is not an error. External credit is sovereign and optional."
 
-contribution_history.py
-  history_id: history-001
-  issue: #3  pr: 2
-  merged: true
-  reopened: false
-  entry_count: 7
-  contributors: external-001, external-002, external-003
+candidate_vs_external.py
+  comparison_id: cmp-housing-007-issue-1
+  candidate_credit: true
+  external_credit: false
+  equivalent: false
+  observation: candidate_not_yet_recognized
+  gap_exists: true
+  gap_is_error: false
+
+credit_observation_report.py
+  report_id: obs-report-housing-007-issue-1
+  summary: "Contribution candidate exists but no external credit observed."
+  candidate_credit: true
+  external_credit: false
   credit_issued: false
-  append_only: true
+  4 sections: Candidate Exists, External Credit Absent,
+              No Contradiction Exists, Observation Is Sufficient
+  summary_table:
+    candidate_exists: true
+    external_credit_absent: true
+    gap_is_error: false
+    observation_sufficient: true
+    dango_issues_credit: false
+    external_system_sovereign: true
 ```
 
 ---
 
-## New Files (Phase 11)
+## New Files (Phase 12)
 
-- bridge/gitsea/credit/CONTRIBUTOR_CREDIT_SPEC.md
-- bridge/gitsea/credit/CREDIT_CANDIDATE_SPEC.md
-- bridge/gitsea/credit/CONTRIBUTION_HISTORY_SPEC.md
-- bridge/gitsea/credit/runtime/contributor_registry.py
-- bridge/gitsea/credit/runtime/contribution_candidate.py
-- bridge/gitsea/credit/runtime/credit_candidate_snapshot.py
-- bridge/gitsea/credit/runtime/contribution_history.py
-- bridge/gitsea/credit/examples/contributor-registry.json (generated)
-- bridge/gitsea/credit/examples/contribution-candidate.json (generated)
-- bridge/gitsea/credit/examples/credit-candidate-snapshot.json (generated)
-- bridge/gitsea/credit/examples/contribution-history.json (generated)
+- bridge/gitsea/external_credit/EXTERNAL_CREDIT_SPEC.md
+- bridge/gitsea/external_credit/OBSERVATION_NOT_ISSUANCE.md
+- bridge/gitsea/external_credit/CANDIDATE_VS_EXTERNAL_CREDIT.md
+- bridge/gitsea/external_credit/runtime/external_credit_adapter.py
+- bridge/gitsea/external_credit/runtime/external_credit_snapshot.py
+- bridge/gitsea/external_credit/runtime/candidate_vs_external.py
+- bridge/gitsea/external_credit/runtime/credit_observation_report.py
+- bridge/gitsea/external_credit/examples/credit-adapter.json (generated)
+- bridge/gitsea/external_credit/examples/external-credit-snapshot.json (generated)
+- bridge/gitsea/external_credit/examples/candidate-vs-external.json (generated)
+- bridge/gitsea/external_credit/examples/credit-observation-report.json (generated)
 
-## Updated Files (Phase 11)
+## Updated Files (Phase 12)
 
-- bridge/gitsea/README.md (Phase 11 section + credit/ in layout)
+- bridge/gitsea/README.md (Phase 12 section + external_credit/ in layout)
 - bridge/RESUME_STATE.md (this file)
 
 ---
 
-## Key Invariants (all Phase 11 files)
+## Key Invariants (all Phase 12 files)
 
 | Field | Value |
 |-------|-------|
@@ -110,12 +126,23 @@ contribution_history.py
 | `append_only` | `true` |
 | `contestable` | `true` |
 | `reopenable` | `true` |
-| `credit_issued` | `false` (always — permanent invariant) |
-| `external_system` | `"gitsea"` |
+| `credit_issued` | `false` (permanent invariant) |
+| `external_credit_detected` | `false` (as observed 2026-05-30) |
+| `observation_only` | `true` |
+| `gap_is_error` | `false` (invariant — gap is never an error) |
+| `dango_issues_credit` | `false` |
+| `external_system_sovereign` | `true` |
 
 ---
 
 ## Previous Phase Context
+
+### Phase 11 Candidates (housing-007 / Issue #1)
+
+- total_candidates: 3
+- credit_eligible: 2 (external-001 reviewer, external-002 evidence_accepted)
+- credit_issued: false
+- external_system: gitsea
 
 ### Phase 10 On-Chain Facts (observed, not executed by Dan-Go)
 
@@ -125,7 +152,6 @@ contribution_history.py
 | RepoVault | `0x3F9c96A429697B458Fe0a16502A050E5AB50bB00` |
 | Owner wallet | `0x89b38ff776565f095b3cd46C5f35EAb27506417C` |
 | Repo ID | `B93829F8829E2FFD13EF10ABA0B8442233BCF80172321B951C50E2E0C4C30D08` |
-| Splits root | `DA309748EA18E9C8C99B7FC50828251D30EB65EB1817FFF6507EC6AB5895B959` |
 | Event | RepoLinked |
 | Status | linked |
 
@@ -133,17 +159,19 @@ contribution_history.py
 
 ## Next Step Candidates
 
-1. **Merge Phase 11 PR** — after review
-2. **Phase 12: GITSEA Stream Candidate Tracking** — monitor when/if streams activate
+1. **Merge Phase 12 PR** — after review
+2. **Phase 13: GITSEA Stream Candidate Tracking** — monitor stream activation events
 3. **Live event ingestion** — real-time cooperation signal updates
-4. **Multi-claim credit dashboard** — aggregate across housing-006, housing-007
-5. **Federation negotiation snapshot** — aggregate Issue history across gitlawb nodes
+4. **Multi-claim observation dashboard** — aggregate across housing-006, housing-007
+5. **Federation credit observation** — observe credit across gitlawb nodes
 
 ---
 
 *dango-gitsea-bridge · authority: none · append-only · stdlib only · hard enforcement: forbidden*
 *Signal is not reward.*
 *Contribution history is not credit.*
+*Observation is not issuance.*
+*Candidate credit is not external credit.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Contribution becomes legible before it becomes valuable.*

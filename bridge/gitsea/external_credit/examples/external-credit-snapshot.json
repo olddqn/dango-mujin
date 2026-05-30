@@ -1,0 +1,29 @@
+{
+  "snapshot_type": "external_credit_snapshot",
+  "generated_at": "2026-05-30T04:51:23.481619+00:00",
+  "snapshot_id": "ext-snapshot-housing-007-issue-1",
+  "claim_id": "housing-007",
+  "issue_id": 1,
+  "candidate_count": 3,
+  "credit_eligible": 2,
+  "systems_observed": [
+    "gitsea"
+  ],
+  "system_count": 1,
+  "external_credit_detected": false,
+  "credit_visible_in": [],
+  "observation_only": true,
+  "observation_status": "no_external_credit_detected",
+  "gap_note": "2 candidate(s) exist but no external credit detected. This is not an error. External credit is sovereign and optional. Candidate credit is not external credit.",
+  "credit_issued": false,
+  "moves_money": false,
+  "execution_allowed": false,
+  "hard_enforcement": false,
+  "advisory": true,
+  "authority": "none",
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "principle_1": "Observation is not issuance.",
+  "principle_2": "Candidate credit is not external credit."
+}
