@@ -1,0 +1,161 @@
+{
+  "record_type": "recurrence_snapshot",
+  "snapshot_id": "recurrence-snapshot-001",
+  "recurrence_count": 4,
+  "commons_counts": {
+    "jammy-house-001": 2,
+    "dra-001": 1,
+    "yacypherpunks-001": 1
+  },
+  "urgency_note": "No urgency ranking applied \u2014 recurrence_is_ranking: false on all records.",
+  "recurrences": [
+    {
+      "recurrence_id": "recurrence-001",
+      "pattern_id": "aid-pattern-001",
+      "commons_id": "jammy-house-001",
+      "recurrence_type": "food_need_reappeared",
+      "count": 3,
+      "linked_loop_ids": [
+        "care-loop-001",
+        "care-loop-003"
+      ],
+      "linked_case_ids": [
+        "relief-case-001"
+      ],
+      "observation_note": "Food support need observed recurring across three recorded instances in Jammy House.",
+      "record_type": "recurrence_observation",
+      "pattern_type": "recurring_food_support",
+      "generated_at": "2026-05-30T09:45:59.640454+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "recurrence_is_ranking": false,
+      "ranks_suffering": false,
+      "recurrence_judges_prior_response": false,
+      "recurrence_demands_new_response": false,
+      "recurrence_certifies_failure": false,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false
+    },
+    {
+      "recurrence_id": "recurrence-002",
+      "pattern_id": "aid-pattern-002",
+      "commons_id": "dra-001",
+      "recurrence_type": "displacement_relief_ongoing",
+      "count": 4,
+      "linked_loop_ids": [
+        "care-loop-002"
+      ],
+      "linked_case_ids": [
+        "relief-case-003",
+        "relief-case-004"
+      ],
+      "observation_note": "Displacement relief need recorded across four observations in D.R.A. context.",
+      "record_type": "recurrence_observation",
+      "pattern_type": "ongoing_displacement_relief",
+      "generated_at": "2026-05-30T09:45:59.640620+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "recurrence_is_ranking": false,
+      "ranks_suffering": false,
+      "recurrence_judges_prior_response": false,
+      "recurrence_demands_new_response": false,
+      "recurrence_certifies_failure": false,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false
+    },
+    {
+      "recurrence_id": "recurrence-003",
+      "pattern_id": "aid-pattern-003",
+      "commons_id": "jammy-house-001",
+      "recurrence_type": "tenancy_unresolved_continued",
+      "count": 2,
+      "linked_loop_ids": [
+        "care-loop-001"
+      ],
+      "linked_case_ids": [
+        "relief-case-002"
+      ],
+      "observation_note": "Housing advocacy cases recorded without tenancy resolution across two observations.",
+      "record_type": "recurrence_observation",
+      "pattern_type": "unresolved_tenancy_pattern",
+      "generated_at": "2026-05-30T09:45:59.640623+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "recurrence_is_ranking": false,
+      "ranks_suffering": false,
+      "recurrence_judges_prior_response": false,
+      "recurrence_demands_new_response": false,
+      "recurrence_certifies_failure": false,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false
+    },
+    {
+      "recurrence_id": "recurrence-004",
+      "pattern_id": "aid-pattern-004",
+      "commons_id": "yacypherpunks-001",
+      "recurrence_type": "skill_exchange_deferred",
+      "count": 1,
+      "linked_loop_ids": [
+        "care-loop-004"
+      ],
+      "linked_case_ids": [
+        "relief-case-005"
+      ],
+      "observation_note": "Skill exchange session recorded once as pending; not yet a recurrence pattern.",
+      "record_type": "recurrence_observation",
+      "pattern_type": "pending_skill_exchange",
+      "generated_at": "2026-05-30T09:45:59.640625+00:00",
+      "authority": "none",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "pattern_learning_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "recurrence_is_ranking": false,
+      "ranks_suffering": false,
+      "recurrence_judges_prior_response": false,
+      "recurrence_demands_new_response": false,
+      "recurrence_certifies_failure": false,
+      "pattern_is_prediction": false,
+      "learning_is_prescription": false
+    }
+  ],
+  "authority": "none",
+  "recurrence_is_ranking": false,
+  "ranks_suffering": false,
+  "pattern_is_prediction": false,
+  "learning_is_prescription": false,
+  "generated_at": "2026-05-30T09:45:59.640628+00:00",
+  "phase": 20,
+  "phase_phrase_1": "Pattern is not prediction.",
+  "phase_phrase_2": "Learning is not prescription.",
+  "phase_phrase_3": "Recurrence is not ranking."
+}
