@@ -84,6 +84,34 @@ python runtime/trust_score.py
 python runtime/reality_feedback.py
 ```
 
+## Phase 22 — Globe（グローブ）基盤
+
+Dan-Go は、AIエージェントと人間が協働して合意形成を行うためのシステムです。
+フェーズ22では、その先にある自由参加型共同体「グローブ」の基盤を追加しました。
+グローブは、国家・自治体・DAO・地域共同体・プロジェクトなどを包含できる単位であり、
+提案・熟議・ルール・実行履歴をGit的に管理することで、政治家中心ではない
+新しい共同体運営の可能性を探ります。
+
+Dan-Go is a system for humans and AI agents to collaboratively build consensus.
+In Phase 22, we added the foundation for "Globe" — a free-participation voluntary community.
+A Globe can encompass nation-states, municipalities, DAOs, local communities, and projects,
+managing proposals, deliberations, rules, and execution history in a Git-like manner,
+exploring new possibilities for community governance beyond politician-centric models.
+
+```bash
+# Globe 一覧を見る
+python3 globe/runtime/globe_registry.py list
+
+# 熟議ログを読む
+python3 globe/runtime/deliberation_log.py summary proposal-001
+
+# UIサーバーを起動して /globe ページを開く
+python3 globe/runtime/globe_server.py
+# → http://localhost:7422/globe
+```
+
+---
+
 ## Structure
 
 ```
@@ -99,6 +127,10 @@ dango-mujin/
 ├── ROADMAP.md             — Where this goes next
 ├── examples/              — Sample claims
 ├── runtime/               — Minimum viable Python runtime
+├── globe/                 — Phase 22: Globe foundation layer
+│   ├── data/              — Globe, Proposal, Deliberation JSON data
+│   ├── runtime/           — CLI tools + HTTP server (stdlib only)
+│   └── spec/              — Globe specification
 └── bridge/                — Dan-Go bridge layer (GITSEA, OGI, gitlawb)
     └── gitsea/            — GITSEA asset registration bridge (advisory only)
 ```

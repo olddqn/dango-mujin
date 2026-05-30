@@ -1,0 +1,70 @@
+[
+  {
+    "proposal_id": "proposal-001",
+    "globe_id": "globe-001",
+    "title": "Dan-Go プロトコルを第零国家の公式合意形成ルールとして採用する",
+    "body": "提案：Dan-GoのMujinプロトコル（MUJIN_PROTOCOL.md参照）を第零国家の公式な合意形成・意思決定フレームワークとして正式に採用する。\n\n理由：\n1. Dan-Goは多数決ではなく熟議・合意形成を重視する。\n2. AIエージェントとの協働によって、人間だけでは処理できない複雑な合意形成が可能になる。\n3. Git的な履歴管理により、すべての意思決定が公開・監査可能になる。\n\n反対意見・懸念点：\n- AIに依存しすぎることへの懸念\n- 技術的なアクセス格差\n- 合意形成の速度\n\nProposal: Formally adopt the Dan-Go Mujin Protocol (see MUJIN_PROTOCOL.md) as the official consensus-building and decision-making framework for State Zero.\n\nRationale:\n1. Dan-Go prioritizes deliberation and consensus over majority rule.\n2. Collaboration with AI agents enables complex consensus formation beyond human processing capacity alone.\n3. Git-like history management makes all decisions publicly auditable.",
+    "proposer": "founding-member-001",
+    "status": "discussion",
+    "gitsea_link": {
+      "gitsea_repo_url": "https://gitlawb.com/z6MkpWP3c2xE5Veu5xSJxviWUrM69SDX4offMifsVXAs31Ts/dango-mujin",
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": "MUJIN_PROTOCOL.md"
+    },
+    "created_at": "2026-05-30T00:00:00Z",
+    "updated_at": "2026-05-30T00:00:00Z"
+  },
+  {
+    "proposal_id": "proposal-002",
+    "globe_id": "globe-001",
+    "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+    "body": "提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。\n\n背景：既存の国家・機関による支援の限界を補完し、自由参加型の草の根支援ネットワークを構築することが第零国家の使命の一部である。\n\nProposal: Formally position refugee and displaced person support as one of the core priority issues of State Zero. Specifically, deepen cooperation with D.R.A. (Displaced Relief Action) and build mutual aid routes for housing, food, legal support, and community integration.",
+    "proposer": "founding-member-002",
+    "status": "voting",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T01:00:00Z",
+    "updated_at": "2026-05-30T01:00:00Z"
+  },
+  {
+    "proposal_id": "proposal-003",
+    "globe_id": "globe-002",
+    "title": "プライバシー保護ツールの共同開発と相互扶助的配布",
+    "body": "提案：YaCypherpunks Commonsとして、プライバシー保護ツールを共同開発し、技術的アクセスが困難なコミュニティへの相互扶助的配布を行う。\n\n具体的手段：\n- ワークショップによる技術共有\n- 翻訳・多言語化\n- オフラインでも機能するツールの優先開発\n\nProposal: As YaCypherpunks Commons, jointly develop privacy protection tools and distribute them through mutual aid to communities with limited technical access.",
+    "proposer": "yacypherpunks-member-001",
+    "status": "draft",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T02:00:00Z",
+    "updated_at": "2026-05-30T02:00:00Z"
+  },
+  {
+    "proposal_id": "proposal-004",
+    "globe_id": "globe-003",
+    "title": "食料支援の定期化と相互扶助スケジュールの確立",
+    "body": "提案：Jammy Houseにおける食料支援を、アドホックな対応から定期的な相互扶助スケジュールへと移行する。Phase 17-20で観察された食料支援ニーズの繰り返しパターンを踏まえ、週次の食事準備協力と月次のフードパントリー訪問をスケジュール化する。\n\nこれは義務ではない。参加は任意であり、スケジュールは提案に過ぎない。\n\nProposal: Transition food support in Jammy House from ad hoc responses to a regular mutual aid schedule. Based on the recurring food support patterns observed in Phases 17-20, schedule weekly meal preparation cooperation and monthly food pantry visits. This is not mandatory. Participation is voluntary and the schedule is only a proposal.",
+    "proposer": "jammy-house-member-001",
+    "status": "discussion",
+    "gitsea_link": {
+      "gitsea_repo_url": null,
+      "gitsea_issue_url": null,
+      "gitsea_pr_url": null,
+      "commit_hash": null,
+      "linked_rule_path": null
+    },
+    "created_at": "2026-05-30T03:00:00Z",
+    "updated_at": "2026-05-30T03:00:00Z"
+  }
+]
