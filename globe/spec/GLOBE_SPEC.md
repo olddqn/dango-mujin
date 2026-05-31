@@ -886,6 +886,88 @@ python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
 
 ---
 
+## Phase 36 — Globe Feed / Changelog（フェーズ36）
+
+Globe 全レイヤーの活動を時系列で集約した advisory フィードを提供する。
+フィードは閲覧補助表示にすぎない。実行・影響・参加者ランキングの証明ではない。
+
+> "Feed is advisory display only."
+> "Feed is not proof of execution."
+> "Feed is not proof of impact."
+> "Feed does not rank participants."
+> "Feed does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `feed_is_advisory_display_only` | `True` |
+| `feed_is_not_proof_of_execution` | `True` |
+| `feed_is_not_proof_of_impact` | `True` |
+| `feed_does_not_rank_participants` | `True` |
+| `feed_does_not_allocate_resources` | `True` |
+| `human_review_is_required_before_any_real_world_action` | `True` |
+| `authority` | `none` |
+
+### データソース / Data Sources (9 source_types)
+
+| source_type | 件数 | 主キー | タイムスタンプ |
+|-------------|------|--------|--------------|
+| `proposal` | 5 | proposal_id | created_at |
+| `claim` | 2 | claim_id | created_at |
+| `directive` | 2 | directive_id | created_at |
+| `execution_log` | 8 | log_id | created_at |
+| `reality_feedback` | 4 | feedback_id | source_entry_created_at |
+| `bridge_target_link` | 4 | link_id | created_at |
+| `timeline` | 1 | contribution_timeline (report) | generated_at |
+| `activity_heatmap` | 1 | activity_heatmap (report) | generated_at |
+| `directive_checklist` | 2 | checklist-{directive_id} | generated_at |
+
+### フィードアイテム構造 / Feed Item Structure
+
+```json
+{
+  "feed_id":         "feed-proposal-proposal-001",
+  "globe_id":        "globe-001",
+  "source_type":     "proposal",
+  "source_id":       "proposal-001",
+  "title":           "Proposal: 難民・避難民支援を...",
+  "content_excerpt": "提案：難民・避難民支援を...",
+  "created_at":      "2026-05-30 01:00:00",
+  "source_path":     "globe/data/proposals.json",
+  "url_path":        "/globe/globe-001/proposals/proposal-001",
+  "tags":            ["closed", "globe-001"],
+  "advisory_only":   true,
+  "not_proof_of_execution": true
+}
+```
+
+### CLI
+
+```bash
+python3 globe/runtime/globe_feed.py summary
+python3 globe/runtime/globe_feed.py save
+python3 globe/runtime/globe_feed.py show-globe globe-001
+python3 globe/runtime/globe_feed.py show-type execution_log
+```
+
+### HTTP ルート
+
+| Path | 説明 |
+|------|------|
+| `/globe/feed` | 全フィードアイテム（created_at 降順） |
+| `/globe/feed?globe=<globe_id>` | Globe 絞り込み |
+| `/globe/feed?type=<source_type>` | source_type 絞り込み |
+
+### 実装ファイル
+
+- `globe/runtime/globe_feed.py` — フィード生成・CLI
+- `globe/reports/globe_feed.json` — 生成済み JSON（29 items）
+- `globe/reports/globe_feed.md` — 生成済み Markdown
+
+---
+
 ## Phase 35 — Directive Execution Checklist（フェーズ35）
 
 Directive の execution_steps を advisory チェックリスト形式でブラウザ表示・CLI 確認する。
