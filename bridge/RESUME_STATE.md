@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Activity Heatmap
+# RESUME_STATE.md — Directive Execution Checklist
 
-> **STATUS: IN PROGRESS (feature/phase-34-activity-heatmap)**
+> **STATUS: IN PROGRESS (feature/phase-35-directive-checklist)**
 
-**Phase:** Activity Heatmap (Phase 34)
-**Branch:** feature/phase-34-activity-heatmap
+**Phase:** Directive Execution Checklist (Phase 35)
+**Branch:** feature/phase-35-directive-checklist
 **Started:** 2026-05-31
 
 ---
@@ -53,7 +53,8 @@
 - Globe Search / Filter UI (Phase 31) — PR #25, merged
 - Contribution Timeline View (Phase 32) — PR #26, merged
 - Proposal Comparison View (Phase 33) — PR #27, merged
-- **Activity Heatmap (Phase 34)** ← current PR
+- Activity Heatmap (Phase 34) — PR #28, merged
+- **Directive Execution Checklist (Phase 35)** ← current PR
 
 ---
 
@@ -297,7 +298,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–34)
+## Protocol Principle Accumulation (Phases 10–35)
 
 | Phase | Phrase |
 |-------|--------|
@@ -396,6 +397,11 @@ need_forecast_report.py
 | 34 | "Heatmap does not rank participants." |
 | 34 | "Heatmap does not allocate resources." |
 | 34 | "Human review is required before any real-world action." |
+| 35 | "Checklist is advisory display only." |
+| 35 | "Checklist is not proof of execution." |
+| 35 | "Checklist is not proof of completion." |
+| 35 | "Checklist does not approve execution." |
+| 35 | "Human review is required before any real-world action." |
 
 ---
 
@@ -504,13 +510,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 35)
+
+- `globe/runtime/directive_checklist.py` — Checklist builder + CLI (advisory only)
+- `globe/reports/directive_checklists.json` — Generated checklists (2 directives, 8 steps)
+- `globe/reports/directive_checklists.md` — Human-readable checklist report
+
+## Updated Files (Phase 35)
+
+- `globe/runtime/globe_server.py` — Added `_load_checklists()`, `_render_cl_item()`, `render_checklist_page()`, Phase 35 CSS; wired `/globe/<id>/directives/<did>/checklist` route; added "📋 Checklist (N steps) →" link and attention note to Directive detail page
+- `globe/spec/GLOBE_SPEC.md` — Phase 35 section
+- `README.md` — Phase 35 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 34 PR** — after review
-2. **Phase 35: Directive Execution Checklist** — advisory checklist view of
-   execution steps per directive, no approval gate
-3. **Phase 36: Globe Feed / Changelog** — append-only activity feed with
+1. **Merge Phase 35 PR** — after review
+2. **Phase 36: Globe Feed / Changelog** — append-only activity feed with
    advisory event stream display, no notifications, no push
+3. **Phase 37: Cross-Directive Dependency Map** — advisory visualization of
+   which directives reference shared data/steps, no execution gating
 
 ---
 
@@ -599,4 +620,8 @@ _No new files — Phase 29 extends existing runtime scripts._
 *Heatmap is not proof of impact.*
 *Heatmap does not rank participants.*
 *Heatmap does not allocate resources.*
+*Checklist is advisory display only.*
+*Checklist is not proof of execution.*
+*Checklist is not proof of completion.*
+*Checklist does not approve execution.*
 *Contribution becomes legible before it becomes valuable.*

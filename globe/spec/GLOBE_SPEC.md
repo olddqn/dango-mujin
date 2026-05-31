@@ -886,6 +886,95 @@ python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
 
 ---
 
+## Phase 35 — Directive Execution Checklist（フェーズ35）
+
+Directive の execution_steps を advisory チェックリスト形式でブラウザ表示・CLI 確認する。
+チェックリストは実行承認・完了証明・法的効力ではなく、確認補助表示にすぎない。
+
+> "Checklist is advisory display only."
+> "Checklist is not proof of execution."
+> "Checklist is not proof of completion."
+> "Checklist does not approve execution."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `checklist_is_advisory_display_only` | `true` |
+| `checklist_is_not_proof_of_execution` | `true` |
+| `checklist_is_not_proof_of_completion` | `true` |
+| `checklist_does_not_approve_execution` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### checklist item フィールド
+
+| フィールド | 内容 |
+|-----------|------|
+| `checklist_id` | `cl-<directive_id>-<step_id>` |
+| `directive_id` / `globe_id` / `step_id` | 参照元 |
+| `step_title` / `step_title_en` | ステップ説明 |
+| `human_approval_required` | 承認必要フラグ |
+| `related_log_count` | 関連ログエントリ数 |
+| `has_human_approval` / `human_approval_count` | 承認記録有無 |
+| `has_execution_attempt` / `execution_attempt_count` | 実行試行 |
+| `has_observation` / `observation_count` | 観察 |
+| `has_feedback` / `feedback_count` | フィードバック |
+| `has_objection` / `objection_count` | 異議（観察のみ、資格剥奪ではない） |
+| `has_rollback_request` / `rollback_request_count` | 差し戻し要求（観察のみ） |
+| `voluntary_resolution_signal_count` | Resolution Signal 数 |
+| `needs_attention` | objection/rollback 観察フラグ |
+| `attribution` | `step_specific` または `directive_summary` |
+| `advisory_only` | `true` |
+| `not_proof_of_completion` | `true` |
+
+### ログ関連付け方針
+
+| ケース | 方針 |
+|--------|------|
+| content に step_id が含まれる | step_specific として関連付け |
+| step_id が含まれない | directive_summary として全ステップに同じ集計を表示 |
+
+### CLI
+
+```bash
+# 全体サマリー
+python3 globe/runtime/directive_checklist.py summary
+
+# 保存（JSON + MD）
+python3 globe/runtime/directive_checklist.py save
+
+# Directive 別
+python3 globe/runtime/directive_checklist.py show-directive directive-claim-proposal-002
+
+# Globe 別
+python3 globe/runtime/directive_checklist.py show-globe globe-001
+```
+
+### HTTP ルート
+
+| URL | 内容 |
+|-----|------|
+| `/globe/<id>/directives/<did>/checklist` | Directive ステップ チェックリスト |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/directive_checklists.json` | 全チェックリスト (machine-readable) |
+| `globe/reports/directive_checklists.md` | 人間可読チェックリスト |
+
+### UI特性
+
+- 実行ボタン・承認ボタン・完了ボタンなし
+- チェックボックスなし（disabled/read-only でもなく、そもそも表示しない）
+- ⚠️ attention = objection/rollback の観察表示（優先度・資格剥奪ではない）
+- Directive 詳細ページに「📋 Checklist (N steps) →」リンクを追加
+- attribution: `directive_summary` = step_id 特定エントリなし（全ステップに同じ集計を表示）
+
+---
+
 ## Phase 34 — Activity Heatmap（フェーズ34）
 
 Globe 全体のイベントを日付ごとに集計し、カレンダー形式で可視化する advisory UI / CLI。

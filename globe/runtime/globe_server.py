@@ -29,6 +29,7 @@ Routes:
     /globe/activity                     → Global activity heatmap       [Phase 34]
     /globe/activity?date=<YYYY-MM-DD>   → Heatmap filtered by date      [Phase 34]
     /globe/activity?globe=<globe_id>    → Heatmap filtered by globe     [Phase 34]
+    /globe/<id>/directives/<did>/checklist → Directive step checklist   [Phase 35]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -919,6 +920,44 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .hm-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .hm-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+/* Phase 35 — Directive Execution Checklist */
+.cl-panel { background: #08090f; border: 1px solid #161e30;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.cl-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.cl-item { border: 1px solid #1a2438; border-radius: 6px;
+           padding: 12px 16px; margin-bottom: 10px; background: #0e1018; }
+.cl-item.attention { border-left: 3px solid #3a2a1a; background: #10100e; }
+.cl-item.no-log    { border-left: 3px solid #1e2030; }
+.cl-step-header { display: flex; align-items: baseline; gap: 10px;
+                  margin-bottom: 6px; flex-wrap: wrap; }
+.cl-step-id { font-family: monospace; font-size: 0.78rem; color: #3a5070;
+              flex-shrink: 0; }
+.cl-step-title { font-size: 0.86rem; color: #7890a8; line-height: 1.5; }
+.cl-step-title-en { font-size: 0.78rem; color: #4a5a6a; margin-top: 3px;
+                    line-height: 1.4; }
+.cl-badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 5px; }
+.cl-badge { font-size: 0.70rem; padding: 2px 7px; border-radius: 3px;
+            background: #10121a; color: #3a4a5a; }
+.cl-badge.appr-req  { background: #0e1828; color: #3a6888; }
+.cl-badge.appr-done { background: #0e2018; color: #3a7848; }
+.cl-badge.appr-none { background: #1a1412; color: #5a4a38; }
+.cl-badge.obj       { background: #1a1010; color: #8a4838; }
+.cl-badge.rb        { background: #181010; color: #7a4828; }
+.cl-badge.obs       { background: #0e1420; color: #3a5880; }
+.cl-badge.exec      { background: #120e20; color: #5a4880; }
+.cl-badge.vrs       { background: #100e18; color: #4a4870; }
+.cl-log-row { font-size: 0.76rem; color: #2a3a52; margin-top: 5px; }
+.cl-attribution { font-size: 0.70rem; color: #1e2a3a; margin-top: 4px;
+                  font-style: italic; }
+.cl-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+               gap: 10px; margin-bottom: 18px; text-align: center;
+               font-size: 0.82rem; }
+.cl-stat-row .cs-num { font-size: 1.3rem; color: #6080a0; }
+.cl-stat-row .cs-lbl { color: #2a3a52; font-size: 0.74rem; }
+.cl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.cl-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -1875,6 +1914,244 @@ def render_activity_page(
     return _page("Globe Activity Heatmap", breadcrumb, body)
 
 
+# ─── Phase 35: Directive Execution Checklist ───────────────────────────────────
+
+_CHECKLISTS_JSON_PATH = _REPORTS_DIR / "directive_checklists.json"
+
+_CL_ENTRY_ICON = {
+    "human_approval":              "✅",
+    "execution_attempt":           "▶",
+    "observation":                 "👁",
+    "feedback":                    "💬",
+    "objection":                   "⚠️",
+    "rollback_request":            "↩",
+    "voluntary_resolution_signal": "🏳️",
+}
+
+
+def _load_checklists() -> dict:
+    """Phase 35 — load directive_checklists.json or build on-the-fly.
+
+    Checklist is advisory display only. Not proof of execution or completion.
+    Does not approve execution. Human review is required before any real-world action.
+    """
+    if _CHECKLISTS_JSON_PATH.exists():
+        try:
+            raw = json.loads(_CHECKLISTS_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "directives" in raw:
+                return raw
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _mod = Path(__file__).parent / "directive_checklist.py"
+        spec = _ilu.spec_from_file_location("directive_checklist", _mod)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_checklists()
+    except Exception:
+        return {"directives": [], "items": [], "total_steps": 0,
+                "directive_count": 0, "generated_at": ""}
+
+
+def _render_cl_item(it: dict) -> str:
+    """Render one checklist item card. Advisory display only. No completion button."""
+    step_id = _e(it.get("step_id", ""))
+    title   = _e(it.get("step_title", ""))
+    title_en = _e(it.get("step_title_en", ""))
+    appr_req = it.get("human_approval_required", True)
+    attn    = it.get("needs_attention", False)
+    attr    = it.get("attribution", "")
+
+    item_cls = "cl-item attention" if attn else "cl-item"
+    if not it.get("related_log_count"):
+        item_cls += " no-log"
+
+    # Badges
+    badges = ""
+    if appr_req:
+        badges += '<span class="cl-badge appr-req">✅ human approval required</span>'
+    else:
+        badges += '<span class="cl-badge">— approval not required</span>'
+
+    if it.get("has_human_approval"):
+        badges += f'<span class="cl-badge appr-done">✅ approval recorded ({it["human_approval_count"]})</span>'
+    else:
+        badges += '<span class="cl-badge appr-none">⬜ no approval recorded</span>'
+
+    if it.get("has_execution_attempt"):
+        badges += f'<span class="cl-badge exec">▶ attempts: {it["execution_attempt_count"]}</span>'
+    if it.get("has_observation"):
+        badges += f'<span class="cl-badge obs">👁 obs: {it["observation_count"]}</span>'
+    if it.get("has_feedback"):
+        badges += f'<span class="cl-badge obs">💬 feedback: {it["feedback_count"]}</span>'
+    if it.get("has_objection"):
+        badges += (f'<span class="cl-badge obj">⚠️ objections: {it["objection_count"]} '
+                   f'<span style="font-size:0.67rem;color:#5a2020">'
+                   f'[observation · not disqualification]</span></span>')
+    if it.get("has_rollback_request"):
+        badges += (f'<span class="cl-badge rb">↩ rollbacks: {it["rollback_request_count"]} '
+                   f'<span style="font-size:0.67rem;color:#4a2818">'
+                   f'[observation · not disqualification]</span></span>')
+    if it.get("voluntary_resolution_signal_count"):
+        badges += (f'<span class="cl-badge vrs">🏳️ signals: '
+                   f'{it["voluntary_resolution_signal_count"]}</span>')
+
+    latest_html = ""
+    if it.get("latest_related_entry_type"):
+        icon = _CL_ENTRY_ICON.get(it["latest_related_entry_type"], "•")
+        latest_html = (
+            f'<div class="cl-log-row">latest log: '
+            f'{icon} {_e(it["latest_related_entry_type"])} '
+            f'({_e(it["latest_related_entry_at"])})</div>'
+        )
+
+    attr_html = ""
+    if attr == "directive_summary":
+        attr_html = (
+            '<div class="cl-attribution">'
+            'log counts: directive-level summary (no step-specific log entries found)'
+            '</div>'
+        )
+    elif attr == "step_specific":
+        attr_html = (
+            '<div class="cl-attribution">log counts: step-specific entries</div>'
+        )
+
+    return f"""
+<div class="{item_cls}">
+  <div class="cl-step-header">
+    <span class="cl-step-id">{step_id}</span>
+    {'<span class="cl-badge obj" style="font-size:0.68rem">⚠️ attention</span>' if attn else ''}
+  </div>
+  <div class="cl-step-title">{title}</div>
+  {f'<div class="cl-step-title-en">{title_en}</div>' if title_en else ''}
+  <div class="cl-badges">{badges}</div>
+  {latest_html}
+  {attr_html}
+</div>"""
+
+
+def render_checklist_page(globe_id: str, directive_id: str) -> str | None:
+    """Phase 35 — Directive Execution Checklist page.
+
+    Checklist is advisory display only. Not proof of execution or completion.
+    Does not approve execution. No completion buttons. No approval buttons.
+    Human review is required before any real-world action.
+    """
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+
+    d = _load_directive_by_id(directive_id)
+    if not d or d.get("globe_id") != globe_id:
+        return None
+
+    cl_data = _load_checklists()
+    dir_cl = next((x for x in cl_data.get("directives", [])
+                   if x["directive_id"] == directive_id), None)
+    if not dir_cl:
+        # Build on-the-fly for this directive
+        entries = _load_exec_log_by_id(directive_id)
+        dir_cl = {
+            "directive_id": directive_id,
+            "globe_id": globe_id,
+            "title": d.get("title", ""),
+            "step_count": len(d.get("execution_steps", [])),
+            "log_entry_count": len(entries),
+            "items": [],
+        }
+
+    items = dir_cl.get("items", [])
+    total_items = len(items)
+    attn_count = sum(1 for it in items if it.get("needs_attention"))
+    appr_count = sum(1 for it in items if it.get("has_human_approval"))
+    obj_count  = sum(1 for it in items if it.get("has_objection"))
+    rb_count   = sum(1 for it in items if it.get("has_rollback_request"))
+    gen = _e(cl_data.get("generated_at", ""))
+
+    # ── Stat row ─────────────────────────────────────────────────────────
+    stat_row = f"""
+<div class="cl-stat-row">
+  <div><div class="cs-num">{total_items}</div>
+       <div class="cs-lbl">steps</div></div>
+  <div><div class="cs-num">✅ {appr_count}</div>
+       <div class="cs-lbl">with approval</div></div>
+  <div><div class="cs-num">⚠️ {obj_count}</div>
+       <div class="cs-lbl">with objection</div></div>
+  <div><div class="cs-num">↩ {rb_count}</div>
+       <div class="cs-lbl">with rollback</div></div>
+</div>"""
+
+    advisory_banner = (
+        '<div class="advisory-banner">'
+        'Checklist is advisory display only · Not proof of execution · '
+        'Not proof of completion · Does not approve execution · '
+        'Human review is required before any real-world action · '
+        'authority: none'
+        '</div>'
+    )
+
+    if items:
+        items_html = "".join(_render_cl_item(it) for it in items)
+    else:
+        items_html = '<div class="cl-empty">チェックリストステップがありません。</div>'
+
+    advisory = (
+        '<div class="cl-advisory">'
+        'Checklist is advisory display only · Not proof of execution · '
+        'Not proof of completion · Does not approve execution · '
+        'Human review is required before any real-world action · '
+        f'generated: {gen}'
+        '</div>'
+    )
+
+    attn_note = ""
+    if attn_count:
+        attn_note = (
+            f'<div style="background:#120e08;border:1px solid #2a1a10;border-radius:5px;'
+            f'padding:8px 12px;margin-bottom:14px;font-size:0.80rem;color:#7a4a28">'
+            f'⚠️ {attn_count} step(s) have objections or rollback requests — '
+            f'these are observations, not disqualifications. '
+            f'Human review is required before any action.'
+            f'</div>'
+        )
+
+    body = f"""
+<h2>📋 Execution Checklist — {_e(d.get('title', directive_id))}
+  <small style="font-size:0.60em;color:#3a4258">(Phase 35 · advisory only)</small>
+</h2>
+<div style="font-family:monospace;font-size:0.78rem;color:#3a4a6a;margin:4px 0 12px">
+  {_e(directive_id)}
+</div>
+{advisory_banner}
+{attn_note}
+{stat_row}
+<div class="cl-panel">
+  <h3>📋 Steps ({total_items}) — 確認補助表示のみ · 実行承認ではない · 完了証明ではない</h3>
+  {items_html}
+  {advisory}
+</div>
+<div style="margin-top:14px;font-size:0.82rem;color:#3a4a5a">
+  <a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}">← Directive 詳細</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/{_e(globe_id)}/logs/{_e(directive_id)}">Execution Log →</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}/timeline">Timeline →</a>
+</div>"""
+
+    return _page(
+        f"Checklist — {directive_id}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › '
+        f'<a href="/globe/{_e(globe_id)}/directives">Directives</a> › '
+        f'<a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}">{_e(directive_id)}</a> › '
+        f'Checklist',
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -2485,9 +2762,32 @@ def render_directive_detail(globe_id: str, directive_id: str) -> str | None:
   </div>
 </div>"""
 
+    # Phase 35 — checklist summary for directive detail
+    cl_data = _load_checklists()
+    dir_cl = next((x for x in cl_data.get("directives", [])
+                   if x["directive_id"] == directive_id), None)
+    cl_count = dir_cl["step_count"] if dir_cl else len(d.get("execution_steps", []))
+    cl_attn  = sum(1 for it in (dir_cl or {}).get("items", []) if it.get("needs_attention"))
+    cl_obj   = sum(1 for it in (dir_cl or {}).get("items", []) if it.get("has_objection"))
+    cl_rb    = sum(1 for it in (dir_cl or {}).get("items", []) if it.get("has_rollback_request"))
+
+    cl_attn_html = ""
+    if cl_attn:
+        cl_attn_html = (
+            f'<div style="background:#120e08;border:1px solid #2a1a10;border-radius:5px;'
+            f'padding:7px 12px;margin-bottom:10px;font-size:0.78rem;color:#6a4020">'
+            f'⚠️ Checklist: {cl_obj} step(s) with objections · '
+            f'{cl_rb} with rollbacks — observation only, not disqualification'
+            f'</div>'
+        )
+
     body = f"""
-<h2>🗂️ {_e(d.get('title', directive_id))}</h2>
+<h2>🗂️ {_e(d.get('title', directive_id))}
+  &nbsp;<a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}/checklist"
+           style="font-size:0.60em;color:#3a5878">📋 Checklist ({cl_count} steps) →</a>
+</h2>
 <div style="font-family:monospace;font-size:0.8rem;color:#3a4a6a;margin:4px 0 12px">{_e(directive_id)}</div>
+{cl_attn_html}
 {_ADVISORY_BANNER}
 
 <h3>基本情報</h3>
@@ -2854,6 +3154,16 @@ class GlobeHandler(BaseHTTPRequestHandler):
             self._send_html(render_timeline_page(
                 globe_id=m.group(1), directive_id=m.group(2)
             ))
+            return
+
+        # Phase 35 — directive checklist (before /globe/<id>/directives/<did> match)
+        m = re.fullmatch(r"/globe/([^/]+)/directives/([^/]+)/checklist", path)
+        if m:
+            content = render_checklist_page(m.group(1), m.group(2))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
             return
 
         m = re.fullmatch(r"/globe/([^/]+)/directives/([^/]+)", path)
