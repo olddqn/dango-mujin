@@ -241,6 +241,35 @@ python3 globe/runtime/execution_log_summary.py show-directive directive-claim-pr
 サマリは `globe/reports/execution_log_summary.json` と `globe/reports/execution_log_summary.md` に保存されます。
 UIサーバーの Globe 一覧ページと Globe 詳細ページにサマリテーブルが表示されます。
 
+## Phase 28 — Directive UI Routes
+
+フェーズ28では、Directive・Execution Log・Summary を globe_server.py 上で直接閲覧できる
+3つのUIルートを追加しました。
+
+Phase 28 adds three new UI routes to globe_server.py for viewing Directives,
+Execution Logs, and per-Globe directive counts directly in the browser.
+
+> "UI display is advisory only."
+> "UI display is not proof of execution."
+> "UI display creates no legal authority."
+> "UI display does not approve execution."
+> "UI display must preserve objections and rollback requests."
+
+```bash
+# UIサーバーを起動する
+python3 globe/runtime/globe_server.py
+# → http://localhost:7422/globe
+
+# Directive 一覧
+# → http://localhost:7422/globe/globe-001/directives
+
+# Directive 詳細（objective / invariants / execution steps / scope / log summary）
+# → http://localhost:7422/globe/globe-001/directives/directive-claim-proposal-002
+
+# Execution Log 全件表示（時系列 · append-only · 異議保存）
+# → http://localhost:7422/globe/globe-001/logs/directive-claim-proposal-002
+```
+
 ---
 
 ## Structure

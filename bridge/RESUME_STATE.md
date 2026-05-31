@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Cross-Globe Execution Log Summary
+# RESUME_STATE.md — Directive UI Routes
 
-> **STATUS: IN PROGRESS (feature/phase-26-exec-log-summary)**
+> **STATUS: IN PROGRESS (feature/phase-28-directive-ui-routes)**
 
-**Phase:** Cross-Globe Execution Log Summary (Phase 26)
-**Branch:** feature/phase-26-exec-log-summary
+**Phase:** Directive UI Routes (Phase 28)
+**Branch:** feature/phase-28-directive-ui-routes
 **Started:** 2026-05-31
 
 ---
@@ -44,7 +44,8 @@
 - Proposal → Claim Conversion Layer (Phase 23) — PR #15, merged
 - Claim → Directive Conversion Layer (Phase 24) — PR #16, merged
 - Directive Execution Log Layer (Phase 25) — PR #17, merged
-- **Cross-Globe Execution Log Summary (Phase 26)** ← current PR
+- Cross-Globe Execution Log Summary (Phase 26) — PR #19, merged
+- **Directive UI Routes (Phase 28)** ← current PR
 
 ---
 
@@ -288,7 +289,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–26)
+## Protocol Principle Accumulation (Phases 10–28)
 
 | Phase | Phrase |
 |-------|--------|
@@ -342,20 +343,25 @@ need_forecast_report.py
 | 26 | "Summary creates no legal authority." |
 | 26 | "Summary does not rank or punish participants." |
 | 26 | "Summary must preserve objections and rollback requests." |
+| 28 | "UI display is advisory only." |
+| 28 | "UI display is not proof of execution." |
+| 28 | "UI display creates no legal authority." |
+| 28 | "UI display does not approve execution." |
+| 28 | "UI display must preserve objections and rollback requests." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 26 PR** — after review
+1. **Merge Phase 28 PR** — after review
 2. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
    Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
-3. **Phase 28: Directive UI Routes** — `/globe/<id>/directives/<directive_id>`
-   and `/globe/<id>/logs/<directive_id>` page rendering
-4. **Phase 29: Voluntary Resolution Signal** — record when participants
+3. **Phase 29: Voluntary Resolution Signal** — record when participants
    voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
-5. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
+4. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
    to Phase 25/26 Execution Log observations in an advisory cross-phase report
+5. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
+   and directives, filter by status, globe, entry type
 
 ---
 
@@ -405,6 +411,11 @@ need_forecast_report.py
 *Summary creates no legal authority.*
 *Summary does not rank or punish participants.*
 *Summary must preserve objections and rollback requests.*
+*UI display is advisory only.*
+*UI display is not proof of execution.*
+*UI display creates no legal authority.*
+*UI display does not approve execution.*
+*UI display must preserve objections and rollback requests.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
