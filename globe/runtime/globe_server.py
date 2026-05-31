@@ -26,6 +26,9 @@ Routes:
     /globe/<id>/directives/<did>/timeline → Directive timeline          [Phase 32]
     /globe/compare                      → Proposal comparison selector  [Phase 33]
     /globe/compare?proposal_a=&proposal_b= → Side-by-side comparison   [Phase 33]
+    /globe/activity                     → Global activity heatmap       [Phase 34]
+    /globe/activity?date=<YYYY-MM-DD>   → Heatmap filtered by date      [Phase 34]
+    /globe/activity?globe=<globe_id>    → Heatmap filtered by globe     [Phase 34]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -50,6 +53,7 @@ _DATA_DIR = _GLOBE_DIR / "data"
 _CLAIMS_DIR = _GLOBE_DIR / "claims"
 _DIRECTIVES_DIR = _GLOBE_DIR / "directives"
 _LOGS_DIR = _GLOBE_DIR / "logs"
+_REPORTS_DIR = _GLOBE_DIR / "reports"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 7422
 
 # ─── Data helpers ──────────────────────────────────────────────────────────────
@@ -885,6 +889,36 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
                      font-size: 0.85rem; cursor: pointer; font-family: inherit;
                      margin-left: 8px; }
 .cmp-select button:hover { background: #1a2a3e; }
+/* Phase 34 — Activity Heatmap */
+.hm-panel { background: #08090f; border: 1px solid #161e30;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.hm-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.hm-day { display: flex; align-items: baseline; gap: 10px;
+          padding: 6px 0; border-bottom: 1px solid #0e1220; font-size: 0.82rem; }
+.hm-day:last-child { border-bottom: none; }
+.hm-date { color: #3a5070; font-family: monospace; width: 88px; flex-shrink: 0; }
+.hm-bar { font-family: monospace; color: #2a6080; letter-spacing: -1px;
+          width: 100px; flex-shrink: 0; overflow: hidden; }
+.hm-count { color: #607888; width: 28px; text-align: right; flex-shrink: 0; }
+.hm-attn { color: #7a4a28; font-size: 0.74rem; }
+.hm-globes { color: #2a3a52; font-size: 0.76rem; margin-left: 4px; }
+.hm-evts { color: #1e2a3a; font-size: 0.72rem; margin-left: 4px; }
+.hm-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+               gap: 10px; margin-bottom: 18px; text-align: center;
+               font-size: 0.82rem; }
+.hm-stat-row .hs-num { font-size: 1.3rem; color: #6080a0; }
+.hm-stat-row .hs-lbl { color: #2a3a52; font-size: 0.74rem; }
+.hm-src-table { width: 100%; border-collapse: collapse; font-size: 0.80rem;
+                margin-bottom: 14px; }
+.hm-src-table th { color: #2a3a50; font-size: 0.72rem; font-weight: 600;
+                    padding: 3px 8px; border-bottom: 1px solid #1e2a3a;
+                    text-align: left; }
+.hm-src-table td { color: #4a6070; padding: 4px 8px;
+                    border-bottom: 1px solid #101820; }
+.hm-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.hm-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -1633,6 +1667,214 @@ def render_compare_page(
     )
 
 
+# ─── Phase 34: Activity Heatmap ────────────────────────────────────────────────
+
+_HEATMAP_JSON_PATH = _REPORTS_DIR / "activity_heatmap.json"
+
+_HM_SRC_ICON = {
+    "execution_log":      "📝",
+    "resolution_signal":  "🏳️",
+    "reality_feedback":   "🔗",
+    "bridge_target_link": "🔗",
+}
+
+_BAR_CHARS_HM = " ▁▂▃▄▅▆▇█"
+
+
+def _hm_bar(count: int, max_count: int, width: int = 10) -> str:
+    """ASCII density bar — advisory visual only, not a score."""
+    if max_count == 0 or count == 0:
+        return " " * width
+    ratio = count / max_count
+    char_idx = min(8, max(1, round(ratio * 8)))
+    c = _BAR_CHARS_HM[char_idx]
+    filled = max(1, round(ratio * width))
+    return (c * filled).ljust(width)
+
+
+def _load_heatmap() -> dict:
+    """Phase 34 — load activity_heatmap.json or build on-the-fly.
+
+    Heatmap is advisory display only. Not proof of impact. No ranking.
+    """
+    if _HEATMAP_JSON_PATH.exists():
+        try:
+            raw = json.loads(_HEATMAP_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "by_date" in raw:
+                return raw
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _mod = Path(__file__).parent / "activity_heatmap.py"
+        spec = _ilu.spec_from_file_location("activity_heatmap", _mod)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_heatmap()
+    except Exception:
+        return {"by_date": {}, "total_events": 0, "date_count": 0,
+                "earliest_date": "", "latest_date": "", "attention_events": 0,
+                "source_type_totals": {}, "globe_totals": {}, "directive_totals": {},
+                "generated_at": ""}
+
+
+def _render_hm_day(date: str, day: dict, max_events: int) -> str:
+    """Render one heatmap row. Advisory counts only."""
+    bar = _hm_bar(day["total_events"], max_events)
+    attn = f'<span class="hm-attn">⚠️ {day["needs_attention_count"]}</span>' \
+           if day.get("needs_attention_count") else ""
+    globe_str = " ".join(
+        f'{_e(gid)}:{cnt}' for gid, cnt in sorted(day.get("by_globe", {}).items())
+    )
+    et_str = " ".join(
+        f'{_e(k)}:{v}' for k, v in sorted(day.get("event_type_counts", {}).items())
+    )
+    return f"""
+<div class="hm-day">
+  <span class="hm-date">{_e(date)}</span>
+  <span class="hm-bar">{_e(bar)}</span>
+  <span class="hm-count">{day['total_events']}</span>
+  {attn}
+  {f'<span class="hm-globes">{globe_str}</span>' if globe_str else ''}
+  {f'<span class="hm-evts">[{et_str}]</span>' if et_str else ''}
+</div>"""
+
+
+def render_activity_page(
+    date_filter: str | None = None,
+    globe_filter: str | None = None,
+) -> str:
+    """Phase 34 — Activity Heatmap page.
+
+    Heatmap is advisory display only. Not proof of impact.
+    No ranking. No execution buttons. No allocation buttons.
+    Event counts reflect what was recorded — not measures of quality.
+    """
+    hm = _load_heatmap()
+    by_date = hm.get("by_date", {})
+    gen = _e(hm.get("generated_at", ""))
+
+    # Apply filters
+    if date_filter and date_filter in by_date:
+        filtered = {date_filter: by_date[date_filter]}
+        scope_label = f"date={date_filter}"
+    elif globe_filter:
+        filtered = {
+            d: day for d, day in sorted(by_date.items())
+            if globe_filter in day.get("by_globe", {})
+        }
+        scope_label = f"globe={globe_filter}"
+    else:
+        filtered = dict(sorted(by_date.items()))
+        scope_label = "全 Globe"
+
+    total_filtered = sum(d["total_events"] for d in filtered.values())
+    attn_filtered  = sum(d.get("needs_attention_count", 0) for d in filtered.values())
+    max_ev = max((d["total_events"] for d in filtered.values()), default=1)
+
+    # ── Stat row (global totals always shown) ────────────────────────────
+    stat_row = f"""
+<div class="hm-stat-row">
+  <div><div class="hs-num">{hm.get('total_events',0)}</div>
+       <div class="hs-lbl">total events</div></div>
+  <div><div class="hs-num">{hm.get('date_count',0)}</div>
+       <div class="hs-lbl">active dates</div></div>
+  <div><div class="hs-num">{hm.get('attention_events',0)}</div>
+       <div class="hs-lbl">⚠️ attention</div></div>
+  <div><div class="hs-num">{len(hm.get('globe_totals',{}))}</div>
+       <div class="hs-lbl">globes</div></div>
+</div>"""
+
+    # ── Source type table ────────────────────────────────────────────────
+    src_rows = ""
+    for st, cnt in sorted(hm.get("source_type_totals", {}).items()):
+        icon = _HM_SRC_ICON.get(st, "•")
+        src_rows += (f'<tr><td>{icon} {_e(st)}</td>'
+                     f'<td style="text-align:right">{cnt}</td></tr>')
+    src_table = f"""
+<table class="hm-src-table">
+  <tr><th>Source type</th><th style="text-align:right">Total</th></tr>
+  {src_rows}
+</table>""" if src_rows else ""
+
+    # ── Globe navigation chips ────────────────────────────────────────────
+    base = "/globe/activity"
+    nav_chips = ""
+    for gid, cnt in sorted(hm.get("globe_totals", {}).items()):
+        active = globe_filter == gid
+        cls = "filter-chip active" if active else "filter-chip"
+        href = f"{base}?globe={_e(gid)}"
+        nav_chips += f'<span class="{cls}"><a href="{href}">🌐 {_e(gid)} ({cnt})</a></span> '
+    # Date links
+    for d in sorted(filtered if date_filter else by_date):
+        active = date_filter == d
+        cls = "filter-chip active" if active else "filter-chip"
+        nav_chips += f'<span class="{cls}"><a href="{base}?date={_e(d)}">{_e(d)}</a></span> '
+    # Clear
+    nav_chips += f'<span class="filter-chip"><a href="{base}">✕ clear</a></span>'
+    nav_html = f'<div class="search-filters">{nav_chips}</div>'
+
+    # ── Day rows ─────────────────────────────────────────────────────────
+    if filtered:
+        days_html = "".join(
+            _render_hm_day(d, filtered[d], max_ev) for d in sorted(filtered)
+        )
+    else:
+        days_html = '<div class="hm-empty">このフィルタに一致するアクティビティがありません。</div>'
+
+    advisory = (
+        '<div class="hm-advisory">'
+        'Heatmap is advisory display only · Not proof of impact · '
+        'Does not rank participants · Does not allocate resources · '
+        'Event counts reflect what was recorded — not measures of quality · '
+        f'Human review is required before any real-world action · generated: {gen}'
+        '</div>'
+    )
+
+    filter_info = (
+        f'<p style="font-size:0.82rem;color:#3a4a5a;margin-bottom:12px">'
+        f'表示: {_e(scope_label)} &nbsp;·&nbsp; {total_filtered} events'
+        f'{"  ⚠️ " + str(attn_filtered) + " attention" if attn_filtered else ""}'
+        f' &nbsp;·&nbsp; advisory counts · not measures of quality</p>'
+    )
+
+    date_range = (f'{_e(hm.get("earliest_date",""))} — {_e(hm.get("latest_date",""))}'
+                  if hm.get("earliest_date") else "—")
+
+    body = f"""
+<h2>🗓 Activity Heatmap
+  <small style="font-size:0.65em;color:#3a4258">(Phase 34 · {_e(scope_label)})</small>
+</h2>
+<p style="font-size:0.80rem;color:#2a3a52;margin-bottom:14px">
+  date range: {date_range}
+</p>
+{stat_row}
+{src_table}
+{nav_html}
+{filter_info}
+<div class="hm-panel">
+  <h3>🗓 Activity by Date — {_e(scope_label)}
+    <span style="font-size:0.75rem;color:#2a3858;font-weight:400">
+      [advisory counts · not measures of quality · not proof of impact]
+    </span>
+  </h3>
+  {days_html}
+  {advisory}
+</div>"""
+
+    # Breadcrumb
+    if date_filter:
+        breadcrumb = (f'<a href="/globe">Globe</a> › '
+                      f'<a href="/globe/activity">Activity</a> › {_e(date_filter)}')
+    elif globe_filter:
+        breadcrumb = (f'<a href="/globe">Globe</a> › '
+                      f'<a href="/globe/activity">Activity</a> › {_e(globe_filter)}')
+    else:
+        breadcrumb = '<a href="/globe">Globe</a> › Activity'
+
+    return _page("Globe Activity Heatmap", breadcrumb, body)
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -1663,7 +1905,8 @@ def render_globe_list() -> str:
         f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small>'
         f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a>'
         f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a>'
-        f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a></h2>'
+        f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a>'
+        f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -2524,6 +2767,14 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 34 — Activity Heatmap (before /globe/<id> match)
+        if path == "/globe/activity":
+            self._send_html(render_activity_page(
+                date_filter=_qs("date"),
+                globe_filter=_qs("globe"),
+            ))
             return
 
         # Phase 33 — Proposal Comparison (before /globe/<id> match)
