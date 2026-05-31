@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–37)
+globe_server.py — Globe UI Server (Phase 22–38)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -37,6 +37,9 @@ Routes:
     /globe/dependencies?globe=<globe_id>  → Dependencies by globe       [Phase 37]
     /globe/dependencies?directive=<id>    → Dependencies by directive   [Phase 37]
     /globe/dependencies?relation=<type>   → Dependencies by relation    [Phase 37]
+    /globe/members                        → Member Profile list         [Phase 38]
+    /globe/members?globe=<globe_id>       → Members filtered by globe   [Phase 38]
+    /globe/members/<member_id>            → Member detail page          [Phase 38]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1035,6 +1038,35 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .dep-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                 border-top: 1px solid #0e1420; padding-top: 8px; }
 .dep-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 38 — Member Profile */
+.mp-panel { background: #08090f; border: 1px solid #161e30;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.mp-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.mp-card { border: 1px solid #1a2438; border-radius: 6px;
+           padding: 12px 16px; margin-bottom: 10px; background: #0e1018; }
+.mp-card-header { display: flex; align-items: baseline; gap: 8px;
+                  flex-wrap: wrap; margin-bottom: 4px; }
+.mp-icon { font-size: 1.1rem; flex-shrink: 0; }
+.mp-id { font-family: monospace; font-size: 0.78rem; color: #3a5070; }
+.mp-name { font-size: 0.86rem; color: #7890a8; margin-bottom: 4px; }
+.mp-meta { font-size: 0.72rem; color: #2a3a52; line-height: 1.6; }
+.mp-counts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.mp-count-chip { font-size: 0.68rem; padding: 2px 7px; border-radius: 3px;
+                 background: #10121a; color: #3a4a5a; }
+.mp-count-chip.has-val { background: #0e1428; color: #3a6080; }
+.mp-latest { font-size: 0.70rem; color: #1e2a3a; margin-top: 4px; }
+.mp-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+               gap: 10px; margin-bottom: 18px; text-align: center;
+               font-size: 0.82rem; }
+.mp-stat-row .ms-num { font-size: 1.3rem; color: #6080a0; }
+.mp-stat-row .ms-lbl { color: #2a3a52; font-size: 0.74rem; }
+.mp-filters { margin-bottom: 14px; font-size: 0.78rem; }
+.mp-filters a { color: #3a5878; margin-right: 8px; }
+.mp-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.mp-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -2647,6 +2679,247 @@ def render_dependencies_page(
     )
 
 
+# ─── Phase 38: Member Profile View ────────────────────────────────────────────
+
+_PROFILES_JSON_PATH = _REPORTS_DIR / "member_profiles.json"
+
+_ACTOR_TYPE_ICON = {"human": "👤", "ai": "🤖", "system": "⚙️"}
+_MP_COUNT_LABELS = [
+    ("proposal",     "proposal_count"),
+    ("deliberation", "deliberation_count"),
+    ("exec_log",     "execution_log_count"),
+    ("approval",     "human_approval_count"),
+    ("observation",  "observation_count"),
+    ("feedback",     "feedback_count"),
+    ("objection",    "objection_count"),
+    ("rollback",     "rollback_request_count"),
+    ("vrs",          "voluntary_resolution_signal_count"),
+    ("exec_attempt", "execution_attempt_count"),
+]
+
+
+def _load_profiles() -> dict:
+    """Phase 38 — load member_profiles.json or build on-the-fly via importlib."""
+    if _PROFILES_JSON_PATH.exists():
+        try:
+            raw = json.loads(_PROFILES_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "members" in raw:
+                return raw
+        except Exception:
+            pass
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "member_profile",
+            str(Path(__file__).with_name("member_profile.py")),
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_profiles()
+    except Exception:
+        return {"members": [], "member_count": 0, "globe_counts": {},
+                "actor_type_counts": {}, "generated_at": ""}
+
+
+def _render_mp_card(m: dict) -> str:
+    mid   = _e(m.get("member_id", ""))
+    name  = _e(m.get("display_name", ""))
+    atypes = m.get("actor_types", [])
+    icons = " ".join(_ACTOR_TYPE_ICON.get(at, "?") for at in atypes) or "?"
+    gids  = ", ".join(_e(g) for g in m.get("globe_ids", [])) or "—"
+    latest = _e(m.get("latest_activity_at", ""))
+    # Count chips
+    chips = ""
+    for lbl, fld in _MP_COUNT_LABELS:
+        val = m.get(fld, 0)
+        if val:
+            chips += (f'<span class="mp-count-chip has-val">'
+                      f'{_e(lbl)}: {val}</span>')
+    return (
+        f'<div class="mp-card">'
+        f'<div class="mp-card-header">'
+        f'<span class="mp-icon">{icons}</span>'
+        f'<span class="mp-id"><a href="/globe/members/{mid}">{mid}</a></span>'
+        f'</div>'
+        f'<div class="mp-name">{name}</div>'
+        f'<div class="mp-meta">'
+        f'globe: {gids} &nbsp;·&nbsp; '
+        f'types: {_e(", ".join(atypes)) or "—"}'
+        f'</div>'
+        f'{"<div class=mp-counts>" + chips + "</div>" if chips else ""}'
+        f'<div class="mp-latest">latest: {latest}</div>'
+        f'</div>'
+    )
+
+
+def render_members_list(globe_filter: str | None = None) -> str:
+    """Phase 38 — Member list page."""
+    report  = _load_profiles()
+    members: list[dict] = report.get("members", [])
+
+    if globe_filter:
+        members = [m for m in members if globe_filter in m.get("globe_ids", [])]
+
+    scope_label = f"globe={_e(globe_filter)}" if globe_filter else "全メンバー"
+    total = report.get("member_count", len(report.get("members", [])))
+    type_counts = report.get("actor_type_counts", {})
+    globe_counts = report.get("globe_counts", {})
+
+    stat_row = f"""<div class="mp-stat-row">
+  <div><div class="ms-num">{total}</div><div class="ms-lbl">members</div></div>
+  <div><div class="ms-num">{len(type_counts)}</div><div class="ms-lbl">actor types</div></div>
+  <div><div class="ms-num">{len(globe_counts)}</div><div class="ms-lbl">globes</div></div>
+  <div><div class="ms-num">{len(members)}</div><div class="ms-lbl">shown</div></div>
+</div>"""
+
+    filter_links = (
+        '<div class="mp-filters">Globe: '
+        '<a href="/globe/members">全て</a>'
+        + "".join(
+            f'<a href="/globe/members?globe={_e(gid)}">'
+            f'🌐 {_e(gid)} ({n})</a>'
+            for gid, n in sorted(globe_counts.items())
+        )
+        + "</div>"
+    )
+
+    cards_html = ("".join(_render_mp_card(m) for m in members) if members else
+                  '<div class="mp-empty">このフィルターに該当するメンバーはいません。</div>')
+
+    advisory = (
+        '<div class="mp-advisory">'
+        + " &nbsp;·&nbsp; ".join([
+            "Member profile is advisory display only.",
+            "Not identity verification.",
+            "Not reputation score.",
+            "Creates no authority.",
+            "Does not rank participants.",
+            "Human review required before any real-world action.",
+        ])
+        + "</div>"
+    )
+
+    body = f"""
+<h2>👥 Globe Members
+  <small style="font-size:0.65em;color:#3a4258">(Phase 38 · {_e(scope_label)})</small>
+</h2>
+<div style="font-size:0.76rem;color:#2a3a52;margin-bottom:12px">
+  generated_at: {_e(report.get('generated_at',''))}
+  &nbsp;·&nbsp; advisory only — not identity verification — creates no authority
+</div>
+{stat_row}
+{filter_links}
+<div class="mp-panel">
+  <h3>⚙️ Actor Types</h3>
+  <div style="font-size:0.78rem">
+{"".join(f'<div>{_ACTOR_TYPE_ICON.get(at,"?")} {_e(at)}: {n}</div>' for at,n in sorted(type_counts.items()))}
+  </div>
+  {advisory}
+</div>
+<h3 style="font-size:0.86rem;color:#3a5070;margin:18px 0 10px">
+  👤 Members ({len(members)}) — {_e(scope_label)}
+</h3>
+{cards_html}
+<div style="margin-top:14px;font-size:0.82rem;color:#3a4a5a">
+  <a href="/globe">← Globe 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/dependencies">🗺️ Dependencies</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/feed">📰 Feed</a>
+</div>"""
+
+    return _page(
+        f"Members — {scope_label}",
+        f'<a href="/globe">Globe</a> › <a href="/globe/members">Members</a>',
+        body,
+    )
+
+
+def render_member_detail(member_id: str) -> str | None:
+    """Phase 38 — Member detail page."""
+    report = _load_profiles()
+    m = next((x for x in report.get("members", []) if x["member_id"] == member_id), None)
+    if not m:
+        return None
+
+    name   = _e(m.get("display_name", member_id))
+    atypes = m.get("actor_types", [])
+    icons  = " ".join(_ACTOR_TYPE_ICON.get(at, "?") for at in atypes) or "?"
+    gids   = m.get("globe_ids", [])
+
+    # Globe links
+    globe_links = " &nbsp;·&nbsp; ".join(
+        f'<a href="/globe/{_e(g)}">{_e(g)}</a>' for g in gids
+    ) or "—"
+
+    # Count table
+    count_rows = "".join(
+        f'<tr><td style="color:#4a5a6a;padding:3px 10px">{_e(lbl)}</td>'
+        f'<td style="color:#6080a0;padding:3px 10px;text-align:right">{m.get(fld,0)}</td></tr>'
+        for lbl, fld in _MP_COUNT_LABELS
+        if m.get(fld, 0)
+    )
+    count_table = (
+        f'<table style="border-collapse:collapse;font-size:0.80rem;margin:8px 0">'
+        f'<tbody>{count_rows}</tbody></table>'
+        if count_rows else
+        '<div style="font-size:0.80rem;color:#3a4a5a">活動記録なし</div>'
+    )
+
+    # Source paths
+    src_html = "".join(
+        f'<div style="font-size:0.72rem;color:#2a3a4a">· {_e(sp)}</div>'
+        for sp in m.get("source_paths", [])
+    )
+
+    advisory = (
+        '<div class="mp-advisory">'
+        + " &nbsp;·&nbsp; ".join([
+            "Member profile is advisory display only.",
+            "Not identity verification.",
+            "Not reputation score.",
+            "Creates no authority.",
+            "Does not rank participants.",
+        ])
+        + "</div>"
+    )
+
+    body = f"""
+<h2>{icons} {name}
+  <small style="font-size:0.60em;color:#3a4258">(Phase 38 · advisory only)</small>
+</h2>
+<div style="font-family:monospace;font-size:0.78rem;color:#3a4a6a;margin:4px 0 10px">
+  {_e(member_id)}
+</div>
+<div class="mp-panel">
+  <div style="font-size:0.80rem;color:#5878a0;margin-bottom:10px">
+    <strong>Globe(s):</strong> {globe_links}
+    &nbsp;·&nbsp;
+    <strong>actor_types:</strong> {_e(", ".join(atypes)) or "—"}
+    &nbsp;·&nbsp;
+    <strong>latest:</strong> {_e(m.get("latest_activity_at",""))}
+  </div>
+  <h3>📊 Activity Counts</h3>
+  {count_table}
+  <h3 style="margin-top:14px">📂 Source Paths</h3>
+  {src_html}
+  {advisory}
+</div>
+<div style="margin-top:14px;font-size:0.82rem;color:#3a4a5a">
+  <a href="/globe/members">← Members 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/dependencies">🗺️ Dependencies</a>
+</div>"""
+
+    return _page(
+        f"Member — {m.get('display_name', member_id)}",
+        (f'<a href="/globe">Globe</a> › '
+         f'<a href="/globe/members">Members</a> › '
+         f'{_e(m.get("display_name", member_id))}'),
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -2680,7 +2953,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a>'
         f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a>'
         f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a>'
-        f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a></h2>'
+        f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a>'
+        f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -3564,6 +3838,21 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 38 — Member Profile list (before /globe/<id> match)
+        if path == "/globe/members":
+            self._send_html(render_members_list(globe_filter=_qs("globe")))
+            return
+
+        # Phase 38 — Member detail page (before /globe/<id> match)
+        m = re.fullmatch(r"/globe/members/([^/]+)", path)
+        if m:
+            content = render_member_detail(m.group(1))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
             return
 
         # Phase 37 — Directive Dependency Map (before /globe/<id> match)

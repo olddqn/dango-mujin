@@ -1603,3 +1603,89 @@ globe/
 
 - **参加は任意。** Globeへの参加も、提案への賛否も、熟議への参加も、すべて任意。
   Participation is voluntary. Joining a Globe, supporting/opposing proposals, and participating in deliberation are all voluntary.
+
+---
+
+## Phase 38 — Globe Member Profile View（フェーズ38）
+
+フェーズ38では、Globe内メンバーの活動履歴を advisory display として可視化する
+**Globe Member Profile View** を追加しました。
+メンバープロフィールは観察補助表示にすぎません。身元確認ではありません。評判スコアではありません。
+権限を創出しません。参加者をランク付けしません。
+
+### 不変条件
+
+```python
+PROFILE_INVARIANTS = {
+    "member_profile_is_advisory_display_only": True,
+    "member_profile_is_not_identity_verification": True,
+    "member_profile_is_not_reputation_score": True,
+    "member_profile_creates_no_authority": True,
+    "member_profile_does_not_rank_participants": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### Protocol Phrases
+
+```
+Member profile is advisory display only.
+Member profile is not identity verification.
+Member profile is not reputation score.
+Member profile creates no authority.
+Member profile does not rank participants.
+Human review is required before any real-world action.
+```
+
+### データソース（6種）
+
+1. `proposals.json` — 提案者 (actor_type=human)
+2. `deliberations.json` — 発言者・speaker_type
+3. `logs/*.jsonl` — 実行ログ actor_name / actor_type / entry_type 別カウント
+4. `reality_feedback_bridge.json` — フィードバック記録
+5. `contribution_timeline.json` — 補完（globe_ids / actor_types / timestamps のみ）
+6. `globe_feed.json` — 補完（残余 actor 捕捉）
+
+### メンバー集計
+
+- 12名 (human: 8, ai: 2, system: 2)
+- globe-001: 8名 / globe-002: 1名 / globe-003: 4名
+
+### カウントフィールド
+
+| フィールド | 説明 |
+|---|---|
+| proposal_count | 提案回数 |
+| deliberation_count | 熟議発言回数 |
+| execution_log_count | 実行ログエントリ数 |
+| human_approval_count | 承認エントリ数 |
+| observation_count | 観察エントリ数 |
+| feedback_count | フィードバック記録数 |
+| objection_count | 異議申立数 |
+| rollback_request_count | ロールバック申請数 |
+| voluntary_resolution_signal_count | 自発的解決シグナル数 |
+| execution_attempt_count | 実行試行数 |
+
+### HTTP Routes
+
+```
+/globe/members                    → メンバー一覧
+/globe/members?globe=<globe_id>   → Globe でフィルター
+/globe/members/<member_id>        → メンバー詳細
+```
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_profile.py summary
+python3 globe/runtime/member_profile.py save
+python3 globe/runtime/member_profile.py show-member member-masuo-komori
+python3 globe/runtime/member_profile.py show-globe globe-001
+```
+
+### 生成ファイル
+
+- `globe/runtime/member_profile.py` — プロフィール構築・CLI
+- `globe/reports/member_profiles.json` — 生成済み JSON (12 members)
+- `globe/reports/member_profiles.md` — 生成済み Markdown
