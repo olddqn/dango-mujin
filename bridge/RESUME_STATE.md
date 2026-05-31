@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Cross-Phase Contribution Summary
+# RESUME_STATE.md — Globe Search / Filter UI
 
-> **STATUS: IN PROGRESS (feature/phase-30-cross-phase-contribution-summary)**
+> **STATUS: IN PROGRESS (feature/phase-31-globe-search-filter)**
 
-**Phase:** Cross-Phase Contribution Summary (Phase 30)
-**Branch:** feature/phase-30-cross-phase-contribution-summary
+**Phase:** Globe Search / Filter UI (Phase 31)
+**Branch:** feature/phase-31-globe-search-filter
 **Started:** 2026-05-31
 
 ---
@@ -49,7 +49,8 @@
 - Reality Feedback Bridge (Phase 27) — PR #21, merged
 - Bridge Target Detail Link (Phase 27b) — PR #22, merged
 - Voluntary Resolution Signal (Phase 29) — PR #23, merged
-- **Cross-Phase Contribution Summary (Phase 30)** ← current PR
+- Cross-Phase Contribution Summary (Phase 30) — PR #24, merged
+- **Globe Search / Filter UI (Phase 31)** ← current PR
 
 ---
 
@@ -293,7 +294,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b + Phase 29 + Phase 30)
+## Protocol Principle Accumulation (Phases 10–31)
 
 | Phase | Phrase |
 |-------|--------|
@@ -372,6 +373,11 @@ need_forecast_report.py
 | 30 | "Cross-phase summary does not rank participants." |
 | 30 | "Cross-phase summary does not allocate resources." |
 | 30 | "Human review is required before any real-world action." |
+| 31 | "Search is advisory display only." |
+| 31 | "Search result is not proof of relevance." |
+| 31 | "Search result does not rank participants." |
+| 31 | "Search result does not allocate resources." |
+| 31 | "Human review is required before any real-world action." |
 
 ---
 
@@ -421,13 +427,27 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 31)
+
+- `globe/runtime/globe_search.py` — Search index builder + CLI (advisory display only)
+- `globe/reports/globe_search_index.json` — Generated search index (36 items)
+
+## Updated Files (Phase 31)
+
+- `globe/runtime/globe_server.py` — Added `_load_search_index()`, `render_search_page()`, Phase 31 CSS; wired `/globe/search` route
+- `globe/spec/GLOBE_SPEC.md` — Phase 31 section
+- `README.md` — Phase 31 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 30 PR** — after review
-2. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
-   and directives, filter by status, globe, entry type
-3. **Phase 32: Contribution Timeline View** — per-globe or per-directive timeline
+1. **Merge Phase 31 PR** — after review
+2. **Phase 32: Contribution Timeline View** — per-globe or per-directive timeline
    of execution log events with resolution signal overlays
+3. **Phase 33: Proposal Comparison View** — side-by-side comparison of two proposals
+   across Globe layers, advisory only, no ranking
 
 ---
 

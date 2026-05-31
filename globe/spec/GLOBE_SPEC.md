@@ -624,6 +624,93 @@ python3 globe/runtime/bridge_target_linker.py show-target relief_case_memory
 
 ---
 
+## Phase 31 — Globe Search / Filter UI（フェーズ31）
+
+Globe・Proposal・Directive・Execution Log・Reality Feedback・Bridge Target Link・Resolution Signal を
+横断検索・フィルタできる UI と CLI を追加。
+
+> "Search is advisory display only."
+> "Search result is not proof of relevance."
+> "Search result does not rank participants."
+> "Search result does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `search_is_advisory_display_only` | `true` |
+| `search_result_is_not_proof_of_relevance` | `true` |
+| `search_result_does_not_rank_participants` | `true` |
+| `search_result_does_not_allocate_resources` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### 検索対象 / Index scope
+
+| item_type | ソース |
+|-----------|--------|
+| `globe` | `globe/data/globes.json` |
+| `proposal` | `globe/data/proposals.json` |
+| `deliberation` | `globe/data/deliberations.json` |
+| `claim` | `globe/claims/*.json` |
+| `directive` | `globe/directives/*.json` |
+| `log` | `globe/logs/*.jsonl` |
+| `feedback` | `globe/reports/reality_feedback_bridge.json` |
+| `link` | `globe/reports/bridge_target_links.json` |
+
+### 検索仕様
+
+- stdlib のみ（外部ライブラリなし）
+- lowercase simple substring search（正規表現なし）
+- ranking score は使わない
+- 結果順: `source_path` + `created_at` の安定ソート（関連度順ではない）
+- 一致理由: `matched title / matched content / matched tag` 等、理由を説明のみ
+
+### CLI
+
+```bash
+# インデックスを生成・保存
+python3 globe/runtime/globe_search.py save-index
+
+# テキスト検索
+python3 globe/runtime/globe_search.py search 住居
+python3 globe/runtime/globe_search.py search "D.R.A."
+
+# フィルタ (組み合わせ可)
+python3 globe/runtime/globe_search.py filter --globe globe-001
+python3 globe/runtime/globe_search.py filter --entry-type voluntary_resolution_signal
+python3 globe/runtime/globe_search.py filter --resolution-status unresolved
+python3 globe/runtime/globe_search.py filter --bridge-target both
+python3 globe/runtime/globe_search.py filter --type directive
+```
+
+### HTTP ルート
+
+| URL | 内容 |
+|-----|------|
+| `/globe/search` | 検索フォーム + フィルタチップ |
+| `/globe/search?q=<query>` | テキスト検索結果 |
+| `/globe/search?globe=<globe_id>` | Globe フィルタ |
+| `/globe/search?entry_type=<type>` | Entry type フィルタ |
+| `/globe/search?resolution_status=<status>` | Resolution status フィルタ |
+| `/globe/search?bridge_target=<target>` | Bridge target フィルタ |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/globe_search_index.json` | 検索インデックス（advisory only） |
+
+### UI特性
+
+- 実行ボタン・承認ボタン・配分ボタンは作らない
+- ランキングスコアは表示しない
+- 既存ページへのリンクのみ（新しい操作機能なし）
+- `advisory_only: true` を全インデックス項目に付与
+
+---
+
 ## Phase 29 — Voluntary Resolution Signal（フェーズ29）
 
 参加者が Directive Execution Log に対し、任意で解決状況を自己申告できる `voluntary_resolution_signal` entry type を追加。
