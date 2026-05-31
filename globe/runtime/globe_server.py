@@ -173,6 +173,115 @@ def _render_bridge_panel(directive_id: str) -> str:
 </div>"""
 
 
+def _load_link_report() -> dict | None:
+    """Load the pre-built Bridge Target Links report, or build it on the fly.
+
+    Phase 27b — advisory only. No approval buttons. No execution links.
+    Bridge target link is advisory only.
+    Link candidate does not reopen a case automatically.
+    Human review is required before any real-world action.
+    """
+    report_path = _GLOBE_DIR / "reports" / "bridge_target_links.json"
+    if report_path.exists():
+        try:
+            return json.loads(report_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "bridge_target_linker",
+            Path(__file__).parent / "bridge_target_linker.py",
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_links()
+    except Exception:
+        return None
+
+
+def _render_link_candidates_panel(directive_id: str) -> str:
+    """Render Bridge Target Detail Link candidates for a given directive.
+
+    Phase 27b — advisory only. No approval buttons. No reopen buttons. No execution links.
+    Bridge target link is advisory only.
+    Link candidate is not proof of case relation.
+    Link candidate creates no legal authority.
+    Link candidate does not reopen a case automatically.
+    Human review is required before any real-world action.
+    """
+    report = _load_link_report()
+    if not report:
+        return ""
+    all_cands = report.get("candidates", [])
+    candidates = [c for c in all_cands if c.get("source_directive_id") == directive_id]
+    if not candidates:
+        return ""
+
+    _CONF_ICON = {"high": "🔴", "medium": "🟡", "low": "⚪"}
+    _TARGET_LABEL = {
+        "relief_case_memory": "Phase 18 Relief Case Memory",
+        "care_loop_reopen":   "Phase 19 Care Loop Reopen",
+        "none":               "no link",
+    }
+
+    items = ""
+    for c in candidates:
+        conf   = c.get("confidence", "low")
+        icon   = _CONF_ICON.get(conf, "⚪")
+        css    = f"lnk-{conf}"
+        lnk_id = c.get("link_id", "")
+        target_type = c.get("candidate_target_type", "none")
+        target_label = _TARGET_LABEL.get(target_type, target_type)
+        item_id = c.get("candidate_item_id", "")
+        item_type = c.get("candidate_item_type", "")
+        desc   = c.get("candidate_description", "")
+        reason = c.get("match_reason", "")
+        path   = c.get("candidate_path", "")
+        src_fb = c.get("source_feedback_id", "")
+
+        item_badge = f'<span class="lnk-conf-badge {conf}">{_e(conf.upper())}</span>' if conf != "low" or target_type != "none" else ""
+
+        items += f"""
+<div class="link-cand-card {css}">
+  <div class="lnk-header">
+    {icon} [{_e(lnk_id)}] &nbsp;← {_e(src_fb)}
+    {item_badge}
+    <span style="color:#2a3858;font-size:0.78rem;margin-left:8px">{_e(target_label)}</span>
+    {f'&nbsp; item: <code style="font-size:0.78rem;color:#2a4a38">{_e(item_id)}</code> ({_e(item_type)})' if item_id else ''}
+  </div>
+  <div class="lnk-desc">{_e(desc)}</div>
+  <div class="lnk-reason">reason: {_e(reason)}</div>
+  {f'<div class="lnk-path">path: {_e(path)}</div>' if path else ''}
+  <div class="lnk-flags">
+    requires_human_review: true &nbsp;·&nbsp;
+    creates_no_legal_authority: true &nbsp;·&nbsp;
+    does_not_reopen_case_automatically: true &nbsp;·&nbsp;
+    advisory_only: true
+  </div>
+</div>"""
+
+    high_count   = sum(1 for c in candidates if c.get("confidence") == "high")
+    medium_count = sum(1 for c in candidates if c.get("confidence") == "medium")
+    low_count    = sum(1 for c in candidates if c.get("confidence") == "low")
+    gen = str(report.get("generated_at", ""))[:19].replace("T", " ")
+
+    return f"""
+<div class="link-cand-panel">
+  <h3>🔗 Bridge Target Detail Links (Phase 27b) — {len(candidates)} candidate(s)
+    &nbsp;<span style="font-size:0.75rem;color:#253040">🔴 high: {high_count} &nbsp;🟡 medium: {medium_count} &nbsp;⚪ low: {low_count}</span>
+  </h3>
+  {items}
+  <div class="link-cand-advisory">
+    Bridge target link is advisory only · Link candidate is not proof of case relation ·
+    Link candidate creates no legal authority ·
+    Link candidate does not reopen a case automatically ·
+    Human review is required before any real-world action ·
+    generated: {_e(gen)}
+  </div>
+</div>"""
+
+
 def _load_claim(proposal_id: str) -> dict | None:
     """Load a generated claim for the given proposal_id, or None if not yet converted."""
     claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
@@ -420,6 +529,29 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
                        background: #14202e; color: #3a5870; margin-left: 6px; }
 .bridge-advisory { font-size: 0.72rem; color: #1e2a3a; margin-top: 10px;
                    border-top: 1px solid #111820; padding-top: 8px; }
+/* Phase 27b — Bridge Target Detail Link candidates panel */
+.link-cand-panel { background: #090c14; border: 1px solid #1a2232;
+                   border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.link-cand-panel h3 { font-size: 0.88rem; color: #4a6070; margin-bottom: 12px;
+                      text-transform: uppercase; letter-spacing: 0.04em; }
+.link-cand-card  { border: 1px solid #161e2e; border-radius: 6px;
+                   padding: 10px 14px; margin-bottom: 8px; font-size: 0.84rem; }
+.link-cand-card.lnk-high   { background: #08130e; border-left: 3px solid #1a3e22; }
+.link-cand-card.lnk-medium { background: #0d1220; border-left: 3px solid #1a2a50; }
+.link-cand-card.lnk-low    { background: #0a0c12; border-left: 3px solid #1a1e28; }
+.link-cand-card .lnk-header  { color: #4a6878; font-size: 0.82rem;
+                                font-weight: 600; margin-bottom: 4px; }
+.link-cand-card .lnk-desc    { color: #607888; font-size: 0.82rem;
+                                line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.link-cand-card .lnk-reason  { color: #253040; font-size: 0.74rem; margin-top: 5px; }
+.link-cand-card .lnk-path    { color: #1e2838; font-size: 0.72rem; margin-top: 3px; font-family: monospace; }
+.link-cand-card .lnk-flags   { color: #182030; font-size: 0.72rem; margin-top: 4px; }
+.lnk-conf-badge { font-size: 0.70rem; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
+.lnk-conf-badge.high   { background: #0e2018; color: #3a7848; }
+.lnk-conf-badge.medium { background: #0e1828; color: #3a5878; }
+.lnk-conf-badge.low    { background: #10121a; color: #2a3450; }
+.link-cand-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                      border-top: 1px solid #0e1420; padding-top: 8px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -1073,6 +1205,7 @@ def render_directive_detail(globe_id: str, directive_id: str) -> str | None:
 </h3>
 {log_summary_html}
 {_render_bridge_panel(directive_id)}
+{_render_link_candidates_panel(directive_id)}
 """
     return _page(
         d.get("title", directive_id),
@@ -1168,6 +1301,7 @@ def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
 <h3>Log Entries ({len(entries)}) — chronological · append-only · objection always recordable</h3>
 {entry_cards}
 {_render_bridge_panel(directive_id)}
+{_render_link_candidates_panel(directive_id)}
 """
     return _page(
         f"Execution Log — {directive_id}",
