@@ -46,6 +46,29 @@ def _proposals():    return _load("proposals.json")
 def _deliberations(): return _load("deliberations.json")
 
 
+def _load_exec_summary() -> dict | None:
+    """Load the pre-built execution log summary report, or build it on the fly."""
+    # Try pre-built report first (fast)
+    report_path = _GLOBE_DIR / "reports" / "execution_log_summary.json"
+    if report_path.exists():
+        try:
+            return json.loads(report_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    # Fall back: build from JSONL files
+    try:
+        import importlib.util, sys as _sys
+        _spec = importlib.util.spec_from_file_location(
+            "execution_log_summary",
+            Path(__file__).parent / "execution_log_summary.py",
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_summary()
+    except Exception:
+        return None
+
+
 def _load_claim(proposal_id: str) -> dict | None:
     """Load a generated claim for the given proposal_id, or None if not yet converted."""
     claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
@@ -179,6 +202,17 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .log-entry-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px;
                    background: #1a2a40; color: #5070a0; margin-right: 4px;
                    display: inline-block; }
+.exec-summary-panel { background: #0c1020; border: 1px solid #1a2438;
+                      border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.exec-summary-panel h3 { font-size: 0.88rem; color: #607090; margin-bottom: 12px;
+                          text-transform: uppercase; letter-spacing: 0.04em; }
+.exec-summary-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.exec-summary-table th { color: #3a5070; font-weight: 600; text-align: left;
+                          padding: 4px 10px; border-bottom: 1px solid #1e2a3a; }
+.exec-summary-table td { color: #6080a0; padding: 5px 10px;
+                          border-bottom: 1px solid #141c28; }
+.exec-summary-table td:first-child { color: #8090a8; }
+.exec-advisory { font-size: 0.72rem; color: #2a3850; margin-top: 10px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -254,11 +288,13 @@ def render_globe_list() -> str:
     &nbsp;·&nbsp; <a href="/globe/{_e(g['globe_id'])}">詳細 →</a>
   </div>
 </div>"""
+    exec_summary_html = _render_exec_summary_panel()
     return _page(
         "Globe 一覧",
         '<a href="/globe">Globe</a>',
         f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small></h2>'
         + items
+        + exec_summary_html
         + '<p style="margin-top:24px;font-size:0.8rem;color:#3a4258">'
         + 'Globe = 自由参加型共同体の単位。国家・自治体・DAO・コミュニティ・プロジェクトを包含できる。</p>'
     )
@@ -309,6 +345,7 @@ def render_globe_detail(globe_id: str) -> str | None:
 
 <h3>Proposal 一覧 &nbsp;<a href="/globe/{_e(globe_id)}/proposals" style="font-size:0.8rem">すべて見る →</a></h3>
 {proposal_html}
+{_render_exec_summary_panel(globe_id)}
 """
     return _page(
         g["name"],
@@ -497,6 +534,81 @@ def _render_execution_log_status(proposal_id: str, status: str) -> str:
   <div class="log-hint">
     legal_authority_created: false · log_is_proof_of_execution: false ·
     objection_always_recordable: true · append_only: true
+  </div>
+</div>"""
+
+
+def _render_exec_summary_panel(globe_id: str | None = None) -> str:
+    """Render a cross-globe (or per-globe) execution log summary panel.
+
+    If globe_id is given, shows only that globe's directives.
+    Summary is advisory only — not proof of execution, no authority.
+    """
+    summary = _load_exec_summary()
+    if not summary:
+        return ""
+
+    if globe_id:
+        by_globe = summary.get("by_globe", [])
+        g_rec = next((g for g in by_globe if g["globe_id"] == globe_id), None)
+        if not g_rec:
+            return ""
+        directives = [
+            d for d in summary.get("directives", [])
+            if d["globe_id"] == globe_id
+        ]
+        total_entries = g_rec["total_entries"]
+        total_obj = g_rec["objection_count"]
+        total_rb = g_rec["rollback_request_count"]
+        header = f"📋 Execution Log Summary — {_e(globe_id)}"
+    else:
+        directives = summary.get("directives", [])
+        total_entries = summary.get("total_log_entries", 0)
+        total_obj = summary.get("total_objections", 0)
+        total_rb = summary.get("total_rollback_requests", 0)
+        header = "📋 Cross-Globe Execution Log Summary (Phase 26)"
+
+    if not directives:
+        return ""
+
+    rows = ""
+    for d in directives:
+        appr_icon = "✅" if d["has_human_approval"] else "⬜"
+        last_icon = {
+            "human_approval": "✅", "execution_attempt": "▶",
+            "observation": "👁", "feedback": "💬",
+            "objection": "⚠", "rollback_request": "↩",
+        }.get(d.get("last_entry_type", ""), "•")
+        rows += f"""
+<tr>
+  <td>{_e(d['directive_id'])}</td>
+  <td>{_e(d['globe_id'])}</td>
+  <td style="text-align:center">{d['total_entries']}</td>
+  <td style="text-align:center">{appr_icon} {d['human_approval_count']}</td>
+  <td style="text-align:center">⚠ {d['objection_count']}</td>
+  <td style="text-align:center">↩ {d['rollback_request_count']}</td>
+  <td>{last_icon} {_e(d.get('last_entry_type','—'))}</td>
+</tr>"""
+
+    gen = str(summary.get("generated_at", ""))[:19].replace("T", " ")
+    return f"""
+<div class="exec-summary-panel">
+  <h3>{header}</h3>
+  <table class="exec-summary-table">
+    <tr>
+      <th>Directive</th><th>Globe</th><th>Entries</th>
+      <th>Approvals</th><th>Objections</th><th>Rollbacks</th><th>Last</th>
+    </tr>
+    {rows}
+  </table>
+  <div style="margin-top:8px;font-size:0.78rem;color:#3a5070">
+    Total entries: {total_entries} &nbsp;·&nbsp;
+    Objections: {total_obj} &nbsp;·&nbsp;
+    Rollbacks: {total_rb}
+  </div>
+  <div class="exec-advisory">
+    Summary is advisory only · not proof of execution · creates no legal authority ·
+    generated: {_e(gen)}
   </div>
 </div>"""
 

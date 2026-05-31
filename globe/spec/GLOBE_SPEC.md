@@ -344,6 +344,120 @@ globe/logs/
 └── directive-claim-proposal-005.md
 ```
 
+---
+
+## Phase 26 — Cross-Globe Execution Log Summary（フェーズ26）
+
+複数の Globe・複数の Directive にまたがる Execution Log を横断集計する advisory ダッシュボード。
+
+Cross-globe advisory dashboard that aggregates Execution Log entries across all Directives and Globes.
+
+### 不変条件 / Invariants
+
+> "Summary is advisory only."
+> "Summary is not proof of execution."
+> "Summary creates no legal authority."
+> "Summary does not rank or punish participants."
+> "Summary must preserve objections and rollback requests."
+
+| Field | Value |
+|-------|-------|
+| `summary_is_advisory_only` | `true` |
+| `summary_is_not_proof_of_execution` | `true` |
+| `summary_creates_no_legal_authority` | `true` |
+| `summary_does_not_rank_participants` | `true` |
+| `summary_preserves_objections` | `true` |
+| `authority` | `none` |
+
+### Summary スキーマ / Schema
+
+```json
+{
+  "summary_id": "execution-log-summary-001",
+  "summary_is_advisory_only": true,
+  "summary_is_not_proof_of_execution": true,
+  "summary_creates_no_legal_authority": true,
+  "summary_does_not_rank_participants": true,
+  "summary_preserves_objections": true,
+  "authority": "none",
+  "phase": 26,
+  "generated_at": "2026-05-31T...",
+  "total_directives_with_logs": 2,
+  "total_log_entries": 6,
+  "total_objections": 1,
+  "total_rollback_requests": 0,
+  "directives": [
+    {
+      "directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "title": "...",
+      "total_entries": 5,
+      "human_approval_count": 2,
+      "execution_attempt_count": 0,
+      "observation_count": 2,
+      "feedback_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "has_human_approval": true,
+      "last_entry_type": "observation",
+      "last_entry_at": "2026-05-30T...",
+      "all_entries_legal_authority_created_false": true,
+      "all_entries_log_is_proof_of_execution_false": true
+    }
+  ],
+  "by_globe": [
+    {
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "directive_count": 2,
+      "total_entries": 6,
+      "human_approval_count": 2,
+      "objection_count": 1,
+      "rollback_request_count": 0
+    }
+  ],
+  "phase_phrases": [
+    "Summary is advisory only.",
+    "Summary is not proof of execution.",
+    "Summary creates no legal authority.",
+    "Summary does not rank or punish participants.",
+    "Summary must preserve objections and rollback requests."
+  ]
+}
+```
+
+### CLI コマンド / CLI
+
+```bash
+# 全 Globe / 全 Directive のサマリを表示
+python3 globe/runtime/execution_log_summary.py summary
+
+# サマリを globe/reports/ に保存
+python3 globe/runtime/execution_log_summary.py save
+
+# 特定 Globe のサマリを表示
+python3 globe/runtime/execution_log_summary.py show-globe globe-001
+
+# 特定 Directive のサマリを表示
+python3 globe/runtime/execution_log_summary.py show-directive directive-claim-proposal-002
+```
+
+### 出力先 / Output
+
+```
+globe/reports/
+├── execution_log_summary.json  — JSON summary (advisory only)
+└── execution_log_summary.md    — Markdown summary (advisory only)
+```
+
+### UI 統合 / UI Integration
+
+- `/globe` — Globe 一覧ページに Cross-Globe Summary パネルを表示
+- `/globe/<globe_id>` — Globe 詳細ページにその Globe の Summary パネルを表示
+
+---
+
 ## UIルート / UI Routes
 
 サーバー起動: `python3 globe/runtime/globe_server.py`

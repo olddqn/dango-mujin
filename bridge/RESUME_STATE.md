@@ -1,10 +1,10 @@
-# RESUME_STATE.md — Directive Execution Log Layer
+# RESUME_STATE.md — Cross-Globe Execution Log Summary
 
-> **STATUS: IN PROGRESS (feature/phase-25-execution-log)**
+> **STATUS: IN PROGRESS (feature/phase-26-exec-log-summary)**
 
-**Phase:** Directive Execution Log Layer (Phase 25)
-**Branch:** feature/phase-25-execution-log
-**Started:** 2026-05-30
+**Phase:** Cross-Globe Execution Log Summary (Phase 26)
+**Branch:** feature/phase-26-exec-log-summary
+**Started:** 2026-05-31
 
 ---
 
@@ -43,7 +43,8 @@
 - Globe Foundation Layer (Phase 22) — PR #14, merged
 - Proposal → Claim Conversion Layer (Phase 23) — PR #15, merged
 - Claim → Directive Conversion Layer (Phase 24) — PR #16, merged
-- **Directive Execution Log Layer (Phase 25)** ← current PR
+- Directive Execution Log Layer (Phase 25) — PR #17, merged
+- **Cross-Globe Execution Log Summary (Phase 26)** ← current PR
 
 ---
 
@@ -287,7 +288,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–24)
+## Protocol Principle Accumulation (Phases 10–26)
 
 | Phase | Phrase |
 |-------|--------|
@@ -336,20 +337,25 @@ need_forecast_report.py
 | 25 | "Log entry is not legal authority." |
 | 25 | "Objection and rollback request must always be recordable." |
 | 25 | "Append-only: existing entries must never be rewritten." |
+| 26 | "Summary is advisory only." |
+| 26 | "Summary is not proof of execution." |
+| 26 | "Summary creates no legal authority." |
+| 26 | "Summary does not rank or punish participants." |
+| 26 | "Summary must preserve objections and rollback requests." |
 
 ---
 
 ## Next Step Candidates
 
-1. **Merge Phase 25 PR** — after review
-2. **Phase 26: Execution Log Cross-Globe Summary** — aggregate execution logs
-   across all globes into an advisory dashboard view
-3. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
+1. **Merge Phase 26 PR** — after review
+2. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
    Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
-4. **Phase 28: Directive UI Routes** — `/globe/<id>/directives/<directive_id>`
+3. **Phase 28: Directive UI Routes** — `/globe/<id>/directives/<directive_id>`
    and `/globe/<id>/logs/<directive_id>` page rendering
-5. **Phase 29: Voluntary Resolution Signal** — record when participants
+4. **Phase 29: Voluntary Resolution Signal** — record when participants
    voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
+5. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
+   to Phase 25/26 Execution Log observations in an advisory cross-phase report
 
 ---
 
@@ -394,6 +400,11 @@ need_forecast_report.py
 *Log entry is not legal authority.*
 *Objection and rollback request must always be recordable.*
 *Append-only: existing entries must never be rewritten.*
+*Summary is advisory only.*
+*Summary is not proof of execution.*
+*Summary creates no legal authority.*
+*Summary does not rank or punish participants.*
+*Summary must preserve objections and rollback requests.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*
