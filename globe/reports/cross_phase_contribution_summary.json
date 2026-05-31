@@ -1,0 +1,250 @@
+{
+  "summary_id": "cross-phase-contribution-summary-001",
+  "cross_phase_summary_is_advisory_only": true,
+  "cross_phase_summary_is_not_proof_of_impact": true,
+  "cross_phase_summary_does_not_rank_participants": true,
+  "cross_phase_summary_does_not_allocate_resources": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "phase": 30,
+  "generated_at": "2026-05-31T10:52:19.512605+00:00",
+  "aid_pattern_count": 4,
+  "need_forecast_record_count": 4,
+  "execution_log_entry_count": 8,
+  "human_approval_count": 2,
+  "observation_count": 2,
+  "feedback_count": 0,
+  "objection_count": 1,
+  "rollback_request_count": 0,
+  "voluntary_resolution_signal_count": 2,
+  "unresolved_signal_count": 1,
+  "contested_signal_count": 0,
+  "bridge_record_count": 4,
+  "bridge_target_link_count": 4,
+  "high_confidence_link_count": 2,
+  "section_aid": {
+    "phase": 20,
+    "phase_label": "Aid Pattern Learning",
+    "aid_pattern_count": 4,
+    "pattern_memory_count": 4,
+    "recurrence_count": 4,
+    "commons_represented": [
+      "dra-001",
+      "jammy-house-001",
+      "yacypherpunks-001"
+    ],
+    "commons_pattern_counts": {
+      "jammy-house-001": 2,
+      "dra-001": 1,
+      "yacypherpunks-001": 1
+    },
+    "pattern_types": [
+      "recurring_food_support",
+      "ongoing_displacement_relief",
+      "unresolved_tenancy_pattern",
+      "pending_skill_exchange"
+    ],
+    "source_files_found": {
+      "aid_pattern_registry": true,
+      "pattern_memory": true,
+      "recurrence_snapshot": true
+    },
+    "pattern_is_prediction": false,
+    "learning_is_prescription": false,
+    "recurrence_is_ranking": false
+  },
+  "section_forecast": {
+    "phase": 21,
+    "phase_label": "Commons Need Forecast Memory",
+    "need_forecast_count": 4,
+    "forecast_memory_count": 4,
+    "preparedness_hint_count": 4,
+    "commons_represented": [
+      "dra-001",
+      "jammy-house-001",
+      "yacypherpunks-001"
+    ],
+    "commons_forecast_counts": {
+      "jammy-house-001": 2,
+      "dra-001": 1,
+      "yacypherpunks-001": 1
+    },
+    "forecast_types": [
+      "recurring_food_support_possible",
+      "ongoing_displacement_relief_possible",
+      "unresolved_tenancy_followup_possible",
+      "skill_exchange_rescheduling_possible"
+    ],
+    "source_files_found": {
+      "need_forecast_registry": true,
+      "forecast_memory": true,
+      "preparedness_hint_snapshot": true
+    },
+    "forecast_is_certainty": false,
+    "preparedness_is_command": false,
+    "hint_is_allocation": false
+  },
+  "section_logs": {
+    "phases": [
+      25,
+      26,
+      27,
+      29
+    ],
+    "phase_label": "Execution Log / Resolution Signal",
+    "total_log_entries": 8,
+    "directive_count": 2,
+    "entry_type_counts": {
+      "human_approval": 2,
+      "observation": 2,
+      "objection": 1,
+      "voluntary_resolution_signal": 2,
+      "execution_attempt": 1
+    },
+    "human_approval_count": 2,
+    "execution_attempt_count": 1,
+    "observation_count": 2,
+    "feedback_count": 0,
+    "objection_count": 1,
+    "rollback_request_count": 0,
+    "voluntary_resolution_signal_count": 2,
+    "resolution_status_counts": {
+      "partially_resolved": 1,
+      "unresolved": 1
+    },
+    "resolved_count": 0,
+    "partially_resolved_count": 1,
+    "paused_count": 0,
+    "unresolved_signal_count": 1,
+    "contested_signal_count": 0,
+    "globe_log_counts": {
+      "globe-001": 6,
+      "globe-003": 2
+    },
+    "globe_directive_counts": {
+      "globe-001": 1,
+      "globe-003": 1
+    }
+  },
+  "section_bridge": {
+    "phase": 27,
+    "phase_label": "Reality Feedback Bridge",
+    "total_source_entries_scanned": 8,
+    "bridge_record_count": 4,
+    "bridge_matched_count": 2,
+    "bridge_none_count": 2,
+    "target_counts": {
+      "relief_case_memory": 1,
+      "care_loop_reopen": 0,
+      "both": 1,
+      "none": 2
+    },
+    "relief_case_memory_count": 1,
+    "care_loop_reopen_count": 0,
+    "both_count": 1,
+    "entry_type_in_records": {
+      "observation": 2,
+      "objection": 1,
+      "voluntary_resolution_signal": 1
+    },
+    "resolution_status_in_records": {
+      "unresolved": 1
+    },
+    "source_file_found": true,
+    "feedback_bridge_is_not_proof_of_resolution": true,
+    "feedback_bridge_creates_no_legal_authority": true
+  },
+  "section_links": {
+    "phase": "27b",
+    "phase_label": "Bridge Target Detail Link",
+    "total_link_candidates": 4,
+    "high_confidence_count": 2,
+    "medium_confidence_count": 0,
+    "low_confidence_count": 2,
+    "confidence_counts": {
+      "low": 2,
+      "high": 2
+    },
+    "target_type_counts": {
+      "none": 2,
+      "relief_case_memory": 2
+    },
+    "linked_item_ids": [
+      "relief-case-003",
+      "relief-case-004"
+    ],
+    "source_file_found": true,
+    "link_candidate_is_not_proof_of_case_relation": true,
+    "link_candidate_creates_no_legal_authority": true
+  },
+  "globe_summaries": [
+    {
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "directive_count": 1,
+      "log_entry_count": 6,
+      "human_approval_count": 2,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "observation_count": 2,
+      "feedback_count": 0,
+      "resolution_signal_count": 1,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "paused_signal_count": 0,
+      "resolved_count": 0,
+      "partially_resolved_count": 1,
+      "bridge_record_count": 3,
+      "link_candidate_count": 4
+    },
+    {
+      "globe_id": "globe-003",
+      "globe_name": "Jammy House Commons",
+      "directive_count": 1,
+      "log_entry_count": 2,
+      "human_approval_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "observation_count": 0,
+      "feedback_count": 0,
+      "resolution_signal_count": 1,
+      "unresolved_signal_count": 1,
+      "contested_signal_count": 0,
+      "paused_signal_count": 0,
+      "resolved_count": 0,
+      "partially_resolved_count": 0,
+      "bridge_record_count": 1,
+      "link_candidate_count": 0
+    }
+  ],
+  "interpretation": {
+    "disclaimer": "Advisory interpretation only. This section describes observable patterns in recorded data. It is not a ranking, score, or command. No allocation or execution follows from these observations. Human review is required before any real-world action.",
+    "where_attention_is_increasing": [
+      "globe-001 (第零国家 (State Zero)): 6 log entries across 1 directive(s)",
+      "globe-003 (Jammy House Commons): 2 log entries across 1 directive(s)"
+    ],
+    "where_unresolved_signals_remain": [
+      "globe-003 (Jammy House Commons): 1 unresolved signal(s), 0 contested signal(s) [self-reported · not proof]"
+    ],
+    "where_objections_exist": [
+      "globe-001 (第零国家 (State Zero)): 1 objection(s) recorded"
+    ],
+    "where_bridge_candidates_require_review": [
+      "globe-001 (第零国家 (State Zero)): 3 bridge record(s), 4 link candidate(s) — human review required",
+      "globe-003 (Jammy House Commons): 1 bridge record(s), 0 link candidate(s) — human review required"
+    ],
+    "cross_phase_observations": [
+      "2 voluntary resolution signal(s) recorded — self-reported only, not proof of resolution",
+      "1 unresolved signal(s) — advisory candidate for Phase 19 Care Loop Reopen",
+      "4 bridge record(s) generated — advisory connection to Phase 18/19 relief and care data",
+      "2 high-confidence link candidate(s) — require human review before any action"
+    ]
+  },
+  "phase_phrases": [
+    "Cross-phase summary is advisory only.",
+    "Cross-phase summary is not proof of impact.",
+    "Cross-phase summary does not rank participants.",
+    "Cross-phase summary does not allocate resources.",
+    "Human review is required before any real-world action."
+  ]
+}

@@ -384,6 +384,50 @@ python3 globe/runtime/directive_execution_log.py \
 
 ---
 
+## Phase 30 — Cross-Phase Contribution Summary
+
+フェーズ30では、Phase 20/21 の援助パターン・ニーズ予測データと、Phase 25–29 の実行ログデータを
+横断的に集約する**クロスフェーズ貢献サマリー**を追加しました。
+
+**Cross-Phase Summary は勧告的です。影響の証明ではありません。
+参加者をランク付けしません。資源を配分しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 30, Dan-Go generates an advisory cross-phase contribution summary connecting
+Phase 20 aid pattern learning, Phase 21 commons need forecasts, and Phase 25–29
+execution log data. This summary is purely advisory — it is not proof of impact,
+does not rank participants, and does not allocate resources.
+
+> "Cross-phase summary is advisory only."
+> "Cross-phase summary is not proof of impact."
+> "Cross-phase summary does not rank participants."
+> "Cross-phase summary does not allocate resources."
+> "Human review is required before any real-world action."
+
+```bash
+# クロスフェーズ サマリー表示
+python3 globe/runtime/cross_phase_contribution_summary.py summary
+
+# レポート保存 (JSON + Markdown)
+python3 globe/runtime/cross_phase_contribution_summary.py save
+
+# Globe別サマリー
+python3 globe/runtime/cross_phase_contribution_summary.py show-globe globe-001
+
+# セクション別表示 (aid / forecast / logs / bridge / links / resolution)
+python3 globe/runtime/cross_phase_contribution_summary.py show-section aid
+python3 globe/runtime/cross_phase_contribution_summary.py show-section resolution
+```
+
+生成ファイル:
+- `globe/reports/cross_phase_contribution_summary.json` — 全サマリー (machine-readable)
+- `globe/reports/cross_phase_contribution_summary.md` — 人間可読サマリー
+
+UI: `/globe` Globe 一覧ページおよび `/globe/<id>` Globe 詳細ページに
+Cross-Phase Summary パネルが追加されます。実行ボタン・割り当てボタンなし。
+
+---
+
 ## Structure
 
 ```

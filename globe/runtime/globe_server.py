@@ -320,6 +320,150 @@ def _render_link_candidates_panel(directive_id: str) -> str:
 </div>"""
 
 
+def _load_cross_phase_summary() -> dict | None:
+    """Phase 30 — load cross_phase_contribution_summary.json or build on-the-fly.
+
+    Cross-phase summary is advisory only. Not proof of impact.
+    Does not rank participants. Does not allocate resources.
+    Human review is required before any real-world action.
+    """
+    _rpt_path = _REPORTS_DIR / "cross_phase_contribution_summary.json"
+    if _rpt_path.exists():
+        try:
+            return json.loads(_rpt_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _mod_path = Path(__file__).parent / "cross_phase_contribution_summary.py"
+        spec = _ilu.spec_from_file_location("cross_phase_contribution_summary", _mod_path)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_summary()
+    except Exception:
+        return None
+
+
+def _render_cross_phase_panel(globe_id: str | None = None) -> str:
+    """Phase 30 — Cross-Phase Contribution Summary advisory panel.
+
+    Cross-phase summary is advisory only. Not proof of impact.
+    Does not rank participants. Does not allocate resources.
+    No execution buttons. No allocation buttons.
+    """
+    rpt = _load_cross_phase_summary()
+    if not rpt:
+        return ""
+
+    gen = _e(rpt.get("generated_at", ""))
+
+    def _row(label: str, val: object) -> str:
+        return (f'<div class="xphase-metric">'
+                f'<span class="xp-label">{label}</span>'
+                f'<span class="xp-value">{val}</span></div>\n')
+
+    # ── Per-globe view ────────────────────────────────────────────────────
+    if globe_id:
+        gs_list = rpt.get("globe_summaries", [])
+        gs = next((x for x in gs_list if x.get("globe_id") == globe_id), None)
+        if not gs:
+            return ""
+        rows = ""
+        for key, label in [
+            ("directive_count",       "Directive 数"),
+            ("log_entry_count",       "Log entries"),
+            ("human_approval_count",  "✅ Approvals"),
+            ("objection_count",       "⚠️ Objections"),
+            ("rollback_request_count","↩️ Rollback requests"),
+            ("bridge_record_count",   "🔗 Bridge records"),
+            ("link_candidate_count",  "🔗 Link candidates"),
+        ]:
+            rows += _row(label, gs.get(key, 0))
+        sig = gs.get("resolution_signal_count", 0)
+        if sig:
+            un = gs.get("unresolved_signal_count", 0)
+            ct = gs.get("contested_signal_count", 0)
+            note = '<span style="color:#182030;font-size:0.75em">self-reported · not proof</span>'
+            rows += _row("🏳️ Resolution signals",
+                         f'{sig} &nbsp;(🔴 unresolved: {un} · ⚔️ contested: {ct}) {note}')
+        return f"""
+<div class="xphase-panel">
+  <h3>📊 Cross-Phase Contribution Summary (Phase 30) — {_e(gs.get("globe_name", globe_id))}</h3>
+  {rows}
+  <div class="xphase-advisory">
+    Cross-phase summary is advisory only · Not proof of impact ·
+    Does not rank participants · Does not allocate resources ·
+    Human review is required before any real-world action ·
+    generated: {gen}
+  </div>
+</div>"""
+
+    # ── Global view ───────────────────────────────────────────────────────
+    totals = rpt.get("global_totals", {})
+    metrics = ""
+    metrics += _row("Phase 20 Aid patterns", totals.get("aid_pattern_count", 0))
+    metrics += _row("Phase 21 Need forecasts", totals.get("need_forecast_record_count", 0))
+    metrics += _row("Execution log entries (Phases 25–29)",
+                    totals.get("execution_log_entry_count", 0))
+    metrics += _row("✅ Human approvals", totals.get("human_approval_count", 0))
+    metrics += _row("⚠️ Objections", totals.get("objection_count", 0))
+    sig = totals.get("voluntary_resolution_signal_count", 0)
+    if sig:
+        un = totals.get("unresolved_signal_count", 0)
+        ct = totals.get("contested_signal_count", 0)
+        note = '<span style="color:#182030;font-size:0.75em">self-reported · not proof</span>'
+        metrics += _row("🏳️ Resolution signals",
+                        f'{sig} &nbsp;(🔴 unresolved: {un} · ⚔️ contested: {ct}) {note}')
+    metrics += _row("🔗 Bridge records", totals.get("bridge_record_count", 0))
+    hc = totals.get("high_confidence_link_count", 0)
+    metrics += _row("🔗 Link candidates (high-conf)",
+                    f'{totals.get("bridge_target_link_count", 0)} &nbsp;(🟢 high: {hc})')
+
+    # Advisory interpretation
+    interp = rpt.get("interpretation", {})
+    interp_inner = ""
+    attn = interp.get("where_attention_is_increasing", [])
+    if attn:
+        items = "".join(f'<div class="xi-item">→ {_e(x)}</div>' for x in attn)
+        interp_inner += f'<div class="xi-title">⚠️ Where attention is increasing</div>{items}'
+    unres_l = interp.get("where_unresolved_signals_remain", [])
+    if unres_l:
+        items = "".join(f'<div class="xi-item">🔴 {_e(x)}</div>' for x in unres_l)
+        interp_inner += ('<div class="xi-title" style="margin-top:6px">'
+                         'Where unresolved signals remain</div>' + items)
+    obj_l = interp.get("where_objections_exist", [])
+    if obj_l:
+        items = "".join(f'<div class="xi-item">⚠️ {_e(x)}</div>' for x in obj_l)
+        interp_inner += ('<div class="xi-title" style="margin-top:6px">'
+                         'Where objections exist</div>' + items)
+    obs_l = interp.get("cross_phase_observations", [])
+    if obs_l:
+        items = "".join(f'<div class="xi-item">• {_e(x)}</div>' for x in obs_l)
+        interp_inner += ('<div class="xi-title" style="margin-top:6px">'
+                         'Cross-phase observations</div>' + items)
+
+    interp_html = ""
+    if interp_inner:
+        disc = _e(interp.get("disclaimer", "Advisory interpretation only."))[:90]
+        interp_html = (f'<div class="xphase-interp">'
+                       f'<div class="xi-title" style="color:#182838">{disc}…</div>'
+                       f'{interp_inner}</div>')
+
+    n_globes = len(rpt.get("globe_summaries", []))
+    return f"""
+<div class="xphase-panel">
+  <h3>📊 Cross-Phase Contribution Summary (Phase 30) — {n_globes} globe(s)</h3>
+  {metrics}
+  {interp_html}
+  <div class="xphase-advisory">
+    Cross-phase summary is advisory only · Not proof of impact ·
+    Does not rank participants · Does not allocate resources ·
+    Human review is required before any real-world action ·
+    generated: {gen}
+  </div>
+</div>"""
+
+
 def _load_claim(proposal_id: str) -> dict | None:
     """Load a generated claim for the given proposal_id, or None if not yet converted."""
     claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
@@ -599,6 +743,24 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .lnk-conf-badge.low    { background: #10121a; color: #2a3450; }
 .link-cand-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                       border-top: 1px solid #0e1420; padding-top: 8px; }
+/* Phase 30 — Cross-Phase Contribution Summary panel */
+.xphase-panel { background: #08090f; border: 1px solid #161e30;
+                border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.xphase-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 12px;
+                   text-transform: uppercase; letter-spacing: 0.04em; }
+.xphase-metric { display: grid; grid-template-columns: 240px 1fr;
+                 gap: 4px 12px; font-size: 0.83rem; margin-bottom: 4px; }
+.xphase-metric .xp-label { color: #2a3a52; }
+.xphase-metric .xp-value { color: #4a6880; }
+.xphase-interp { background: #090c12; border: 1px solid #111820;
+                 border-radius: 6px; padding: 10px 14px; margin-top: 10px;
+                 font-size: 0.82rem; }
+.xphase-interp .xi-title { color: #2a3a52; font-size: 0.76rem;
+                            text-transform: uppercase; letter-spacing: 0.04em;
+                            margin-bottom: 6px; }
+.xphase-interp .xi-item  { color: #3a5068; margin-bottom: 3px; }
+.xphase-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                   border-top: 1px solid #0e1420; padding-top: 8px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -675,12 +837,14 @@ def render_globe_list() -> str:
   </div>
 </div>"""
     exec_summary_html = _render_exec_summary_panel()
+    cross_phase_html = _render_cross_phase_panel()   # Phase 30
     return _page(
         "Globe 一覧",
         '<a href="/globe">Globe</a>',
         f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small></h2>'
         + items
         + exec_summary_html
+        + cross_phase_html
         + '<p style="margin-top:24px;font-size:0.8rem;color:#3a4258">'
         + 'Globe = 自由参加型共同体の単位。国家・自治体・DAO・コミュニティ・プロジェクトを包含できる。</p>'
     )
@@ -761,6 +925,7 @@ def render_globe_detail(globe_id: str) -> str | None:
 <h3>Proposal 一覧 &nbsp;<a href="/globe/{_e(globe_id)}/proposals" style="font-size:0.8rem">すべて見る →</a></h3>
 {proposal_html}
 {_render_exec_summary_panel(globe_id)}
+{_render_cross_phase_panel(globe_id)}
 """
     return _page(
         g["name"],
