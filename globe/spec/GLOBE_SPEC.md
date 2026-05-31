@@ -886,6 +886,95 @@ python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
 
 ---
 
+## Phase 34 — Activity Heatmap（フェーズ34）
+
+Globe 全体のイベントを日付ごとに集計し、カレンダー形式で可視化する advisory UI / CLI。
+カウントは記録されたイベント数を反映するだけであり、品質・優先度・インパクトの尺度ではない。
+
+> "Heatmap is advisory display only."
+> "Heatmap is not proof of impact."
+> "Heatmap does not rank participants."
+> "Heatmap does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `heatmap_is_advisory_display_only` | `true` |
+| `heatmap_is_not_proof_of_impact` | `true` |
+| `heatmap_does_not_rank_participants` | `true` |
+| `heatmap_does_not_allocate_resources` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### データソース
+
+| 優先度 | ソース | 内容 |
+|--------|--------|------|
+| Primary | `globe/reports/contribution_timeline.json` | 全 16 items（Phase 32 で生成） |
+| Fallback | `globe/logs/*.jsonl` | JSONL 直接スキャン |
+
+### 集計項目（日別）
+
+| フィールド | 内容 |
+|-----------|------|
+| `total_events` | 日別総イベント数 |
+| `execution_log_count` | 実行ログイベント数 |
+| `resolution_signal_count` | 解決シグナル数 |
+| `reality_feedback_count` | Reality Feedback 数 |
+| `bridge_target_link_count` | Bridge Target Link 数 |
+| `objection_count` | 異議申立て数 |
+| `rollback_request_count` | ロールバック要求数 |
+| `unresolved_count` | 未解決数 |
+| `contested_count` | 争議中数 |
+| `needs_attention_count` | 注目フラグ数（優先ではなく観察） |
+| `by_globe` | Globe 別カウント |
+| `by_directive` | Directive 別カウント |
+| `event_type_counts` | イベントタイプ別カウント |
+
+### CLI
+
+```bash
+# 全体サマリー
+python3 globe/runtime/activity_heatmap.py summary
+
+# 保存（JSON + MD）
+python3 globe/runtime/activity_heatmap.py save
+
+# 日付フィルタ
+python3 globe/runtime/activity_heatmap.py show-date 2026-05-31
+
+# Globe フィルタ
+python3 globe/runtime/activity_heatmap.py show-globe globe-001
+
+# Directive フィルタ
+python3 globe/runtime/activity_heatmap.py show-directive directive-claim-proposal-002
+```
+
+### HTTP ルート
+
+| URL | 内容 |
+|-----|------|
+| `/globe/activity` | 全体ヒートマップ |
+| `/globe/activity?date=2026-05-31` | 日付フィルタ |
+| `/globe/activity?globe=globe-001` | Globe フィルタ |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/activity_heatmap.json` | ヒートマップデータ (machine-readable) |
+| `globe/reports/activity_heatmap.md` | 人間可読ヒートマップレポート |
+
+### UI特性
+
+- 実行ボタン・承認ボタン・配分ボタンなし
+- ASCII density bar は視覚的表示のみ（スコアではない）
+- ⚠️ attention フラグは objection/rollback/unresolved/contested の観察（優先度ではない）
+
+---
+
 ## Phase 29 — Voluntary Resolution Signal（フェーズ29）
 
 参加者が Directive Execution Log に対し、任意で解決状況を自己申告できる `voluntary_resolution_signal` entry type を追加。

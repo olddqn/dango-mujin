@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Proposal Comparison View
+# RESUME_STATE.md — Activity Heatmap
 
-> **STATUS: IN PROGRESS (feature/phase-33-proposal-comparison)**
+> **STATUS: IN PROGRESS (feature/phase-34-activity-heatmap)**
 
-**Phase:** Proposal Comparison View (Phase 33)
-**Branch:** feature/phase-33-proposal-comparison
+**Phase:** Activity Heatmap (Phase 34)
+**Branch:** feature/phase-34-activity-heatmap
 **Started:** 2026-05-31
 
 ---
@@ -52,7 +52,8 @@
 - Cross-Phase Contribution Summary (Phase 30) — PR #24, merged
 - Globe Search / Filter UI (Phase 31) — PR #25, merged
 - Contribution Timeline View (Phase 32) — PR #26, merged
-- **Proposal Comparison View (Phase 33)** ← current PR
+- Proposal Comparison View (Phase 33) — PR #27, merged
+- **Activity Heatmap (Phase 34)** ← current PR
 
 ---
 
@@ -296,7 +297,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–33)
+## Protocol Principle Accumulation (Phases 10–34)
 
 | Phase | Phrase |
 |-------|--------|
@@ -390,6 +391,11 @@ need_forecast_report.py
 | 33 | "Comparison does not score proposals." |
 | 33 | "Comparison does not allocate resources." |
 | 33 | "Human review is required before any real-world action." |
+| 34 | "Heatmap is advisory display only." |
+| 34 | "Heatmap is not proof of impact." |
+| 34 | "Heatmap does not rank participants." |
+| 34 | "Heatmap does not allocate resources." |
+| 34 | "Human review is required before any real-world action." |
 
 ---
 
@@ -483,13 +489,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 34)
+
+- `globe/runtime/activity_heatmap.py` — Heatmap builder + CLI (advisory only)
+- `globe/reports/activity_heatmap.json` — Generated heatmap (2 dates, 16 events)
+- `globe/reports/activity_heatmap.md` — Human-readable heatmap report
+
+## Updated Files (Phase 34)
+
+- `globe/runtime/globe_server.py` — Added `_REPORTS_DIR` (bugfix), `_load_heatmap()`, `render_activity_page()`, Phase 34 CSS; wired `/globe/activity` route with `?date=` and `?globe=` query params; added "🗓 Activity →" to Globe list header
+- `globe/spec/GLOBE_SPEC.md` — Phase 34 section
+- `README.md` — Phase 34 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 33 PR** — after review
-2. **Phase 34: Globe Activity Heatmap** — calendar-style activity view per globe,
-   advisory only, no score, no ranking
-3. **Phase 35: Directive Execution Checklist** — advisory checklist view of
+1. **Merge Phase 34 PR** — after review
+2. **Phase 35: Directive Execution Checklist** — advisory checklist view of
    execution steps per directive, no approval gate
+3. **Phase 36: Globe Feed / Changelog** — append-only activity feed with
+   advisory event stream display, no notifications, no push
 
 ---
 
@@ -570,4 +591,12 @@ _No new files — Phase 29 extends existing runtime scripts._
 *Preparedness is not command.*
 *Hint is not allocation.*
 *Dan-Go records preparedness hints; it does not predict, command, or allocate.*
+*Comparison is advisory display only.*
+*Comparison is not ranking.*
+*Comparison does not score proposals.*
+*Comparison does not allocate resources.*
+*Heatmap is advisory display only.*
+*Heatmap is not proof of impact.*
+*Heatmap does not rank participants.*
+*Heatmap does not allocate resources.*
 *Contribution becomes legible before it becomes valuable.*

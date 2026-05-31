@@ -562,6 +562,54 @@ HTTP URL:
 
 ---
 
+## Phase 34 — Activity Heatmap
+
+フェーズ34では、Globe 全体のイベントを日付ごとに集計し、カレンダー形式で可視化する
+**Activity Heatmap UI / CLI** を追加しました。
+カウントは記録されたイベント数を反映するだけであり、品質・優先度・インパクトの尺度ではありません。
+
+**Heatmap は advisory display のみです。影響の証明ではありません。
+参加者をランク付けしません。資源を配分しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 34, Dan-Go generates a date-aggregated activity heatmap across all Globe-layer
+events (execution_log, resolution_signal, reality_feedback, bridge_target_link). Counts
+are what was recorded — not measures of quality, priority, or impact.
+
+> "Heatmap is advisory display only."
+> "Heatmap is not proof of impact."
+> "Heatmap does not rank participants."
+> "Heatmap does not allocate resources."
+> "Human review is required before any real-world action."
+
+```bash
+# ヒートマップ サマリー
+python3 globe/runtime/activity_heatmap.py summary
+
+# レポート保存 (JSON + Markdown)
+python3 globe/runtime/activity_heatmap.py save
+
+# 日付フィルタ
+python3 globe/runtime/activity_heatmap.py show-date 2026-05-31
+
+# Globe フィルタ
+python3 globe/runtime/activity_heatmap.py show-globe globe-001
+
+# Directive フィルタ
+python3 globe/runtime/activity_heatmap.py show-directive directive-claim-proposal-002
+```
+
+HTTP URL:
+- `http://localhost:7422/globe/activity` — 全体ヒートマップ
+- `http://localhost:7422/globe/activity?date=2026-05-31` — 日付フィルタ
+- `http://localhost:7422/globe/activity?globe=globe-001` — Globe フィルタ
+
+生成ファイル:
+- `globe/reports/activity_heatmap.json` — ヒートマップデータ (machine-readable)
+- `globe/reports/activity_heatmap.md` — 人間可読ヒートマップレポート
+
+---
+
 ## Structure
 
 ```

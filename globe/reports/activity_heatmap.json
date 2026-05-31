@@ -1,0 +1,118 @@
+{
+  "heatmap_id": "globe-activity-heatmap",
+  "generated_at": "2026-05-31 11:51:36",
+  "total_events": 16,
+  "date_count": 2,
+  "earliest_date": "2026-05-30",
+  "latest_date": "2026-05-31",
+  "attention_events": 5,
+  "source_type_totals": {
+    "execution_log": 6,
+    "reality_feedback": 4,
+    "bridge_target_link": 4,
+    "resolution_signal": 2
+  },
+  "globe_totals": {
+    "globe-001": 13,
+    "globe-003": 3
+  },
+  "directive_totals": {
+    "directive-claim-proposal-002": 13,
+    "directive-claim-proposal-005": 3
+  },
+  "heatmap_is_advisory_display_only": true,
+  "heatmap_is_not_proof_of_impact": true,
+  "heatmap_does_not_rank_participants": true,
+  "heatmap_does_not_allocate_resources": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "phase": "34",
+  "phase_phrases": [
+    "Heatmap is advisory display only.",
+    "Heatmap is not proof of impact.",
+    "Heatmap does not rank participants.",
+    "Heatmap does not allocate resources.",
+    "Human review is required before any real-world action."
+  ],
+  "by_date": {
+    "2026-05-30": {
+      "total_events": 9,
+      "execution_log_count": 6,
+      "resolution_signal_count": 0,
+      "reality_feedback_count": 3,
+      "bridge_target_link_count": 0,
+      "objection_count": 2,
+      "rollback_request_count": 0,
+      "unresolved_count": 0,
+      "contested_count": 0,
+      "needs_attention_count": 1,
+      "by_globe": {
+        "globe-001": 8,
+        "globe-003": 1
+      },
+      "by_directive": {
+        "directive-claim-proposal-002": 8,
+        "directive-claim-proposal-005": 1
+      },
+      "event_type_counts": {
+        "human_approval": 2,
+        "observation": 4,
+        "execution_attempt": 1,
+        "objection": 2
+      },
+      "source_type_counts": {
+        "execution_log": 6,
+        "reality_feedback": 3
+      },
+      "items": [
+        "tl-exec-log-001",
+        "tl-exec-log-002",
+        "tl-rfb-rfb-001",
+        "tl-exec-log-001",
+        "tl-exec-log-003",
+        "tl-rfb-rfb-002",
+        "tl-exec-log-004",
+        "tl-exec-log-005",
+        "tl-rfb-rfb-003"
+      ]
+    },
+    "2026-05-31": {
+      "total_events": 7,
+      "execution_log_count": 0,
+      "resolution_signal_count": 2,
+      "reality_feedback_count": 1,
+      "bridge_target_link_count": 4,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "unresolved_count": 1,
+      "contested_count": 0,
+      "needs_attention_count": 4,
+      "by_globe": {
+        "globe-001": 5,
+        "globe-003": 2
+      },
+      "by_directive": {
+        "directive-claim-proposal-002": 5,
+        "directive-claim-proposal-005": 2
+      },
+      "event_type_counts": {
+        "link_candidate": 4,
+        "voluntary_resolution_signal": 3
+      },
+      "source_type_counts": {
+        "bridge_target_link": 4,
+        "resolution_signal": 2,
+        "reality_feedback": 1
+      },
+      "items": [
+        "tl-lnk-lnk-001",
+        "tl-lnk-lnk-002",
+        "tl-lnk-lnk-003",
+        "tl-lnk-lnk-004",
+        "tl-reso-log-006",
+        "tl-rfb-rfb-004",
+        "tl-reso-log-002"
+      ]
+    }
+  }
+}
