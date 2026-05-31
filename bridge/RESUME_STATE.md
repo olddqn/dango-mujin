@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Voluntary Resolution Signal
+# RESUME_STATE.md — Cross-Phase Contribution Summary
 
-> **STATUS: IN PROGRESS (feature/phase-29-voluntary-resolution-signal)**
+> **STATUS: IN PROGRESS (feature/phase-30-cross-phase-contribution-summary)**
 
-**Phase:** Voluntary Resolution Signal (Phase 29)
-**Branch:** feature/phase-29-voluntary-resolution-signal
+**Phase:** Cross-Phase Contribution Summary (Phase 30)
+**Branch:** feature/phase-30-cross-phase-contribution-summary
 **Started:** 2026-05-31
 
 ---
@@ -48,7 +48,8 @@
 - Directive UI Routes (Phase 28) — PR #20, merged
 - Reality Feedback Bridge (Phase 27) — PR #21, merged
 - Bridge Target Detail Link (Phase 27b) — PR #22, merged
-- **Voluntary Resolution Signal (Phase 29)** ← current PR
+- Voluntary Resolution Signal (Phase 29) — PR #23, merged
+- **Cross-Phase Contribution Summary (Phase 30)** ← current PR
 
 ---
 
@@ -292,7 +293,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b + Phase 29)
+## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b + Phase 29 + Phase 30)
 
 | Phase | Phrase |
 |-------|--------|
@@ -366,6 +367,11 @@ need_forecast_report.py
 | 29 | "Resolution signal does not close support automatically." |
 | 29 | "Resolution signal creates no legal authority." |
 | 29 | "Contested status must always remain recordable." |
+| 30 | "Cross-phase summary is advisory only." |
+| 30 | "Cross-phase summary is not proof of impact." |
+| 30 | "Cross-phase summary does not rank participants." |
+| 30 | "Cross-phase summary does not allocate resources." |
+| 30 | "Human review is required before any real-world action." |
 
 ---
 
@@ -400,13 +406,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 30)
+
+- `globe/runtime/cross_phase_contribution_summary.py` — Cross-phase summary builder (advisory only)
+- `globe/reports/cross_phase_contribution_summary.json` — Generated cross-phase summary report
+- `globe/reports/cross_phase_contribution_summary.md` — Generated Markdown report
+
+## Updated Files (Phase 30)
+
+- `globe/runtime/globe_server.py` — Added `_load_cross_phase_summary()`, `_render_cross_phase_panel()`, Phase 30 CSS; wired into Globe list and Globe detail pages
+- `globe/spec/GLOBE_SPEC.md` — Phase 30 section
+- `README.md` — Phase 30 section with invariant quotes and CLI examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 29 PR** — after review
-2. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
-   to Phase 25/26 Execution Log observations in an advisory cross-phase report
-3. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
+1. **Merge Phase 30 PR** — after review
+2. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
    and directives, filter by status, globe, entry type
+3. **Phase 32: Contribution Timeline View** — per-globe or per-directive timeline
+   of execution log events with resolution signal overlays
 
 ---
 

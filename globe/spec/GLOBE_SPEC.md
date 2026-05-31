@@ -704,6 +704,109 @@ python3 globe/runtime/directive_execution_log.py \
 
 ---
 
+## Phase 30 — Cross-Phase Contribution Summary（フェーズ30）
+
+Phase 20/21 の援助パターン・ニーズ予測データと、Phase 25–29 の実行ログデータを横断的に集約し、
+勧告的なクロスフェーズ貢献サマリーを生成する。
+
+> "Cross-phase summary is advisory only."
+> "Cross-phase summary is not proof of impact."
+> "Cross-phase summary does not rank participants."
+> "Cross-phase summary does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `cross_phase_summary_is_advisory_only` | `true` |
+| `cross_phase_summary_is_not_proof_of_impact` | `true` |
+| `cross_phase_summary_does_not_rank_participants` | `true` |
+| `cross_phase_summary_does_not_allocate_resources` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### データソース
+
+| フェーズ | ファイル | 役割 |
+|---------|---------|------|
+| Phase 20 | `bridge/gitsea/aid_patterns/examples/aid-pattern-registry.json` | 援助パターン一覧 |
+| Phase 20 | `bridge/gitsea/aid_patterns/examples/pattern-memory.json` | パターン記憶 |
+| Phase 20 | `bridge/gitsea/aid_patterns/examples/recurrence-snapshot.json` | 再発スナップショット |
+| Phase 21 | `bridge/gitsea/need_forecast/examples/need-forecast-registry.json` | ニーズ予測一覧 |
+| Phase 21 | `bridge/gitsea/need_forecast/examples/forecast-memory.json` | 予測記憶 |
+| Phase 21 | `bridge/gitsea/need_forecast/examples/preparedness-hint-snapshot.json` | 準備ヒント |
+| Phase 25–29 | `globe/reports/execution_log_summary.json` | 実行ログサマリー |
+| Phase 27 | `globe/reports/reality_feedback_bridge.json` | ブリッジ記録 |
+| Phase 27b | `globe/reports/bridge_target_links.json` | リンク候補 |
+
+### 集計指標（14指標）
+
+| 指標 | 説明 |
+|------|------|
+| `aid_pattern_count` | Phase 20 援助パターン数 |
+| `pattern_memory_count` | パターン記憶数 |
+| `recurrence_count` | 再発スナップショット数 |
+| `need_forecast_count` | Phase 21 ニーズ予測数 |
+| `forecast_memory_count` | 予測記憶数 |
+| `preparedness_hint_count` | 準備ヒント数 |
+| `execution_log_entry_count` | Phase 25–29 実行ログエントリ数 |
+| `human_approval_count` | 人間承認数 |
+| `objection_count` | 異議数 |
+| `voluntary_resolution_signal_count` | Phase 29 解決シグナル数（自己申告） |
+| `unresolved_signal_count` | 未解決シグナル数 |
+| `bridge_record_count` | Phase 27 ブリッジ記録数 |
+| `bridge_target_link_count` | Phase 27b リンク候補数 |
+| `high_confidence_link_count` | 高信頼度リンク候補数 |
+
+### CLI
+
+```bash
+# サマリー表示
+python3 globe/runtime/cross_phase_contribution_summary.py summary
+
+# レポート保存 (JSON + Markdown)
+python3 globe/runtime/cross_phase_contribution_summary.py save
+
+# Globe別サマリー
+python3 globe/runtime/cross_phase_contribution_summary.py show-globe globe-001
+
+# セクション別表示
+python3 globe/runtime/cross_phase_contribution_summary.py show-section aid
+python3 globe/runtime/cross_phase_contribution_summary.py show-section forecast
+python3 globe/runtime/cross_phase_contribution_summary.py show-section logs
+python3 globe/runtime/cross_phase_contribution_summary.py show-section bridge
+python3 globe/runtime/cross_phase_contribution_summary.py show-section links
+python3 globe/runtime/cross_phase_contribution_summary.py show-section resolution
+```
+
+### Advisory Interpretation（勧告的解釈）
+
+以下の4観点でパターンを列挙。スコア・ランキング・割り当ては行わない。
+
+| 観点 | 条件 |
+|------|------|
+| `where_attention_is_increasing` | log entries ≥ 2 の Globe |
+| `where_unresolved_signals_remain` | unresolved/contested ≥ 1 の Globe |
+| `where_objections_exist` | objections ≥ 1 の Globe |
+| `where_bridge_candidates_require_review` | bridge records ≥ 1 の Globe |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/cross_phase_contribution_summary.json` | 機械読み取り可能な全サマリー |
+| `globe/reports/cross_phase_contribution_summary.md` | 人間可読サマリー |
+
+### UI統合（Phase 30）
+
+- `/globe` — Globe 一覧ページに Cross-Phase Summary パネルを追加（advisory only）
+- `/globe/<globe_id>` — Globe 詳細ページに per-globe Cross-Phase Summary パネルを追加
+- 実行ボタン・割り当てボタンは一切追加しない
+- ランキング・スコアは表示しない
+
+---
+
 ## Phase 28 — Directive UI Routes（フェーズ28）
 
 Phase 24〜26 で生成された Directive / Execution Log / Summary を globe_server.py 上で直接閲覧できる UI ルートを追加。
