@@ -562,6 +562,42 @@ HTTP URL:
 
 ---
 
+## Phase 36 — Globe Feed / Changelog
+
+フェーズ36では、Globe 全レイヤー（Proposal / Claim / Directive / Execution Log /
+Reality Feedback / Bridge Target Link / Timeline / Activity Heatmap / Directive Checklist）
+の活動を created_at 降順で集約した **Globe Feed / Changelog** を追加しました。
+フィードは閲覧補助表示にすぎません。実行・影響・参加者ランキングの証明ではありません。
+
+**Feed は advisory display のみです。実行の証明ではありません。
+影響の証明ではありません。参加者をランク付けしません。
+リソースを配分しません。実世界での行動の前に人間によるレビューが必要です。**
+
+### 追加ファイル
+
+- `globe/runtime/globe_feed.py` — フィード生成・CLI（9 source_types, 29 items）
+- `globe/reports/globe_feed.json` — 生成済み JSON
+- `globe/reports/globe_feed.md` — 生成済み Markdown
+
+### CLI
+
+```bash
+python3 globe/runtime/globe_feed.py summary
+python3 globe/runtime/globe_feed.py save
+python3 globe/runtime/globe_feed.py show-globe globe-001   # 18 items
+python3 globe/runtime/globe_feed.py show-type execution_log # 8 items
+```
+
+### HTTP
+
+| Route | Description |
+|-------|-------------|
+| `/globe/feed` | Full feed, created_at desc |
+| `/globe/feed?globe=globe-001` | Filter by globe |
+| `/globe/feed?type=execution_log` | Filter by source_type |
+
+---
+
 ## Phase 35 — Directive Execution Checklist
 
 フェーズ35では、Directive の execution_steps を advisory チェックリスト形式でブラウザ表示・CLI 確認できる

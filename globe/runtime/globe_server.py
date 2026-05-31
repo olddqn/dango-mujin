@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–28)
+globe_server.py — Globe UI Server (Phase 22–36)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -30,6 +30,9 @@ Routes:
     /globe/activity?date=<YYYY-MM-DD>   → Heatmap filtered by date      [Phase 34]
     /globe/activity?globe=<globe_id>    → Heatmap filtered by globe     [Phase 34]
     /globe/<id>/directives/<did>/checklist → Directive step checklist   [Phase 35]
+    /globe/feed                           → Globe Feed / Changelog      [Phase 36]
+    /globe/feed?globe=<globe_id>          → Feed filtered by globe      [Phase 36]
+    /globe/feed?type=<source_type>        → Feed filtered by type       [Phase 36]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -958,6 +961,41 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .cl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .cl-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 36 — Globe Feed / Changelog */
+.fd-panel { background: #08090f; border: 1px solid #161e30;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.fd-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.fd-item { border: 1px solid #1a2438; border-radius: 6px;
+           padding: 12px 16px; margin-bottom: 10px; background: #0e1018; }
+.fd-item-header { display: flex; align-items: baseline; gap: 8px;
+                  flex-wrap: wrap; margin-bottom: 4px; }
+.fd-type-badge { font-size: 0.70rem; font-family: monospace;
+                 background: #10121a; color: #3a4a6a;
+                 padding: 1px 6px; border-radius: 3px; flex-shrink: 0; }
+.fd-globe-tag { font-size: 0.70rem; color: #2a3a5a; flex-shrink: 0; }
+.fd-ts { font-size: 0.70rem; color: #1e2a3a; margin-left: auto; flex-shrink: 0; }
+.fd-title { font-size: 0.86rem; color: #7890a8; line-height: 1.5; margin-bottom: 3px; }
+.fd-excerpt { font-size: 0.78rem; color: #3a4a5a; line-height: 1.45; }
+.fd-link { font-size: 0.75rem; color: #2a4a6a; margin-top: 5px; }
+.fd-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+               gap: 10px; margin-bottom: 18px; text-align: center;
+               font-size: 0.82rem; }
+.fd-stat-row .fs-num { font-size: 1.3rem; color: #6080a0; }
+.fd-stat-row .fs-lbl { color: #2a3a52; font-size: 0.74rem; }
+.fd-type-table { width: 100%; border-collapse: collapse;
+                 font-size: 0.78rem; margin-bottom: 14px; }
+.fd-type-table th { color: #3a4a6a; padding: 4px 8px;
+                    border-bottom: 1px solid #1a2438; text-align: left; }
+.fd-type-table td { padding: 4px 8px; color: #2a3a52;
+                    border-bottom: 1px solid #0e1420; }
+.fd-filters { margin-bottom: 14px; font-size: 0.78rem; }
+.fd-filters a { color: #3a5878; margin-right: 8px; }
+.fd-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.fd-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -2152,6 +2190,175 @@ def render_checklist_page(globe_id: str, directive_id: str) -> str | None:
     )
 
 
+# ─── Phase 36: Globe Feed / Changelog ─────────────────────────────────────────
+
+_FEED_JSON_PATH = _REPORTS_DIR / "globe_feed.json"
+
+_FEED_TYPE_ICON = {
+    "proposal":           "📋",
+    "claim":              "📌",
+    "directive":          "🗂️",
+    "execution_log":      "📝",
+    "reality_feedback":   "🔗",
+    "bridge_target_link": "🔗",
+    "timeline":           "⏱",
+    "activity_heatmap":   "🗓",
+    "directive_checklist":"📋",
+}
+
+
+def _load_feed() -> dict:
+    """Phase 36 — load globe_feed.json or build on-the-fly via importlib."""
+    if _FEED_JSON_PATH.exists():
+        try:
+            raw = json.loads(_FEED_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "items" in raw:
+                return raw
+        except Exception:
+            pass
+    # Fallback: build live
+    try:
+        import importlib.util, sys as _sys
+        _spec = importlib.util.spec_from_file_location(
+            "globe_feed",
+            str(Path(__file__).with_name("globe_feed.py")),
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_feed()
+    except Exception:
+        return {"items": [], "total_items": 0, "source_type_counts": {},
+                "globe_counts": {}, "generated_at": ""}
+
+
+def _render_fd_item(it: dict) -> str:
+    st   = _e(it.get("source_type", ""))
+    gid  = it.get("globe_id", "")
+    ts   = _e(it.get("created_at", ""))
+    icon = _FEED_TYPE_ICON.get(it.get("source_type", ""), "•")
+    title = _e(it.get("title", ""))
+    excerpt = _e(it.get("content_excerpt", ""))
+    url  = it.get("url_path", "")
+    link_html = (f'<div class="fd-link"><a href="{_e(url)}">詳細 →</a></div>'
+                 if url else "")
+    globe_tag = (f'<span class="fd-globe-tag">[{_e(gid)}]</span>' if gid else "")
+    return f"""<div class="fd-item">
+  <div class="fd-item-header">
+    <span class="fd-type-badge">{icon} {st}</span>
+    {globe_tag}
+    <span class="fd-ts">{ts}</span>
+  </div>
+  <div class="fd-title">{title}</div>
+  {"<div class='fd-excerpt'>" + excerpt + "</div>" if excerpt else ""}
+  {link_html}
+</div>"""
+
+
+def render_feed_page(
+    globe_filter: str | None = None,
+    type_filter: str | None = None,
+) -> str:
+    """Phase 36 — Globe Feed / Changelog page."""
+    feed = _load_feed()
+    all_items: list[dict] = feed.get("items", [])
+
+    # Apply filters
+    filtered = all_items
+    if globe_filter:
+        filtered = [it for it in filtered if it.get("globe_id") == globe_filter]
+    if type_filter:
+        filtered = [it for it in filtered if it.get("source_type") == type_filter]
+
+    # Scope label
+    parts = []
+    if globe_filter:
+        parts.append(f"globe={_e(globe_filter)}")
+    if type_filter:
+        parts.append(f"type={_e(type_filter)}")
+    scope_label = " · ".join(parts) if parts else "全アイテム"
+
+    # Stat row
+    total_all = feed.get("total_items", len(all_items))
+    type_counts = feed.get("source_type_counts", {})
+    globe_counts = feed.get("globe_counts", {})
+    stat_row = f"""<div class="fd-stat-row">
+  <div><div class="fs-num">{total_all}</div><div class="fs-lbl">total items</div></div>
+  <div><div class="fs-num">{len(type_counts)}</div><div class="fs-lbl">source types</div></div>
+  <div><div class="fs-num">{len(globe_counts)}</div><div class="fs-lbl">globes</div></div>
+  <div><div class="fs-num">{len(filtered)}</div><div class="fs-lbl">shown</div></div>
+</div>"""
+
+    # Type counts table
+    type_rows = "".join(
+        f'<tr><td>{_FEED_TYPE_ICON.get(st, "•")} <a href="/globe/feed?type={_e(st)}">{_e(st)}</a></td>'
+        f'<td style="text-align:right">{n}</td></tr>'
+        for st, n in sorted(type_counts.items())
+    )
+    type_table = (f'<table class="fd-type-table"><thead><tr>'
+                  f'<th>source_type</th><th>count</th></tr></thead>'
+                  f'<tbody>{type_rows}</tbody></table>'
+                  if type_rows else "")
+
+    # Filter links
+    filter_links = f'<div class="fd-filters">絞り込み: '
+    filter_links += f'<a href="/globe/feed">全て ({total_all})</a>'
+    for gid in sorted(globe_counts.keys()):
+        cnt = globe_counts[gid]
+        filter_links += (f'<a href="/globe/feed?globe={_e(gid)}">'
+                         f'🌐 {_e(gid)} ({cnt})</a>')
+    filter_links += "</div>"
+
+    # Items HTML
+    if filtered:
+        items_html = "".join(_render_fd_item(it) for it in filtered)
+    else:
+        items_html = '<div class="fd-empty">このフィルターに該当するアイテムはありません。</div>'
+
+    # Advisory
+    advisory = ('<div class="fd-advisory">'
+                + " &nbsp;·&nbsp; ".join([
+                    "Feed is advisory display only.",
+                    "Not proof of execution.",
+                    "Not proof of impact.",
+                    "Does not rank participants.",
+                    "Does not allocate resources.",
+                    "Human review required before any real-world action.",
+                ])
+                + "</div>")
+
+    body = f"""
+<h2>📰 Globe Feed / Changelog
+  <small style="font-size:0.65em;color:#3a4258">(Phase 36 · {_e(scope_label)})</small>
+</h2>
+<div style="font-size:0.76rem;color:#2a3a52;margin-bottom:12px">
+  generated_at: {_e(feed.get('generated_at',''))}
+</div>
+{stat_row}
+{filter_links}
+<div class="fd-panel">
+  <h3>📊 Source Type Counts</h3>
+  {type_table}
+  {advisory}
+</div>
+<h3 style="font-size:0.86rem;color:#3a5070;margin:18px 0 10px">
+  📋 Feed Items ({len(filtered)}) — {_e(scope_label)}
+</h3>
+{items_html}
+<div style="margin-top:14px;font-size:0.82rem;color:#3a4a5a">
+  <a href="/globe">← Globe 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/activity">🗓 Activity Heatmap</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/timeline">⏱ Timeline</a>
+</div>"""
+
+    return _page(
+        f"Feed — {scope_label}",
+        f'<a href="/globe">Globe</a> › Feed',
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -2183,7 +2390,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a>'
         f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a>'
         f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a>'
-        f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a></h2>'
+        f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a>'
+        f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -3067,6 +3275,14 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 36 — Globe Feed (before /globe/<id> match)
+        if path == "/globe/feed":
+            self._send_html(render_feed_page(
+                globe_filter=_qs("globe"),
+                type_filter=_qs("type"),
+            ))
             return
 
         # Phase 34 — Activity Heatmap (before /globe/<id> match)

@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Directive Execution Checklist
+# RESUME_STATE.md — Globe Feed / Changelog
 
-> **STATUS: IN PROGRESS (feature/phase-35-directive-checklist)**
+> **STATUS: IN PROGRESS (feature/phase-36-globe-feed)**
 
-**Phase:** Directive Execution Checklist (Phase 35)
-**Branch:** feature/phase-35-directive-checklist
+**Phase:** Globe Feed / Changelog (Phase 36)
+**Branch:** feature/phase-36-globe-feed
 **Started:** 2026-05-31
 
 ---
@@ -54,7 +54,8 @@
 - Contribution Timeline View (Phase 32) — PR #26, merged
 - Proposal Comparison View (Phase 33) — PR #27, merged
 - Activity Heatmap (Phase 34) — PR #28, merged
-- **Directive Execution Checklist (Phase 35)** ← current PR
+- Directive Execution Checklist (Phase 35) — PR #29, merged
+- **Globe Feed / Changelog (Phase 36)** ← current PR
 
 ---
 
@@ -402,6 +403,12 @@ need_forecast_report.py
 | 35 | "Checklist is not proof of completion." |
 | 35 | "Checklist does not approve execution." |
 | 35 | "Human review is required before any real-world action." |
+| 36 | "Feed is advisory display only." |
+| 36 | "Feed is not proof of execution." |
+| 36 | "Feed is not proof of impact." |
+| 36 | "Feed does not rank participants." |
+| 36 | "Feed does not allocate resources." |
+| 36 | "Human review is required before any real-world action." |
 
 ---
 
@@ -525,13 +532,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 36)
+
+- `globe/runtime/globe_feed.py` — Feed builder + CLI (9 source_types, 29 items, advisory only)
+- `globe/reports/globe_feed.json` — Generated feed JSON
+- `globe/reports/globe_feed.md` — Human-readable feed Markdown
+
+## Updated Files (Phase 36)
+
+- `globe/runtime/globe_server.py` — Added `_load_feed()`, `_render_fd_item()`, `render_feed_page()`, Phase 36 CSS; wired `/globe/feed` route with `?globe=` and `?type=` query params; added "📰 Feed →" to Globe list header; updated docstring to Phase 22–36
+- `globe/spec/GLOBE_SPEC.md` — Phase 36 section (9 source_types, feed item structure, CLI/HTTP routes)
+- `README.md` — Phase 36 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 35 PR** — after review
-2. **Phase 36: Globe Feed / Changelog** — append-only activity feed with
-   advisory event stream display, no notifications, no push
-3. **Phase 37: Cross-Directive Dependency Map** — advisory visualization of
+1. **Merge Phase 36 PR** — after review
+2. **Phase 37: Cross-Directive Dependency Map** — advisory visualization of
    which directives reference shared data/steps, no execution gating
+3. **Phase 38: Globe Member Profile View** — advisory member activity summary,
+   no identity verification, no authority grants
 
 ---
 
@@ -624,4 +646,9 @@ _No new files — Phase 29 extends existing runtime scripts._
 *Checklist is not proof of execution.*
 *Checklist is not proof of completion.*
 *Checklist does not approve execution.*
+*Feed is advisory display only.*
+*Feed is not proof of execution.*
+*Feed is not proof of impact.*
+*Feed does not rank participants.*
+*Feed does not allocate resources.*
 *Contribution becomes legible before it becomes valuable.*
