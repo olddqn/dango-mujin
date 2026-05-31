@@ -562,6 +562,95 @@ HTTP URL:
 
 ---
 
+## Phase 37b — Dependency Edge URL Enrichment
+
+フェーズ37b では、Phase 37 の未実装部分として残っていた
+dependency edge の `{}` placeholder URL を修正しました。
+
+- **修正前**: `/globe/{}/directives/directive-claim-proposal-002` （broken）
+- **修正後**: `/globe/globe-001/directives/directive-claim-proposal-002` （correct）
+
+`_render_dep_edge()` に `globe_lookup: dict[str, str]` パラメーターを追加し、
+`render_dependencies_page()` で `all_nodes` から lookup を構築して渡します。
+
+**URL enrichment は advisory display のみです。実行順序ではありません。
+Directiveをランク付けしません。責任を割り当てません。**
+
+---
+
+## Phase 37 — Directive Dependency Map
+
+フェーズ37では、Directive 間の参照関係・共有キーワード・同一Globe・同一Claim/Proposal由来・
+共有ブリッジターゲット・共有解決ステータス・共有注意フラグを検出し、
+advisory dependency map として可視化する **Directive Dependency Map** を追加しました。
+依存関係マップは観察補助表示にすぎません。実行順序・優先順位・責任割当ではありません。
+
+**Dependency map は advisory display のみです。実行順序ではありません。
+Directiveをランク付けしません。責任を割り当てません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+### 追加ファイル
+
+- `globe/runtime/directive_dependency_map.py` — 関係検出・CLI (7 relation_types, 4 edges)
+- `globe/reports/directive_dependency_map.json` — 生成済み JSON
+- `globe/reports/directive_dependency_map.md` — 生成済み Markdown
+
+### CLI
+
+```bash
+python3 globe/runtime/directive_dependency_map.py summary
+python3 globe/runtime/directive_dependency_map.py show-directive directive-claim-proposal-002
+python3 globe/runtime/directive_dependency_map.py show-globe globe-001
+python3 globe/runtime/directive_dependency_map.py show-relation shared_keyword
+```
+
+### HTTP
+
+| Route | Description |
+|-------|-------------|
+| `/globe/dependencies` | Full dependency map |
+| `/globe/dependencies?globe=globe-001` | Filter by globe |
+| `/globe/dependencies?directive=<id>` | Filter by directive |
+| `/globe/dependencies?relation=shared_keyword` | Filter by relation type |
+
+---
+
+## Phase 36 — Globe Feed / Changelog
+
+フェーズ36では、Globe 全レイヤー（Proposal / Claim / Directive / Execution Log /
+Reality Feedback / Bridge Target Link / Timeline / Activity Heatmap / Directive Checklist）
+の活動を created_at 降順で集約した **Globe Feed / Changelog** を追加しました。
+フィードは閲覧補助表示にすぎません。実行・影響・参加者ランキングの証明ではありません。
+
+**Feed は advisory display のみです。実行の証明ではありません。
+影響の証明ではありません。参加者をランク付けしません。
+リソースを配分しません。実世界での行動の前に人間によるレビューが必要です。**
+
+### 追加ファイル
+
+- `globe/runtime/globe_feed.py` — フィード生成・CLI（9 source_types, 29 items）
+- `globe/reports/globe_feed.json` — 生成済み JSON
+- `globe/reports/globe_feed.md` — 生成済み Markdown
+
+### CLI
+
+```bash
+python3 globe/runtime/globe_feed.py summary
+python3 globe/runtime/globe_feed.py save
+python3 globe/runtime/globe_feed.py show-globe globe-001   # 18 items
+python3 globe/runtime/globe_feed.py show-type execution_log # 8 items
+```
+
+### HTTP
+
+| Route | Description |
+|-------|-------------|
+| `/globe/feed` | Full feed, created_at desc |
+| `/globe/feed?globe=globe-001` | Filter by globe |
+| `/globe/feed?type=execution_log` | Filter by source_type |
+
+---
+
 ## Phase 35 — Directive Execution Checklist
 
 フェーズ35では、Directive の execution_steps を advisory チェックリスト形式でブラウザ表示・CLI 確認できる

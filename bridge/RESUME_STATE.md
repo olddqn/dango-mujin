@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Directive Execution Checklist
+# RESUME_STATE.md — Dependency Edge URL Enrichment
 
-> **STATUS: IN PROGRESS (feature/phase-35-directive-checklist)**
+> **STATUS: IN PROGRESS (feature/phase-37-directive-dependency-map)**
 
-**Phase:** Directive Execution Checklist (Phase 35)
-**Branch:** feature/phase-35-directive-checklist
+**Phase:** Dependency Edge URL Enrichment (Phase 37b)
+**Branch:** feature/phase-37-directive-dependency-map
 **Started:** 2026-05-31
 
 ---
@@ -54,7 +54,10 @@
 - Contribution Timeline View (Phase 32) — PR #26, merged
 - Proposal Comparison View (Phase 33) — PR #27, merged
 - Activity Heatmap (Phase 34) — PR #28, merged
-- **Directive Execution Checklist (Phase 35)** ← current PR
+- Directive Execution Checklist (Phase 35) — PR #29, merged
+- Globe Feed / Changelog (Phase 36) — PR #30, merged
+- Directive Dependency Map (Phase 37) — PR #31
+- **Dependency Edge URL Enrichment (Phase 37b)** ← current commit
 
 ---
 
@@ -402,6 +405,21 @@ need_forecast_report.py
 | 35 | "Checklist is not proof of completion." |
 | 35 | "Checklist does not approve execution." |
 | 35 | "Human review is required before any real-world action." |
+| 36 | "Feed is advisory display only." |
+| 36 | "Feed is not proof of execution." |
+| 36 | "Feed is not proof of impact." |
+| 36 | "Feed does not rank participants." |
+| 36 | "Feed does not allocate resources." |
+| 36 | "Human review is required before any real-world action." |
+| 37 | "Dependency map is advisory display only." |
+| 37 | "Dependency is not execution order." |
+| 37 | "Dependency does not rank directives." |
+| 37 | "Dependency does not allocate responsibility." |
+| 37 | "Human review is required before any real-world action." |
+| 37b | "URL enrichment is advisory display only." |
+| 37b | "URL enrichment is not execution order." |
+| 37b | "URL enrichment does not rank directives." |
+| 37b | "URL enrichment does not allocate responsibility." |
 
 ---
 
@@ -525,13 +543,52 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## Updated Files (Phase 37b)
+
+- `globe/runtime/globe_server.py` — `_render_dep_edge()` に `globe_lookup` パラメーター追加; `render_dependencies_page()` で lookup 構築・受け渡し; `{}` placeholder を削除し、正しい `/globe/<gid>/directives/<did>` URL を生成
+- `globe/spec/GLOBE_SPEC.md` — Phase 37b セクション追加
+- `README.md` — Phase 37b セクション追加
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
+## New Files (Phase 37)
+
+- `globe/runtime/directive_dependency_map.py` — Dependency detection + CLI (7 relation_types, 4 edges)
+- `globe/reports/directive_dependency_map.json` — Generated dependency map JSON
+- `globe/reports/directive_dependency_map.md` — Human-readable dependency map Markdown
+
+## Updated Files (Phase 37)
+
+- `globe/runtime/globe_server.py` — Added `_load_dependency_map()`, `_render_dep_node()`, `_render_dep_edge()`, `render_dependencies_page()`, Phase 37 CSS; wired `/globe/dependencies` route with `?globe=`, `?directive=`, `?relation=` query params; added "🗺️ Dep →" to Globe list header; updated docstring to Phase 22–37
+- `globe/spec/GLOBE_SPEC.md` — Phase 37 section (7 relation_types, edge structure, CLI/HTTP routes)
+- `README.md` — Phase 37 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
+## New Files (Phase 36)
+
+- `globe/runtime/globe_feed.py` — Feed builder + CLI (9 source_types, 29 items, advisory only)
+- `globe/reports/globe_feed.json` — Generated feed JSON
+- `globe/reports/globe_feed.md` — Human-readable feed Markdown
+
+## Updated Files (Phase 36)
+
+- `globe/runtime/globe_server.py` — Added `_load_feed()`, `_render_fd_item()`, `render_feed_page()`, Phase 36 CSS; wired `/globe/feed` route with `?globe=` and `?type=` query params; added "📰 Feed →" to Globe list header; updated docstring to Phase 22–36
+- `globe/spec/GLOBE_SPEC.md` — Phase 36 section (9 source_types, feed item structure, CLI/HTTP routes)
+- `README.md` — Phase 36 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 35 PR** — after review
-2. **Phase 36: Globe Feed / Changelog** — append-only activity feed with
-   advisory event stream display, no notifications, no push
-3. **Phase 37: Cross-Directive Dependency Map** — advisory visualization of
-   which directives reference shared data/steps, no execution gating
+1. **Merge Phase 37 PR** — after review
+2. **Phase 38: Globe Member Profile View** — advisory member activity summary,
+   no identity verification, no authority grants
+3. **Phase 39: Cross-Phase Dependency Timeline** — timeline view of dependency
+   edge changes over time, advisory only
 
 ---
 
@@ -624,4 +681,13 @@ _No new files — Phase 29 extends existing runtime scripts._
 *Checklist is not proof of execution.*
 *Checklist is not proof of completion.*
 *Checklist does not approve execution.*
+*Feed is advisory display only.*
+*Feed is not proof of execution.*
+*Feed is not proof of impact.*
+*Feed does not rank participants.*
+*Feed does not allocate resources.*
+*Dependency map is advisory display only.*
+*Dependency is not execution order.*
+*Dependency does not rank directives.*
+*Dependency does not allocate responsibility.*
 *Contribution becomes legible before it becomes valuable.*
