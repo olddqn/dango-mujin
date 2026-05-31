@@ -1,0 +1,593 @@
+{
+  "heatmap_id": "globe-member-activity-heatmap",
+  "generated_at": "2026-05-31 20:48:52",
+  "phase": "39",
+  "total_members": 12,
+  "total_events": 25,
+  "all_dates": [
+    "2026-05-30",
+    "2026-05-31"
+  ],
+  "activity_types": [
+    "proposal",
+    "deliberation",
+    "human_approval",
+    "observation",
+    "objection",
+    "feedback",
+    "rollback_request",
+    "voluntary_resolution_signal",
+    "execution_attempt",
+    "execution_log",
+    "timeline_event",
+    "feed_item"
+  ],
+  "phase_phrases": [
+    "Member activity heatmap is advisory display only.",
+    "Member activity heatmap is not identity verification.",
+    "Member activity heatmap is not reputation score.",
+    "Member activity heatmap does not rank members.",
+    "Member activity heatmap creates no authority.",
+    "Human review is required before any real-world action."
+  ],
+  "member_activity_heatmap_is_advisory_display_only": true,
+  "member_activity_heatmap_is_not_identity_verification": true,
+  "member_activity_heatmap_is_not_reputation_score": true,
+  "member_activity_heatmap_does_not_rank_members": true,
+  "member_activity_heatmap_creates_no_authority": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "members": [
+    {
+      "member_id": "member-bridge-target-linker",
+      "display_name": "bridge_target_linker",
+      "actor_types": [
+        "system"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 4,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 0,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 4,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 4
+      },
+      "by_date": {
+        "2026-05-31": {
+          "timeline_event": 4
+        }
+      },
+      "latest_activity_at": "2026-05-31T01:00:22.998239+00:00",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-dan-go-ai-mediator",
+      "display_name": "Dan-Go AI Mediator",
+      "actor_types": [
+        "ai"
+      ],
+      "globe_ids": [
+        "globe-001",
+        "globe-003"
+      ],
+      "total_events": 3,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 3,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 2,
+        "globe-003": 1
+      },
+      "by_date": {
+        "2026-05-30": {
+          "deliberation": 3
+        }
+      },
+      "latest_activity_at": "2026-05-30T03:15:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-masuo-komori",
+      "display_name": "Masuo Komori",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 3,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 0,
+        "human_approval": 2,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 1,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 3
+      },
+      "by_date": {
+        "2026-05-30": {
+          "human_approval": 2
+        },
+        "2026-05-31": {
+          "voluntary_resolution_signal": 1
+        }
+      },
+      "latest_activity_at": "2026-05-31T04:27:29.210356+00:00",
+      "objection_count": 0,
+      "unresolved_signal_count": 1,
+      "contested_signal_count": 1,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-dan-go-agent",
+      "display_name": "Dan-Go Agent",
+      "actor_types": [
+        "ai"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 0,
+        "human_approval": 0,
+        "observation": 2,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "observation": 2
+        }
+      },
+      "latest_activity_at": "2026-05-30T23:16:45.610715+00:00",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-founding-member-001",
+      "display_name": "founding-member-001",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 1,
+        "deliberation": 1,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "proposal": 1,
+          "deliberation": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T00:10:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-founding-member-002",
+      "display_name": "founding-member-002",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 1,
+        "deliberation": 1,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "proposal": 1,
+          "deliberation": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T01:10:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-founding-member-003",
+      "display_name": "founding-member-003",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 1,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 1,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "deliberation": 1,
+          "objection": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T23:12:26.340959+00:00",
+      "objection_count": 1,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-jammy-house-member-001",
+      "display_name": "jammy-house-member-001",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-003"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 1,
+        "deliberation": 1,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-003": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "proposal": 1,
+          "deliberation": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T03:10:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-jammy-house-member-002",
+      "display_name": "jammy-house-member-002",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-003"
+      ],
+      "total_events": 2,
+      "by_activity_type": {
+        "proposal": 1,
+        "deliberation": 0,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 1,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-003": 2
+      },
+      "by_date": {
+        "2026-05-30": {
+          "proposal": 1,
+          "execution_attempt": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T23:12:22.311734+00:00",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-dan-go-protocol",
+      "display_name": "Dan-Go Protocol",
+      "actor_types": [
+        "system"
+      ],
+      "globe_ids": [
+        "globe-001"
+      ],
+      "total_events": 1,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 1,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-001": 1
+      },
+      "by_date": {
+        "2026-05-30": {
+          "deliberation": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T00:21:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-jammy-house-steward",
+      "display_name": "Jammy House Steward",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-003"
+      ],
+      "total_events": 1,
+      "by_activity_type": {
+        "proposal": 0,
+        "deliberation": 0,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 1,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-003": 1
+      },
+      "by_date": {
+        "2026-05-31": {
+          "voluntary_resolution_signal": 1
+        }
+      },
+      "latest_activity_at": "2026-05-31T04:27:33.201255+00:00",
+      "objection_count": 0,
+      "unresolved_signal_count": 1,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    },
+    {
+      "member_id": "member-yacypherpunks-member-001",
+      "display_name": "yacypherpunks-member-001",
+      "actor_types": [
+        "human"
+      ],
+      "globe_ids": [
+        "globe-002"
+      ],
+      "total_events": 1,
+      "by_activity_type": {
+        "proposal": 1,
+        "deliberation": 0,
+        "human_approval": 0,
+        "observation": 0,
+        "objection": 0,
+        "feedback": 0,
+        "rollback_request": 0,
+        "voluntary_resolution_signal": 0,
+        "execution_attempt": 0,
+        "execution_log": 0,
+        "timeline_event": 0,
+        "feed_item": 0
+      },
+      "by_globe": {
+        "globe-002": 1
+      },
+      "by_date": {
+        "2026-05-30": {
+          "proposal": 1
+        }
+      },
+      "latest_activity_at": "2026-05-30T02:00:00Z",
+      "objection_count": 0,
+      "unresolved_signal_count": 0,
+      "contested_signal_count": 0,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "creates_no_authority": true
+    }
+  ],
+  "by_date_summary": {
+    "2026-05-30": {
+      "total_events": 19,
+      "active_members": [
+        "member-dan-go-agent",
+        "member-dan-go-ai-mediator",
+        "member-dan-go-protocol",
+        "member-founding-member-001",
+        "member-founding-member-002",
+        "member-founding-member-003",
+        "member-jammy-house-member-001",
+        "member-jammy-house-member-002",
+        "member-masuo-komori",
+        "member-yacypherpunks-member-001"
+      ],
+      "by_activity_type": {
+        "observation": 2,
+        "deliberation": 8,
+        "objection": 1,
+        "human_approval": 2,
+        "proposal": 5,
+        "execution_attempt": 1
+      }
+    },
+    "2026-05-31": {
+      "total_events": 6,
+      "active_members": [
+        "member-bridge-target-linker",
+        "member-jammy-house-steward",
+        "member-masuo-komori"
+      ],
+      "by_activity_type": {
+        "voluntary_resolution_signal": 2,
+        "timeline_event": 4
+      }
+    }
+  }
+}
