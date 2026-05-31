@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–36)
+globe_server.py — Globe UI Server (Phase 22–37)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -33,6 +33,10 @@ Routes:
     /globe/feed                           → Globe Feed / Changelog      [Phase 36]
     /globe/feed?globe=<globe_id>          → Feed filtered by globe      [Phase 36]
     /globe/feed?type=<source_type>        → Feed filtered by type       [Phase 36]
+    /globe/dependencies                   → Directive Dependency Map    [Phase 37]
+    /globe/dependencies?globe=<globe_id>  → Dependencies by globe       [Phase 37]
+    /globe/dependencies?directive=<id>    → Dependencies by directive   [Phase 37]
+    /globe/dependencies?relation=<type>   → Dependencies by relation    [Phase 37]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -995,6 +999,42 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .fd-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .fd-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 37 — Directive Dependency Map */
+.dep-panel { background: #08090f; border: 1px solid #161e30;
+             border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.dep-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.dep-node { border: 1px solid #1a2438; border-radius: 6px;
+            padding: 10px 14px; margin-bottom: 8px; background: #0e1018; }
+.dep-node-id { font-family: monospace; font-size: 0.78rem; color: #3a5070; }
+.dep-node-title { font-size: 0.84rem; color: #7890a8; margin: 3px 0; line-height: 1.4; }
+.dep-node-meta { font-size: 0.72rem; color: #2a3a52; margin-top: 4px; }
+.dep-edge { border: 1px solid #1a2438; border-radius: 6px;
+            padding: 10px 14px; margin-bottom: 8px; background: #0a0c10; }
+.dep-edge-header { display: flex; align-items: baseline; gap: 8px;
+                   flex-wrap: wrap; margin-bottom: 4px; }
+.dep-rel-badge { font-size: 0.70rem; font-family: monospace;
+                 background: #10121a; color: #3a4a6a;
+                 padding: 1px 6px; border-radius: 3px; flex-shrink: 0; }
+.dep-conf-badge { font-size: 0.70rem; padding: 1px 6px; border-radius: 3px;
+                  flex-shrink: 0; }
+.dep-conf-badge.high   { background: #0e1828; color: #3a6888; }
+.dep-conf-badge.medium { background: #101428; color: #3a5878; }
+.dep-conf-badge.low    { background: #181420; color: #4a3a58; }
+.dep-edge-dirs { font-size: 0.80rem; color: #5878a0; margin-bottom: 4px; }
+.dep-edge-reason { font-size: 0.76rem; color: #3a4a5a; line-height: 1.45; }
+.dep-terms { font-size: 0.72rem; color: #2a3a4a; margin-top: 4px; }
+.dep-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+                gap: 10px; margin-bottom: 18px; text-align: center;
+                font-size: 0.82rem; }
+.dep-stat-row .ds-num { font-size: 1.3rem; color: #6080a0; }
+.dep-stat-row .ds-lbl { color: #2a3a52; font-size: 0.74rem; }
+.dep-filters { margin-bottom: 14px; font-size: 0.78rem; }
+.dep-filters a { color: #3a5878; margin-right: 8px; }
+.dep-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1420; padding-top: 8px; }
+.dep-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -2359,6 +2399,236 @@ def render_feed_page(
     )
 
 
+# ─── Phase 37: Directive Dependency Map ────────────────────────────────────────
+
+_DEP_JSON_PATH = _REPORTS_DIR / "directive_dependency_map.json"
+
+_DEP_REL_ICON = {
+    "same_globe":              "🌐",
+    "shared_keyword":          "🔤",
+    "shared_claim_source":     "📌",
+    "shared_proposal_source":  "📋",
+    "shared_bridge_target":    "🔗",
+    "shared_resolution_status":"🏁",
+    "shared_attention_marker": "⚠️",
+}
+
+
+def _load_dependency_map() -> dict:
+    """Phase 37 — load directive_dependency_map.json or build on-the-fly via importlib."""
+    if _DEP_JSON_PATH.exists():
+        try:
+            raw = json.loads(_DEP_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "edges" in raw:
+                return raw
+        except Exception:
+            pass
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "directive_dependency_map",
+            str(Path(__file__).with_name("directive_dependency_map.py")),
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_dependency_map()
+    except Exception:
+        return {"nodes": [], "edges": [], "edge_count": 0,
+                "directive_count": 0, "relation_type_counts": {},
+                "confidence_counts": {}, "generated_at": ""}
+
+
+def _render_dep_node(node: dict) -> str:
+    did   = _e(node.get("directive_id", ""))
+    gid   = _e(node.get("globe_id", ""))
+    title = _e(node.get("title", ""))
+    res   = _e(", ".join(node.get("resolution_statuses", [])))
+    attn  = _e(", ".join(node.get("attention_types", [])))
+    url   = f"/globe/{_e(node.get('globe_id',''))}/directives/{did}" if gid else ""
+    link  = f'<a href="{url}">{did}</a>' if url else did
+    meta_parts = []
+    if gid:
+        meta_parts.append(f"globe: {gid}")
+    if res:
+        meta_parts.append(f"resolution: {res}")
+    if attn:
+        meta_parts.append(f"attention: {attn}")
+    return (
+        f'<div class="dep-node">'
+        f'<div class="dep-node-id">{link}</div>'
+        f'<div class="dep-node-title">{title}</div>'
+        f'<div class="dep-node-meta">{" &nbsp;·&nbsp; ".join(meta_parts)}</div>'
+        f'</div>'
+    )
+
+
+def _render_dep_edge(e: dict) -> str:
+    rt   = _e(e.get("relation_type", ""))
+    conf = e.get("confidence", "low")
+    icon = _DEP_REL_ICON.get(e.get("relation_type", ""), "•")
+    src  = _e(e.get("source_directive_id", ""))
+    tgt  = _e(e.get("target_directive_id", ""))
+    reason = _e(e.get("relation_reason", ""))
+    terms  = e.get("shared_terms", [])
+    terms_html = (
+        f'<div class="dep-terms">共有: {_e(", ".join(terms[:6]))}</div>'
+        if terms else ""
+    )
+    return (
+        f'<div class="dep-edge">'
+        f'<div class="dep-edge-header">'
+        f'<span class="dep-rel-badge">{icon} {rt}</span>'
+        f'<span class="dep-conf-badge {_e(conf)}">{_e(conf)}</span>'
+        f'</div>'
+        f'<div class="dep-edge-dirs">'
+        f'<a href="/globe/{{}}/directives/{src}" style="color:#5878a0">{src}</a>'
+        f' ↔ '
+        f'<a href="/globe/{{}}/directives/{tgt}" style="color:#5878a0">{tgt}</a>'
+        f'</div>'
+        f'<div class="dep-edge-reason">{reason}</div>'
+        f'{terms_html}'
+        f'</div>'
+    )
+
+
+def render_dependencies_page(
+    globe_filter: str | None = None,
+    directive_filter: str | None = None,
+    relation_filter: str | None = None,
+) -> str:
+    """Phase 37 — Directive Dependency Map page."""
+    dep_map = _load_dependency_map()
+    all_nodes: list[dict] = dep_map.get("nodes", [])
+    all_edges: list[dict] = dep_map.get("edges", [])
+
+    # Apply filters
+    nodes = all_nodes
+    edges = all_edges
+    if globe_filter:
+        globe_dids = {n["directive_id"] for n in all_nodes if n.get("globe_id") == globe_filter}
+        nodes = [n for n in all_nodes if n["directive_id"] in globe_dids]
+        edges = [e for e in all_edges
+                 if e["source_directive_id"] in globe_dids
+                 or e["target_directive_id"] in globe_dids]
+    elif directive_filter:
+        edges = [e for e in all_edges
+                 if e["source_directive_id"] == directive_filter
+                 or e["target_directive_id"] == directive_filter]
+        touched = ({e["source_directive_id"] for e in edges}
+                   | {e["target_directive_id"] for e in edges})
+        nodes = [n for n in all_nodes if n["directive_id"] in touched]
+    elif relation_filter:
+        edges = [e for e in all_edges if e.get("relation_type") == relation_filter]
+        touched = ({e["source_directive_id"] for e in edges}
+                   | {e["target_directive_id"] for e in edges})
+        nodes = [n for n in all_nodes if n["directive_id"] in touched]
+
+    # Scope label
+    parts = []
+    if globe_filter:
+        parts.append(f"globe={_e(globe_filter)}")
+    if directive_filter:
+        parts.append(f"directive={_e(directive_filter)}")
+    if relation_filter:
+        parts.append(f"relation={_e(relation_filter)}")
+    scope_label = " · ".join(parts) if parts else "全Directive"
+
+    # Stats
+    total_nodes = dep_map.get("directive_count", len(all_nodes))
+    total_edges = dep_map.get("edge_count", len(all_edges))
+    rel_counts  = dep_map.get("relation_type_counts", {})
+    stat_row = f"""<div class="dep-stat-row">
+  <div><div class="ds-num">{total_nodes}</div><div class="ds-lbl">directives</div></div>
+  <div><div class="ds-num">{total_edges}</div><div class="ds-lbl">total edges</div></div>
+  <div><div class="ds-num">{len(rel_counts)}</div><div class="ds-lbl">relation types</div></div>
+  <div><div class="ds-num">{len(edges)}</div><div class="ds-lbl">shown edges</div></div>
+</div>"""
+
+    # Relation type filter links
+    rel_links = '<div class="dep-filters">Relation: <a href="/globe/dependencies">全て</a>'
+    for rt in sorted(rel_counts.keys()):
+        icon = _DEP_REL_ICON.get(rt, "•")
+        cnt  = rel_counts[rt]
+        rel_links += (f'<a href="/globe/dependencies?relation={_e(rt)}">'
+                      f'{icon} {_e(rt)} ({cnt})</a>')
+    rel_links += "</div>"
+
+    # Relation type table
+    rel_rows = "".join(
+        f'<tr><td>{_DEP_REL_ICON.get(rt,"•")} '
+        f'<a href="/globe/dependencies?relation={_e(rt)}">{_e(rt)}</a></td>'
+        f'<td style="text-align:right">{n}</td></tr>'
+        for rt, n in sorted(rel_counts.items())
+    )
+    rel_table = (
+        f'<table style="width:100%;border-collapse:collapse;font-size:0.78rem;margin-bottom:14px">'
+        f'<thead><tr>'
+        f'<th style="color:#3a4a6a;padding:4px 8px;border-bottom:1px solid #1a2438;text-align:left">relation_type</th>'
+        f'<th style="color:#3a4a6a;padding:4px 8px;border-bottom:1px solid #1a2438">count</th>'
+        f'</tr></thead><tbody>{rel_rows}</tbody></table>'
+        if rel_rows else ""
+    )
+
+    # Node cards
+    nodes_html = "".join(_render_dep_node(n) for n in nodes) if nodes else (
+        '<div class="dep-empty">このフィルターに該当するDirectiveはありません。</div>'
+    )
+
+    # Edge cards
+    edges_html = "".join(_render_dep_edge(e) for e in edges) if edges else (
+        '<div class="dep-empty">このフィルターに該当するDependency Edgeはありません。</div>'
+    )
+
+    advisory = (
+        '<div class="dep-advisory">'
+        + " &nbsp;·&nbsp; ".join([
+            "Dependency map is advisory display only.",
+            "Not execution order.",
+            "Does not rank directives.",
+            "Does not allocate responsibility.",
+            "Human review required before any real-world action.",
+        ])
+        + "</div>"
+    )
+
+    body = f"""
+<h2>🗺️ Directive Dependency Map
+  <small style="font-size:0.65em;color:#3a4258">(Phase 37 · {_e(scope_label)})</small>
+</h2>
+<div style="font-size:0.76rem;color:#2a3a52;margin-bottom:12px">
+  generated_at: {_e(dep_map.get('generated_at',''))}
+  &nbsp;·&nbsp; advisory only — not execution order — does not rank directives
+</div>
+{stat_row}
+{rel_links}
+<div class="dep-panel">
+  <h3>📊 Relation Type Counts</h3>
+  {rel_table}
+  {advisory}
+</div>
+<h3 style="font-size:0.86rem;color:#3a5070;margin:18px 0 10px">
+  🗂️ Directive Nodes ({len(nodes)}) — {_e(scope_label)}
+</h3>
+{nodes_html}
+<h3 style="font-size:0.86rem;color:#3a5070;margin:18px 0 10px">
+  🔗 Dependency Edges ({len(edges)}) — {_e(scope_label)}
+</h3>
+{edges_html}
+<div style="margin-top:14px;font-size:0.82rem;color:#3a4a5a">
+  <a href="/globe">← Globe 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/feed">📰 Feed</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/timeline">⏱ Timeline</a>
+</div>"""
+
+    return _page(
+        f"Dependencies — {scope_label}",
+        f'<a href="/globe">Globe</a> › Dependencies',
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -2391,7 +2661,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a>'
         f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a>'
         f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a>'
-        f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a></h2>'
+        f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a>'
+        f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -3275,6 +3546,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 37 — Directive Dependency Map (before /globe/<id> match)
+        if path == "/globe/dependencies":
+            self._send_html(render_dependencies_page(
+                globe_filter=_qs("globe"),
+                directive_filter=_qs("directive"),
+                relation_filter=_qs("relation"),
+            ))
             return
 
         # Phase 36 — Globe Feed (before /globe/<id> match)
