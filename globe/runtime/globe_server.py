@@ -15,6 +15,12 @@ Routes:
     /globe/<id>/directives              → Directives list for a Globe  [Phase 28]
     /globe/<id>/directives/<dir_id>     → Directive detail page        [Phase 28]
     /globe/<id>/logs/<dir_id>           → Execution Log detail page    [Phase 28]
+    /globe/search                       → Search / Filter page         [Phase 31]
+    /globe/search?q=<query>             → Text search across all items [Phase 31]
+    /globe/search?globe=<globe_id>      → Filter by globe              [Phase 31]
+    /globe/search?entry_type=<type>     → Filter by entry_type         [Phase 31]
+    /globe/search?resolution_status=<s> → Filter by resolution_status  [Phase 31]
+    /globe/search?bridge_target=<t>     → Filter by bridge_target      [Phase 31]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -32,6 +38,7 @@ import sys
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from urllib.parse import urlparse, parse_qs
 
 _GLOBE_DIR = Path(__file__).resolve().parents[1]
 _DATA_DIR = _GLOBE_DIR / "data"
@@ -743,6 +750,45 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .lnk-conf-badge.low    { background: #10121a; color: #2a3450; }
 .link-cand-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                       border-top: 1px solid #0e1420; padding-top: 8px; }
+/* Phase 31 — Search / Filter UI */
+.search-bar { display: flex; gap: 8px; margin-bottom: 18px; }
+.search-bar input { flex: 1; background: #0e1220; border: 1px solid #1e2a3a;
+                    border-radius: 6px; padding: 8px 14px; color: #a0b8e0;
+                    font-size: 0.92rem; font-family: inherit; }
+.search-bar input:focus { outline: none; border-color: #2a4a6a; }
+.search-bar button { background: #14202e; border: 1px solid #2a4a6a;
+                     border-radius: 6px; padding: 8px 18px; color: #6ab0f5;
+                     font-size: 0.88rem; cursor: pointer; font-family: inherit; }
+.search-bar button:hover { background: #1a2a3e; }
+.search-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.filter-chip { font-size: 0.75rem; padding: 3px 10px; border-radius: 4px;
+               background: #0e1220; border: 1px solid #1a2a3a; color: #4a6880; }
+.filter-chip a { color: #4a6880; }
+.filter-chip.active { background: #0e1828; border-color: #2a4a6a; color: #6ab0f5; }
+.search-result { border: 1px solid #1a2232; border-radius: 6px; padding: 12px 16px;
+                 margin-bottom: 8px; background: #0e1018; }
+.search-result .sr-header { display: flex; align-items: baseline; gap: 8px;
+                             margin-bottom: 6px; }
+.sr-type-badge { font-size: 0.70rem; padding: 2px 7px; border-radius: 4px;
+                 font-weight: 600; letter-spacing: 0.03em; }
+.sr-type-badge.globe       { background: #0e1828; color: #4a88c8; }
+.sr-type-badge.proposal    { background: #0e1820; color: #4aa878; }
+.sr-type-badge.deliberation{ background: #14141e; color: #7878c8; }
+.sr-type-badge.claim       { background: #1a1408; color: #c8a040; }
+.sr-type-badge.directive   { background: #141820; color: #6888a8; }
+.sr-type-badge.log         { background: #0c1410; color: #3a7848; }
+.sr-type-badge.feedback    { background: #100c18; color: #7848a8; }
+.sr-type-badge.link        { background: #101820; color: #3858a8; }
+.sr-title a { color: #8898b0; font-size: 0.90rem; font-weight: 600; }
+.sr-title span { color: #8898b0; font-size: 0.90rem; font-weight: 600; }
+.sr-meta { font-size: 0.76rem; color: #3a4a62; margin-top: 4px; }
+.sr-excerpt { font-size: 0.82rem; color: #5a6a7a; margin-top: 5px;
+              line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.sr-reason { font-size: 0.72rem; color: #253040; margin-top: 4px; }
+.search-advisory { font-size: 0.76rem; color: #182030; margin: 14px 0;
+                   padding: 8px 12px; border: 1px solid #101820; border-radius: 5px;
+                   background: #08090f; }
+.search-empty { color: #3a4a5a; font-size: 0.88rem; padding: 18px 0; }
 /* Phase 30 — Cross-Phase Contribution Summary panel */
 .xphase-panel { background: #08090f; border: 1px solid #161e30;
                 border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
@@ -814,6 +860,232 @@ def _gitsea_html(link: dict | None) -> str:
         return '<p class="empty">GITSEA link fields not yet populated.</p>'
     return '<div class="gitsea-box">' + "".join(rows) + "</div>"
 
+# ─── Phase 31: Search / Filter ──────────────────────────────────────────────
+
+_SEARCH_INDEX_PATH = _REPORTS_DIR / "globe_search_index.json"
+
+_SR_TYPE_ICONS = {
+    "globe":        "🌐",
+    "proposal":     "📋",
+    "deliberation": "💬",
+    "claim":        "📌",
+    "directive":    "🗂️",
+    "log":          "📝",
+    "feedback":     "🔗",
+    "link":         "🔗",
+}
+
+
+def _load_search_index() -> list[dict]:
+    """Phase 31 — load globe_search_index.json or build on-the-fly.
+
+    Search is advisory display only. Not proof of relevance. No ranking.
+    """
+    if _SEARCH_INDEX_PATH.exists():
+        try:
+            raw = json.loads(_SEARCH_INDEX_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "items" in raw:
+                return raw["items"]
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _mod = Path(__file__).parent / "globe_search.py"
+        spec = _ilu.spec_from_file_location("globe_search", _mod)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_index()["items"]
+    except Exception:
+        return []
+
+
+def _render_search_result(r: dict) -> str:
+    """Render a single search result card. Advisory display only."""
+    itype = r.get("item_type", "")
+    icon = _SR_TYPE_ICONS.get(itype, "•")
+    url = r.get("url_path", "")
+    title = _e(r.get("title", r.get("item_id", "")))
+    title_html = (f'<a href="{_e(url)}">{title}</a>' if url else f'<span>{title}</span>')
+
+    meta_parts = []
+    if r.get("globe_id"):
+        meta_parts.append(f'globe: {_e(r["globe_id"])}')
+    if r.get("entry_type"):
+        meta_parts.append(f'entry_type: {_e(r["entry_type"])}')
+    if r.get("resolution_status"):
+        meta_parts.append(f'resolution_status: {_e(r["resolution_status"])}')
+    if r.get("bridge_target"):
+        meta_parts.append(f'bridge_target: {_e(r["bridge_target"])}')
+    if r.get("confidence"):
+        meta_parts.append(f'confidence: {_e(r["confidence"])}')
+    if r.get("created_at"):
+        meta_parts.append(f'{_e(r["created_at"][:10])}')
+    meta_html = " &nbsp;·&nbsp; ".join(meta_parts)
+
+    excerpt = _e(r.get("content_excerpt", ""))
+    reason  = _e(r.get("match_reason", ""))
+    src     = _e(r.get("source_path", ""))
+
+    return f"""
+<div class="search-result">
+  <div class="sr-header">
+    <span class="sr-type-badge {_e(itype)}">{icon} {_e(itype)}</span>
+    <span class="sr-title">{title_html}</span>
+  </div>
+  <div class="sr-meta">{meta_html}</div>
+  {f'<div class="sr-excerpt">{excerpt}</div>' if excerpt else ''}
+  <div class="sr-reason">match: {reason} &nbsp;·&nbsp; <code style="font-size:0.70rem;color:#1e2838">{src}</code></div>
+</div>"""
+
+
+def render_search_page(
+    query: str | None = None,
+    globe_filter: str | None = None,
+    entry_type_filter: str | None = None,
+    resolution_status_filter: str | None = None,
+    bridge_target_filter: str | None = None,
+) -> str:
+    """Phase 31 — Search / Filter page.
+
+    Search is advisory display only. Not proof of relevance. No ranking.
+    No execution buttons. No allocation buttons.
+    """
+    # Load index and run search / filter
+    index_items = _load_search_index()
+
+    # Import search function dynamically
+    try:
+        import importlib.util as _ilu
+        _mod = Path(__file__).parent / "globe_search.py"
+        spec = _ilu.spec_from_file_location("globe_search", _mod)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        results = mod.search(
+            index_items,
+            query=query or None,
+            globe_id=globe_filter or None,
+            entry_type=entry_type_filter or None,
+            resolution_status=resolution_status_filter or None,
+            bridge_target=bridge_target_filter or None,
+        )
+    except Exception:
+        results = []
+
+    # ── Search bar ────────────────────────────────────────────────────────
+    q_val = _e(query or "")
+    search_bar = f"""
+<form method="GET" action="/globe/search">
+  <div class="search-bar">
+    <input type="text" name="q" value="{q_val}"
+           placeholder="キーワード検索 — 住居 / D.R.A. / unresolved / directive …">
+    <button type="submit">🔍 Search</button>
+  </div>"""
+
+    # Preserve active filters as hidden inputs
+    if globe_filter:
+        search_bar += f'<input type="hidden" name="globe" value="{_e(globe_filter)}">'
+    if entry_type_filter:
+        search_bar += f'<input type="hidden" name="entry_type" value="{_e(entry_type_filter)}">'
+    if resolution_status_filter:
+        search_bar += f'<input type="hidden" name="resolution_status" value="{_e(resolution_status_filter)}">'
+    if bridge_target_filter:
+        search_bar += f'<input type="hidden" name="bridge_target" value="{_e(bridge_target_filter)}">'
+    search_bar += "</form>"
+
+    # ── Filter chips ──────────────────────────────────────────────────────
+    def _chip(label: str, href: str, active: bool) -> str:
+        cls = "filter-chip active" if active else "filter-chip"
+        return f'<span class="{cls}"><a href="{href}">{label}</a></span>'
+
+    q_param = f"?q={_e(query)}" if query else "?"
+
+    chips = ""
+    # Globe chips
+    globes = _globes()
+    for g in globes:
+        gid = g["globe_id"]
+        active = globe_filter == gid
+        chips += _chip(
+            f'🌐 {_e(g["name"][:12])}',
+            f'/globe/search{q_param}{"&" if query else ""}globe={_e(gid)}',
+            active
+        )
+    # Entry type chips
+    for et in ["human_approval", "observation", "objection", "rollback_request",
+               "voluntary_resolution_signal"]:
+        active = entry_type_filter == et
+        chips += _chip(
+            f'📝 {et.replace("_"," ")}',
+            f'/globe/search{q_param}{"&" if query else ""}entry_type={_e(et)}',
+            active
+        )
+    # Resolution status chips
+    for rs in ["resolved", "partially_resolved", "paused", "unresolved", "contested"]:
+        active = resolution_status_filter == rs
+        chips += _chip(
+            f'🏳️ {rs}',
+            f'/globe/search{q_param}{"&" if query else ""}resolution_status={_e(rs)}',
+            active
+        )
+    # Bridge target chips
+    for bt in ["relief_case_memory", "care_loop_reopen", "both", "none"]:
+        active = bridge_target_filter == bt
+        chips += _chip(
+            f'🔗 {bt}',
+            f'/globe/search{q_param}{"&" if query else ""}bridge_target={_e(bt)}',
+            active
+        )
+    # Clear filter link
+    clear_href = f'/globe/search?q={_e(query)}' if query else '/globe/search'
+    chips += _chip('✕ clear filters', clear_href, False)
+    filter_row = f'<div class="search-filters">{chips}</div>'
+
+    # ── Result list ───────────────────────────────────────────────────────
+    active_filters = [
+        x for x in [globe_filter, entry_type_filter,
+                     resolution_status_filter, bridge_target_filter] if x
+    ]
+    has_query   = bool(query)
+    has_filters = bool(active_filters)
+
+    if not has_query and not has_filters:
+        result_html = '<p class="search-empty">キーワードを入力するか、フィルタを選択してください。<br>Search is advisory display only · no ranking · no allocation</p>'
+        count_html  = ""
+    else:
+        count_html = (
+            f'<p style="font-size:0.82rem;color:#3a4a5a;margin-bottom:12px">'
+            f'{len(results)} 件 — advisory display only · not proof of relevance · no ranking</p>'
+        )
+        if results:
+            result_html = "".join(_render_search_result(r) for r in results)
+        else:
+            result_html = '<p class="search-empty">一致する項目が見つかりませんでした。</p>'
+
+    advisory = """
+<div class="search-advisory">
+  <strong>Search is advisory display only.</strong> ·
+  Search result is not proof of relevance. ·
+  Search result does not rank participants. ·
+  Search result does not allocate resources. ·
+  Human review is required before any real-world action. ·
+  authority: none
+</div>"""
+
+    body = f"""
+<h2>🔍 Globe 横断検索 / Search &amp; Filter <small style="font-size:0.7em;color:#3a4258">(Phase 31)</small></h2>
+{search_bar}
+{filter_row}
+{advisory}
+{count_html}
+{result_html}"""
+
+    return _page(
+        "Globe 検索",
+        '<a href="/globe">Globe</a> › Search',
+        body
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -841,7 +1113,8 @@ def render_globe_list() -> str:
     return _page(
         "Globe 一覧",
         '<a href="/globe">Globe</a>',
-        f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small></h2>'
+        f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small>'
+        f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -1691,10 +1964,27 @@ class GlobeHandler(BaseHTTPRequestHandler):
         )
 
     def do_GET(self):
-        path = self.path.split("?")[0].rstrip("/") or "/"
+        parsed   = urlparse(self.path)
+        path     = parsed.path.rstrip("/") or "/"
+        qs       = parse_qs(parsed.query, keep_blank_values=False)
+
+        def _qs(key: str) -> str | None:
+            vals = qs.get(key)
+            return vals[0].strip() if vals else None
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 31 — Search / Filter route (must appear before /globe/<id> match)
+        if path == "/globe/search":
+            self._send_html(render_search_page(
+                query=_qs("q"),
+                globe_filter=_qs("globe"),
+                entry_type_filter=_qs("entry_type"),
+                resolution_status_filter=_qs("resolution_status"),
+                bridge_target_filter=_qs("bridge_target"),
+            ))
             return
 
         if path == "/globe":

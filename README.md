@@ -428,6 +428,52 @@ Cross-Phase Summary パネルが追加されます。実行ボタン・割り当
 
 ---
 
+## Phase 31 — Globe Search / Filter UI
+
+フェーズ31では、Globe・Proposal・Directive・Execution Log・Reality Feedback・
+Bridge Target Link・Resolution Signal を横断検索・フィルタできる **検索 UI と CLI** を追加しました。
+
+**Search は advisory display のみです。検索結果は関連性の証明ではありません。
+参加者をランク付けしません。資源を配分しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 31, Dan-Go adds a cross-layer search and filter system across all Globe
+artifacts. The search index is built from all available data files and is advisory
+display only — no relevance ranking, no allocation, no execution buttons.
+
+> "Search is advisory display only."
+> "Search result is not proof of relevance."
+> "Search result does not rank participants."
+> "Search result does not allocate resources."
+> "Human review is required before any real-world action."
+
+```bash
+# インデックス生成
+python3 globe/runtime/globe_search.py save-index
+
+# テキスト検索
+python3 globe/runtime/globe_search.py search 住居
+python3 globe/runtime/globe_search.py search "D.R.A."
+
+# フィルタ
+python3 globe/runtime/globe_search.py filter --globe globe-001
+python3 globe/runtime/globe_search.py filter --entry-type voluntary_resolution_signal
+python3 globe/runtime/globe_search.py filter --resolution-status unresolved
+python3 globe/runtime/globe_search.py filter --bridge-target both
+```
+
+HTTP 検索 URL:
+- `http://localhost:7422/globe/search` — 検索フォーム + フィルタ
+- `http://localhost:7422/globe/search?q=住居`
+- `http://localhost:7422/globe/search?globe=globe-001`
+- `http://localhost:7422/globe/search?entry_type=voluntary_resolution_signal`
+- `http://localhost:7422/globe/search?resolution_status=unresolved`
+- `http://localhost:7422/globe/search?bridge_target=both`
+
+生成ファイル: `globe/reports/globe_search_index.json` (36 items · advisory only)
+
+---
+
 ## Structure
 
 ```
