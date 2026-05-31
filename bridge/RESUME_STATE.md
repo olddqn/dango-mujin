@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Contribution Timeline View
+# RESUME_STATE.md — Proposal Comparison View
 
-> **STATUS: IN PROGRESS (feature/phase-32-contribution-timeline)**
+> **STATUS: IN PROGRESS (feature/phase-33-proposal-comparison)**
 
-**Phase:** Contribution Timeline View (Phase 32)
-**Branch:** feature/phase-32-contribution-timeline
+**Phase:** Proposal Comparison View (Phase 33)
+**Branch:** feature/phase-33-proposal-comparison
 **Started:** 2026-05-31
 
 ---
@@ -51,7 +51,8 @@
 - Voluntary Resolution Signal (Phase 29) — PR #23, merged
 - Cross-Phase Contribution Summary (Phase 30) — PR #24, merged
 - Globe Search / Filter UI (Phase 31) — PR #25, merged
-- **Contribution Timeline View (Phase 32)** ← current PR
+- Contribution Timeline View (Phase 32) — PR #26, merged
+- **Proposal Comparison View (Phase 33)** ← current PR
 
 ---
 
@@ -295,7 +296,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–32)
+## Protocol Principle Accumulation (Phases 10–33)
 
 | Phase | Phrase |
 |-------|--------|
@@ -384,6 +385,11 @@ need_forecast_report.py
 | 32 | "Timeline does not rank participants." |
 | 32 | "Timeline does not allocate resources." |
 | 32 | "Human review is required before any real-world action." |
+| 33 | "Comparison is advisory display only." |
+| 33 | "Comparison is not ranking." |
+| 33 | "Comparison does not score proposals." |
+| 33 | "Comparison does not allocate resources." |
+| 33 | "Human review is required before any real-world action." |
 
 ---
 
@@ -462,13 +468,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 33)
+
+- `globe/runtime/proposal_compare.py` — Comparison builder + CLI (advisory only)
+- `globe/reports/proposal_comparison_proposal-002_vs_proposal-005.json` — Sample comparison
+- `globe/reports/proposal_comparison_proposal-002_vs_proposal-005.md` — Markdown report
+
+## Updated Files (Phase 33)
+
+- `globe/runtime/globe_server.py` — Added `render_compare_page()`, Phase 33 CSS; wired `/globe/compare` route
+- `globe/spec/GLOBE_SPEC.md` — Phase 33 section
+- `README.md` — Phase 33 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 32 PR** — after review
-2. **Phase 33: Proposal Comparison View** — side-by-side comparison of two proposals
-   across Globe layers, advisory only, no ranking
-3. **Phase 34: Globe Activity Heatmap** — calendar-style activity view per globe,
+1. **Merge Phase 33 PR** — after review
+2. **Phase 34: Globe Activity Heatmap** — calendar-style activity view per globe,
    advisory only, no score, no ranking
+3. **Phase 35: Directive Execution Checklist** — advisory checklist view of
+   execution steps per directive, no approval gate
 
 ---
 
