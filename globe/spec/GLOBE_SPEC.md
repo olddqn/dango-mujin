@@ -802,6 +802,90 @@ python3 globe/runtime/contribution_timeline.py show-type reality_feedback
 
 ---
 
+## Phase 33 — Proposal Comparison View（フェーズ33）
+
+2 つの Proposal を横並びで比較する advisory UI / CLI。
+比較は評価・順位・優劣判定ではなく、人間が熟議の違いを確認するための表示。
+
+> "Comparison is advisory display only."
+> "Comparison is not ranking."
+> "Comparison does not score proposals."
+> "Comparison does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `comparison_is_advisory_display_only` | `true` |
+| `comparison_is_not_ranking` | `true` |
+| `comparison_does_not_score_proposals` | `true` |
+| `comparison_does_not_allocate_resources` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### 比較項目
+
+| 項目 | 説明 |
+|------|------|
+| `status` | Proposal ステータス |
+| `globe_id` | Globe |
+| `deliberation_count` | 熟議エントリ数 |
+| `claim_exists` / `claim_status` | Claim 変換済み |
+| `directive_exists` / `directive_status` | Directive 変換済み |
+| `log_entry_count` | Execution Log エントリ数 |
+| `human_approval_count` | 人間承認数 |
+| `objection_count` | 異議数 |
+| `rollback_request_count` | ロールバック要求数 |
+| `voluntary_resolution_signal_count` | Resolution Signal 数 |
+| `latest_resolution_status` | 最新 Resolution Status |
+| `bridge_record_count` | Bridge Feedback 記録数 |
+| `link_candidate_count` | Link Candidate 数 |
+| `high_confidence_links` | 高信頼度リンク数 |
+| `timeline_item_count` | Timeline Item 数 |
+
+### 差異表示方針
+
+- 差異は「観察上の相違」として列挙する
+- 「優れている」「劣っている」は記載しない
+- スコア・ランキングは生成しない
+
+### CLI
+
+```bash
+# Proposal 一覧
+python3 globe/runtime/proposal_compare.py list
+
+# 比較表示
+python3 globe/runtime/proposal_compare.py compare proposal-002 proposal-005
+
+# レポート保存
+python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
+```
+
+### HTTP ルート
+
+| URL | 内容 |
+|-----|------|
+| `/globe/compare` | Proposal 選択フォーム |
+| `/globe/compare?proposal_a=proposal-002&proposal_b=proposal-005` | 横並び比較 |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/proposal_comparison_<id_a>_vs_<id_b>.json` | 比較レポート (machine-readable) |
+| `globe/reports/proposal_comparison_<id_a>_vs_<id_b>.md` | 人間可読比較レポート |
+
+### UI特性
+
+- 実行ボタン・承認ボタン・配分ボタンなし
+- スコア・ランキングなし
+- 差異は観察表示のみ
+- 既存ページへのリンクのみ
+
+---
+
 ## Phase 29 — Voluntary Resolution Signal（フェーズ29）
 
 参加者が Directive Execution Log に対し、任意で解決状況を自己申告できる `voluntary_resolution_signal` entry type を追加。

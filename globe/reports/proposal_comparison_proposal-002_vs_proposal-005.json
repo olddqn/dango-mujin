@@ -1,0 +1,159 @@
+{
+  "comparison_id": "compare-proposal-002-vs-proposal-005",
+  "generated_at": "2026-05-31 11:41:24",
+  "proposal_a": "proposal-002",
+  "proposal_b": "proposal-005",
+  "comparison_is_advisory_display_only": true,
+  "comparison_is_not_ranking": true,
+  "comparison_does_not_score_proposals": true,
+  "comparison_does_not_allocate_resources": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "phase": "33",
+  "phase_phrases": [
+    "Comparison is advisory display only.",
+    "Comparison is not ranking.",
+    "Comparison does not score proposals.",
+    "Comparison does not allocate resources.",
+    "Human review is required before any real-world action."
+  ],
+  "snapshot_a": {
+    "proposal_id": "proposal-002",
+    "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+    "body_excerpt": "提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。 背景：既存の国家・機関による支援の限界を補完し、自由参加型の草の根支援ネットワークを構築することが第零国家の使命の一部である。 Proposal: Formally position refu…",
+    "status": "accepted",
+    "proposer": "founding-member-002",
+    "globe_id": "globe-001",
+    "created_at": "2026-05-30",
+    "deliberation_count": 2,
+    "claim_exists": true,
+    "claim_id": "claim-proposal-002",
+    "claim_status": "claim_draft",
+    "directive_exists": true,
+    "directive_id": "directive-claim-proposal-002",
+    "directive_status": "directive_draft",
+    "log_entry_count": 6,
+    "human_approval_count": 2,
+    "observation_count": 2,
+    "feedback_count": 0,
+    "objection_count": 1,
+    "rollback_request_count": 0,
+    "voluntary_resolution_signal_count": 1,
+    "latest_resolution_status": "partially_resolved",
+    "bridge_record_count": 3,
+    "link_candidate_count": 4,
+    "high_confidence_links": 2,
+    "timeline_item_count": 13
+  },
+  "snapshot_b": {
+    "proposal_id": "proposal-005",
+    "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+    "body_excerpt": "提案：Jammy Houseにおけるテナンシー問題を、個別対応から合意形成プロセスへと移行する。具体的には、住居問題が発生した場合に熟議→提案→実行のフローを通じて対応する仕組みを確立する。 Phase 17-20で観察された未解決テナンシーパターン（aid-pattern-003）を踏まえ、再発防止のための合意形成フローを定める。 Proposal: Establish a consensus-…",
+    "status": "accepted",
+    "proposer": "jammy-house-member-002",
+    "globe_id": "globe-003",
+    "created_at": "2026-05-30",
+    "deliberation_count": 0,
+    "claim_exists": true,
+    "claim_id": "claim-proposal-005",
+    "claim_status": "claim_draft",
+    "directive_exists": true,
+    "directive_id": "directive-claim-proposal-005",
+    "directive_status": "directive_draft",
+    "log_entry_count": 2,
+    "human_approval_count": 0,
+    "observation_count": 0,
+    "feedback_count": 0,
+    "objection_count": 0,
+    "rollback_request_count": 0,
+    "voluntary_resolution_signal_count": 1,
+    "latest_resolution_status": "unresolved",
+    "bridge_record_count": 1,
+    "link_candidate_count": 0,
+    "high_confidence_links": 0,
+    "timeline_item_count": 3
+  },
+  "difference_count": 10,
+  "differences": [
+    {
+      "field": "globe_id",
+      "label": "Globe",
+      "value_a": "globe-001",
+      "value_b": "globe-003",
+      "observation": "Globe differs: 'globe-001' vs 'globe-003'"
+    },
+    {
+      "field": "deliberation_count",
+      "label": "Deliberation entries",
+      "value_a": 2,
+      "value_b": 0,
+      "observation": "Deliberation entries differs: 2 vs 0"
+    },
+    {
+      "field": "log_entry_count",
+      "label": "Execution log entries",
+      "value_a": 6,
+      "value_b": 2,
+      "observation": "Execution log entries differs: 6 vs 2"
+    },
+    {
+      "field": "human_approval_count",
+      "label": "Human approvals",
+      "value_a": 2,
+      "value_b": 0,
+      "observation": "Human approvals differs: 2 vs 0"
+    },
+    {
+      "field": "objection_count",
+      "label": "Objections",
+      "value_a": 1,
+      "value_b": 0,
+      "observation": "Objections differs: 1 vs 0"
+    },
+    {
+      "field": "latest_resolution_status",
+      "label": "Latest resolution status",
+      "value_a": "partially_resolved",
+      "value_b": "unresolved",
+      "observation": "Latest resolution status differs: 'partially_resolved' vs 'unresolved'"
+    },
+    {
+      "field": "bridge_record_count",
+      "label": "Bridge feedback records",
+      "value_a": 3,
+      "value_b": 1,
+      "observation": "Bridge feedback records differs: 3 vs 1"
+    },
+    {
+      "field": "link_candidate_count",
+      "label": "Link candidates",
+      "value_a": 4,
+      "value_b": 0,
+      "observation": "Link candidates differs: 4 vs 0"
+    },
+    {
+      "field": "high_confidence_links",
+      "label": "High-confidence links",
+      "value_a": 2,
+      "value_b": 0,
+      "observation": "High-confidence links differs: 2 vs 0"
+    },
+    {
+      "field": "timeline_item_count",
+      "label": "Timeline items",
+      "value_a": 13,
+      "value_b": 3,
+      "observation": "Timeline items differs: 13 vs 3"
+    }
+  ],
+  "same_fields": [
+    "status",
+    "claim_exists",
+    "claim_status",
+    "directive_exists",
+    "directive_status",
+    "rollback_request_count",
+    "voluntary_resolution_signal_count"
+  ],
+  "comparison_note": "Differences are observable distinctions only. They are not scores, rankings, or judgements of quality. Human review is required before any real-world action."
+}

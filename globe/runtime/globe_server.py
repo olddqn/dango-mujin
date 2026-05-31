@@ -24,6 +24,8 @@ Routes:
     /globe/timeline                     → Global timeline               [Phase 32]
     /globe/<id>/timeline                → Globe timeline                [Phase 32]
     /globe/<id>/directives/<did>/timeline → Directive timeline          [Phase 32]
+    /globe/compare                      → Proposal comparison selector  [Phase 33]
+    /globe/compare?proposal_a=&proposal_b= → Side-by-side comparison   [Phase 33]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -841,6 +843,48 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .tl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .tl-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+/* Phase 33 — Proposal Comparison */
+.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.cmp-col { background: #0e1018; border: 1px solid #1e2430; border-radius: 8px;
+           padding: 16px 18px; }
+.cmp-col.col-a { border-top: 3px solid #2a4a6a; }
+.cmp-col.col-b { border-top: 3px solid #2a3a5a; }
+.cmp-col-label { font-size: 0.72rem; color: #3a5878; text-transform: uppercase;
+                 letter-spacing: 0.06em; margin-bottom: 8px; }
+.cmp-col-title { font-size: 0.95rem; color: #a0b8d0; font-weight: 600;
+                 margin-bottom: 6px; line-height: 1.4; }
+.cmp-col-meta  { font-size: 0.76rem; color: #3a4a5a; margin-bottom: 8px; }
+.cmp-col-body  { font-size: 0.80rem; color: #5a6a7a; line-height: 1.55;
+                 white-space: pre-wrap; word-break: break-word; }
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 12px 0; }
+.cmp-table th { font-size: 0.72rem; color: #3a4a5a; font-weight: 600; padding: 5px 10px;
+                text-align: left; border-bottom: 1px solid #1e2430; background: #0a0c12; }
+.cmp-table td { padding: 5px 10px; border-bottom: 1px solid #121820; vertical-align: top; }
+.cmp-table td.field { color: #3a4a5a; width: 30%; }
+.cmp-table td.val-a { color: #607888; width: 30%; }
+.cmp-table td.val-b { color: #607888; width: 30%; }
+.cmp-table tr.diff td { background: #0e1220; }
+.cmp-table tr.diff td.field { color: #5a7898; }
+.cmp-table tr.diff td.val-a,
+.cmp-table tr.diff td.val-b { color: #8898b0; }
+.cmp-diff-mark { font-size: 0.70rem; color: #3a5878; }
+.cmp-diffs { background: #08090f; border: 1px solid #161e30; border-radius: 6px;
+             padding: 12px 16px; margin: 12px 0; font-size: 0.82rem; }
+.cmp-diffs h4 { font-size: 0.78rem; color: #3a5070; margin-bottom: 8px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.cmp-diff-item { color: #4a6070; margin-bottom: 4px; }
+.cmp-advisory { font-size: 0.72rem; color: #182030; margin-top: 12px;
+                border-top: 1px solid #0e1420; padding-top: 8px; }
+.cmp-select { background: #0e1018; border: 1px solid #1e2430; border-radius: 6px;
+              padding: 14px 18px; margin-bottom: 16px; }
+.cmp-select select { background: #0e1220; border: 1px solid #1e2a3a;
+                     border-radius: 4px; padding: 6px 10px; color: #a0b0c8;
+                     font-size: 0.88rem; font-family: inherit; }
+.cmp-select button { background: #14202e; border: 1px solid #2a4a6a;
+                     border-radius: 5px; padding: 7px 16px; color: #6ab0f5;
+                     font-size: 0.85rem; cursor: pointer; font-family: inherit;
+                     margin-left: 8px; }
+.cmp-select button:hover { background: #1a2a3e; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -1343,6 +1387,252 @@ def render_timeline_page(
     return _page(page_title, breadcrumb, body)
 
 
+# ─── Phase 33: Proposal Comparison ─────────────────────────────────────────────
+
+_STATUS_ICON_CMP = {
+    "accepted": "✅", "discussion": "💬", "draft": "📝",
+    "voting": "🗳️", "rejected": "❌", "archived": "📦",
+}
+_RS_ICON_CMP = {
+    "resolved": "✅", "partially_resolved": "🟡", "paused": "⏸️",
+    "unresolved": "🔴", "contested": "⚔️",
+}
+
+_CMP_DIFF_FIELDS = [
+    ("status",                          "Proposal status"),
+    ("globe_id",                        "Globe"),
+    ("deliberation_count",              "Deliberation entries"),
+    ("claim_exists",                    "Claim converted"),
+    ("claim_status",                    "Claim status"),
+    ("directive_exists",                "Directive converted"),
+    ("directive_status",                "Directive status"),
+    ("log_entry_count",                 "Execution log entries"),
+    ("human_approval_count",            "Human approvals"),
+    ("objection_count",                 "Objections"),
+    ("rollback_request_count",          "Rollback requests"),
+    ("voluntary_resolution_signal_count","Resolution signals"),
+    ("latest_resolution_status",        "Latest resolution status"),
+    ("bridge_record_count",             "Bridge feedback records"),
+    ("link_candidate_count",            "Link candidates"),
+    ("high_confidence_links",           "High-confidence links"),
+    ("timeline_item_count",             "Timeline items"),
+]
+
+
+def _cmp_fmt(field: str, val: object) -> str:
+    """Format a comparison field value for HTML display."""
+    if field == "latest_resolution_status" and isinstance(val, str) and val:
+        icon = _RS_ICON_CMP.get(val, "")
+        return f'{icon} {_e(val)}'
+    if field == "status" and isinstance(val, str):
+        icon = _STATUS_ICON_CMP.get(val, "")
+        return f'{icon} {_e(val)}'
+    if isinstance(val, bool):
+        return "✅ yes" if val else "— no"
+    if val == "" or val is None:
+        return "—"
+    return _e(str(val))
+
+
+def _build_cmp_from_module(id_a: str, id_b: str) -> dict | None:
+    """Load proposal_compare module and build comparison. Advisory only."""
+    try:
+        import importlib.util as _ilu
+        _mod_path = Path(__file__).parent / "proposal_compare.py"
+        spec = _ilu.spec_from_file_location("proposal_compare", _mod_path)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_comparison(id_a, id_b)
+    except Exception:
+        return None
+
+
+def render_compare_page(
+    proposal_a: str | None = None,
+    proposal_b: str | None = None,
+) -> str:
+    """Phase 33 — Proposal Comparison page.
+
+    Comparison is advisory display only. Not ranking. No score. No allocation.
+    No execution buttons. No approval buttons.
+    """
+    all_proposals = _proposals()
+
+    # ── Proposal selector form ────────────────────────────────────────────
+    def _opt(pid: str, selected: str | None) -> str:
+        title = next((p.get("title", pid)[:40] for p in all_proposals
+                      if p.get("proposal_id") == pid), pid)
+        sel = ' selected' if pid == selected else ''
+        return f'<option value="{_e(pid)}"{sel}>{_e(pid)} — {_e(title)}</option>'
+
+    opts_a = "".join(_opt(p["proposal_id"], proposal_a) for p in all_proposals)
+    opts_b = "".join(_opt(p["proposal_id"], proposal_b) for p in all_proposals)
+
+    selector = f"""
+<div class="cmp-select">
+  <form method="GET" action="/globe/compare">
+    <label style="font-size:0.82rem;color:#4a6080">Proposal A:</label>
+    <select name="proposal_a">{opts_a}</select>
+    &nbsp;&nbsp;
+    <label style="font-size:0.82rem;color:#4a6080">Proposal B:</label>
+    <select name="proposal_b">{opts_b}</select>
+    <button type="submit">⚖️ 比較</button>
+    <span style="font-size:0.76rem;color:#2a3858;margin-left:12px">
+      比較は advisory display only · スコアなし · ランキングなし
+    </span>
+  </form>
+</div>"""
+
+    advisory_banner = """
+<div class="cmp-advisory" style="margin-bottom:14px;padding:8px 12px;
+     border:1px solid #101820;border-radius:5px;background:#08090f;font-size:0.76rem;color:#182030">
+  <strong>Comparison is advisory display only.</strong> ·
+  Comparison is not ranking. ·
+  Comparison does not score proposals. ·
+  Comparison does not allocate resources. ·
+  Human review is required before any real-world action. ·
+  authority: none
+</div>"""
+
+    # ── No selection yet ──────────────────────────────────────────────────
+    if not proposal_a or not proposal_b or proposal_a == proposal_b:
+        body = f"""
+<h2>⚖️ Proposal 比較 / Comparison
+  <small style="font-size:0.65em;color:#3a4258">(Phase 33 · advisory only)</small>
+</h2>
+{selector}
+{advisory_banner}
+<p style="color:#3a4a5a;font-size:0.88rem">
+  比較する 2 つの Proposal を選択してください。<br>
+  比較は差異の観察表示のみです。スコア・ランキング・配分は行いません。
+</p>"""
+        return _page(
+            "Proposal 比較",
+            '<a href="/globe">Globe</a> › Compare',
+            body
+        )
+
+    # ── Build comparison ──────────────────────────────────────────────────
+    cmp = _build_cmp_from_module(proposal_a, proposal_b)
+    if not cmp or cmp.get("snapshot_a", {}).get("error") or cmp.get("snapshot_b", {}).get("error"):
+        err_a = (cmp or {}).get("snapshot_a", {}).get("error", "")
+        err_b = (cmp or {}).get("snapshot_b", {}).get("error", "")
+        body = f"""
+<h2>⚖️ Proposal 比較</h2>
+{selector}
+<p style="color:#c05050">比較エラー: {_e(err_a or err_b or 'unknown error')}</p>"""
+        return _page("比較エラー", '<a href="/globe">Globe</a> › Compare', body)
+
+    sa = cmp["snapshot_a"]
+    sb = cmp["snapshot_b"]
+    diffs = cmp.get("differences", [])
+    gen = _e(cmp.get("generated_at", ""))
+
+    # ── Column cards ──────────────────────────────────────────────────────
+    def _col(snap: dict, label: str, cls: str) -> str:
+        pid   = snap.get("proposal_id", "")
+        gid   = snap.get("globe_id", "")
+        st    = snap.get("status", "")
+        si    = _STATUS_ICON_CMP.get(st, "")
+        prop  = snap.get("proposer", "")
+        body_x= _e(snap.get("body_excerpt", ""))
+        link_url = ""
+        for p in all_proposals:
+            if p.get("proposal_id") == pid:
+                link_url = f"/globe/{_e(gid)}/proposals/{_e(pid)}"
+                break
+        title_html = (f'<a href="{link_url}" style="color:#a0b8d0">{_e(snap.get("title",""))}</a>'
+                      if link_url else _e(snap.get("title", "")))
+        return f"""
+<div class="cmp-col {cls}">
+  <div class="cmp-col-label">{label} — {_e(pid)}</div>
+  <div class="cmp-col-title">{title_html}</div>
+  <div class="cmp-col-meta">
+    {si} {_e(st)} &nbsp;·&nbsp; globe: {_e(gid)} &nbsp;·&nbsp;
+    proposer: {_e(prop)} &nbsp;·&nbsp; created: {_e(snap.get("created_at",""))}
+  </div>
+  <div class="cmp-col-body">{body_x}</div>
+</div>"""
+
+    cols_html = f"""
+<div class="cmp-grid">
+  {_col(sa, "Proposal A", "col-a")}
+  {_col(sb, "Proposal B", "col-b")}
+</div>"""
+
+    # ── Comparison table ──────────────────────────────────────────────────
+    rows = ""
+    for field, label in _CMP_DIFF_FIELDS:
+        va = sa.get(field)
+        vb = sb.get(field)
+        diff = va != vb
+        row_cls = ' class="diff"' if diff else ""
+        diff_mark = '<span class="cmp-diff-mark">◀ differs</span>' if diff else ""
+        rows += (f'<tr{row_cls}>'
+                 f'<td class="field">{_e(label)}</td>'
+                 f'<td class="val-a">{_cmp_fmt(field, va)}</td>'
+                 f'<td class="val-b">{_cmp_fmt(field, vb)}</td>'
+                 f'<td style="font-size:0.70rem;color:#3a5878">{diff_mark}</td>'
+                 f'</tr>\n')
+
+    table_html = f"""
+<table class="cmp-table">
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>[A] {_e(proposal_a)}</th>
+      <th>[B] {_e(proposal_b)}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+{rows}
+  </tbody>
+</table>"""
+
+    # ── Differences panel ─────────────────────────────────────────────────
+    if diffs:
+        diff_items = "".join(
+            f'<div class="cmp-diff-item">• <strong>{_e(d["label"])}</strong>: '
+            f'{_cmp_fmt(d["field"], d["value_a"])} vs {_cmp_fmt(d["field"], d["value_b"])}</div>'
+            for d in diffs
+        )
+        diffs_html = f"""
+<div class="cmp-diffs">
+  <h4>Observable differences ({len(diffs)}) — not scores · not rankings</h4>
+  <p style="font-size:0.72rem;color:#2a3850;margin-bottom:8px">
+    差異は観察上の相違であり、優劣・スコア・ランキングではありません。
+  </p>
+  {diff_items}
+</div>"""
+    else:
+        diffs_html = '<div class="cmp-diffs"><h4>差異なし</h4></div>'
+
+    body = f"""
+<h2>⚖️ Proposal 比較 / Comparison
+  <small style="font-size:0.65em;color:#3a4258">(Phase 33 · advisory only · not ranking)</small>
+</h2>
+{selector}
+{advisory_banner}
+{cols_html}
+<h3>Side-by-Side — 差異は観察のみ、評価・スコアなし</h3>
+{table_html}
+{diffs_html}
+<div class="cmp-advisory">
+  Comparison is advisory display only · Not ranking · Does not score proposals ·
+  Does not allocate resources · Human review is required before any real-world action ·
+  generated: {gen}
+</div>"""
+
+    return _page(
+        f"比較: {proposal_a} vs {proposal_b}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/compare">Compare</a> › '
+        f'{_e(proposal_a)} vs {_e(proposal_b)}',
+        body
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -1372,7 +1662,8 @@ def render_globe_list() -> str:
         '<a href="/globe">Globe</a>',
         f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small>'
         f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a>'
-        f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a></h2>'
+        f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a>'
+        f'&nbsp;<a href="/globe/compare" style="font-size:0.65em;color:#3a5060">⚖️ Compare →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -2233,6 +2524,14 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 33 — Proposal Comparison (before /globe/<id> match)
+        if path == "/globe/compare":
+            self._send_html(render_compare_page(
+                proposal_a=_qs("proposal_a"),
+                proposal_b=_qs("proposal_b"),
+            ))
             return
 
         # Phase 31 — Search / Filter route (must appear before /globe/<id> match)

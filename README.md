@@ -521,6 +521,47 @@ HTTP URL:
 
 ---
 
+## Phase 33 — Proposal Comparison View
+
+フェーズ33では、2 つの Proposal を横並びで比較できる **advisory 比較 UI / CLI** を追加しました。
+比較は評価・順位・優劣判定ではなく、人間が熟議の違いを確認するための表示です。
+
+**Comparison は advisory display のみです。ランキングではありません。
+Proposal をスコア付けしません。資源を配分しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 33, Dan-Go adds a side-by-side advisory comparison of two Proposals
+across all Globe-layer artifacts (deliberations, claim, directive, execution log,
+bridge feedback, link candidates, timeline). Differences are observable distinctions
+only — not scores, not rankings, not judgements of quality.
+
+> "Comparison is advisory display only."
+> "Comparison is not ranking."
+> "Comparison does not score proposals."
+> "Comparison does not allocate resources."
+> "Human review is required before any real-world action."
+
+```bash
+# Proposal 一覧
+python3 globe/runtime/proposal_compare.py list
+
+# 比較表示
+python3 globe/runtime/proposal_compare.py compare proposal-002 proposal-005
+
+# レポート保存
+python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
+```
+
+HTTP URL:
+- `http://localhost:7422/globe/compare` — 選択フォーム
+- `http://localhost:7422/globe/compare?proposal_a=proposal-002&proposal_b=proposal-005` — 横並び比較
+
+生成ファイル:
+- `globe/reports/proposal_comparison_proposal-002_vs_proposal-005.json`
+- `globe/reports/proposal_comparison_proposal-002_vs_proposal-005.md`
+
+---
+
 ## Structure
 
 ```
