@@ -1,0 +1,107 @@
+{
+  "bridge_id": "reality-feedback-bridge-001",
+  "reality_feedback_is_advisory_only": true,
+  "feedback_bridge_is_not_proof_of_resolution": true,
+  "feedback_bridge_creates_no_legal_authority": true,
+  "feedback_bridge_does_not_reopen_case_automatically": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "phase": 27,
+  "generated_at": "2026-05-31T00:41:10.786235+00:00",
+  "total_source_entries_scanned": 6,
+  "total_bridge_records": 3,
+  "bridge_target_counts": {
+    "relief_case_memory": 1,
+    "care_loop_reopen": 0,
+    "both": 0,
+    "none": 2
+  },
+  "records": [
+    {
+      "feedback_id": "rfb-001",
+      "source_directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "source_log_id": "log-002",
+      "entry_type": "observation",
+      "actor_type": "ai",
+      "actor_name": "Dan-Go Agent",
+      "content": "実行前提条件の確認が必要",
+      "suggested_bridge_target": "none",
+      "suggested_reason": "no keyword match and entry type does not imply a default bridge target — human review may identify a relevant Phase 18 or Phase 19 connection",
+      "requires_human_review": true,
+      "creates_no_legal_authority": true,
+      "not_proof_of_resolution": true,
+      "advisory_only": true,
+      "source_entry_created_at": "2026-05-30T23:12:15.292929+00:00",
+      "record_generated_at": "2026-05-31T00:41:10.785970+00:00"
+    },
+    {
+      "feedback_id": "rfb-002",
+      "source_directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "source_log_id": "log-003",
+      "entry_type": "objection",
+      "actor_type": "human",
+      "actor_name": "founding-member-003",
+      "content": "D.R.A.との連携前にコミュニティ内の合意確認が必要と考える",
+      "suggested_bridge_target": "relief_case_memory",
+      "suggested_reason": "content contains relief / housing / tenancy / displacement keywords — advisory candidate for Phase 18 Relief Case Memory review",
+      "requires_human_review": true,
+      "creates_no_legal_authority": true,
+      "not_proof_of_resolution": true,
+      "advisory_only": true,
+      "source_entry_created_at": "2026-05-30T23:12:26.340959+00:00",
+      "record_generated_at": "2026-05-31T00:41:10.786090+00:00"
+    },
+    {
+      "feedback_id": "rfb-003",
+      "source_directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "source_log_id": "log-005",
+      "entry_type": "observation",
+      "actor_type": "ai",
+      "actor_name": "Dan-Go Agent",
+      "content": "実行前提条件の確認が必要",
+      "suggested_bridge_target": "none",
+      "suggested_reason": "no keyword match and entry type does not imply a default bridge target — human review may identify a relevant Phase 18 or Phase 19 connection",
+      "requires_human_review": true,
+      "creates_no_legal_authority": true,
+      "not_proof_of_resolution": true,
+      "advisory_only": true,
+      "source_entry_created_at": "2026-05-30T23:16:45.610715+00:00",
+      "record_generated_at": "2026-05-31T00:41:10.786095+00:00"
+    }
+  ],
+  "by_directive": [
+    {
+      "directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "record_count": 3,
+      "bridge_targets": {
+        "none": 2,
+        "relief_case_memory": 1
+      }
+    }
+  ],
+  "by_globe": [
+    {
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "directive_count": 1,
+      "record_count": 3,
+      "bridge_targets": {
+        "none": 2,
+        "relief_case_memory": 1
+      }
+    }
+  ],
+  "phase_phrases": [
+    "Reality feedback is advisory only.",
+    "Feedback bridge is not proof of resolution.",
+    "Feedback bridge creates no legal authority.",
+    "Feedback bridge does not reopen a case automatically.",
+    "Human review is required before any real-world action."
+  ]
+}

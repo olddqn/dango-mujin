@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Directive UI Routes
+# RESUME_STATE.md — Reality Feedback Bridge
 
-> **STATUS: IN PROGRESS (feature/phase-28-directive-ui-routes)**
+> **STATUS: IN PROGRESS (feature/phase-27-reality-feedback-bridge)**
 
-**Phase:** Directive UI Routes (Phase 28)
-**Branch:** feature/phase-28-directive-ui-routes
+**Phase:** Reality Feedback Bridge (Phase 27)
+**Branch:** feature/phase-27-reality-feedback-bridge
 **Started:** 2026-05-31
 
 ---
@@ -45,7 +45,8 @@
 - Claim → Directive Conversion Layer (Phase 24) — PR #16, merged
 - Directive Execution Log Layer (Phase 25) — PR #17, merged
 - Cross-Globe Execution Log Summary (Phase 26) — PR #19, merged
-- **Directive UI Routes (Phase 28)** ← current PR
+- Directive UI Routes (Phase 28) — PR #20, merged
+- **Reality Feedback Bridge (Phase 27)** ← current PR
 
 ---
 
@@ -289,7 +290,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–28)
+## Protocol Principle Accumulation (Phases 10–28 + Phase 27)
 
 | Phase | Phrase |
 |-------|--------|
@@ -343,6 +344,11 @@ need_forecast_report.py
 | 26 | "Summary creates no legal authority." |
 | 26 | "Summary does not rank or punish participants." |
 | 26 | "Summary must preserve objections and rollback requests." |
+| 27 | "Reality feedback is advisory only." |
+| 27 | "Feedback bridge is not proof of resolution." |
+| 27 | "Feedback bridge creates no legal authority." |
+| 27 | "Feedback bridge does not reopen a case automatically." |
+| 27 | "Human review is required before any real-world action." |
 | 28 | "UI display is advisory only." |
 | 28 | "UI display is not proof of execution." |
 | 28 | "UI display creates no legal authority." |
@@ -353,10 +359,8 @@ need_forecast_report.py
 
 ## Next Step Candidates
 
-1. **Merge Phase 28 PR** — after review
-2. **Phase 27: Reality Feedback Bridge** — connect Execution Log entries to
-   Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
-3. **Phase 29: Voluntary Resolution Signal** — record when participants
+1. **Merge Phase 27 PR** — after review
+2. **Phase 29: Voluntary Resolution Signal** — record when participants
    voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
 4. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
    to Phase 25/26 Execution Log observations in an advisory cross-phase report
@@ -411,6 +415,11 @@ need_forecast_report.py
 *Summary creates no legal authority.*
 *Summary does not rank or punish participants.*
 *Summary must preserve objections and rollback requests.*
+*Reality feedback is advisory only.*
+*Feedback bridge is not proof of resolution.*
+*Feedback bridge creates no legal authority.*
+*Feedback bridge does not reopen a case automatically.*
+*Human review is required before any real-world action.*
 *UI display is advisory only.*
 *UI display is not proof of execution.*
 *UI display creates no legal authority.*

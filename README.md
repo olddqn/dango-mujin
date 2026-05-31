@@ -241,6 +241,39 @@ python3 globe/runtime/execution_log_summary.py show-directive directive-claim-pr
 サマリは `globe/reports/execution_log_summary.json` と `globe/reports/execution_log_summary.md` に保存されます。
 UIサーバーの Globe 一覧ページと Globe 詳細ページにサマリテーブルが表示されます。
 
+## Phase 27 — Reality Feedback Bridge
+
+フェーズ27では、Directive Execution Log の観察・フィードバック・異議・差し戻し要求エントリを
+Phase 18（Relief Case Memory）および Phase 19（Care Loop Reopen）に接続する
+advisory ブリッジ層を追加しました。
+
+In Phase 27, we added an advisory Reality Feedback Bridge that reads Execution Log entries
+(observation / feedback / objection / rollback_request) and generates advisory bridge records
+suggesting connections to Phase 18 Relief Case Memory or Phase 19 Care Loop Reopen.
+
+> "Reality feedback is advisory only."
+> "Feedback bridge is not proof of resolution."
+> "Feedback bridge creates no legal authority."
+> "Feedback bridge does not reopen a case automatically."
+> "Human review is required before any real-world action."
+
+```bash
+# Bridge サマリを表示する
+python3 globe/runtime/reality_feedback_bridge.py summary
+
+# レポートを globe/reports/ に保存する
+python3 globe/runtime/reality_feedback_bridge.py save
+
+# Directive ごとのブリッジ候補を表示する
+python3 globe/runtime/reality_feedback_bridge.py show-directive directive-claim-proposal-002
+
+# Globe ごとのブリッジ候補を表示する
+python3 globe/runtime/reality_feedback_bridge.py show-globe globe-001
+```
+
+変換結果は `globe/reports/reality_feedback_bridge.json` と `.md` に保存されます。
+UIサーバーの Execution Log ページと Directive 詳細ページにブリッジパネルが表示されます。
+
 ## Phase 28 — Directive UI Routes
 
 フェーズ28では、Directive・Execution Log・Summary を globe_server.py 上で直接閲覧できる

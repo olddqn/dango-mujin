@@ -458,6 +458,95 @@ globe/reports/
 
 ---
 
+## Phase 27 — Reality Feedback Bridge（フェーズ27）
+
+Execution Log の observation / feedback / objection / rollback_request エントリを
+Phase 18 Relief Case Memory および Phase 19 Care Loop Reopen と接続する advisory bridge。
+
+Connects Directive Execution Log entries (observation / feedback / objection /
+rollback_request) to Phase 18 Relief Case Memory and Phase 19 Care Loop Reopen
+via advisory bridge records.
+
+### 不変条件 / Invariants
+
+> "Reality feedback is advisory only."
+> "Feedback bridge is not proof of resolution."
+> "Feedback bridge creates no legal authority."
+> "Feedback bridge does not reopen a case automatically."
+> "Human review is required before any real-world action."
+
+| Field | Value |
+|-------|-------|
+| `reality_feedback_is_advisory_only` | `true` |
+| `feedback_bridge_is_not_proof_of_resolution` | `true` |
+| `feedback_bridge_creates_no_legal_authority` | `true` |
+| `feedback_bridge_does_not_reopen_case_automatically` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `none` |
+
+### Bridge 判定ルール / Bridge Determination Rules
+
+| Entry type | キーワード | suggested_bridge_target |
+|-----------|-----------|------------------------|
+| any | 住居 / housing / tenant / 避難 / 難民 / relief など | `relief_case_memory` (Phase 18) |
+| any | 再開 / reopen / care / follow-up / 継続 など | `care_loop_reopen` (Phase 19) |
+| any | 両方含む | `both` |
+| `objection` / `rollback_request` | キーワードなし | `care_loop_reopen` (default) |
+| `observation` / `feedback` | キーワードなし | `none` |
+
+### Bridge Record スキーマ / Schema
+
+```json
+{
+  "feedback_id": "rfb-001",
+  "source_directive_id": "directive-claim-proposal-002",
+  "globe_id": "globe-001",
+  "source_log_id": "log-002",
+  "entry_type": "observation",
+  "actor_type": "ai",
+  "actor_name": "Dan-Go Agent",
+  "content": "実行前提条件の確認が必要",
+  "suggested_bridge_target": "none",
+  "suggested_reason": "no keyword match...",
+  "requires_human_review": true,
+  "creates_no_legal_authority": true,
+  "not_proof_of_resolution": true,
+  "advisory_only": true
+}
+```
+
+### CLI コマンド / CLI
+
+```bash
+# 全サマリを表示
+python3 globe/runtime/reality_feedback_bridge.py summary
+
+# globe/reports/ に保存
+python3 globe/runtime/reality_feedback_bridge.py save
+
+# Directive ごとに表示
+python3 globe/runtime/reality_feedback_bridge.py show-directive directive-claim-proposal-002
+
+# Globe ごとに表示
+python3 globe/runtime/reality_feedback_bridge.py show-globe globe-001
+```
+
+### 出力先 / Output
+
+```
+globe/reports/
+├── reality_feedback_bridge.json  — JSON bridge report (advisory only)
+└── reality_feedback_bridge.md    — Markdown bridge report (advisory only)
+```
+
+### UI 統合 / UI Integration
+
+- `/globe/<id>/logs/<directive_id>` — Execution Log 全件表示ページにBridgeパネルを表示
+- `/globe/<id>/directives/<directive_id>` — Directive 詳細ページにBridgeパネルを表示
+- 承認ボタン・実行ボタンは一切追加しない。表示は advisory のみ。
+
+---
+
 ## Phase 28 — Directive UI Routes（フェーズ28）
 
 Phase 24〜26 で生成された Directive / Execution Log / Summary を globe_server.py 上で直接閲覧できる UI ルートを追加。

@@ -75,6 +75,104 @@ def _load_exec_summary() -> dict | None:
         return None
 
 
+def _load_bridge_report() -> dict | None:
+    """Load the pre-built Reality Feedback Bridge report, or build it on the fly."""
+    report_path = _GLOBE_DIR / "reports" / "reality_feedback_bridge.json"
+    if report_path.exists():
+        try:
+            return json.loads(report_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "reality_feedback_bridge",
+            Path(__file__).parent / "reality_feedback_bridge.py",
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_bridge()
+    except Exception:
+        return None
+
+
+def _render_bridge_panel(directive_id: str) -> str:
+    """Render Reality Feedback Bridge suggestions for a given directive.
+
+    Phase 27 — advisory only. No approval buttons. No execution links.
+    Reality feedback is advisory only.
+    Feedback bridge does not reopen a case automatically.
+    Human review is required before any real-world action.
+    """
+    report = _load_bridge_report()
+    if not report:
+        return ""
+    records = [r for r in report.get("records", []) if r["source_directive_id"] == directive_id]
+    if not records:
+        return ""
+
+    _TARGET_ICON_MAP = {
+        "relief_case_memory": "🏠",
+        "care_loop_reopen":   "🔄",
+        "both":               "🏠🔄",
+        "none":               "—",
+    }
+    _TARGET_LABEL_MAP = {
+        "relief_case_memory": "Phase 18 Relief Case Memory",
+        "care_loop_reopen":   "Phase 19 Care Loop Reopen",
+        "both":               "Phase 18 + Phase 19",
+        "none":               "no bridge match",
+    }
+    _ENTRY_ICON_MAP = {
+        "observation":      "👁",
+        "feedback":         "💬",
+        "objection":        "⚠",
+        "rollback_request": "↩",
+    }
+
+    items = ""
+    for r in records:
+        target = r.get("suggested_bridge_target", "none")
+        css_cls = {
+            "relief_case_memory": "relief",
+            "care_loop_reopen":   "care",
+            "both":               "both",
+            "none":               "none",
+        }.get(target, "none")
+        ei    = _ENTRY_ICON_MAP.get(r["entry_type"], "•")
+        ti    = _TARGET_ICON_MAP.get(target, "—")
+        label = _TARGET_LABEL_MAP.get(target, target)
+        items += f"""
+<div class="bridge-record {css_cls}">
+  <div class="br-header">
+    {ei} {_e(r["entry_type"])} &nbsp;[{_e(r["feedback_id"])}]
+    <span class="bridge-target-badge">{ti} {_e(label)}</span>
+  </div>
+  <div class="br-content">{_e(r["content"])}</div>
+  <div class="br-reason">reason: {_e(r["suggested_reason"])}</div>
+  <div class="br-flags">
+    requires_human_review: true &nbsp;·&nbsp;
+    creates_no_legal_authority: true &nbsp;·&nbsp;
+    not_proof_of_resolution: true &nbsp;·&nbsp;
+    advisory_only: true
+  </div>
+</div>"""
+
+    gen = str(report.get("generated_at", ""))[:19].replace("T", " ")
+    return f"""
+<div class="bridge-panel">
+  <h3>🔗 Reality Feedback Bridge (Phase 27) — {len(records)} suggestion(s)</h3>
+  {items}
+  <div class="bridge-advisory">
+    Reality feedback is advisory only · Feedback bridge is not proof of resolution ·
+    Feedback bridge creates no legal authority ·
+    Feedback bridge does not reopen a case automatically ·
+    Human review is required before any real-world action ·
+    generated: {_e(gen)}
+  </div>
+</div>"""
+
+
 def _load_claim(proposal_id: str) -> dict | None:
     """Load a generated claim for the given proposal_id, or None if not yet converted."""
     claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
@@ -301,6 +399,27 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
              gap: 8px; text-align: center; font-size: 0.85rem; }
 .stat-grid .stat-num { font-size: 1.4rem; color: #8098b8; }
 .stat-grid .stat-lbl { color: #3a4a68; font-size: 0.75rem; }
+/* Phase 27 — Reality Feedback Bridge panel */
+.bridge-panel { background: #0c1018; border: 1px solid #1e2838;
+                border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.bridge-panel h3 { font-size: 0.88rem; color: #507080; margin-bottom: 12px;
+                   text-transform: uppercase; letter-spacing: 0.04em; }
+.bridge-record { border: 1px solid #1a2438; border-radius: 6px;
+                 padding: 10px 14px; margin-bottom: 8px; font-size: 0.84rem; }
+.bridge-record.relief { background: #0a1618; border-left: 3px solid #1e4838; }
+.bridge-record.care   { background: #0a0e18; border-left: 3px solid #1e2850; }
+.bridge-record.both   { background: #0c1020; border-left: 3px solid #3a1a50; }
+.bridge-record.none   { background: #0b0d12; border-left: 3px solid #1a1e28; }
+.bridge-record .br-header  { color: #5a7090; font-size: 0.82rem;
+                              font-weight: 600; margin-bottom: 4px; }
+.bridge-record .br-content { color: #7088a0; font-size: 0.82rem;
+                              line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.bridge-record .br-reason  { color: #2a3a52; font-size: 0.74rem; margin-top: 5px; }
+.bridge-record .br-flags   { color: #1e2a3a; font-size: 0.72rem; margin-top: 4px; }
+.bridge-target-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px;
+                       background: #14202e; color: #3a5870; margin-left: 6px; }
+.bridge-advisory { font-size: 0.72rem; color: #1e2a3a; margin-top: 10px;
+                   border-top: 1px solid #111820; padding-top: 8px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -953,6 +1072,7 @@ def render_directive_detail(globe_id: str, directive_id: str) -> str | None:
   &nbsp;<a href="/globe/{_e(globe_id)}/logs/{_e(directive_id)}" style="font-size:0.8rem">全件表示 →</a>
 </h3>
 {log_summary_html}
+{_render_bridge_panel(directive_id)}
 """
     return _page(
         d.get("title", directive_id),
@@ -1047,6 +1167,7 @@ def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
 
 <h3>Log Entries ({len(entries)}) — chronological · append-only · objection always recordable</h3>
 {entry_cards}
+{_render_bridge_panel(directive_id)}
 """
     return _page(
         f"Execution Log — {directive_id}",
