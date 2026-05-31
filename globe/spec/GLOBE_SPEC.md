@@ -547,6 +547,83 @@ globe/reports/
 
 ---
 
+## Phase 27b — Bridge Target Detail Link（フェーズ27b）
+
+Phase 27 の Reality Feedback Bridge で生成された `suggested_bridge_target` を、
+Phase 18 Relief Case Memory / Phase 19 Care Loop Reopen の具体的な既存データに advisory link する。
+
+> "Bridge target link is advisory only."
+> "Link candidate is not proof of case relation."
+> "Link candidate creates no legal authority."
+> "Link candidate does not reopen a case automatically."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `bridge_target_link_is_advisory_only` | `true` |
+| `link_candidate_is_not_proof_of_case_relation` | `true` |
+| `link_candidate_creates_no_legal_authority` | `true` |
+| `link_candidate_does_not_reopen_case_automatically` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### Link Candidate スキーマ
+
+```json
+{
+  "link_id": "lnk-002",
+  "source_feedback_id": "rfb-002",
+  "source_directive_id": "directive-claim-proposal-002",
+  "globe_id": "globe-001",
+  "suggested_bridge_target": "relief_case_memory",
+  "candidate_target_type": "relief_case_memory",
+  "candidate_path": "bridge/gitsea/relief/examples/relief-case-registry.json",
+  "candidate_item_id": "relief-case-003",
+  "candidate_item_type": "relief_case",
+  "candidate_description": "Supply coordination was observed for displaced family...",
+  "match_reason": "commons_id match (dra-001) + case_type 'refugee_relief_followup' contains refugee keyword",
+  "confidence": "high",
+  "requires_human_review": true,
+  "creates_no_legal_authority": true,
+  "does_not_reopen_case_automatically": true,
+  "advisory_only": true,
+  "created_at": "2026-05-31T01:00:22"
+}
+```
+
+### 信頼スコア / Confidence scoring
+
+| confidence | 条件 |
+|------------|------|
+| `high`   | commons_id が content にマッチ かつ ケースのtype/descに関連キーワードあり |
+| `medium` | commons_id マッチ のみ、または キーワードオーバーラップ |
+| `low`    | ファイルレベルの間接関連（fallback） |
+
+### CLI
+
+```bash
+python3 globe/runtime/bridge_target_linker.py summary
+python3 globe/runtime/bridge_target_linker.py save
+python3 globe/runtime/bridge_target_linker.py show-feedback rfb-002
+python3 globe/runtime/bridge_target_linker.py show-globe globe-001
+python3 globe/runtime/bridge_target_linker.py show-target relief_case_memory
+```
+
+### 出力先 / Output directories
+
+- `globe/reports/bridge_target_links.json` — JSONL link candidates report
+- `globe/reports/bridge_target_links.md` — Markdown report
+
+### UI統合 / UI integration
+
+- `/globe/<id>/directives/<directive_id>` — Directive 詳細ページに Link Candidates パネルを表示
+- `/globe/<id>/logs/<directive_id>` — Execution Log ページに Link Candidates パネルを表示
+- 承認ボタン・再開ボタン・実行ボタンは一切追加しない。表示は advisory のみ。
+
+---
+
 ## Phase 28 — Directive UI Routes（フェーズ28）
 
 Phase 24〜26 で生成された Directive / Execution Log / Summary を globe_server.py 上で直接閲覧できる UI ルートを追加。

@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Reality Feedback Bridge
+# RESUME_STATE.md — Bridge Target Detail Link
 
-> **STATUS: IN PROGRESS (feature/phase-27-reality-feedback-bridge)**
+> **STATUS: IN PROGRESS (feature/phase-27b-bridge-target-linker)**
 
-**Phase:** Reality Feedback Bridge (Phase 27)
-**Branch:** feature/phase-27-reality-feedback-bridge
+**Phase:** Bridge Target Detail Link (Phase 27b)
+**Branch:** feature/phase-27b-bridge-target-linker
 **Started:** 2026-05-31
 
 ---
@@ -46,7 +46,8 @@
 - Directive Execution Log Layer (Phase 25) — PR #17, merged
 - Cross-Globe Execution Log Summary (Phase 26) — PR #19, merged
 - Directive UI Routes (Phase 28) — PR #20, merged
-- **Reality Feedback Bridge (Phase 27)** ← current PR
+- Reality Feedback Bridge (Phase 27) — PR #21, merged
+- **Bridge Target Detail Link (Phase 27b)** ← current PR
 
 ---
 
@@ -290,7 +291,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–28 + Phase 27)
+## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b)
 
 | Phase | Phrase |
 |-------|--------|
@@ -349,6 +350,11 @@ need_forecast_report.py
 | 27 | "Feedback bridge creates no legal authority." |
 | 27 | "Feedback bridge does not reopen a case automatically." |
 | 27 | "Human review is required before any real-world action." |
+| 27b | "Bridge target link is advisory only." |
+| 27b | "Link candidate is not proof of case relation." |
+| 27b | "Link candidate creates no legal authority." |
+| 27b | "Link candidate does not reopen a case automatically." |
+| 27b | "Human review is required before any real-world action." |
 | 28 | "UI display is advisory only." |
 | 28 | "UI display is not proof of execution." |
 | 28 | "UI display creates no legal authority." |
@@ -357,9 +363,24 @@ need_forecast_report.py
 
 ---
 
+## New Files (Phase 27b)
+
+- `globe/runtime/bridge_target_linker.py` — Link candidate builder (advisory only)
+- `globe/reports/bridge_target_links.json` — Generated link candidates report
+- `globe/reports/bridge_target_links.md` — Generated Markdown report
+
+## Updated Files (Phase 27b)
+
+- `globe/runtime/globe_server.py` — Added `_load_link_report()`, `_render_link_candidates_panel()`, Phase 27b CSS; wired into Directive detail and Execution Log pages
+- `globe/spec/GLOBE_SPEC.md` — Phase 27b section
+- `README.md` — Phase 27b section with invariant quotes and CLI examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 27 PR** — after review
+1. **Merge Phase 27b PR** — after review
 2. **Phase 29: Voluntary Resolution Signal** — record when participants
    voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
 4. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
@@ -425,6 +446,11 @@ need_forecast_report.py
 *UI display creates no legal authority.*
 *UI display does not approve execution.*
 *UI display must preserve objections and rollback requests.*
+*Bridge target link is advisory only.*
+*Link candidate is not proof of case relation.*
+*Link candidate creates no legal authority.*
+*Link candidate does not reopen a case automatically.*
+*Human review is required before any real-world action.*
 *Dan-Go observes treasury context; it does not operate the treasury.*
 *Dan-Go records contribution candidates; external systems may issue credit.*
 *Dan-Go records commons participation; it does not govern communities.*

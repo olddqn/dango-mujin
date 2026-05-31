@@ -274,6 +274,43 @@ python3 globe/runtime/reality_feedback_bridge.py show-globe globe-001
 変換結果は `globe/reports/reality_feedback_bridge.json` と `.md` に保存されます。
 UIサーバーの Execution Log ページと Directive 詳細ページにブリッジパネルが表示されます。
 
+## Phase 27b — Bridge Target Detail Link
+
+フェーズ27bでは、Phase 27 の Reality Feedback Bridge レコードから、Phase 18 Relief Case Memory および
+Phase 19 Care Loop Reopen の具体的な既存データへの advisory link を生成する Bridge Target Linker を追加しました。
+
+**Link candidate は advisory のみです。Link candidate は case 関係の証明ではありません。法的権限を生じません。
+ケースを自動的に再開しません。実世界アクションの前には、常に人間の明示的な承認が必要です。**
+
+In Phase 27b, we added a Bridge Target Detail Linker that generates advisory link candidates
+from Phase 27 bridge records to specific Phase 18 / Phase 19 data items with confidence scoring.
+
+> "Bridge target link is advisory only."
+> "Link candidate is not proof of case relation."
+> "Link candidate creates no legal authority."
+> "Link candidate does not reopen a case automatically."
+> "Human review is required before any real-world action."
+
+```bash
+# Link サマリを表示する
+python3 globe/runtime/bridge_target_linker.py summary
+
+# レポートを globe/reports/ に保存する
+python3 globe/runtime/bridge_target_linker.py save
+
+# Feedback レコードごとの link candidates を表示する
+python3 globe/runtime/bridge_target_linker.py show-feedback rfb-002
+
+# Globe ごとの link candidates を表示する
+python3 globe/runtime/bridge_target_linker.py show-globe globe-001
+
+# target_type ごとの link candidates を表示する
+python3 globe/runtime/bridge_target_linker.py show-target relief_case_memory
+```
+
+変換結果は `globe/reports/bridge_target_links.json` と `.md` に保存されます。
+UIサーバーの Directive 詳細ページと Execution Log ページに Link Candidates パネルが表示されます。
+
 ## Phase 28 — Directive UI Routes
 
 フェーズ28では、Directive・Execution Log・Summary を globe_server.py 上で直接閲覧できる
