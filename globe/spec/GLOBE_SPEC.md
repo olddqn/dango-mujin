@@ -886,6 +886,29 @@ python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
 
 ---
 
+## Phase 37b — Dependency Edge URL Enrichment（フェーズ37b）
+
+Phase 37 で `{}` placeholder になっていた dependency edge の directive URL を修正。
+`globe_lookup`（directive_id → globe_id マップ）を node metadata から構築し、
+`_render_dep_edge()` に渡すことで、正しいリンクを生成する。
+
+- **修正前**: `href="/globe/{}/directives/directive-claim-proposal-002"` （broken）
+- **修正後**: `href="/globe/globe-001/directives/directive-claim-proposal-002"` （correct）
+
+URL enrichment は利便性改善であり、実行順序・優先順位・責任割当ではない。
+
+### 実装変更
+
+- `_render_dep_edge(e, globe_lookup)` — `globe_lookup: dict[str, str]` パラメーター追加
+- `render_dependencies_page()` — `globe_lookup` を `all_nodes` から構築して `_render_dep_edge` に渡す
+- globe_id が空の場合は `<span>` にフォールバック（リンクなし）
+
+### 修正ファイル
+
+- `globe/runtime/globe_server.py` — `_render_dep_edge()` と `render_dependencies_page()` を修正
+
+---
+
 ## Phase 37 — Directive Dependency Map（フェーズ37）
 
 Directive 間の参照関係・共有キーワード・同一Globe・同一Claim/Proposal由来などを、

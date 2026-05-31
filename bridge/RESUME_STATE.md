@@ -1,8 +1,8 @@
-# RESUME_STATE.md — Directive Dependency Map
+# RESUME_STATE.md — Dependency Edge URL Enrichment
 
 > **STATUS: IN PROGRESS (feature/phase-37-directive-dependency-map)**
 
-**Phase:** Directive Dependency Map (Phase 37)
+**Phase:** Dependency Edge URL Enrichment (Phase 37b)
 **Branch:** feature/phase-37-directive-dependency-map
 **Started:** 2026-05-31
 
@@ -56,7 +56,8 @@
 - Activity Heatmap (Phase 34) — PR #28, merged
 - Directive Execution Checklist (Phase 35) — PR #29, merged
 - Globe Feed / Changelog (Phase 36) — PR #30, merged
-- **Directive Dependency Map (Phase 37)** ← current PR
+- Directive Dependency Map (Phase 37) — PR #31
+- **Dependency Edge URL Enrichment (Phase 37b)** ← current commit
 
 ---
 
@@ -415,6 +416,10 @@ need_forecast_report.py
 | 37 | "Dependency does not rank directives." |
 | 37 | "Dependency does not allocate responsibility." |
 | 37 | "Human review is required before any real-world action." |
+| 37b | "URL enrichment is advisory display only." |
+| 37b | "URL enrichment is not execution order." |
+| 37b | "URL enrichment does not rank directives." |
+| 37b | "URL enrichment does not allocate responsibility." |
 
 ---
 
@@ -534,6 +539,15 @@ _No new files — Phase 29 extends existing runtime scripts._
 - `globe/runtime/globe_server.py` — Added `_load_checklists()`, `_render_cl_item()`, `render_checklist_page()`, Phase 35 CSS; wired `/globe/<id>/directives/<did>/checklist` route; added "📋 Checklist (N steps) →" link and attention note to Directive detail page
 - `globe/spec/GLOBE_SPEC.md` — Phase 35 section
 - `README.md` — Phase 35 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
+## Updated Files (Phase 37b)
+
+- `globe/runtime/globe_server.py` — `_render_dep_edge()` に `globe_lookup` パラメーター追加; `render_dependencies_page()` で lookup 構築・受け渡し; `{}` placeholder を削除し、正しい `/globe/<gid>/directives/<did>` URL を生成
+- `globe/spec/GLOBE_SPEC.md` — Phase 37b セクション追加
+- `README.md` — Phase 37b セクション追加
 - `bridge/RESUME_STATE.md` — this file
 
 ---

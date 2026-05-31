@@ -2462,29 +2462,41 @@ def _render_dep_node(node: dict) -> str:
     )
 
 
-def _render_dep_edge(e: dict) -> str:
+def _render_dep_edge(e: dict, globe_lookup: dict[str, str]) -> str:
+    """Phase 37b — render a dependency edge card with fully-resolved directive URLs."""
     rt   = _e(e.get("relation_type", ""))
     conf = e.get("confidence", "low")
     icon = _DEP_REL_ICON.get(e.get("relation_type", ""), "•")
-    src  = _e(e.get("source_directive_id", ""))
-    tgt  = _e(e.get("target_directive_id", ""))
+    src_did = e.get("source_directive_id", "")
+    tgt_did = e.get("target_directive_id", "")
+    src_gid = globe_lookup.get(src_did, "")
+    tgt_gid = globe_lookup.get(tgt_did, "")
+    src = _e(src_did)
+    tgt = _e(tgt_did)
     reason = _e(e.get("relation_reason", ""))
     terms  = e.get("shared_terms", [])
     terms_html = (
         f'<div class="dep-terms">共有: {_e(", ".join(terms[:6]))}</div>'
         if terms else ""
     )
+    # Phase 37b: build fully-resolved URLs using globe_id from node lookup
+    if src_gid:
+        src_link = (f'<a href="/globe/{_e(src_gid)}/directives/{src}"'
+                    f' style="color:#5878a0">{src}</a>')
+    else:
+        src_link = f'<span style="color:#5878a0">{src}</span>'
+    if tgt_gid:
+        tgt_link = (f'<a href="/globe/{_e(tgt_gid)}/directives/{tgt}"'
+                    f' style="color:#5878a0">{tgt}</a>')
+    else:
+        tgt_link = f'<span style="color:#5878a0">{tgt}</span>'
     return (
         f'<div class="dep-edge">'
         f'<div class="dep-edge-header">'
         f'<span class="dep-rel-badge">{icon} {rt}</span>'
         f'<span class="dep-conf-badge {_e(conf)}">{_e(conf)}</span>'
         f'</div>'
-        f'<div class="dep-edge-dirs">'
-        f'<a href="/globe/{{}}/directives/{src}" style="color:#5878a0">{src}</a>'
-        f' ↔ '
-        f'<a href="/globe/{{}}/directives/{tgt}" style="color:#5878a0">{tgt}</a>'
-        f'</div>'
+        f'<div class="dep-edge-dirs">{src_link} ↔ {tgt_link}</div>'
         f'<div class="dep-edge-reason">{reason}</div>'
         f'{terms_html}'
         f'</div>'
@@ -2500,6 +2512,12 @@ def render_dependencies_page(
     dep_map = _load_dependency_map()
     all_nodes: list[dict] = dep_map.get("nodes", [])
     all_edges: list[dict] = dep_map.get("edges", [])
+
+    # Phase 37b — build directive_id → globe_id lookup for URL enrichment
+    globe_lookup: dict[str, str] = {
+        n["directive_id"]: n.get("globe_id", "")
+        for n in all_nodes
+    }
 
     # Apply filters
     nodes = all_nodes
@@ -2575,7 +2593,7 @@ def render_dependencies_page(
     )
 
     # Edge cards
-    edges_html = "".join(_render_dep_edge(e) for e in edges) if edges else (
+    edges_html = "".join(_render_dep_edge(e, globe_lookup) for e in edges) if edges else (
         '<div class="dep-empty">このフィルターに該当するDependency Edgeはありません。</div>'
     )
 

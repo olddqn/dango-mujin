@@ -562,6 +562,22 @@ HTTP URL:
 
 ---
 
+## Phase 37b — Dependency Edge URL Enrichment
+
+フェーズ37b では、Phase 37 の未実装部分として残っていた
+dependency edge の `{}` placeholder URL を修正しました。
+
+- **修正前**: `/globe/{}/directives/directive-claim-proposal-002` （broken）
+- **修正後**: `/globe/globe-001/directives/directive-claim-proposal-002` （correct）
+
+`_render_dep_edge()` に `globe_lookup: dict[str, str]` パラメーターを追加し、
+`render_dependencies_page()` で `all_nodes` から lookup を構築して渡します。
+
+**URL enrichment は advisory display のみです。実行順序ではありません。
+Directiveをランク付けしません。責任を割り当てません。**
+
+---
+
 ## Phase 37 — Directive Dependency Map
 
 フェーズ37では、Directive 間の参照関係・共有キーワード・同一Globe・同一Claim/Proposal由来・
