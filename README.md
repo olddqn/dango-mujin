@@ -562,6 +562,49 @@ HTTP URL:
 
 ---
 
+## Phase 38 — Globe Member Profile View
+
+フェーズ38では、Globe内メンバーの活動履歴を advisory display として可視化する
+**Globe Member Profile View** を追加しました。
+
+> **"Member profile is advisory display only."**
+> **"Member profile is not identity verification."**
+> **"Member profile is not reputation score."**
+> **"Member profile creates no authority."**
+> **"Member profile does not rank participants."**
+
+### データ収集
+
+6ソース（proposals / deliberations / logs / reality_feedback / contribution_timeline / globe_feed）から
+12名のメンバープロフィールを構築。actor_type: human(8), ai(2), system(2)。
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_profile.py summary
+# member_count: 12, actor_types: 3
+
+python3 globe/runtime/member_profile.py show-member member-masuo-komori
+# execution_log_count: 3, human_approval_count: 2, voluntary_resolution_signal_count: 1
+
+python3 globe/runtime/member_profile.py show-globe globe-001
+# 8 members in globe-001
+```
+
+### URL確認
+
+- http://localhost:7422/globe/members
+- http://localhost:7422/globe/members/member-masuo-komori
+- http://localhost:7422/globe/members?globe=globe-001
+
+### 生成ファイル
+
+- `globe/runtime/member_profile.py` — プロフィール構築・CLI (12 members, 6 sources)
+- `globe/reports/member_profiles.json` — 生成済み JSON
+- `globe/reports/member_profiles.md` — 生成済み Markdown
+
+---
+
 ## Phase 37b — Dependency Edge URL Enrichment
 
 フェーズ37b では、Phase 37 の未実装部分として残っていた

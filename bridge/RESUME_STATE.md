@@ -1,10 +1,10 @@
-# RESUME_STATE.md — Dependency Edge URL Enrichment
+# RESUME_STATE.md — Globe Member Profile View
 
-> **STATUS: IN PROGRESS (feature/phase-37-directive-dependency-map)**
+> **STATUS: IN PROGRESS (feature/phase-38-member-profile)**
 
-**Phase:** Dependency Edge URL Enrichment (Phase 37b)
-**Branch:** feature/phase-37-directive-dependency-map
-**Started:** 2026-05-31
+**Phase:** Globe Member Profile View (Phase 38)
+**Branch:** feature/phase-38-member-profile
+**Started:** 2026-06-01
 
 ---
 
@@ -57,7 +57,8 @@
 - Directive Execution Checklist (Phase 35) — PR #29, merged
 - Globe Feed / Changelog (Phase 36) — PR #30, merged
 - Directive Dependency Map (Phase 37) — PR #31
-- **Dependency Edge URL Enrichment (Phase 37b)** ← current commit
+- Dependency Edge URL Enrichment (Phase 37b) — merged via PR #32
+- **Globe Member Profile View (Phase 38)** ← current commit
 
 ---
 
@@ -540,6 +541,32 @@ _No new files — Phase 29 extends existing runtime scripts._
 - `globe/spec/GLOBE_SPEC.md` — Phase 35 section
 - `README.md` — Phase 35 section with invariant quotes and CLI/URL examples
 - `bridge/RESUME_STATE.md` — this file
+
+---
+
+## New Files (Phase 38)
+
+- `globe/runtime/member_profile.py` — Member profile builder + CLI (12 members, 6 sources, advisory only)
+- `globe/reports/member_profiles.json` — Generated member profiles JSON
+- `globe/reports/member_profiles.md` — Human-readable member profiles Markdown
+
+## Updated Files (Phase 38)
+
+- `globe/runtime/globe_server.py` — Added `_load_profiles()`, `_render_mp_card()`, `render_members_list()`, `render_member_detail()`, Phase 38 CSS; wired `/globe/members` and `/globe/members/<member_id>` routes with `?globe=` query param; added "👥 Members →" to Globe list header; updated docstring to Phase 22–38
+- `globe/spec/GLOBE_SPEC.md` — Phase 38 section (6 data sources, 10 count fields, HTTP routes, CLI)
+- `README.md` — Phase 38 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 38)
+
+```
+Member profile is advisory display only.
+Member profile is not identity verification.
+Member profile is not reputation score.
+Member profile creates no authority.
+Member profile does not rank participants.
+Human review is required before any real-world action.
+```
 
 ---
 
