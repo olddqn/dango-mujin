@@ -886,6 +886,94 @@ python3 globe/runtime/proposal_compare.py save proposal-002 proposal-005
 
 ---
 
+## Phase 37 — Directive Dependency Map（フェーズ37）
+
+Directive 間の参照関係・共有キーワード・同一Globe・同一Claim/Proposal由来などを、
+advisory dependency map として可視化する。
+依存関係マップは観察補助表示にすぎない。実行順序・優先順位・責任割当ではない。
+
+> "Dependency map is advisory display only."
+> "Dependency is not execution order."
+> "Dependency does not rank directives."
+> "Dependency does not allocate responsibility."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `dependency_map_is_advisory_display_only` | `True` |
+| `dependency_is_not_execution_order` | `True` |
+| `dependency_does_not_rank_directives` | `True` |
+| `dependency_does_not_allocate_responsibility` | `True` |
+| `human_review_is_required_before_any_real_world_action` | `True` |
+| `authority` | `none` |
+
+### 検出関係タイプ / Detected Relation Types (7)
+
+| relation_type | 検出方法 | 信頼度 |
+|---------------|----------|--------|
+| `same_globe` | globe_id 完全一致 | high |
+| `shared_keyword` | scope.in_scope 共通項 (非テンプレート) | high/low |
+| `shared_claim_source` | source_claim_id 一致 | high |
+| `shared_proposal_source` | source_proposal_id 一致 | high |
+| `shared_bridge_target` | bridge_target_links + reality_feedback共有 | high/low |
+| `shared_resolution_status` | ログ resolution_status 共有 | medium |
+| `shared_attention_marker` | objection / rollback_request / vrs 共有 | high/medium |
+
+### Dependency Edge 構造
+
+```json
+{
+  "edge_id":                          "edge-shared_keyword-002-005",
+  "source_directive_id":              "directive-claim-proposal-002",
+  "target_directive_id":              "directive-claim-proposal-005",
+  "relation_type":                    "shared_keyword",
+  "relation_reason":                  "Shared non-template scope item: \"住居アドボカシーの熟議フロー運用\"",
+  "shared_terms":                     ["住居アドボカシーの熟議フロー運用"],
+  "confidence":                       "high",
+  "advisory_only":                    true,
+  "not_execution_order":              true,
+  "does_not_allocate_responsibility": true
+}
+```
+
+### 生成結果 (2 directives)
+
+- directive_count: 2
+- edge_count: 4
+  - shared_keyword (high): 住居アドボカシーの熟議フロー運用 共有
+  - shared_keyword (low): プロトコルテンプレートスコープ項目共有
+  - shared_bridge_target (low): relief_case_memory / both
+  - shared_attention_marker (medium): voluntary_resolution_signal 共有
+
+### CLI
+
+```bash
+python3 globe/runtime/directive_dependency_map.py summary
+python3 globe/runtime/directive_dependency_map.py save
+python3 globe/runtime/directive_dependency_map.py show-directive directive-claim-proposal-002
+python3 globe/runtime/directive_dependency_map.py show-globe globe-001
+python3 globe/runtime/directive_dependency_map.py show-relation shared_keyword
+```
+
+### HTTP ルート
+
+| Path | 説明 |
+|------|------|
+| `/globe/dependencies` | 全Dependency Map |
+| `/globe/dependencies?globe=globe-001` | Globe 絞り込み |
+| `/globe/dependencies?directive=<id>` | Directive 絞り込み |
+| `/globe/dependencies?relation=shared_keyword` | Relation type 絞り込み |
+
+### 実装ファイル
+
+- `globe/runtime/directive_dependency_map.py` — 関係検出・CLI
+- `globe/reports/directive_dependency_map.json` — 生成済み JSON (4 edges)
+- `globe/reports/directive_dependency_map.md` — 生成済み Markdown
+
+---
+
 ## Phase 36 — Globe Feed / Changelog（フェーズ36）
 
 Globe 全レイヤーの活動を時系列で集約した advisory フィードを提供する。

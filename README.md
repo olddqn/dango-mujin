@@ -562,6 +562,43 @@ HTTP URL:
 
 ---
 
+## Phase 37 — Directive Dependency Map
+
+フェーズ37では、Directive 間の参照関係・共有キーワード・同一Globe・同一Claim/Proposal由来・
+共有ブリッジターゲット・共有解決ステータス・共有注意フラグを検出し、
+advisory dependency map として可視化する **Directive Dependency Map** を追加しました。
+依存関係マップは観察補助表示にすぎません。実行順序・優先順位・責任割当ではありません。
+
+**Dependency map は advisory display のみです。実行順序ではありません。
+Directiveをランク付けしません。責任を割り当てません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+### 追加ファイル
+
+- `globe/runtime/directive_dependency_map.py` — 関係検出・CLI (7 relation_types, 4 edges)
+- `globe/reports/directive_dependency_map.json` — 生成済み JSON
+- `globe/reports/directive_dependency_map.md` — 生成済み Markdown
+
+### CLI
+
+```bash
+python3 globe/runtime/directive_dependency_map.py summary
+python3 globe/runtime/directive_dependency_map.py show-directive directive-claim-proposal-002
+python3 globe/runtime/directive_dependency_map.py show-globe globe-001
+python3 globe/runtime/directive_dependency_map.py show-relation shared_keyword
+```
+
+### HTTP
+
+| Route | Description |
+|-------|-------------|
+| `/globe/dependencies` | Full dependency map |
+| `/globe/dependencies?globe=globe-001` | Filter by globe |
+| `/globe/dependencies?directive=<id>` | Filter by directive |
+| `/globe/dependencies?relation=shared_keyword` | Filter by relation type |
+
+---
+
 ## Phase 36 — Globe Feed / Changelog
 
 フェーズ36では、Globe 全レイヤー（Proposal / Claim / Directive / Execution Log /
