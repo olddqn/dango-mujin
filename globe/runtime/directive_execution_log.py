@@ -1,34 +1,50 @@
 #!/usr/bin/env python3
 """
-directive_execution_log.py — Directive Execution Log (Phase 25)
+directive_execution_log.py — Directive Execution Log (Phase 25 + Phase 29)
 Dan-Go × GITSEA — Globe Execution Layer
 
 Records human approvals, execution attempts, observations, feedback,
-objections, and rollback requests for a given Directive.
+objections, rollback requests, and voluntary resolution signals for a Directive.
 
 Execution Log is not proof of execution.
 Log entry is not legal authority.
 Human approval is required before real-world execution.
 Objection and rollback request must always be recordable.
 Append-only: existing entries must never be rewritten.
+Resolution signal is self-reported only.
+Resolution signal is not proof of resolution.
+Resolution signal does not close support automatically.
+Contested status must always remain recordable.
 
 authority: none · append-only · legal_authority_created: false
 non_coercive: true · objection_always_recordable: true
 
 Usage:
     python3 globe/runtime/directive_execution_log.py \\
-        append <directive_id> <entry_type> <actor_type> <actor_name> <content>
+        append <directive_id> <entry_type> <actor_type> <actor_name> <content> \\
+        [--resolution-status resolved|partially_resolved|paused|unresolved|contested]
     python3 globe/runtime/directive_execution_log.py list <directive_id>
     python3 globe/runtime/directive_execution_log.py summary <directive_id>
     python3 globe/runtime/directive_execution_log.py export-md <directive_id>
 
 Entry types:
-    human_approval      — Human explicitly approves a directive step
-    execution_attempt   — Record of an attempted execution step
-    observation         — Observation during or after an attempt
-    feedback            — Feedback from any actor on the directive
-    objection           — Objection to the directive or a step (always recordable)
-    rollback_request    — Request to roll back an executed step (always recordable)
+    human_approval             — Human explicitly approves a directive step
+    execution_attempt          — Record of an attempted execution step
+    observation                — Observation during or after an attempt
+    feedback                   — Feedback from any actor on the directive
+    objection                  — Objection to the directive or a step (always recordable)
+    rollback_request           — Request to roll back an executed step (always recordable)
+    voluntary_resolution_signal — Self-reported resolution status (always recordable)
+                                  Requires --resolution-status flag.
+                                  Self-reported only · not proof of resolution ·
+                                  does not close support automatically.
+
+Resolution statuses (voluntary_resolution_signal only):
+    resolved           — Participant self-reports matter resolved
+    partially_resolved — Participant self-reports partial progress
+    paused             — Participant self-reports temporary pause
+    unresolved         — Participant self-reports matter still open
+    contested          — Participant contests current state (always recordable)
 
 Actor types:
     human   — Human participant
@@ -54,23 +70,48 @@ VALID_ENTRY_TYPES = {
     "feedback",
     "objection",
     "rollback_request",
+    "voluntary_resolution_signal",       # Phase 29
 }
 
 VALID_ACTOR_TYPES = {"human", "ai", "system"}
+
+# Phase 29 — valid resolution statuses for voluntary_resolution_signal
+VALID_RESOLUTION_STATUSES = {
+    "resolved",
+    "partially_resolved",
+    "paused",
+    "unresolved",
+    "contested",
+}
 
 # These entry types warn if no prior human_approval exists in the log
 REQUIRES_PRIOR_APPROVAL = frozenset({"execution_attempt", "observation", "feedback"})
 
 # These are always recordable with no approval gate (non-coercive, contestable)
-ALWAYS_RECORDABLE = frozenset({"human_approval", "objection", "rollback_request"})
+ALWAYS_RECORDABLE = frozenset({
+    "human_approval",
+    "objection",
+    "rollback_request",
+    "voluntary_resolution_signal",       # Phase 29 — self-reported, no gate
+})
 
 ENTRY_TYPE_ICON = {
-    "human_approval":    "✅",
-    "execution_attempt": "▶️",
-    "observation":       "👁️",
-    "feedback":          "💬",
-    "objection":         "⚠️",
-    "rollback_request":  "↩️",
+    "human_approval":             "✅",
+    "execution_attempt":          "▶️",
+    "observation":                "👁️",
+    "feedback":                   "💬",
+    "objection":                  "⚠️",
+    "rollback_request":           "↩️",
+    "voluntary_resolution_signal": "🏳️",  # Phase 29 — self-reported signal
+}
+
+# Phase 29 — icon per resolution status
+RESOLUTION_STATUS_ICON = {
+    "resolved":           "✅",
+    "partially_resolved": "🟡",
+    "paused":             "⏸️",
+    "unresolved":         "🔴",
+    "contested":          "⚔️",
 }
 
 ACTOR_TYPE_ICON = {"human": "👤", "ai": "🤖", "system": "⚙️"}
@@ -157,9 +198,15 @@ def append_entry(
     content: str,
     evidence_refs: list | None = None,
     non_coercion_confirmed: bool = True,
+    resolution_status: str | None = None,   # Phase 29
     verbose: bool = True,
 ) -> dict | None:
-    """Append a new entry to the directive's execution log."""
+    """Append a new entry to the directive's execution log.
+
+    Phase 29: if entry_type == 'voluntary_resolution_signal', resolution_status is required.
+    Resolution signal is self-reported only. Not proof of resolution.
+    Does not close support automatically. Contested status always recordable.
+    """
 
     # ── Validate entry_type ──
     if entry_type not in VALID_ENTRY_TYPES:
@@ -178,6 +225,25 @@ def append_entry(
                 f"Valid types: {', '.join(sorted(VALID_ACTOR_TYPES))}"
             )
         return None
+
+    # ── Phase 29: resolution_status validation ──
+    if entry_type == "voluntary_resolution_signal":
+        if not resolution_status:
+            if verbose:
+                print(
+                    "ERROR: voluntary_resolution_signal requires --resolution-status.\n"
+                    f"Valid values: {', '.join(sorted(VALID_RESOLUTION_STATUSES))}\n"
+                    "Resolution signal is self-reported only · not proof of resolution · "
+                    "does not close support automatically."
+                )
+            return None
+        if resolution_status not in VALID_RESOLUTION_STATUSES:
+            if verbose:
+                print(
+                    f"ERROR: unknown resolution_status '{resolution_status}'.\n"
+                    f"Valid values: {', '.join(sorted(VALID_RESOLUTION_STATUSES))}"
+                )
+            return None
 
     # ── Confirm directive exists ──
     directive = _load_directive(directive_id)
@@ -205,7 +271,7 @@ def append_entry(
             )
 
     # ── Build entry ──
-    entry = {
+    entry: dict = {
         "log_id":                log_id,
         "directive_id":          directive_id,
         "globe_id":              globe_id,
@@ -219,6 +285,14 @@ def append_entry(
         "created_at":            _now(),
     }
 
+    # ── Phase 29: add resolution_status fields ──
+    if entry_type == "voluntary_resolution_signal":
+        entry["resolution_status"]                        = resolution_status
+        entry["resolution_signal_is_self_reported"]       = True
+        entry["resolution_signal_is_not_proof"]           = True
+        entry["resolution_signal_does_not_close_support"] = True
+        entry["resolution_signal_creates_no_legal_authority"] = True
+
     # ── Append (never overwrites) ──
     _append_to_log(directive_id, entry)
 
@@ -230,12 +304,25 @@ def append_entry(
         print(f"    directive: {directive_id}")
         print(f"    globe:     {globe_id}")
         print(f"    content:   {content}")
+        if resolution_status:
+            rs_icon = RESOLUTION_STATUS_ICON.get(resolution_status, "•")
+            print(f"    resolution_status: {rs_icon} {resolution_status}")
         print(f"    time:      {entry['created_at'][:19]}")
         print()
         if entry_type == "human_approval":
             print("    ✅ Human approval recorded.")
         elif entry_type in {"objection", "rollback_request"}:
             print(f"    ⚠️  {entry_type} recorded — always recordable; append-only.")
+        elif entry_type == "voluntary_resolution_signal":
+            rs_icon = RESOLUTION_STATUS_ICON.get(resolution_status, "•")
+            print(
+                f"    🏳️  voluntary_resolution_signal recorded — self-reported only.\n"
+                f"       resolution_status: {rs_icon} {resolution_status}\n"
+                "       Resolution signal is not proof of resolution.\n"
+                "       Resolution signal does not close support automatically.\n"
+                "       Resolution signal creates no legal authority.\n"
+                "       Contested status must always remain recordable."
+            )
         print()
         print(
             "    legal_authority_created: false · "
@@ -288,6 +375,11 @@ def list_entries(directive_id: str) -> None:
         if len(content) > 100:
             content = content[:100] + "…"
         print(f"    content: {content}")
+        # Phase 29 — show resolution_status if present
+        rs = e.get("resolution_status")
+        if rs:
+            rs_icon = RESOLUTION_STATUS_ICON.get(rs, "•")
+            print(f"    resolution_status: {rs_icon} {rs}  (self-reported · not proof)")
         refs = e.get("evidence_refs", [])
         if refs:
             print(f"    refs:    {', '.join(refs)}")
@@ -328,7 +420,27 @@ def summary(directive_id: str) -> None:
         for et in sorted(VALID_ENTRY_TYPES):
             n = counts.get(et, 0)
             if n:
-                print(f"    {ENTRY_TYPE_ICON.get(et, '•')} {et:<20} {n}")
+                print(f"    {ENTRY_TYPE_ICON.get(et, '•')} {et:<28} {n}")
+        print()
+
+    # Phase 29 — resolution signal breakdown
+    signal_entries = [e for e in entries if e.get("entry_type") == "voluntary_resolution_signal"]
+    if signal_entries:
+        rs_counts: dict[str, int] = {}
+        for e in signal_entries:
+            rs = e.get("resolution_status", "unknown")
+            rs_counts[rs] = rs_counts.get(rs, 0) + 1
+        print("  resolution_signal breakdown (self-reported · not proof):")
+        for rs in sorted(VALID_RESOLUTION_STATUSES):
+            n = rs_counts.get(rs, 0)
+            if n:
+                rs_icon = RESOLUTION_STATUS_ICON.get(rs, "•")
+                print(f"    {rs_icon} {rs:<20} {n}")
+        latest_rs = signal_entries[-1].get("resolution_status", "")
+        rs_icon = RESOLUTION_STATUS_ICON.get(latest_rs, "•")
+        latest_actor = signal_entries[-1].get("actor_name", "?")
+        print(f"  latest_resolution_signal:  {rs_icon} {latest_rs}  (by {latest_actor})")
+        print("  [self-reported only · not proof · does not close support automatically]")
         print()
 
     if last:
@@ -355,6 +467,10 @@ def summary(directive_id: str) -> None:
     print("    objection_always_recordable: true")
     print("    rollback_always_recordable:  true")
     print("    append_only:               true")
+    print("    resolution_signal_is_self_reported:       true (Phase 29)")
+    print("    resolution_signal_is_not_proof:           true (Phase 29)")
+    print("    resolution_signal_does_not_close_support: true (Phase 29)")
+    print("    contested_always_recordable:              true (Phase 29)")
 
 
 # ─── Export Markdown ────────────────────────────────────────────────────────────
@@ -393,6 +509,13 @@ def export_md(directive_id: str) -> None:
             if refs:
                 refs_md = "\n\n**evidence_refs:** " + ", ".join(f"`{r}`" for r in refs)
 
+            rs_row = ""
+            rs = e.get("resolution_status")
+            if rs:
+                rs_icon = RESOLUTION_STATUS_ICON.get(rs, "•")
+                rs_row = (
+                    f"| `resolution_status` | {rs_icon} {rs} _(self-reported · not proof)_ |\n"
+                )
             entries_md += (
                 f"### [{e.get('log_id', '?')}] {icon} {e.get('entry_type', '?')}\n\n"
                 f"| Field | Value |\n"
@@ -400,7 +523,8 @@ def export_md(directive_id: str) -> None:
                 f"| `actor` | {actor_icon} {e.get('actor_name', '?')} ({e.get('actor_type', '?')}) |\n"
                 f"| `created_at` | {str(e.get('created_at', ''))[:19]} |\n"
                 f"| `non_coercion_confirmed` | {str(e.get('non_coercion_confirmed', True)).lower()} |\n"
-                f"| `legal_authority_created` | {str(e.get('legal_authority_created', False)).lower()} |\n\n"
+                f"| `legal_authority_created` | {str(e.get('legal_authority_created', False)).lower()} |\n"
+                f"{rs_row}\n"
                 f"> {e.get('content', '')}"
                 f"{refs_md}\n\n---\n\n"
             )
@@ -478,18 +602,34 @@ def main() -> None:
 
     if cmd == "append":
         # append <directive_id> <entry_type> <actor_type> <actor_name> <content>
+        #        [--resolution-status <status>]
         if len(args) < 6:
             print(
                 "Usage: directive_execution_log.py append "
-                "<directive_id> <entry_type> <actor_type> <actor_name> <content>"
+                "<directive_id> <entry_type> <actor_type> <actor_name> <content> "
+                "[--resolution-status resolved|partially_resolved|paused|unresolved|contested]"
             )
             sys.exit(1)
+
+        # Parse optional --resolution-status flag from tail of args
+        positional = args[1:6]
+        resolution_status: str | None = None
+        remaining = args[6:]
+        i = 0
+        while i < len(remaining):
+            if remaining[i] == "--resolution-status" and i + 1 < len(remaining):
+                resolution_status = remaining[i + 1]
+                i += 2
+            else:
+                i += 1
+
         append_entry(
-            directive_id=args[1],
-            entry_type=args[2],
-            actor_type=args[3],
-            actor_name=args[4],
-            content=args[5],
+            directive_id=positional[0],
+            entry_type=positional[1],
+            actor_type=positional[2],
+            actor_name=positional[3],
+            content=positional[4],
+            resolution_status=resolution_status,
         )
 
     elif cmd == "list":

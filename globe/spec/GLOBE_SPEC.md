@@ -624,6 +624,86 @@ python3 globe/runtime/bridge_target_linker.py show-target relief_case_memory
 
 ---
 
+## Phase 29 — Voluntary Resolution Signal（フェーズ29）
+
+参加者が Directive Execution Log に対し、任意で解決状況を自己申告できる `voluntary_resolution_signal` entry type を追加。
+
+> "Resolution signal is self-reported only."
+> "Resolution signal is not proof of resolution."
+> "Resolution signal does not close support automatically."
+> "Resolution signal creates no legal authority."
+> "Contested status must always remain recordable."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `resolution_signal_is_self_reported` | `true` |
+| `resolution_signal_is_not_proof` | `true` |
+| `resolution_signal_does_not_close_support` | `true` |
+| `resolution_signal_creates_no_legal_authority` | `true` |
+| `contested_always_recordable` | `true` |
+| `append_only` | `true` |
+
+### resolution_status 値
+
+| status | 意味 |
+|--------|------|
+| `resolved` | 参加者が解決済みを自己申告 |
+| `partially_resolved` | 部分的な進展を自己申告 |
+| `paused` | 一時停止を自己申告 |
+| `unresolved` | 未解決として継続観察を表明 |
+| `contested` | 現在の状態に異議（常に記録可能） |
+
+### CLI
+
+```bash
+# voluntary_resolution_signal を追加する
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 voluntary_resolution_signal human "Masuo Komori" \
+  "D.R.A.連携の前提整理はいったん一区切りとする" \
+  --resolution-status partially_resolved
+
+# 常に記録可能（人間承認不要）
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 voluntary_resolution_signal human "member-001" \
+  "この解決には合意できない" \
+  --resolution-status contested
+```
+
+### Bridge ルーティング（Phase 27との連携）
+
+| resolution_status | bridge 対象 |
+|-------------------|-------------|
+| `unresolved` | `care_loop_reopen`（content keyword で escalate） |
+| `contested` | `care_loop_reopen` |
+| `paused` | `care_loop_reopen` |
+| `resolved` | bridge 対象外（summary に保存） |
+| `partially_resolved` | bridge 対象外（summary に保存） |
+
+### Execution Log Summary への反映（Phase 26 + 29）
+
+```json
+{
+  "resolution_signal_count": 2,
+  "resolved_count": 0,
+  "partially_resolved_count": 1,
+  "paused_count": 0,
+  "unresolved_count": 1,
+  "contested_count": 0,
+  "latest_resolution_status": "unresolved"
+}
+```
+
+### UI統合（Phase 28 + 29）
+
+- `/globe/<id>/logs/<directive_id>` — entry card に `resolution_status` バッジと self-reported 注記
+- `/globe/<id>/directives/<directive_id>` — Directive 詳細ページに最新 resolution_status チップ（self-reported 明記）
+- Cross-Globe Summary テーブルに `🏳️ Signal` 列追加（self-reported 明記）
+- 承認ボタン・解決確定ボタン・支援終了ボタンは一切追加しない
+
+---
+
 ## Phase 28 — Directive UI Routes（フェーズ28）
 
 Phase 24〜26 で生成された Directive / Execution Log / Summary を globe_server.py 上で直接閲覧できる UI ルートを追加。

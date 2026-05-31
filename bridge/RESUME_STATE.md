@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Bridge Target Detail Link
+# RESUME_STATE.md — Voluntary Resolution Signal
 
-> **STATUS: IN PROGRESS (feature/phase-27b-bridge-target-linker)**
+> **STATUS: IN PROGRESS (feature/phase-29-voluntary-resolution-signal)**
 
-**Phase:** Bridge Target Detail Link (Phase 27b)
-**Branch:** feature/phase-27b-bridge-target-linker
+**Phase:** Voluntary Resolution Signal (Phase 29)
+**Branch:** feature/phase-29-voluntary-resolution-signal
 **Started:** 2026-05-31
 
 ---
@@ -47,7 +47,8 @@
 - Cross-Globe Execution Log Summary (Phase 26) — PR #19, merged
 - Directive UI Routes (Phase 28) — PR #20, merged
 - Reality Feedback Bridge (Phase 27) — PR #21, merged
-- **Bridge Target Detail Link (Phase 27b)** ← current PR
+- Bridge Target Detail Link (Phase 27b) — PR #22, merged
+- **Voluntary Resolution Signal (Phase 29)** ← current PR
 
 ---
 
@@ -291,7 +292,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b)
+## Protocol Principle Accumulation (Phases 10–28 + Phase 27 + Phase 27b + Phase 29)
 
 | Phase | Phrase |
 |-------|--------|
@@ -360,6 +361,11 @@ need_forecast_report.py
 | 28 | "UI display creates no legal authority." |
 | 28 | "UI display does not approve execution." |
 | 28 | "UI display must preserve objections and rollback requests." |
+| 29 | "Resolution signal is self-reported only." |
+| 29 | "Resolution signal is not proof of resolution." |
+| 29 | "Resolution signal does not close support automatically." |
+| 29 | "Resolution signal creates no legal authority." |
+| 29 | "Contested status must always remain recordable." |
 
 ---
 
@@ -378,14 +384,28 @@ need_forecast_report.py
 
 ---
 
+## New Files (Phase 29)
+
+_No new files — Phase 29 extends existing runtime scripts._
+
+## Updated Files (Phase 29)
+
+- `globe/runtime/directive_execution_log.py` — Added `voluntary_resolution_signal` entry type, `--resolution-status` flag, Phase 29 invariants
+- `globe/runtime/execution_log_summary.py` — Resolution signal aggregation (per-directive + per-globe + totals)
+- `globe/runtime/reality_feedback_bridge.py` — `voluntary_resolution_signal` in BRIDGE_ENTRY_TYPES; unresolved/contested/paused routed to care_loop_reopen
+- `globe/runtime/globe_server.py` — `_render_resolution_signal_stat()`, `_RS_ICON`, Phase 29 CSS, resolution signal in entry cards, directive detail, and summary table
+- `globe/spec/GLOBE_SPEC.md` — Phase 29 section
+- `README.md` — Phase 29 section with invariant quotes and CLI examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 27b PR** — after review
-2. **Phase 29: Voluntary Resolution Signal** — record when participants
-   voluntarily mark a directive log as "resolved" (without Dan-Go certifying)
-4. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
+1. **Merge Phase 29 PR** — after review
+2. **Phase 30: Cross-Phase Contribution Summary** — bridge Phase 20/21 aid patterns
    to Phase 25/26 Execution Log observations in an advisory cross-phase report
-5. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
+3. **Phase 31: Globe Search / Filter UI** — keyword search across proposals
    and directives, filter by status, globe, entry type
 
 ---
@@ -446,6 +466,11 @@ need_forecast_report.py
 *UI display creates no legal authority.*
 *UI display does not approve execution.*
 *UI display must preserve objections and rollback requests.*
+*Resolution signal is self-reported only.*
+*Resolution signal is not proof of resolution.*
+*Resolution signal does not close support automatically.*
+*Resolution signal creates no legal authority.*
+*Contested status must always remain recordable.*
 *Bridge target link is advisory only.*
 *Link candidate is not proof of case relation.*
 *Link candidate creates no legal authority.*

@@ -59,15 +59,34 @@ ENTRY_TYPES = [
     "feedback",
     "objection",
     "rollback_request",
+    "voluntary_resolution_signal",   # Phase 29
 ]
 
 ENTRY_ICON = {
-    "human_approval":    "✅",
-    "execution_attempt": "▶️",
-    "observation":       "👁️",
-    "feedback":          "💬",
-    "objection":         "⚠️",
-    "rollback_request":  "↩️",
+    "human_approval":              "✅",
+    "execution_attempt":           "▶️",
+    "observation":                 "👁️",
+    "feedback":                    "💬",
+    "objection":                   "⚠️",
+    "rollback_request":            "↩️",
+    "voluntary_resolution_signal": "🏳️",   # Phase 29
+}
+
+# Phase 29 — resolution statuses
+RESOLUTION_STATUSES = [
+    "resolved",
+    "partially_resolved",
+    "paused",
+    "unresolved",
+    "contested",
+]
+
+RESOLUTION_STATUS_ICON = {
+    "resolved":           "✅",
+    "partially_resolved": "🟡",
+    "paused":             "⏸️",
+    "unresolved":         "🔴",
+    "contested":          "⚔️",
 }
 
 
@@ -140,6 +159,16 @@ def _summarize_directive(directive_id: str, entries: list, meta: dict, globe_nam
     has_approval = counts["human_approval"] > 0
     last = entries[-1] if entries else {}
 
+    # Phase 29 — aggregate resolution signal counts
+    rs_counts = {rs: 0 for rs in RESOLUTION_STATUSES}
+    latest_resolution_status = ""
+    for e in entries:
+        if e.get("entry_type") == "voluntary_resolution_signal":
+            rs = e.get("resolution_status", "")
+            if rs in rs_counts:
+                rs_counts[rs] += 1
+                latest_resolution_status = rs
+
     return {
         "directive_id": directive_id,
         "globe_id": meta["globe_id"],
@@ -152,6 +181,14 @@ def _summarize_directive(directive_id: str, entries: list, meta: dict, globe_nam
         "feedback_count": counts["feedback"],
         "objection_count": counts["objection"],
         "rollback_request_count": counts["rollback_request"],
+        # Phase 29
+        "resolution_signal_count": counts["voluntary_resolution_signal"],
+        "resolved_count":           rs_counts["resolved"],
+        "partially_resolved_count": rs_counts["partially_resolved"],
+        "paused_count":             rs_counts["paused"],
+        "unresolved_count":         rs_counts["unresolved"],
+        "contested_count":          rs_counts["contested"],
+        "latest_resolution_status": latest_resolution_status,
         "has_human_approval": has_approval,
         "last_entry_type": last.get("entry_type", ""),
         "last_entry_at": last.get("created_at", ""),
@@ -182,6 +219,13 @@ def _aggregate_by_globe(directives: list, globes: list) -> list:
                 "feedback_count": 0,
                 "objection_count": 0,
                 "rollback_request_count": 0,
+                # Phase 29
+                "resolution_signal_count": 0,
+                "resolved_count": 0,
+                "partially_resolved_count": 0,
+                "paused_count": 0,
+                "unresolved_count": 0,
+                "contested_count": 0,
                 "has_any_approval": False,
                 "directive_ids": [],
             }
@@ -194,6 +238,13 @@ def _aggregate_by_globe(directives: list, globes: list) -> list:
         rec["feedback_count"] += d["feedback_count"]
         rec["objection_count"] += d["objection_count"]
         rec["rollback_request_count"] += d["rollback_request_count"]
+        # Phase 29
+        rec["resolution_signal_count"] += d["resolution_signal_count"]
+        rec["resolved_count"]           += d["resolved_count"]
+        rec["partially_resolved_count"] += d["partially_resolved_count"]
+        rec["paused_count"]             += d["paused_count"]
+        rec["unresolved_count"]         += d["unresolved_count"]
+        rec["contested_count"]          += d["contested_count"]
         rec["has_any_approval"] = rec["has_any_approval"] or d["has_human_approval"]
         rec["directive_ids"].append(d["directive_id"])
     # Return in globe_id order
@@ -221,12 +272,19 @@ def build_summary() -> dict:
     return {
         "summary_id": "execution-log-summary-001",
         **SUMMARY_INVARIANTS,
-        "phase": 26,
+        "phase": "26+29",
         "generated_at": _now(),
         "total_directives_with_logs": len(directives),
         "total_log_entries": total_entries,
         "total_objections": sum(d["objection_count"] for d in directives),
         "total_rollback_requests": sum(d["rollback_request_count"] for d in directives),
+        # Phase 29
+        "total_resolution_signals":        sum(d["resolution_signal_count"] for d in directives),
+        "total_resolved":                  sum(d["resolved_count"] for d in directives),
+        "total_partially_resolved":        sum(d["partially_resolved_count"] for d in directives),
+        "total_paused":                    sum(d["paused_count"] for d in directives),
+        "total_unresolved":                sum(d["unresolved_count"] for d in directives),
+        "total_contested":                 sum(d["contested_count"] for d in directives),
         "directives": directives,
         "by_globe": by_globe,
         "phase_phrases": PHASE_PHRASES,
@@ -252,6 +310,15 @@ def print_summary(report: dict) -> None:
     print(f"  total_log_entries:          {report.get('total_log_entries', 0)}")
     print(f"  total_objections:           {report.get('total_objections', 0)}")
     print(f"  total_rollback_requests:    {report.get('total_rollback_requests', 0)}")
+    # Phase 29
+    if report.get("total_resolution_signals", 0):
+        print(f"  🏳️  resolution_signals:       {report.get('total_resolution_signals', 0)}")
+        print(f"    ✅ resolved:          {report.get('total_resolved', 0)}")
+        print(f"    🟡 partially_resolved:{report.get('total_partially_resolved', 0)}")
+        print(f"    ⏸️  paused:            {report.get('total_paused', 0)}")
+        print(f"    🔴 unresolved:        {report.get('total_unresolved', 0)}")
+        print(f"    ⚔️  contested:         {report.get('total_contested', 0)}")
+        print("  [self-reported only · not proof of resolution · does not close support]")
     print()
     print("  Invariants:")
     for k, v in SUMMARY_INVARIANTS.items():
@@ -290,6 +357,13 @@ def print_summary(report: dict) -> None:
               f"rollbacks={d['rollback_request_count']}  "
               f"attempts={d['execution_attempt_count']}  "
               f"observations={d['observation_count']}")
+        # Phase 29
+        if d.get("resolution_signal_count", 0):
+            lrs = d.get("latest_resolution_status", "")
+            rs_icons = {"resolved":"✅","partially_resolved":"🟡","paused":"⏸️",
+                        "unresolved":"🔴","contested":"⚔️"}
+            print(f"     🏳️  signals={d['resolution_signal_count']}  "
+                  f"latest: {rs_icons.get(lrs,'•')} {lrs}  (self-reported · not proof)")
         print(f"     last: {ENTRY_ICON.get(d['last_entry_type'], '•')} {d['last_entry_type']}  "
               f"({_fmt_date(d['last_entry_at'])})")
         print()
@@ -314,6 +388,15 @@ def print_globe(report: dict, globe_id: str) -> None:
     print(f"  objections:            {rec['objection_count']}")
     print(f"  rollback_requests:     {rec['rollback_request_count']}")
     print(f"  has_any_approval:      {_fmt_bool(rec['has_any_approval'])}")
+    # Phase 29
+    if rec.get("resolution_signal_count", 0):
+        print(f"  🏳️  resolution_signals: {rec['resolution_signal_count']}")
+        print(f"    ✅ resolved={rec.get('resolved_count',0)}  "
+              f"🟡 partial={rec.get('partially_resolved_count',0)}  "
+              f"⏸️  paused={rec.get('paused_count',0)}  "
+              f"🔴 unresolved={rec.get('unresolved_count',0)}  "
+              f"⚔️  contested={rec.get('contested_count',0)}")
+        print("    [self-reported only · not proof of resolution]")
     print()
     print("  Directives in this Globe:")
     for did in rec.get("directive_ids", []):
@@ -346,6 +429,20 @@ def print_directive(report: dict, directive_id: str) -> None:
     print(f"  feedback:              {d['feedback_count']}")
     print(f"  objections:            {d['objection_count']}")
     print(f"  rollback_requests:     {d['rollback_request_count']}")
+    # Phase 29
+    if d.get("resolution_signal_count", 0):
+        print(f"  🏳️  resolution_signals: {d['resolution_signal_count']}")
+        print(f"    ✅ resolved={d.get('resolved_count',0)}  "
+              f"🟡 partial={d.get('partially_resolved_count',0)}  "
+              f"⏸️  paused={d.get('paused_count',0)}  "
+              f"🔴 unresolved={d.get('unresolved_count',0)}  "
+              f"⚔️  contested={d.get('contested_count',0)}")
+        lrs = d.get("latest_resolution_status", "")
+        if lrs:
+            rs_icons = {"resolved":"✅","partially_resolved":"🟡","paused":"⏸️",
+                        "unresolved":"🔴","contested":"⚔️"}
+            print(f"    latest: {rs_icons.get(lrs,'•')} {lrs}  (self-reported · not proof)")
+        print("    [Resolution signal does not close support automatically]")
     print(f"  last_entry_type:       {d['last_entry_type']}")
     print(f"  last_entry_at:         {_fmt_date(d['last_entry_at'])}")
     print()
@@ -388,6 +485,15 @@ def _build_markdown(report: dict) -> str:
     lines.append(f"| Total log entries | {ne} |")
     lines.append(f"| Total objections | {nobj} |")
     lines.append(f"| Total rollback requests | {nrb} |")
+    # Phase 29
+    n_sig = report.get("total_resolution_signals", 0)
+    if n_sig:
+        lines.append(f"| 🏳️ Resolution signals (self-reported · not proof) | {n_sig} |")
+        lines.append(f"| &nbsp;&nbsp;✅ resolved | {report.get('total_resolved', 0)} |")
+        lines.append(f"| &nbsp;&nbsp;🟡 partially_resolved | {report.get('total_partially_resolved', 0)} |")
+        lines.append(f"| &nbsp;&nbsp;⏸️ paused | {report.get('total_paused', 0)} |")
+        lines.append(f"| &nbsp;&nbsp;🔴 unresolved | {report.get('total_unresolved', 0)} |")
+        lines.append(f"| &nbsp;&nbsp;⚔️ contested | {report.get('total_contested', 0)} |")
     lines.append("")
 
     lines.append("## By Globe")
@@ -417,11 +523,18 @@ def _build_markdown(report: dict) -> str:
     if not directives:
         lines.append("*No execution logs recorded yet.*")
     else:
-        lines.append("| Directive | Globe | Entries | Approval | Objections | Rollbacks | Last Entry |")
-        lines.append("|-----------|-------|---------|----------|------------|-----------|------------|")
+        lines.append("| Directive | Globe | Entries | Approval | Objections | Rollbacks | 🏳️ Signal (self-reported) | Last Entry |")
+        lines.append("|-----------|-------|---------|----------|------------|-----------|--------------------------|------------|")
+        rs_icons = {"resolved":"✅","partially_resolved":"🟡","paused":"⏸️",
+                    "unresolved":"🔴","contested":"⚔️"}
         for d in directives:
             icon = "✅" if d["has_human_approval"] else "⬜"
             last = f"{ENTRY_ICON.get(d['last_entry_type'],'•')} {d['last_entry_type']}"
+            lrs = d.get("latest_resolution_status", "")
+            sig_cell = (
+                f"{rs_icons.get(lrs,'•')} {lrs} ({d.get('resolution_signal_count',0)})"
+                if d.get("resolution_signal_count", 0) else "—"
+            )
             lines.append(
                 f"| {d['directive_id']} "
                 f"| {d['globe_id']} "
@@ -429,6 +542,7 @@ def _build_markdown(report: dict) -> str:
                 f"| {icon} {d['human_approval_count']} "
                 f"| {d['objection_count']} "
                 f"| {d['rollback_request_count']} "
+                f"| {sig_cell} "
                 f"| {last} |"
             )
     lines.append("")
