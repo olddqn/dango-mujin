@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Search / Filter UI
+# RESUME_STATE.md — Contribution Timeline View
 
-> **STATUS: IN PROGRESS (feature/phase-31-globe-search-filter)**
+> **STATUS: IN PROGRESS (feature/phase-32-contribution-timeline)**
 
-**Phase:** Globe Search / Filter UI (Phase 31)
-**Branch:** feature/phase-31-globe-search-filter
+**Phase:** Contribution Timeline View (Phase 32)
+**Branch:** feature/phase-32-contribution-timeline
 **Started:** 2026-05-31
 
 ---
@@ -50,7 +50,8 @@
 - Bridge Target Detail Link (Phase 27b) — PR #22, merged
 - Voluntary Resolution Signal (Phase 29) — PR #23, merged
 - Cross-Phase Contribution Summary (Phase 30) — PR #24, merged
-- **Globe Search / Filter UI (Phase 31)** ← current PR
+- Globe Search / Filter UI (Phase 31) — PR #25, merged
+- **Contribution Timeline View (Phase 32)** ← current PR
 
 ---
 
@@ -294,7 +295,7 @@ need_forecast_report.py
 
 ---
 
-## Protocol Principle Accumulation (Phases 10–31)
+## Protocol Principle Accumulation (Phases 10–32)
 
 | Phase | Phrase |
 |-------|--------|
@@ -378,6 +379,11 @@ need_forecast_report.py
 | 31 | "Search result does not rank participants." |
 | 31 | "Search result does not allocate resources." |
 | 31 | "Human review is required before any real-world action." |
+| 32 | "Timeline is advisory display only." |
+| 32 | "Timeline is not proof of impact." |
+| 32 | "Timeline does not rank participants." |
+| 32 | "Timeline does not allocate resources." |
+| 32 | "Human review is required before any real-world action." |
 
 ---
 
@@ -441,13 +447,28 @@ _No new files — Phase 29 extends existing runtime scripts._
 
 ---
 
+## New Files (Phase 32)
+
+- `globe/runtime/contribution_timeline.py` — Timeline builder + CLI (advisory only)
+- `globe/reports/contribution_timeline.json` — Generated timeline (16 items)
+- `globe/reports/contribution_timeline.md` — Human-readable timeline
+
+## Updated Files (Phase 32)
+
+- `globe/runtime/globe_server.py` — Added `_load_timeline()`, `render_timeline_page()`, Phase 32 CSS; wired `/globe/timeline`, `/globe/<id>/timeline`, `/globe/<id>/directives/<did>/timeline` routes
+- `globe/spec/GLOBE_SPEC.md` — Phase 32 section
+- `README.md` — Phase 32 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+---
+
 ## Next Step Candidates
 
-1. **Merge Phase 31 PR** — after review
-2. **Phase 32: Contribution Timeline View** — per-globe or per-directive timeline
-   of execution log events with resolution signal overlays
-3. **Phase 33: Proposal Comparison View** — side-by-side comparison of two proposals
+1. **Merge Phase 32 PR** — after review
+2. **Phase 33: Proposal Comparison View** — side-by-side comparison of two proposals
    across Globe layers, advisory only, no ranking
+3. **Phase 34: Globe Activity Heatmap** — calendar-style activity view per globe,
+   advisory only, no score, no ranking
 
 ---
 

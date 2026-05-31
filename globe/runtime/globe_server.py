@@ -21,6 +21,9 @@ Routes:
     /globe/search?entry_type=<type>     → Filter by entry_type         [Phase 31]
     /globe/search?resolution_status=<s> → Filter by resolution_status  [Phase 31]
     /globe/search?bridge_target=<t>     → Filter by bridge_target      [Phase 31]
+    /globe/timeline                     → Global timeline               [Phase 32]
+    /globe/<id>/timeline                → Globe timeline                [Phase 32]
+    /globe/<id>/directives/<did>/timeline → Directive timeline          [Phase 32]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -807,6 +810,37 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .xphase-interp .xi-item  { color: #3a5068; margin-bottom: 3px; }
 .xphase-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                    border-top: 1px solid #0e1420; padding-top: 8px; }
+/* Phase 32 — Contribution Timeline */
+.tl-panel { background: #08090f; border: 1px solid #161e30;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.tl-panel h3 { font-size: 0.88rem; color: #3a5070; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.tl-item { display: flex; gap: 12px; padding: 10px 0;
+           border-bottom: 1px solid #0e1220; }
+.tl-item:last-child { border-bottom: none; }
+.tl-item.attention { border-left: 3px solid #3a2a1a; padding-left: 10px; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+          margin-top: 5px; }
+.tl-dot.execution_log       { background: #2a4a6a; }
+.tl-dot.resolution_signal   { background: #3a2a50; }
+.tl-dot.reality_feedback    { background: #1a3a2a; }
+.tl-dot.bridge_target_link  { background: #1a2a4a; }
+.tl-body { flex: 1; min-width: 0; }
+.tl-meta { font-size: 0.74rem; color: #2a3a52; margin-bottom: 3px; }
+.tl-title { font-size: 0.84rem; color: #6888a8; font-weight: 600; }
+.tl-content { font-size: 0.80rem; color: #4a5a6a; margin-top: 3px;
+              white-space: pre-wrap; word-break: break-word; line-height: 1.5; }
+.tl-badges { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; }
+.tl-src-badge { font-size: 0.68rem; padding: 1px 6px; border-radius: 3px; }
+.tl-src-badge.execution_log      { background: #0e1828; color: #3a6888; }
+.tl-src-badge.resolution_signal  { background: #140e20; color: #6848a8; }
+.tl-src-badge.reality_feedback   { background: #0e1814; color: #3a7848; }
+.tl-src-badge.bridge_target_link { background: #0e1428; color: #3a5888; }
+.tl-evt-badge { font-size: 0.68rem; padding: 1px 6px; border-radius: 3px;
+                background: #10121a; color: #3a4a5a; }
+.tl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.tl-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -1086,6 +1120,229 @@ def render_search_page(
     )
 
 
+# ─── Phase 32: Contribution Timeline ───────────────────────────────────────────
+
+_TIMELINE_JSON_PATH = _REPORTS_DIR / "contribution_timeline.json"
+
+_TL_SRC_ICON = {
+    "execution_log":      "📝",
+    "resolution_signal":  "🏳️",
+    "reality_feedback":   "🔗",
+    "bridge_target_link": "🔗",
+}
+
+_TL_RS_ICON = {
+    "resolved": "✅", "partially_resolved": "🟡", "paused": "⏸️",
+    "unresolved": "🔴", "contested": "⚔️",
+}
+
+
+def _load_timeline() -> dict:
+    """Phase 32 — load contribution_timeline.json or build on-the-fly.
+
+    Timeline is advisory display only. Not proof of impact. No ranking.
+    """
+    if _TIMELINE_JSON_PATH.exists():
+        try:
+            raw = json.loads(_TIMELINE_JSON_PATH.read_text(encoding="utf-8"))
+            if isinstance(raw, dict) and "items" in raw:
+                return raw
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _mod = Path(__file__).parent / "contribution_timeline.py"
+        spec = _ilu.spec_from_file_location("contribution_timeline", _mod)
+        mod = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod.build_timeline()
+    except Exception:
+        return {"items": [], "total_items": 0, "source_type_counts": {},
+                "by_globe": {}, "by_directive": {}, "generated_at": ""}
+
+
+def _render_tl_item(it: dict) -> str:
+    """Render one timeline item card. Advisory display only."""
+    src = it.get("source_type", "")
+    et  = it.get("event_type", "")
+    attn = it.get("needs_attention", False)
+    attn_cls = " attention" if attn else ""
+
+    ts_raw = it.get("created_at", "")
+    ts = ts_raw[:16].replace("T", " ") if ts_raw else "—"
+
+    gid = _e(it.get("globe_id", ""))
+    did = _e(it.get("directive_id", ""))
+    actor = _e(it.get("actor_name", ""))
+    title = _e(it.get("title", ""))
+    content = _e(it.get("content", ""))
+
+    # Link to existing page if possible
+    url = ""
+    if gid and did:
+        url = f"/globe/{gid}/logs/{did}"
+
+    title_html = (f'<a href="{url}" style="color:#6888a8">{title}</a>'
+                  if url else title)
+
+    # Resolution status badge
+    rs = it.get("resolution_status", "")
+    rs_badge = ""
+    if rs:
+        rs_icon = _TL_RS_ICON.get(rs, "")
+        rs_badge = (f'<span class="tl-evt-badge" style="'
+                    f'background:#14101e;color:#8848c8">{rs_icon} {_e(rs)}</span>')
+
+    # Confidence badge
+    conf = it.get("confidence", "")
+    conf_badge = ""
+    if conf:
+        col = {"high": "#3a7848", "medium": "#5878a8", "low": "#3a4858"}.get(conf, "#3a4858")
+        conf_badge = (f'<span class="tl-evt-badge" style="color:{col}">conf: {_e(conf)}</span>')
+
+    # Bridge target badge
+    bt = it.get("bridge_target", "")
+    bt_badge = ""
+    if bt and bt != "none":
+        bt_badge = f'<span class="tl-evt-badge">→ {_e(bt)}</span>'
+
+    src_icon = _TL_SRC_ICON.get(src, "•")
+
+    return f"""
+<div class="tl-item{attn_cls}">
+  <div class="tl-dot {_e(src)}"></div>
+  <div class="tl-body">
+    <div class="tl-meta">{ts} &nbsp;·&nbsp; {gid} &nbsp;·&nbsp; {actor}</div>
+    <div class="tl-title">{title_html}</div>
+    {f'<div class="tl-content">{content}</div>' if content else ''}
+    <div class="tl-badges">
+      <span class="tl-src-badge {_e(src)}">{src_icon} {_e(src)}</span>
+      <span class="tl-evt-badge">{_e(et)}</span>
+      {rs_badge}{conf_badge}{bt_badge}
+    </div>
+  </div>
+</div>"""
+
+
+def render_timeline_page(
+    globe_id: str | None = None,
+    directive_id: str | None = None,
+) -> str:
+    """Phase 32 — Timeline page.
+
+    Timeline is advisory display only. Not proof of impact.
+    No ranking. No execution buttons. No allocation buttons.
+    """
+    tl = _load_timeline()
+    items = tl.get("items", [])
+
+    # Filter
+    if directive_id:
+        items = [it for it in items if it.get("directive_id") == directive_id]
+        scope_label = f"Directive: {directive_id}"
+    elif globe_id:
+        items = [it for it in items if it.get("globe_id") == globe_id]
+        scope_label = f"Globe: {globe_id}"
+    else:
+        scope_label = "全 Globe"
+
+    gen = _e(tl.get("generated_at", ""))
+    total_tl = tl.get("total_items", 0)
+    attn_count = sum(1 for it in items if it.get("needs_attention"))
+
+    # Type filter links
+    base_url = "/globe/timeline"
+    if globe_id and directive_id:
+        base_url = f"/globe/{_e(globe_id)}/directives/{_e(directive_id)}/timeline"
+    elif globe_id:
+        base_url = f"/globe/{_e(globe_id)}/timeline"
+
+    type_chips = ""
+    src_counts = {}
+    for it in items:
+        st = it.get("source_type", "")
+        src_counts[st] = src_counts.get(st, 0) + 1
+
+    for st in ["execution_log", "resolution_signal", "reality_feedback", "bridge_target_link"]:
+        cnt = src_counts.get(st, 0)
+        icon = _TL_SRC_ICON.get(st, "•")
+        type_chips += (f'<span class="filter-chip">'
+                       f'{icon} {st.replace("_", " ")} ({cnt})</span> ')
+
+    # Stat row
+    stat_row = (
+        f'<p style="font-size:0.82rem;color:#3a4a5a;margin-bottom:12px">'
+        f'{len(items)} items · {attn_count} need attention · '
+        f'advisory display only · not proof of impact · no ranking</p>'
+    )
+
+    # Items
+    if items:
+        items_html = "".join(_render_tl_item(it) for it in items)
+    else:
+        items_html = '<div class="tl-empty">タイムラインイベントがありません。</div>'
+
+    advisory = (
+        '<div class="tl-advisory">'
+        'Timeline is advisory display only · Not proof of impact · '
+        'Does not rank participants · Does not allocate resources · '
+        f'Human review is required before any real-world action · generated: {gen}'
+        '</div>'
+    )
+
+    # Breadcrumb
+    if globe_id and directive_id:
+        globes = _globes()
+        g = next((x for x in globes if x["globe_id"] == globe_id), None)
+        g_name = _e(g["name"]) if g else _e(globe_id)
+        breadcrumb = (
+            f'<a href="/globe">Globe</a> › '
+            f'<a href="/globe/{_e(globe_id)}">{g_name}</a> › '
+            f'<a href="/globe/{_e(globe_id)}/directives">Directives</a> › '
+            f'<a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}">{_e(directive_id)}</a> › '
+            f'Timeline'
+        )
+        page_title = f"Timeline — {directive_id}"
+    elif globe_id:
+        globes = _globes()
+        g = next((x for x in globes if x["globe_id"] == globe_id), None)
+        g_name = _e(g["name"]) if g else _e(globe_id)
+        breadcrumb = (
+            f'<a href="/globe">Globe</a> › '
+            f'<a href="/globe/{_e(globe_id)}">{g_name}</a> › Timeline'
+        )
+        page_title = f"Timeline — {g_name}"
+    else:
+        breadcrumb = '<a href="/globe">Globe</a> › Timeline'
+        page_title = "Timeline — 全 Globe"
+
+    # Cross-globe navigation chips (only on global page)
+    nav_html = ""
+    if not globe_id:
+        all_globes = _globes()
+        nav_chips = "".join(
+            f'<span class="filter-chip"><a href="/globe/{_e(g["globe_id"])}/timeline">'
+            f'🌐 {_e(g["name"][:14])}</a></span> '
+            for g in all_globes
+        )
+        nav_html = f'<div class="search-filters">{nav_chips}</div>'
+
+    body = f"""
+<h2>⏱ 貢献タイムライン / Contribution Timeline
+  <small style="font-size:0.65em;color:#3a4258">(Phase 32 · {_e(scope_label)})</small>
+</h2>
+{nav_html}
+<div class="search-filters">{type_chips}</div>
+{stat_row}
+<div class="tl-panel">
+  <h3>⏱ Events — {_e(scope_label)} ({len(items)}件) — total index: {total_tl}</h3>
+  {items_html}
+  {advisory}
+</div>"""
+
+    return _page(page_title, breadcrumb, body)
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -1114,7 +1371,8 @@ def render_globe_list() -> str:
         "Globe 一覧",
         '<a href="/globe">Globe</a>',
         f'<h2>🌐 Globe 一覧 <small style="font-size:0.7em;color:#3a4258">({len(globes)})</small>'
-        f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a></h2>'
+        f'&nbsp;<a href="/globe/search" style="font-size:0.65em;color:#4a6880">🔍 検索 →</a>'
+        f'&nbsp;<a href="/globe/timeline" style="font-size:0.65em;color:#3a5870">⏱ Timeline →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -1177,7 +1435,8 @@ def render_globe_detail(globe_id: str) -> str | None:
 <h3>GITSEA 連携情報</h3>
 {_gitsea_html(g.get('gitsea_link'))}
 
-<h3>🗂️ Directives &nbsp;<a href="/globe/{_e(globe_id)}/directives" style="font-size:0.8rem">すべて見る →</a></h3>
+<h3>🗂️ Directives &nbsp;<a href="/globe/{_e(globe_id)}/directives" style="font-size:0.8rem">すべて見る →</a>
+&nbsp;<a href="/globe/{_e(globe_id)}/timeline" style="font-size:0.75rem;color:#3a5870">⏱ Timeline →</a></h3>
 <div class="card">
   <div class="field-row">
     <span class="label">Directive 数</span>
@@ -1987,8 +2246,19 @@ class GlobeHandler(BaseHTTPRequestHandler):
             ))
             return
 
+        # Phase 32 — Global timeline
+        if path == "/globe/timeline":
+            self._send_html(render_timeline_page())
+            return
+
         if path == "/globe":
             self._send_html(render_globe_list())
+            return
+
+        # Phase 32 — per-globe timeline (before /globe/<id> generic match)
+        m = re.fullmatch(r"/globe/([^/]+)/timeline", path)
+        if m:
+            self._send_html(render_timeline_page(globe_id=m.group(1)))
             return
 
         m = re.fullmatch(r"/globe/([^/]+)", path)
@@ -2026,6 +2296,14 @@ class GlobeHandler(BaseHTTPRequestHandler):
                 self._send_html(content)
             else:
                 self._404()
+            return
+
+        # Phase 32 — per-directive timeline (before /globe/<id>/directives/<did> match)
+        m = re.fullmatch(r"/globe/([^/]+)/directives/([^/]+)/timeline", path)
+        if m:
+            self._send_html(render_timeline_page(
+                globe_id=m.group(1), directive_id=m.group(2)
+            ))
             return
 
         m = re.fullmatch(r"/globe/([^/]+)/directives/([^/]+)", path)
