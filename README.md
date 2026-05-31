@@ -206,6 +206,41 @@ python3 globe/runtime/directive_execution_log.py export-md directive-claim-propo
 ログは `globe/logs/{directive_id}.jsonl` に JSONL 形式で保存されます。
 UIサーバーでは Proposal 詳細ページに Execution Log の状況（エントリ数・承認状況・最終エントリ）が表示されます。
 
+## Phase 26 — Cross-Globe Execution Log Summary
+
+フェーズ26では、複数の Globe・複数の Directive にまたがる Execution Log を横断集計する
+advisory ダッシュボードを追加しました。
+
+**Summary は advisory のみです。Summary は実行の証明ではありません。法的権限を生じません。
+参加者をランク付けしません。異議と差し戻し要求を保存します。**
+
+In Phase 26, we added a cross-globe advisory dashboard that aggregates all Execution Log
+entries across all Directives and Globes. The summary is never proof of execution and
+creates no legal authority.
+
+> "Summary is advisory only."
+> "Summary is not proof of execution."
+> "Summary creates no legal authority."
+> "Summary does not rank or punish participants."
+> "Summary must preserve objections and rollback requests."
+
+```bash
+# 全 Globe / 全 Directive のサマリを表示する
+python3 globe/runtime/execution_log_summary.py summary
+
+# サマリを globe/reports/ に保存する
+python3 globe/runtime/execution_log_summary.py save
+
+# 特定 Globe のサマリを表示する
+python3 globe/runtime/execution_log_summary.py show-globe globe-001
+
+# 特定 Directive のサマリを表示する
+python3 globe/runtime/execution_log_summary.py show-directive directive-claim-proposal-002
+```
+
+サマリは `globe/reports/execution_log_summary.json` と `globe/reports/execution_log_summary.md` に保存されます。
+UIサーバーの Globe 一覧ページと Globe 詳細ページにサマリテーブルが表示されます。
+
 ---
 
 ## Structure

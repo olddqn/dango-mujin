@@ -1,0 +1,94 @@
+{
+  "summary_id": "execution-log-summary-001",
+  "summary_is_advisory_only": true,
+  "summary_is_not_proof_of_execution": true,
+  "summary_creates_no_legal_authority": true,
+  "summary_does_not_rank_participants": true,
+  "summary_preserves_objections": true,
+  "authority": "none",
+  "phase": 26,
+  "generated_at": "2026-05-31T00:01:33.235411+00:00",
+  "total_directives_with_logs": 2,
+  "total_log_entries": 6,
+  "total_objections": 1,
+  "total_rollback_requests": 0,
+  "directives": [
+    {
+      "directive_id": "directive-claim-proposal-002",
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "total_entries": 5,
+      "human_approval_count": 2,
+      "execution_attempt_count": 0,
+      "observation_count": 2,
+      "feedback_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "has_human_approval": true,
+      "last_entry_type": "observation",
+      "last_entry_at": "2026-05-30T23:16:45.610715+00:00",
+      "all_entries_legal_authority_created_false": true,
+      "all_entries_log_is_proof_of_execution_false": true
+    },
+    {
+      "directive_id": "directive-claim-proposal-005",
+      "globe_id": "globe-003",
+      "globe_name": "Jammy House Commons",
+      "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+      "total_entries": 1,
+      "human_approval_count": 0,
+      "execution_attempt_count": 1,
+      "observation_count": 0,
+      "feedback_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "has_human_approval": false,
+      "last_entry_type": "execution_attempt",
+      "last_entry_at": "2026-05-30T23:12:22.311734+00:00",
+      "all_entries_legal_authority_created_false": true,
+      "all_entries_log_is_proof_of_execution_false": true
+    }
+  ],
+  "by_globe": [
+    {
+      "globe_id": "globe-001",
+      "globe_name": "第零国家 (State Zero)",
+      "directive_count": 1,
+      "total_entries": 5,
+      "human_approval_count": 2,
+      "execution_attempt_count": 0,
+      "observation_count": 2,
+      "feedback_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "has_any_approval": true,
+      "directive_ids": [
+        "directive-claim-proposal-002"
+      ]
+    },
+    {
+      "globe_id": "globe-003",
+      "globe_name": "Jammy House Commons",
+      "directive_count": 1,
+      "total_entries": 1,
+      "human_approval_count": 0,
+      "execution_attempt_count": 1,
+      "observation_count": 0,
+      "feedback_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "has_any_approval": false,
+      "directive_ids": [
+        "directive-claim-proposal-005"
+      ]
+    }
+  ],
+  "phase_phrases": [
+    "Summary is advisory only.",
+    "Summary is not proof of execution.",
+    "Summary creates no legal authority.",
+    "Summary does not rank or punish participants.",
+    "Summary must preserve objections and rollback requests."
+  ]
+}
