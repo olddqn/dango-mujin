@@ -7,13 +7,13 @@
   "human_review_is_required_before_any_real_world_action": true,
   "authority": "none",
   "phase": 27,
-  "generated_at": "2026-05-31T00:41:10.786235+00:00",
-  "total_source_entries_scanned": 6,
-  "total_bridge_records": 3,
+  "generated_at": "2026-05-31T04:27:43.619269+00:00",
+  "total_source_entries_scanned": 8,
+  "total_bridge_records": 4,
   "bridge_target_counts": {
     "relief_case_memory": 1,
     "care_loop_reopen": 0,
-    "both": 0,
+    "both": 1,
     "none": 2
   },
   "records": [
@@ -33,7 +33,7 @@
       "not_proof_of_resolution": true,
       "advisory_only": true,
       "source_entry_created_at": "2026-05-30T23:12:15.292929+00:00",
-      "record_generated_at": "2026-05-31T00:41:10.785970+00:00"
+      "record_generated_at": "2026-05-31T04:27:43.618835+00:00"
     },
     {
       "feedback_id": "rfb-002",
@@ -51,7 +51,7 @@
       "not_proof_of_resolution": true,
       "advisory_only": true,
       "source_entry_created_at": "2026-05-30T23:12:26.340959+00:00",
-      "record_generated_at": "2026-05-31T00:41:10.786090+00:00"
+      "record_generated_at": "2026-05-31T04:27:43.618976+00:00"
     },
     {
       "feedback_id": "rfb-003",
@@ -69,7 +69,28 @@
       "not_proof_of_resolution": true,
       "advisory_only": true,
       "source_entry_created_at": "2026-05-30T23:16:45.610715+00:00",
-      "record_generated_at": "2026-05-31T00:41:10.786095+00:00"
+      "record_generated_at": "2026-05-31T04:27:43.618983+00:00"
+    },
+    {
+      "feedback_id": "rfb-004",
+      "source_directive_id": "directive-claim-proposal-005",
+      "globe_id": "globe-003",
+      "source_log_id": "log-002",
+      "entry_type": "voluntary_resolution_signal",
+      "actor_type": "human",
+      "actor_name": "Jammy House Steward",
+      "content": "住居アドボカシーは未解決として継続観察する",
+      "suggested_bridge_target": "both",
+      "suggested_reason": "voluntary_resolution_signal status='unresolved' with both relief and care keywords — advisory candidate for Phase 18 Relief Case Memory AND Phase 19 Care Loop Reopen",
+      "requires_human_review": true,
+      "creates_no_legal_authority": true,
+      "not_proof_of_resolution": true,
+      "advisory_only": true,
+      "source_entry_created_at": "2026-05-31T04:27:33.201255+00:00",
+      "record_generated_at": "2026-05-31T04:27:43.619093+00:00",
+      "resolution_status": "unresolved",
+      "resolution_signal_is_self_reported": true,
+      "resolution_signal_is_not_proof": true
     }
   ],
   "by_directive": [
@@ -83,6 +104,16 @@
         "none": 2,
         "relief_case_memory": 1
       }
+    },
+    {
+      "directive_id": "directive-claim-proposal-005",
+      "globe_id": "globe-003",
+      "globe_name": "Jammy House Commons",
+      "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+      "record_count": 1,
+      "bridge_targets": {
+        "both": 1
+      }
     }
   ],
   "by_globe": [
@@ -94,6 +125,15 @@
       "bridge_targets": {
         "none": 2,
         "relief_case_memory": 1
+      }
+    },
+    {
+      "globe_id": "globe-003",
+      "globe_name": "Jammy House Commons",
+      "directive_count": 1,
+      "record_count": 1,
+      "bridge_targets": {
+        "both": 1
       }
     }
   ],

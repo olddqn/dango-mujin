@@ -340,6 +340,48 @@ python3 globe/runtime/globe_server.py
 # → http://localhost:7422/globe/globe-001/logs/directive-claim-proposal-002
 ```
 
+## Phase 29 — Voluntary Resolution Signal
+
+フェーズ29では、参加者が Directive Execution Log に対して任意で解決状況を自己申告できる
+`voluntary_resolution_signal` エントリタイプを追加しました。
+
+**Resolution signal は自己申告のみです。解決の証明ではありません。
+支援を自動的に終了させません。法的権限を生じません。
+Contested status は常に記録可能です。**
+
+In Phase 29, participants can voluntarily self-report their perceived resolution status
+in the Directive Execution Log. Dan-Go does not certify resolution. The signal is
+advisory only and does not close support or create legal authority.
+
+> "Resolution signal is self-reported only."
+> "Resolution signal is not proof of resolution."
+> "Resolution signal does not close support automatically."
+> "Resolution signal creates no legal authority."
+> "Contested status must always remain recordable."
+
+```bash
+# 解決シグナルを記録する（人間承認不要・常に記録可能）
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 voluntary_resolution_signal human "Masuo Komori" \
+  "D.R.A.連携の前提整理はいったん一区切りとする" \
+  --resolution-status partially_resolved
+
+# 未解決として継続観察を表明する
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-005 voluntary_resolution_signal human "Jammy House Steward" \
+  "住居アドボカシーは未解決として継続観察する" \
+  --resolution-status unresolved
+
+# 異議を記録する（常に記録可能）
+python3 globe/runtime/directive_execution_log.py \
+  append directive-claim-proposal-002 voluntary_resolution_signal human "member-001" \
+  "この解決には合意できない" \
+  --resolution-status contested
+```
+
+`unresolved` / `contested` / `paused` シグナルは Phase 27 Reality Feedback Bridge の対象となります。
+`resolved` / `partially_resolved` はサマリに保存されますが bridge 対象外です。
+
 ---
 
 ## Structure

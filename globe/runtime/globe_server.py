@@ -96,6 +96,44 @@ def _load_bridge_report() -> dict | None:
         return None
 
 
+def _render_resolution_signal_stat(entries: list) -> str:
+    """Phase 29 — render a compact resolution signal summary row.
+
+    Self-reported only. Not proof of resolution. Does not close support automatically.
+    Contested status must always remain recordable.
+    """
+    signals = [e for e in entries if e.get("entry_type") == "voluntary_resolution_signal"]
+    if not signals:
+        return ""
+    latest = signals[-1]
+    rs = latest.get("resolution_status", "")
+    rs_icon = _RS_ICON.get(rs, "•")
+    actor = _e(latest.get("actor_name", "?"))
+    rs_counts: dict[str, int] = {}
+    for s in signals:
+        k = s.get("resolution_status", "")
+        rs_counts[k] = rs_counts.get(k, 0) + 1
+
+    count_parts = " &nbsp;".join(
+        f'{_RS_ICON.get(k,"•")} {_e(k)}: {n}'
+        for k, n in sorted(rs_counts.items()) if n
+    )
+    return f"""
+<div style="margin:12px 0 4px;padding:10px 14px;background:#0a0e18;border:1px solid #1a2238;
+            border-radius:6px;font-size:0.82rem">
+  <span style="color:#4a6070">🏳️ Resolution Signal (Phase 29)</span>
+  &nbsp;—&nbsp;
+  <span class="rs-badge {_e(rs)}">{rs_icon} {_e(rs)}</span>
+  <span style="color:#3a4a68;margin-left:8px">latest by {actor}</span>
+  &nbsp;·&nbsp;
+  <span style="color:#2a3850">{count_parts}</span>
+  <div style="font-size:0.70rem;color:#1e2838;margin-top:4px">
+    self-reported only · not proof of resolution · does not close support automatically ·
+    creates no legal authority · contested status always recordable
+  </div>
+</div>"""
+
+
 def _render_bridge_panel(directive_id: str) -> str:
     """Render Reality Feedback Bridge suggestions for a given directive.
 
@@ -498,6 +536,15 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .log-entry-card.feedback          { background: #0c1018; border-left: 3px solid #2a2a40; }
 .log-entry-card.objection         { background: #1a1010; border-left: 3px solid #5a2020; }
 .log-entry-card.rollback_request  { background: #181010; border-left: 3px solid #4a2818; }
+.log-entry-card.voluntary_resolution_signal { background: #0c1218; border-left: 3px solid #2a3a60; }
+.rs-badge { display: inline-block; font-size: 0.72rem; padding: 2px 8px; border-radius: 4px;
+            margin-left: 6px; }
+.rs-badge.resolved           { background: #0e2018; color: #3a7848; }
+.rs-badge.partially_resolved { background: #1a1a10; color: #7a7030; }
+.rs-badge.paused             { background: #14141e; color: #4a5888; }
+.rs-badge.unresolved         { background: #1a0e0e; color: #8a3838; }
+.rs-badge.contested          { background: #180e18; color: #6a3870; }
+.rs-self-reported            { font-size: 0.70rem; color: #2a3050; margin-top: 4px; }
 .log-entry-card .entry-header { font-weight: 600; color: #7090b0; margin-bottom: 6px; }
 .log-entry-card .entry-content { color: #8898b0; line-height: 1.65;
                                   white-space: pre-wrap; word-break: break-word; }
@@ -831,12 +878,21 @@ def _render_directive_status(proposal_id: str, status: str) -> str:
 
 
 _EXEC_ENTRY_ICON = {
-    "human_approval":    "✅",
-    "execution_attempt": "▶",
-    "observation":       "👁",
-    "feedback":          "💬",
-    "objection":         "⚠",
-    "rollback_request":  "↩",
+    "human_approval":              "✅",
+    "execution_attempt":           "▶",
+    "observation":                 "👁",
+    "feedback":                    "💬",
+    "objection":                   "⚠",
+    "rollback_request":            "↩",
+    "voluntary_resolution_signal": "🏳️",   # Phase 29
+}
+
+_RS_ICON = {
+    "resolved":           "✅",
+    "partially_resolved": "🟡",
+    "paused":             "⏸️",
+    "unresolved":         "🔴",
+    "contested":          "⚔️",
 }
 
 
@@ -942,11 +998,15 @@ def _render_exec_summary_panel(globe_id: str | None = None) -> str:
     rows = ""
     for d in directives:
         appr_icon = "✅" if d["has_human_approval"] else "⬜"
-        last_icon = {
-            "human_approval": "✅", "execution_attempt": "▶",
-            "observation": "👁", "feedback": "💬",
-            "objection": "⚠", "rollback_request": "↩",
-        }.get(d.get("last_entry_type", ""), "•")
+        last_icon = _EXEC_ENTRY_ICON.get(d.get("last_entry_type", ""), "•")
+        # Phase 29 — resolution signal cell
+        lrs = d.get("latest_resolution_status", "")
+        rs_count = d.get("resolution_signal_count", 0)
+        if rs_count and lrs:
+            rs_icon = _RS_ICON.get(lrs, "•")
+            sig_cell = f'<span title="self-reported · not proof">{rs_icon} {_e(lrs)}</span>'
+        else:
+            sig_cell = "—"
         rows += f"""
 <tr>
   <td>{_e(d['directive_id'])}</td>
@@ -955,17 +1015,34 @@ def _render_exec_summary_panel(globe_id: str | None = None) -> str:
   <td style="text-align:center">{appr_icon} {d['human_approval_count']}</td>
   <td style="text-align:center">⚠ {d['objection_count']}</td>
   <td style="text-align:center">↩ {d['rollback_request_count']}</td>
+  <td style="text-align:center">{sig_cell}</td>
   <td>{last_icon} {_e(d.get('last_entry_type','—'))}</td>
 </tr>"""
 
     gen = str(summary.get("generated_at", ""))[:19].replace("T", " ")
+    # Phase 29 totals
+    total_sig = summary.get("total_resolution_signals", 0)
+    sig_html = ""
+    if total_sig:
+        total_sig = summary.get("total_resolution_signals", 0)
+        sig_html = (
+            f"&nbsp;·&nbsp; 🏳️ signals: {total_sig} "
+            f"(✅ {summary.get('total_resolved',0)} "
+            f"🟡 {summary.get('total_partially_resolved',0)} "
+            f"⏸️ {summary.get('total_paused',0)} "
+            f"🔴 {summary.get('total_unresolved',0)} "
+            f"⚔️ {summary.get('total_contested',0)}) "
+            f'<span style="color:#2a3050;font-size:0.72rem">self-reported · not proof</span>'
+        )
+
     return f"""
 <div class="exec-summary-panel">
   <h3>{header}</h3>
   <table class="exec-summary-table">
     <tr>
       <th>Directive</th><th>Globe</th><th>Entries</th>
-      <th>Approvals</th><th>Objections</th><th>Rollbacks</th><th>Last</th>
+      <th>Approvals</th><th>Objections</th><th>Rollbacks</th>
+      <th>🏳️ Signal</th><th>Last</th>
     </tr>
     {rows}
   </table>
@@ -973,6 +1050,7 @@ def _render_exec_summary_panel(globe_id: str | None = None) -> str:
     Total entries: {total_entries} &nbsp;·&nbsp;
     Objections: {total_obj} &nbsp;·&nbsp;
     Rollbacks: {total_rb}
+    {sig_html}
   </div>
   <div class="exec-advisory">
     Summary is advisory only · not proof of execution · creates no legal authority ·
@@ -1149,10 +1227,27 @@ def render_directive_detail(globe_id: str, directive_id: str) -> str | None:
         "⬜ ログエントリなし" if not entries else
         "⚠ human_approval 未記録"
     )
+    # Phase 29 — latest resolution signal for directive detail
+    signal_entries = [e for e in entries if e.get("entry_type") == "voluntary_resolution_signal"]
+    rs_chip_html = ""
+    if signal_entries:
+        latest_rs = signal_entries[-1].get("resolution_status", "")
+        rs_icon = _RS_ICON.get(latest_rs, "•")
+        rs_actor = _e(signal_entries[-1].get("actor_name", "?"))
+        rs_chip_html = (
+            f'<span class="rs-badge {_e(latest_rs)}" '
+            f'title="self-reported · not proof · does not close support automatically">'
+            f"{rs_icon} {_e(latest_rs)}</span>"
+            f'<span style="font-size:0.72rem;color:#2a3050;margin-left:6px">'
+            f"self-reported by {rs_actor} · not proof"
+            f"</span>"
+        )
+
     log_summary_html = f"""
 <div class="log-box {box_cls}">
   {approval_label}<br>
   <span style="font-size:0.82rem;display:block;margin-top:6px">{log_badges}</span>
+  {f'<div style="margin-top:8px">🏳️ Resolution Signal: {rs_chip_html}</div>' if rs_chip_html else ''}
   <div class="log-hint" style="margin-top:8px">
     Total entries: {len(entries)} &nbsp;·&nbsp;
     <a href="/globe/{_e(globe_id)}/logs/{_e(directive_id)}">Execution Log 全件表示 →</a>
@@ -1255,6 +1350,18 @@ def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
         legal = e.get("legal_authority_created", False)
         proof = e.get("log_is_proof_of_execution", False)
         append_only = e.get("append_only", True)
+        # Phase 29 — resolution signal badge
+        rs = e.get("resolution_status", "")
+        rs_html = ""
+        if et == "voluntary_resolution_signal" and rs:
+            rs_icon = _RS_ICON.get(rs, "•")
+            rs_html = (
+                f'<span class="rs-badge {_e(rs)}">{rs_icon} {_e(rs)}</span>'
+                f'<div class="rs-self-reported">'
+                f"self-reported only · not proof of resolution · "
+                f"does not close support automatically · creates no legal authority"
+                f"</div>"
+            )
         entry_cards += f"""
 <div class="log-entry-card {_e(et)}">
   <div class="entry-header">
@@ -1264,6 +1371,7 @@ def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
     </span>
   </div>
   <div class="entry-content">{content}</div>
+  {rs_html}
   {evidence_html}
   <div class="entry-meta">
     legal_authority_created: {str(legal).lower()} &nbsp;·&nbsp;
@@ -1291,6 +1399,7 @@ def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
     <div><div class="stat-num">↩ {counts.get('rollback_request',0)}</div>
          <div class="stat-lbl">rollbacks</div></div>
   </div>
+  {_render_resolution_signal_stat(entries)}
   <div style="margin-top:12px;font-size:0.78rem;color:#2a3858;text-align:center">
     source: <code>{_e(d.get('source_claim_id',''))}</code>
     &nbsp;·&nbsp;

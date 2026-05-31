@@ -53,7 +53,12 @@ BRIDGE_PHRASES = [
 ]
 
 # Entry types that generate bridge records
-BRIDGE_ENTRY_TYPES = {"observation", "feedback", "objection", "rollback_request"}
+BRIDGE_ENTRY_TYPES = {"observation", "feedback", "objection", "rollback_request",
+                      "voluntary_resolution_signal"}   # Phase 29
+
+# Phase 29 — resolution statuses that route to bridge (unresolved/contested/paused)
+# resolved / partially_resolved are excluded from bridging but kept in summary
+BRIDGE_RESOLUTION_STATUSES = {"unresolved", "contested", "paused"}
 
 # Keywords triggering Phase 18 Relief Case Memory suggestion
 RELIEF_KEYWORDS = [
@@ -85,10 +90,11 @@ _TARGET_LABEL = {
 }
 
 _ENTRY_ICON = {
-    "observation":      "👁",
-    "feedback":         "💬",
-    "objection":        "⚠",
-    "rollback_request": "↩",
+    "observation":                 "👁",
+    "feedback":                    "💬",
+    "objection":                   "⚠",
+    "rollback_request":            "↩",
+    "voluntary_resolution_signal": "🏳️",   # Phase 29
 }
 
 
@@ -149,15 +155,49 @@ def _determine_bridge_target(entry: dict) -> tuple:
       "none"                no confident match
 
     Rules (in priority order):
-      1. Keyword scan of entry content
-      2. objection / rollback_request default to care_loop_reopen if no keyword match
-      3. Otherwise: none
+      1. Phase 29: voluntary_resolution_signal with unresolved/contested/paused
+         → care_loop_reopen (and keyword escalation applies on top)
+      2. Keyword scan of entry content (applies to all entry types)
+      3. objection / rollback_request default to care_loop_reopen if no keyword match
+      4. Otherwise: none
     """
     content_lower = entry.get("content", "").lower()
     et = entry.get("entry_type", "")
+    rs = entry.get("resolution_status", "")
 
     has_relief = any(k.lower() in content_lower for k in RELIEF_KEYWORDS)
     has_care   = any(k.lower() in content_lower for k in CARE_KEYWORDS)
+
+    # Phase 29 — voluntary_resolution_signal routing
+    if et == "voluntary_resolution_signal":
+        if rs not in BRIDGE_RESOLUTION_STATUSES:
+            # resolved / partially_resolved → not bridged (kept in summary only)
+            return (
+                "none",
+                f"voluntary_resolution_signal with resolution_status='{rs}' — "
+                "resolved/partially_resolved signals are not routed to bridge "
+                "(self-reported positive outcomes are advisory only and not escalated)",
+            )
+        # unresolved / contested / paused → care_loop_reopen, with keyword escalation
+        if has_relief and has_care:
+            return (
+                "both",
+                f"voluntary_resolution_signal status='{rs}' with both relief and care keywords — "
+                "advisory candidate for Phase 18 Relief Case Memory AND Phase 19 Care Loop Reopen",
+            )
+        if has_relief:
+            return (
+                "both",
+                f"voluntary_resolution_signal status='{rs}' with relief/housing keywords — "
+                "advisory candidate for Phase 18 Relief Case Memory AND Phase 19 Care Loop Reopen "
+                "(unresolved/contested/paused signals escalate to both by default)",
+            )
+        return (
+            "care_loop_reopen",
+            f"voluntary_resolution_signal status='{rs}' — "
+            "unresolved/contested/paused signals are advisory candidates for "
+            "Phase 19 Care Loop Reopen; human review required",
+        )
 
     if has_relief and has_care:
         return (
@@ -196,7 +236,7 @@ def _make_feedback_record(entry: dict, seq: int, meta: dict) -> dict:
     """Build a single advisory feedback record from a log entry."""
     bridge_target, reason = _determine_bridge_target(entry)
     now = datetime.now(timezone.utc).isoformat()
-    return {
+    rec = {
         "feedback_id":             f"rfb-{seq:03d}",
         "source_directive_id":     entry.get("directive_id", meta.get("directive_id", "")),
         "globe_id":                entry.get("globe_id", meta.get("globe_id", "")),
@@ -214,6 +254,13 @@ def _make_feedback_record(entry: dict, seq: int, meta: dict) -> dict:
         "source_entry_created_at": entry.get("created_at", ""),
         "record_generated_at":     now,
     }
+    # Phase 29 — carry resolution_status metadata when present
+    rs = entry.get("resolution_status")
+    if rs:
+        rec["resolution_status"] = rs
+        rec["resolution_signal_is_self_reported"] = True
+        rec["resolution_signal_is_not_proof"]     = True
+    return rec
 
 
 # ─── Report builder ─────────────────────────────────────────────────────────────
@@ -227,9 +274,16 @@ def build_bridge() -> dict:
     for directive_id, entries in sorted(all_entries.items()):
         meta = _load_directive_meta(directive_id)
         for entry in entries:
-            if entry.get("entry_type") in BRIDGE_ENTRY_TYPES:
-                records.append(_make_feedback_record(entry, seq, meta))
-                seq += 1
+            et = entry.get("entry_type", "")
+            if et not in BRIDGE_ENTRY_TYPES:
+                continue
+            # Phase 29 — skip resolved/partially_resolved signals (keep summary only)
+            if et == "voluntary_resolution_signal":
+                rs = entry.get("resolution_status", "")
+                if rs not in BRIDGE_RESOLUTION_STATUSES:
+                    continue  # resolved / partially_resolved → not bridged
+            records.append(_make_feedback_record(entry, seq, meta))
+            seq += 1
 
     # Count by bridge target
     target_counts: dict[str, int] = {
