@@ -562,6 +562,50 @@ HTTP URL:
 
 ---
 
+## Phase 35 — Directive Execution Checklist
+
+フェーズ35では、Directive の execution_steps を advisory チェックリスト形式でブラウザ表示・CLI 確認できる
+**Directive Execution Checklist UI / CLI** を追加しました。
+チェックリストは実行承認・完了証明・法的効力ではなく、確認補助表示にすぎません。
+
+**Checklist は advisory display のみです。実行の証明ではありません。
+完了の証明ではありません。実行を承認しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 35, Dan-Go generates an advisory step-by-step checklist for each Directive,
+cross-referencing Execution Log entries by step_id (or directive-level summary if no
+step-specific entries exist). The checklist is a confirmation aid display only — it
+creates no obligation and approves no action.
+
+> "Checklist is advisory display only."
+> "Checklist is not proof of execution."
+> "Checklist is not proof of completion."
+> "Checklist does not approve execution."
+> "Human review is required before any real-world action."
+
+```bash
+# チェックリスト サマリー
+python3 globe/runtime/directive_checklist.py summary
+
+# レポート保存 (JSON + Markdown)
+python3 globe/runtime/directive_checklist.py save
+
+# Directive 別
+python3 globe/runtime/directive_checklist.py show-directive directive-claim-proposal-002
+
+# Globe 別
+python3 globe/runtime/directive_checklist.py show-globe globe-001
+```
+
+HTTP URL:
+- `http://localhost:7422/globe/globe-001/directives/directive-claim-proposal-002/checklist`
+
+生成ファイル:
+- `globe/reports/directive_checklists.json` — 全チェックリスト (machine-readable)
+- `globe/reports/directive_checklists.md` — 人間可読チェックリスト
+
+---
+
 ## Phase 34 — Activity Heatmap
 
 フェーズ34では、Globe 全体のイベントを日付ごとに集計し、カレンダー形式で可視化する
