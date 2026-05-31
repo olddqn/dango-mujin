@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22)
+globe_server.py — Globe UI Server (Phase 22–28)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -12,6 +12,12 @@ Routes:
     /globe/<id>    → Globe detail page (proposals + GITSEA link)
     /globe/<id>/proposals               → Proposals list for a Globe
     /globe/<id>/proposals/<proposal_id> → Proposal detail + deliberation log
+    /globe/<id>/directives              → Directives list for a Globe  [Phase 28]
+    /globe/<id>/directives/<dir_id>     → Directive detail page        [Phase 28]
+    /globe/<id>/logs/<dir_id>           → Execution Log detail page    [Phase 28]
+
+UI display is advisory only — not proof of execution — creates no legal authority.
+UI display does not approve execution. Objections and rollback requests are preserved.
 
 Usage:
     python3 globe/runtime/globe_server.py [port]
@@ -69,6 +75,104 @@ def _load_exec_summary() -> dict | None:
         return None
 
 
+def _load_bridge_report() -> dict | None:
+    """Load the pre-built Reality Feedback Bridge report, or build it on the fly."""
+    report_path = _GLOBE_DIR / "reports" / "reality_feedback_bridge.json"
+    if report_path.exists():
+        try:
+            return json.loads(report_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "reality_feedback_bridge",
+            Path(__file__).parent / "reality_feedback_bridge.py",
+        )
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_bridge()
+    except Exception:
+        return None
+
+
+def _render_bridge_panel(directive_id: str) -> str:
+    """Render Reality Feedback Bridge suggestions for a given directive.
+
+    Phase 27 — advisory only. No approval buttons. No execution links.
+    Reality feedback is advisory only.
+    Feedback bridge does not reopen a case automatically.
+    Human review is required before any real-world action.
+    """
+    report = _load_bridge_report()
+    if not report:
+        return ""
+    records = [r for r in report.get("records", []) if r["source_directive_id"] == directive_id]
+    if not records:
+        return ""
+
+    _TARGET_ICON_MAP = {
+        "relief_case_memory": "🏠",
+        "care_loop_reopen":   "🔄",
+        "both":               "🏠🔄",
+        "none":               "—",
+    }
+    _TARGET_LABEL_MAP = {
+        "relief_case_memory": "Phase 18 Relief Case Memory",
+        "care_loop_reopen":   "Phase 19 Care Loop Reopen",
+        "both":               "Phase 18 + Phase 19",
+        "none":               "no bridge match",
+    }
+    _ENTRY_ICON_MAP = {
+        "observation":      "👁",
+        "feedback":         "💬",
+        "objection":        "⚠",
+        "rollback_request": "↩",
+    }
+
+    items = ""
+    for r in records:
+        target = r.get("suggested_bridge_target", "none")
+        css_cls = {
+            "relief_case_memory": "relief",
+            "care_loop_reopen":   "care",
+            "both":               "both",
+            "none":               "none",
+        }.get(target, "none")
+        ei    = _ENTRY_ICON_MAP.get(r["entry_type"], "•")
+        ti    = _TARGET_ICON_MAP.get(target, "—")
+        label = _TARGET_LABEL_MAP.get(target, target)
+        items += f"""
+<div class="bridge-record {css_cls}">
+  <div class="br-header">
+    {ei} {_e(r["entry_type"])} &nbsp;[{_e(r["feedback_id"])}]
+    <span class="bridge-target-badge">{ti} {_e(label)}</span>
+  </div>
+  <div class="br-content">{_e(r["content"])}</div>
+  <div class="br-reason">reason: {_e(r["suggested_reason"])}</div>
+  <div class="br-flags">
+    requires_human_review: true &nbsp;·&nbsp;
+    creates_no_legal_authority: true &nbsp;·&nbsp;
+    not_proof_of_resolution: true &nbsp;·&nbsp;
+    advisory_only: true
+  </div>
+</div>"""
+
+    gen = str(report.get("generated_at", ""))[:19].replace("T", " ")
+    return f"""
+<div class="bridge-panel">
+  <h3>🔗 Reality Feedback Bridge (Phase 27) — {len(records)} suggestion(s)</h3>
+  {items}
+  <div class="bridge-advisory">
+    Reality feedback is advisory only · Feedback bridge is not proof of resolution ·
+    Feedback bridge creates no legal authority ·
+    Feedback bridge does not reopen a case automatically ·
+    Human review is required before any real-world action ·
+    generated: {_e(gen)}
+  </div>
+</div>"""
+
+
 def _load_claim(proposal_id: str) -> dict | None:
     """Load a generated claim for the given proposal_id, or None if not yet converted."""
     claim_path = _CLAIMS_DIR / f"claim-{proposal_id}.json"
@@ -95,6 +199,49 @@ def _load_directive(proposal_id: str) -> dict | None:
 def _load_exec_log(proposal_id: str) -> list:
     """Load execution log entries (JSONL) for the directive derived from proposal_id."""
     directive_id = f"directive-claim-{proposal_id}"
+    log_path = _LOGS_DIR / f"{directive_id}.jsonl"
+    if not log_path.exists():
+        return []
+    entries = []
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            try:
+                entries.append(json.loads(line))
+            except Exception:
+                pass
+    return entries
+
+
+def _load_all_directives() -> list:
+    """Load all directive JSON files from globe/directives/ (sorted by filename)."""
+    result = []
+    for p in sorted(_DIRECTIVES_DIR.glob("*.json")):
+        try:
+            result.append(json.loads(p.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+    return result
+
+
+def _load_directives_for_globe(globe_id: str) -> list:
+    """Return all directives whose globe_id matches."""
+    return [d for d in _load_all_directives() if d.get("globe_id") == globe_id]
+
+
+def _load_directive_by_id(directive_id: str) -> dict | None:
+    """Load a single directive JSON by its directive_id."""
+    p = _DIRECTIVES_DIR / f"{directive_id}.json"
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def _load_exec_log_by_id(directive_id: str) -> list:
+    """Load execution log entries (JSONL) by directive_id directly."""
     log_path = _LOGS_DIR / f"{directive_id}.jsonl"
     if not log_path.exists():
         return []
@@ -213,6 +360,66 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
                           border-bottom: 1px solid #141c28; }
 .exec-summary-table td:first-child { color: #8090a8; }
 .exec-advisory { font-size: 0.72rem; color: #2a3850; margin-top: 10px; }
+/* Phase 28 — Directive / Execution Log pages */
+.advisory-banner { background: #0a0e18; border: 1px solid #1a2030;
+                   border-left: 3px solid #2a3a5a; border-radius: 0 6px 6px 0;
+                   padding: 10px 16px; font-size: 0.78rem; color: #3a4a6a;
+                   margin-bottom: 18px; line-height: 1.6; }
+.directive-step { background: #0e121e; border: 1px solid #1e2438;
+                  border-radius: 6px; padding: 12px 16px; margin-bottom: 8px; }
+.directive-step .step-id { font-family: monospace; font-size: 0.78rem;
+                            color: #3a4a6a; margin-bottom: 4px; }
+.directive-step .step-desc { font-size: 0.86rem; color: #8090a8; line-height: 1.6; }
+.directive-step .step-meta { font-size: 0.75rem; color: #2a3a58; margin-top: 6px; }
+.step-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;
+              background: #1a2030; color: #4a5870; margin-right: 4px; }
+.step-badge.pending { background: #1a2038; color: #5070a0; }
+.step-badge.done    { background: #102018; color: #40a060; }
+.invariant-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 8px; }
+.invariant-table td { padding: 4px 10px; border-bottom: 1px solid #141c28; }
+.invariant-table td:first-child { color: #3a4a6a; width: 240px; font-family: monospace; }
+.invariant-table td:last-child { color: #5a7090; }
+.invariant-table .invar-false { color: #3a5060; }
+.invariant-table .invar-none  { color: #3a4a5a; }
+.log-entry-card { border: 1px solid #1a2438; border-radius: 6px;
+                  padding: 12px 16px; margin-bottom: 8px; font-size: 0.85rem; }
+.log-entry-card.human_approval    { background: #0a1820; border-left: 3px solid #1e4a28; }
+.log-entry-card.execution_attempt { background: #0e1420; border-left: 3px solid #2a2060; }
+.log-entry-card.observation       { background: #0e1620; border-left: 3px solid #1e3050; }
+.log-entry-card.feedback          { background: #0c1018; border-left: 3px solid #2a2a40; }
+.log-entry-card.objection         { background: #1a1010; border-left: 3px solid #5a2020; }
+.log-entry-card.rollback_request  { background: #181010; border-left: 3px solid #4a2818; }
+.log-entry-card .entry-header { font-weight: 600; color: #7090b0; margin-bottom: 6px; }
+.log-entry-card .entry-content { color: #8898b0; line-height: 1.65;
+                                  white-space: pre-wrap; word-break: break-word; }
+.log-entry-card .entry-meta { font-size: 0.75rem; color: #2a3858; margin-top: 8px; }
+.scope-list     { font-size: 0.85rem; color: #7090a8; margin: 6px 0 0 18px; line-height: 1.8; }
+.scope-list.out { color: #5a4a6a; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr);
+             gap: 8px; text-align: center; font-size: 0.85rem; }
+.stat-grid .stat-num { font-size: 1.4rem; color: #8098b8; }
+.stat-grid .stat-lbl { color: #3a4a68; font-size: 0.75rem; }
+/* Phase 27 — Reality Feedback Bridge panel */
+.bridge-panel { background: #0c1018; border: 1px solid #1e2838;
+                border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.bridge-panel h3 { font-size: 0.88rem; color: #507080; margin-bottom: 12px;
+                   text-transform: uppercase; letter-spacing: 0.04em; }
+.bridge-record { border: 1px solid #1a2438; border-radius: 6px;
+                 padding: 10px 14px; margin-bottom: 8px; font-size: 0.84rem; }
+.bridge-record.relief { background: #0a1618; border-left: 3px solid #1e4838; }
+.bridge-record.care   { background: #0a0e18; border-left: 3px solid #1e2850; }
+.bridge-record.both   { background: #0c1020; border-left: 3px solid #3a1a50; }
+.bridge-record.none   { background: #0b0d12; border-left: 3px solid #1a1e28; }
+.bridge-record .br-header  { color: #5a7090; font-size: 0.82rem;
+                              font-weight: 600; margin-bottom: 4px; }
+.bridge-record .br-content { color: #7088a0; font-size: 0.82rem;
+                              line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.bridge-record .br-reason  { color: #2a3a52; font-size: 0.74rem; margin-top: 5px; }
+.bridge-record .br-flags   { color: #1e2a3a; font-size: 0.72rem; margin-top: 4px; }
+.bridge-target-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px;
+                       background: #14202e; color: #3a5870; margin-left: 6px; }
+.bridge-advisory { font-size: 0.72rem; color: #1e2a3a; margin-top: 10px;
+                   border-top: 1px solid #111820; padding-top: 8px; }
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
 """
@@ -305,6 +512,17 @@ def render_globe_detail(globe_id: str) -> str | None:
     g = next((x for x in globes if x["globe_id"] == globe_id), None)
     if not g:
         return None
+
+    # Directive / Log counts for this globe
+    globe_directives = _load_directives_for_globe(globe_id)
+    dir_log_total = 0
+    dir_approval_total = 0
+    for gd in globe_directives:
+        elog = _load_exec_log_by_id(gd["directive_id"])
+        dir_log_total += len(elog)
+        dir_approval_total += sum(1 for e in elog if e.get("entry_type") == "human_approval")
+    dir_count = len(globe_directives)
+
     proposals_for = [p for p in _proposals() if p.get("globe_id") == globe_id]
     proposal_html = ""
     for p in proposals_for:
@@ -342,6 +560,24 @@ def render_globe_detail(globe_id: str) -> str | None:
 
 <h3>GITSEA 連携情報</h3>
 {_gitsea_html(g.get('gitsea_link'))}
+
+<h3>🗂️ Directives &nbsp;<a href="/globe/{_e(globe_id)}/directives" style="font-size:0.8rem">すべて見る →</a></h3>
+<div class="card">
+  <div class="field-row">
+    <span class="label">Directive 数</span>
+    <span class="value">{dir_count} 件</span>
+  </div>
+  <div class="field-row">
+    <span class="label">Execution Log entries</span>
+    <span class="value">{dir_log_total} エントリ &nbsp;·&nbsp; ✅ approvals: {dir_approval_total}</span>
+  </div>
+  <div class="field-row" style="margin-top:6px">
+    <span class="label"></span>
+    <span class="value">
+      <a href="/globe/{_e(globe_id)}/directives">Directive 一覧 →</a>
+    </span>
+  </div>
+</div>
 
 <h3>Proposal 一覧 &nbsp;<a href="/globe/{_e(globe_id)}/proposals" style="font-size:0.8rem">すべて見る →</a></h3>
 {proposal_html}
@@ -613,6 +849,337 @@ def _render_exec_summary_panel(globe_id: str | None = None) -> str:
 </div>"""
 
 
+_ADVISORY_BANNER = (
+    '<div class="advisory-banner">'
+    "UI display is advisory only · not proof of execution · creates no legal authority · "
+    "UI display does not approve execution · objections and rollback requests are preserved."
+    "</div>"
+)
+
+_EXEC_LOG_ADVISORY_BANNER = (
+    '<div class="advisory-banner">'
+    "Execution Log is not proof of execution · Log entry is not legal authority · "
+    "Append-only: existing entries must never be rewritten · "
+    "Objection and rollback request must always be recordable."
+    "</div>"
+)
+
+
+def render_directives_list(globe_id: str) -> str | None:
+    """List all Directives for a Globe. Advisory display only."""
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+
+    directives = _load_directives_for_globe(globe_id)
+    items = ""
+    for d in directives:
+        did = d["directive_id"]
+        entries = _load_exec_log_by_id(did)
+        has_approval = any(e.get("entry_type") == "human_approval" for e in entries)
+
+        last_type = "—"
+        last_at = "—"
+        if entries:
+            last = entries[-1]
+            last_type = last.get("entry_type", "—")
+            last_at = str(last.get("created_at", ""))[:10]
+
+        appr_icon = "✅" if has_approval else "⬜"
+        last_icon = _EXEC_ENTRY_ICON.get(last_type, "•")
+
+        items += f"""
+<div class="card">
+  <h4>
+    <a href="/globe/{_e(globe_id)}/directives/{_e(did)}">{_e(d.get('title', did))}</a>
+  </h4>
+  <div style="font-family:monospace;font-size:0.78rem;color:#3a4a6a;margin:4px 0 6px">{_e(did)}</div>
+  <div class="desc">{_e(d.get('objective',''))}</div>
+  <div class="meta" style="margin-top:10px">
+    <span class="tag">source: {_e(d.get('source_claim_id','?'))}</span>
+    <span class="tag">steps: {len(d.get('execution_steps',[]))}</span>
+    <span class="tag">log: {len(entries)} entries</span>
+    <span class="tag">{appr_icon} approval</span>
+    <span class="tag">last: {last_icon} {_e(last_type)} {_e(last_at)}</span>
+    &nbsp;·&nbsp;
+    <a href="/globe/{_e(globe_id)}/directives/{_e(did)}">Directive 詳細 →</a>
+    &nbsp;·&nbsp;
+    <a href="/globe/{_e(globe_id)}/logs/{_e(did)}">Execution Log →</a>
+  </div>
+</div>"""
+
+    if not items:
+        items = '<p class="empty">この Globe にはまだ Directive がありません。</p>'
+
+    return _page(
+        f"Directives — {g['name']}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › Directives',
+        f'<h2>🗂️ Directives — {_e(g["name"])}</h2>'
+        + _ADVISORY_BANNER
+        + items,
+    )
+
+
+def _render_invariant_table(d: dict) -> str:
+    """Render invariant key/value table for a directive."""
+    fields = [
+        "authority", "execution_allowed", "moves_money", "hard_enforcement",
+        "advisory", "append_only", "contestable", "human_approval_required",
+        "directive_creates_legal_authority", "directive_is_coercion",
+        "directive_creates_obligation", "conversion_is_execution",
+        "directive_certifies_outcome", "directive_allocates_resources",
+    ]
+    rows = ""
+    for f in fields:
+        val = d.get(f)
+        if val is None:
+            val_str, css = "—", "invar-none"
+        elif val is False or val == "none":
+            val_str, css = str(val).lower(), "invar-false"
+        else:
+            val_str, css = str(val).lower(), ""
+        rows += f'<tr><td>{_e(f)}</td><td class="{css}">{_e(val_str)}</td></tr>'
+    return f'<table class="invariant-table">{rows}</table>'
+
+
+def render_directive_detail(globe_id: str, directive_id: str) -> str | None:
+    """Full Directive detail page. Advisory display only."""
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+
+    d = _load_directive_by_id(directive_id)
+    if not d or d.get("globe_id") != globe_id:
+        return None
+
+    entries = _load_exec_log_by_id(directive_id)
+    has_approval = any(e.get("entry_type") == "human_approval" for e in entries)
+
+    # Execution steps
+    steps_html = ""
+    for step in d.get("execution_steps", []):
+        sid = _e(step.get("step_id", ""))
+        desc_ja = _e(step.get("description", ""))
+        desc_en = step.get("description_en", "")
+        contribs = ", ".join(_e(c) for c in step.get("required_contributions", []))
+        step_status = step.get("status", "pending")
+        need_appr = step.get("human_approval_required", True)
+        steps_html += f"""
+<div class="directive-step">
+  <div class="step-id">{sid}
+    <span class="step-badge {_e(step_status)}">{_e(step_status)}</span>
+    {"<span class='step-badge pending'>human approval required</span>" if need_appr else ""}
+  </div>
+  <div class="step-desc">{desc_ja}</div>
+  {"<div class='step-desc' style='color:#5a6a80'>" + _e(desc_en) + "</div>" if desc_en else ""}
+  <div class="step-meta">required contributions: {contribs or "—"}</div>
+</div>"""
+
+    # Required evidence
+    ev_items = "".join(
+        f'<li style="color:#6a7a90;margin-bottom:4px">{_e(ev)}</li>'
+        for ev in d.get("required_evidence", [])
+    )
+    evidence_html = (
+        f'<ul style="margin-left:18px;line-height:1.8">{ev_items}</ul>'
+        if ev_items else '<p class="empty">なし</p>'
+    )
+
+    # Scope
+    in_items  = "".join(f"<li>{_e(s)}</li>" for s in d.get("scope", {}).get("in_scope", []))
+    out_items = "".join(f"<li>{_e(s)}</li>" for s in d.get("scope", {}).get("out_of_scope", []))
+    scope_html = f"""
+<div style="margin-bottom:12px">
+  <div style="font-size:0.8rem;color:#3a5a40;margin-bottom:4px">✅ In Scope</div>
+  <ul class="scope-list">{in_items}</ul>
+</div>
+<div>
+  <div style="font-size:0.8rem;color:#5a3a3a;margin-bottom:4px">🚫 Out of Scope</div>
+  <ul class="scope-list out">{out_items}</ul>
+</div>"""
+
+    # Log summary
+    counts: dict[str, int] = {}
+    for e in entries:
+        et = e.get("entry_type", "unknown")
+        counts[et] = counts.get(et, 0) + 1
+    appr_icon = "✅" if has_approval else "⬜"
+    log_badges = "".join(
+        f'<span class="log-entry-badge">{_EXEC_ENTRY_ICON.get(et,"•")} {_e(et)}: {n}</span>'
+        for et, n in counts.items()
+    )
+    box_cls = "approved" if has_approval else ("has-entries" if entries else "no-entries")
+    approval_label = (
+        "✅ human_approval 記録済み" if has_approval else
+        "⬜ ログエントリなし" if not entries else
+        "⚠ human_approval 未記録"
+    )
+    log_summary_html = f"""
+<div class="log-box {box_cls}">
+  {approval_label}<br>
+  <span style="font-size:0.82rem;display:block;margin-top:6px">{log_badges}</span>
+  <div class="log-hint" style="margin-top:8px">
+    Total entries: {len(entries)} &nbsp;·&nbsp;
+    <a href="/globe/{_e(globe_id)}/logs/{_e(directive_id)}">Execution Log 全件表示 →</a>
+  </div>
+</div>"""
+
+    body = f"""
+<h2>🗂️ {_e(d.get('title', directive_id))}</h2>
+<div style="font-family:monospace;font-size:0.8rem;color:#3a4a6a;margin:4px 0 12px">{_e(directive_id)}</div>
+{_ADVISORY_BANNER}
+
+<h3>基本情報</h3>
+<div class="card">
+  <div class="field-row"><span class="label">source_claim_id</span>
+    <span class="value"><code>{_e(d.get('source_claim_id',''))}</code></span></div>
+  <div class="field-row"><span class="label">source_proposal_id</span>
+    <span class="value"><code>{_e(d.get('source_proposal_id',''))}</code></span></div>
+  <div class="field-row"><span class="label">status</span>
+    <span class="value">{_e(d.get('status',''))}</span></div>
+  <div class="field-row"><span class="label">created_at</span>
+    <span class="value">{_e(str(d.get('created_at',''))[:10])}</span></div>
+</div>
+
+<h3>Objective（目的）</h3>
+<div class="body-block">{_e(d.get('objective',''))}</div>
+
+<h3>Non-Authority Clause</h3>
+<div class="founding" style="border-left-color:#3a2a1a">{_e(d.get('non_authority_clause',''))}</div>
+
+<h3>不変条件 / Invariants</h3>
+<div class="card" style="padding:10px 12px">
+{_render_invariant_table(d)}
+</div>
+
+<h3>Execution Steps ({len(d.get('execution_steps',[]))})
+  <small style="font-size:0.72rem;color:#2a3858;text-transform:none;font-weight:400">
+    execution_allowed: false on all steps
+  </small>
+</h3>
+{steps_html or '<p class="empty">ステップなし</p>'}
+
+<h3>Required Evidence</h3>
+{evidence_html}
+
+<h3>Scope</h3>
+<div class="card">{scope_html}</div>
+
+<h3>📋 Execution Log Summary
+  &nbsp;<a href="/globe/{_e(globe_id)}/logs/{_e(directive_id)}" style="font-size:0.8rem">全件表示 →</a>
+</h3>
+{log_summary_html}
+{_render_bridge_panel(directive_id)}
+"""
+    return _page(
+        d.get("title", directive_id),
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › '
+        f'<a href="/globe/{_e(globe_id)}/directives">Directives</a> › '
+        f'{_e(directive_id)}',
+        body,
+    )
+
+
+def render_execution_log_page(globe_id: str, directive_id: str) -> str | None:
+    """Full Execution Log viewer. Advisory display only. Preserves objections."""
+    globes = _globes()
+    g = next((x for x in globes if x["globe_id"] == globe_id), None)
+    if not g:
+        return None
+
+    d = _load_directive_by_id(directive_id)
+    if not d or d.get("globe_id") != globe_id:
+        return None
+
+    entries = _load_exec_log_by_id(directive_id)
+
+    counts: dict[str, int] = {}
+    for e in entries:
+        et = e.get("entry_type", "unknown")
+        counts[et] = counts.get(et, 0) + 1
+
+    has_approval = counts.get("human_approval", 0) > 0
+    appr_icon = "✅" if has_approval else "⬜"
+
+    # Entry cards (chronological order — JSONL is append-only)
+    entry_cards = ""
+    for i, e in enumerate(entries, 1):
+        et = e.get("entry_type", "unknown")
+        icon = _EXEC_ENTRY_ICON.get(et, "•")
+        actor_type = _e(e.get("actor_type", "?"))
+        actor_name = _e(e.get("actor_name", "?"))
+        content = _e(e.get("content", ""))
+        created = _e(str(e.get("created_at", ""))[:19].replace("T", " "))
+        evidence = e.get("evidence_refs", [])
+        evidence_html = ""
+        if evidence:
+            ev_items = "".join(f"<li><code>{_e(r)}</code></li>" for r in evidence)
+            evidence_html = f'<ul style="margin:6px 0 0 16px;font-size:0.78rem;color:#3a4a6a">{ev_items}</ul>'
+        legal = e.get("legal_authority_created", False)
+        proof = e.get("log_is_proof_of_execution", False)
+        append_only = e.get("append_only", True)
+        entry_cards += f"""
+<div class="log-entry-card {_e(et)}">
+  <div class="entry-header">
+    {icon} {_e(et.replace('_', ' '))}
+    <span style="font-weight:400;font-size:0.8rem;color:#4a5a78">
+      &nbsp;#{i} &nbsp;·&nbsp; {actor_type}: {actor_name} &nbsp;·&nbsp; {created}
+    </span>
+  </div>
+  <div class="entry-content">{content}</div>
+  {evidence_html}
+  <div class="entry-meta">
+    legal_authority_created: {str(legal).lower()} &nbsp;·&nbsp;
+    log_is_proof_of_execution: {str(proof).lower()} &nbsp;·&nbsp;
+    append_only: {str(append_only).lower()}
+  </div>
+</div>"""
+
+    if not entry_cards:
+        entry_cards = '<p class="empty">まだエントリが記録されていません。</p>'
+
+    body = f"""
+<h2>📋 Execution Log — {_e(d.get('title', directive_id))}</h2>
+<div style="font-family:monospace;font-size:0.8rem;color:#3a4a6a;margin:4px 0 12px">{_e(directive_id)}</div>
+{_EXEC_LOG_ADVISORY_BANNER}
+
+<div class="card" style="padding:16px 20px;margin-bottom:18px">
+  <div class="stat-grid">
+    <div><div class="stat-num">{len(entries)}</div>
+         <div class="stat-lbl">total entries</div></div>
+    <div><div class="stat-num">{appr_icon} {counts.get('human_approval',0)}</div>
+         <div class="stat-lbl">approvals</div></div>
+    <div><div class="stat-num">⚠ {counts.get('objection',0)}</div>
+         <div class="stat-lbl">objections</div></div>
+    <div><div class="stat-num">↩ {counts.get('rollback_request',0)}</div>
+         <div class="stat-lbl">rollbacks</div></div>
+  </div>
+  <div style="margin-top:12px;font-size:0.78rem;color:#2a3858;text-align:center">
+    source: <code>{_e(d.get('source_claim_id',''))}</code>
+    &nbsp;·&nbsp;
+    <a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}">Directive 詳細 →</a>
+  </div>
+</div>
+
+<h3>Log Entries ({len(entries)}) — chronological · append-only · objection always recordable</h3>
+{entry_cards}
+{_render_bridge_panel(directive_id)}
+"""
+    return _page(
+        f"Execution Log — {directive_id}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/{_e(globe_id)}">{_e(g["name"])}</a> › '
+        f'<a href="/globe/{_e(globe_id)}/directives">Directives</a> › '
+        f'<a href="/globe/{_e(globe_id)}/directives/{_e(directive_id)}">{_e(directive_id)}</a> › '
+        f'Log',
+        body,
+    )
+
+
 def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
     globes = _globes()
     g = next((x for x in globes if x["globe_id"] == globe_id), None)
@@ -747,6 +1314,34 @@ class GlobeHandler(BaseHTTPRequestHandler):
         m = re.fullmatch(r"/globe/([^/]+)/proposals/([^/]+)", path)
         if m:
             content = render_proposal_detail(m.group(1), m.group(2))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        # Phase 28 — Directive UI Routes
+        m = re.fullmatch(r"/globe/([^/]+)/directives", path)
+        if m:
+            content = render_directives_list(m.group(1))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        m = re.fullmatch(r"/globe/([^/]+)/directives/([^/]+)", path)
+        if m:
+            content = render_directive_detail(m.group(1), m.group(2))
+            if content:
+                self._send_html(content)
+            else:
+                self._404()
+            return
+
+        m = re.fullmatch(r"/globe/([^/]+)/logs/([^/]+)", path)
+        if m:
+            content = render_execution_log_page(m.group(1), m.group(2))
             if content:
                 self._send_html(content)
             else:
