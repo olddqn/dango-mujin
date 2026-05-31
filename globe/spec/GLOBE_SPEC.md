@@ -711,6 +711,97 @@ python3 globe/runtime/globe_search.py filter --type directive
 
 ---
 
+## Phase 32 — Contribution Timeline View（フェーズ32）
+
+Globe / Directive ごとの Execution Log・Resolution Signal・Reality Feedback・
+Bridge Target Link を時系列で表示する Timeline View。
+
+> "Timeline is advisory display only."
+> "Timeline is not proof of impact."
+> "Timeline does not rank participants."
+> "Timeline does not allocate resources."
+> "Human review is required before any real-world action."
+
+### 不変条件 / Invariants
+
+| Key | Value |
+|-----|-------|
+| `timeline_is_advisory_display_only` | `true` |
+| `timeline_is_not_proof_of_impact` | `true` |
+| `timeline_does_not_rank_participants` | `true` |
+| `timeline_does_not_allocate_resources` | `true` |
+| `human_review_is_required_before_any_real_world_action` | `true` |
+| `authority` | `"none"` |
+
+### source_type
+
+| source_type | ソース | 件数 |
+|-------------|--------|------|
+| `execution_log` | `globe/logs/*.jsonl` の非 resolution_signal エントリ | 6 |
+| `resolution_signal` | `globe/logs/*.jsonl` の voluntary_resolution_signal エントリ | 2 |
+| `reality_feedback` | `globe/reports/reality_feedback_bridge.json` | 4 |
+| `bridge_target_link` | `globe/reports/bridge_target_links.json` | 4 |
+
+### ソート仕様
+
+- `created_at` 昇順（ISO 文字列ソートで正確）
+- 同一 `created_at` の場合: `source_type` + `source_id` で安定ソート
+- score / ranking なし
+
+### needs_attention フラグ
+
+以下の条件に該当する item は `needs_attention: true` — 優先順位ではなく観察対象の識別子
+
+| 条件 | 理由 |
+|------|------|
+| `event_type` = `objection` または `rollback_request` | 実行ログに異議・ロールバック要求 |
+| `resolution_status` = `unresolved` または `contested` | 未解決・異議ある解決シグナル |
+| `confidence` = `high` (bridge_target_link) | 高信頼度リンク候補 |
+
+### CLI
+
+```bash
+# 全体サマリー
+python3 globe/runtime/contribution_timeline.py summary
+
+# レポート保存
+python3 globe/runtime/contribution_timeline.py save
+
+# Globe別タイムライン
+python3 globe/runtime/contribution_timeline.py show-globe globe-001
+
+# Directive別タイムライン
+python3 globe/runtime/contribution_timeline.py show-directive directive-claim-proposal-002
+
+# ソースタイプ別
+python3 globe/runtime/contribution_timeline.py show-type resolution_signal
+python3 globe/runtime/contribution_timeline.py show-type reality_feedback
+```
+
+### HTTP ルート
+
+| URL | 内容 |
+|-----|------|
+| `/globe/timeline` | 全 Globe タイムライン |
+| `/globe/<globe_id>/timeline` | Globe 別タイムライン |
+| `/globe/<globe_id>/directives/<directive_id>/timeline` | Directive 別タイムライン |
+
+### 生成ファイル
+
+| ファイル | 説明 |
+|---------|------|
+| `globe/reports/contribution_timeline.json` | タイムライン全体 (machine-readable) |
+| `globe/reports/contribution_timeline.md` | 人間可読タイムライン |
+
+### UI特性
+
+- 承認ボタン・実行ボタン・配分ボタンなし
+- スコア・ランキングなし
+- `needs_attention` は観察対象の識別のみ（優先順位付けではない）
+- 既存の Directive / Log ページへのリンクのみ
+
+---
+
 ## Phase 29 — Voluntary Resolution Signal（フェーズ29）
 
 参加者が Directive Execution Log に対し、任意で解決状況を自己申告できる `voluntary_resolution_signal` entry type を追加。

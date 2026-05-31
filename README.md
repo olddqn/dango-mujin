@@ -474,6 +474,53 @@ HTTP 検索 URL:
 
 ---
 
+## Phase 32 — Contribution Timeline View
+
+フェーズ32では、Globe / Directive ごとの Execution Log・Resolution Signal・
+Reality Feedback・Bridge Target Link を時系列表示する **Timeline View** を追加しました。
+
+**Timeline は advisory display のみです。影響の証明ではありません。
+参加者をランク付けしません。資源を配分しません。
+実世界での行動の前に人間によるレビューが必要です。**
+
+In Phase 32, Dan-Go generates a chronological contribution timeline across all
+execution log entries, resolution signals, bridge feedback records, and link
+candidates. Sorted by created_at ascending (stable, no relevance score).
+
+> "Timeline is advisory display only."
+> "Timeline is not proof of impact."
+> "Timeline does not rank participants."
+> "Timeline does not allocate resources."
+> "Human review is required before any real-world action."
+
+```bash
+# タイムライン サマリー
+python3 globe/runtime/contribution_timeline.py summary
+
+# レポート保存 (JSON + Markdown)
+python3 globe/runtime/contribution_timeline.py save
+
+# Globe別
+python3 globe/runtime/contribution_timeline.py show-globe globe-001
+
+# Directive別
+python3 globe/runtime/contribution_timeline.py show-directive directive-claim-proposal-002
+
+# ソースタイプ別 (execution_log / resolution_signal / reality_feedback / bridge_target_link)
+python3 globe/runtime/contribution_timeline.py show-type resolution_signal
+```
+
+HTTP URL:
+- `http://localhost:7422/globe/timeline` — 全 Globe タイムライン (16 items)
+- `http://localhost:7422/globe/globe-001/timeline` — Globe-001 (13 items)
+- `http://localhost:7422/globe/globe-001/directives/directive-claim-proposal-002/timeline` — Directive (13 items)
+
+生成ファイル:
+- `globe/reports/contribution_timeline.json` — 全タイムライン (16 items · advisory only)
+- `globe/reports/contribution_timeline.md` — 人間可読
+
+---
+
 ## Structure
 
 ```
