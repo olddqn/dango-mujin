@@ -1,6 +1,6 @@
 # RESUME_STATE.md — Protocol Phrase Ledger
 
-> **STATUS: IN PROGRESS (feature/phase-45-protocol-phrase-ledger)**
+> **STATUS: COMPLETE (feature/phase-45-protocol-phrase-ledger — PR opened)**
 
 **Phase:** Protocol Phrase Ledger (Phase 45)
 **Branch:** feature/phase-45-protocol-phrase-ledger
@@ -65,7 +65,7 @@
 - Globe Directive Resolution Timeline (Phase 42) — PR #37
 - Cross-Directive Signal Aggregation (Phase 43) — PR #38
 - Globe Governance Summary (Phase 44) — PR #39
-- **Globe Protocol Phrase Ledger (Phase 45)** ← current commit
+- **Globe Protocol Phrase Ledger (Phase 45)** — PR opened ← current
 
 ---
 
