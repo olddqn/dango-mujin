@@ -5463,7 +5463,7 @@ def _load_ppl() -> dict:
 def _render_phrase_card(entry: dict) -> str:
     pt      = _e(entry.get("phrase_type", "other"))
     pid     = _e(entry.get("phrase_id", ""))
-    phase   = _e(entry.get("first_seen_phase", ""))
+    phase   = _e(entry.get("phase", "") or entry.get("first_seen_phase", ""))
     text    = _e(entry.get("phrase_text", ""))
     norm    = _e(entry.get("normalized_phrase", ""))
     src     = _e(entry.get("source_file", ""))
@@ -5494,8 +5494,6 @@ def render_phrases_page(
     """Phase 45 — Protocol Phrase Ledger page."""
     data    = _load_ppl()
     entries = data.get("entries", [])
-    meta    = data.get("meta", {})
-
     # apply filters
     shown = entries
     if phase_filter:
@@ -5507,8 +5505,8 @@ def render_phrases_page(
         shown = [e for e in shown if ql in e.get("phrase_text", "").lower()
                  or ql in e.get("normalized_phrase", "").lower()]
 
-    total   = meta.get("total_phrases", len(entries))
-    raw_occ = meta.get("total_raw_occurrences", 0)
+    total   = data.get("total_phrases", len(entries))
+    raw_occ = data.get("total_raw_occurrences", 0)
 
     # type nav
     all_types = [
