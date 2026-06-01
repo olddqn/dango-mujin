@@ -562,6 +562,52 @@ HTTP URL:
 
 ---
 
+## Phase 40 — Globe Member × Directive Participation Map
+
+Member と Directive の関係を参加マップとして可視化。
+参加の観察補助 — 評価・ランキング・信用スコア・権限付与・責任割当ではない。
+
+> **"Member-directive map is advisory display only."**
+> **"Member-directive map is not identity verification."**
+> **"Member-directive map is not reputation score."**
+> **"Member-directive map does not rank members."**
+> **"Member-directive map does not allocate responsibility."**
+
+### データ集計
+
+8 entries, 8 unique members, 2 directives, 2 globes。
+11 relation types — proposer_related, deliberation_related, human_approval,
+observation, objection, voluntary_resolution_signal, execution_attempt,
+timeline_related, feedback_bridge_related 等。
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_directive_map.py summary
+# total_entries:8, total_members:8, attention_entries:3
+
+python3 globe/runtime/member_directive_map.py show-member member-masuo-komori
+# directive-002: human_approval, voluntary_resolution_signal, unresolved, contested
+
+python3 globe/runtime/member_directive_map.py show-directive directive-claim-proposal-002
+# 6 members: bridge-target-linker, dan-go-agent, masuo-komori, founding-member-002, founding-member-003, dan-go-ai-mediator
+```
+
+### URL確認
+
+- http://localhost:7422/globe/member-directives
+- http://localhost:7422/globe/member-directives?member=member-masuo-komori
+- http://localhost:7422/globe/member-directives?directive=directive-claim-proposal-002
+- http://localhost:7422/globe/member-directives?globe=globe-001
+
+### 生成ファイル
+
+- `globe/runtime/member_directive_map.py` — マップ構築・CLI (8 entries, 11 relation types)
+- `globe/reports/member_directive_map.json` — 生成済み JSON
+- `globe/reports/member_directive_map.md` — 生成済み Markdown
+
+---
+
 ## Phase 39 — Globe Member Activity Heatmap
 
 Member ごとの活動を 日付 × Globe × activity type の heatmap として表示。

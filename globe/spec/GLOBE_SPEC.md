@@ -1775,3 +1775,90 @@ python3 globe/runtime/member_activity_heatmap.py show-date 2026-05-31
 - `globe/runtime/member_activity_heatmap.py` — ヒートマップ構築・CLI (12 members, 25 events, 2 dates)
 - `globe/reports/member_activity_heatmap.json` — 生成済み JSON
 - `globe/reports/member_activity_heatmap.md` — 生成済み Markdown
+
+---
+
+## Phase 40 — Globe Member × Directive Participation Map（フェーズ40）
+
+フェーズ40では、Member と Directive の関係を参加マップとして可視化する
+**Globe Member × Directive Participation Map** を追加しました。
+これは参加の観察補助であり、評価・ランキング・信用スコア・権限付与・責任割当ではありません。
+
+### 不変条件
+
+```python
+MAP_INVARIANTS = {
+    "member_directive_map_is_advisory_display_only": True,
+    "member_directive_map_is_not_identity_verification": True,
+    "member_directive_map_is_not_reputation_score": True,
+    "member_directive_map_does_not_rank_members": True,
+    "member_directive_map_does_not_allocate_responsibility": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### Protocol Phrases
+
+```
+Member-directive map is advisory display only.
+Member-directive map is not identity verification.
+Member-directive map is not reputation score.
+Member-directive map does not rank members.
+Member-directive map does not allocate responsibility.
+Human review is required before any real-world action.
+```
+
+### 関係タイプ（11種）
+
+| relation_type | ソース |
+|---|---|
+| proposer_related | proposals.json → directive source_proposal_id |
+| deliberation_related | deliberations.json → proposal → directive |
+| human_approval | logs/*.jsonl |
+| observation | logs/*.jsonl |
+| objection | logs/*.jsonl |
+| feedback | logs/*.jsonl |
+| rollback_request | logs/*.jsonl |
+| voluntary_resolution_signal | logs/*.jsonl |
+| execution_attempt | logs/*.jsonl |
+| timeline_related | contribution_timeline.json (bridge_target_link) |
+| feedback_bridge_related | reality_feedback_bridge.json |
+
+### map entry フィールド
+
+- `map_id`, `member_id`, `display_name`, `actor_types`
+- `directive_id`, `directive_title`, `globe_id`
+- `relation_types`, `event_count`, `latest_activity_at`
+- `has_human_approval`, `has_objection`, `has_unresolved_signal`, `has_contested_signal`
+- invariant flags
+
+### HTTP Routes
+
+```
+/globe/member-directives                          → 全エントリ
+/globe/member-directives?member=<id>             → メンバーでフィルター
+/globe/member-directives?directive=<directive_id> → Directive でフィルター
+/globe/member-directives?globe=<globe_id>         → Globe でフィルター
+```
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_directive_map.py summary
+python3 globe/runtime/member_directive_map.py save
+python3 globe/runtime/member_directive_map.py show-member member-masuo-komori
+python3 globe/runtime/member_directive_map.py show-directive directive-claim-proposal-002
+python3 globe/runtime/member_directive_map.py show-globe globe-001
+```
+
+### 集計結果
+
+- 8 entries, 8 unique members, 2 directives, 2 globes
+- attention entries: 3 (objection, unresolved_signal, contested_signal)
+
+### 生成ファイル
+
+- `globe/runtime/member_directive_map.py` — マップ構築・CLI
+- `globe/reports/member_directive_map.json` — 生成済み JSON (8 entries)
+- `globe/reports/member_directive_map.md` — 生成済み Markdown

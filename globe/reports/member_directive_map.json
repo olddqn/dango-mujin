@@ -1,0 +1,304 @@
+{
+  "map_id": "globe-member-directive-map",
+  "generated_at": "2026-06-01 11:05:29",
+  "phase": "40",
+  "total_entries": 8,
+  "total_members": 8,
+  "total_directives": 2,
+  "total_globes": 2,
+  "attention_entries": [
+    "map-masuo-komori-002",
+    "map-founding-mem-002",
+    "map-jammy-house--005"
+  ],
+  "relation_types": [
+    "proposer_related",
+    "deliberation_related",
+    "human_approval",
+    "observation",
+    "objection",
+    "feedback",
+    "rollback_request",
+    "voluntary_resolution_signal",
+    "execution_attempt",
+    "timeline_related",
+    "feedback_bridge_related"
+  ],
+  "phase_phrases": [
+    "Member-directive map is advisory display only.",
+    "Member-directive map is not identity verification.",
+    "Member-directive map is not reputation score.",
+    "Member-directive map does not rank members.",
+    "Member-directive map does not allocate responsibility.",
+    "Human review is required before any real-world action."
+  ],
+  "member_directive_map_is_advisory_display_only": true,
+  "member_directive_map_is_not_identity_verification": true,
+  "member_directive_map_is_not_reputation_score": true,
+  "member_directive_map_does_not_rank_members": true,
+  "member_directive_map_does_not_allocate_responsibility": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "entries": [
+    {
+      "map_id": "map-bridge-targe-002",
+      "member_id": "member-bridge-target-linker",
+      "display_name": "bridge-target-linker",
+      "actor_types": [
+        "system"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "timeline_related"
+      ],
+      "event_count": 4,
+      "latest_activity_at": "2026-05-31T01:00:22.998239+00:00",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-dan-go-agent-002",
+      "member_id": "member-dan-go-agent",
+      "display_name": "dan-go-agent",
+      "actor_types": [
+        "ai"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "observation",
+        "feedback_bridge_related"
+      ],
+      "event_count": 4,
+      "latest_activity_at": "2026-05-30T23:16:45.610715+00:00",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-masuo-komori-002",
+      "member_id": "member-masuo-komori",
+      "display_name": "masuo-komori",
+      "actor_types": [
+        "human"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "human_approval",
+        "voluntary_resolution_signal"
+      ],
+      "event_count": 3,
+      "latest_activity_at": "2026-05-31T04:27:29.210356+00:00",
+      "has_human_approval": true,
+      "has_objection": false,
+      "has_unresolved_signal": true,
+      "has_contested_signal": true,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-founding-mem-002",
+      "member_id": "member-founding-member-002",
+      "display_name": "founding-member-002",
+      "actor_types": [
+        "human"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "proposer_related",
+        "deliberation_related"
+      ],
+      "event_count": 2,
+      "latest_activity_at": "2026-05-30T01:10:00Z",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-founding-mem-002",
+      "member_id": "member-founding-member-003",
+      "display_name": "founding-member-003",
+      "actor_types": [
+        "human"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "objection",
+        "feedback_bridge_related"
+      ],
+      "event_count": 2,
+      "latest_activity_at": "2026-05-30T23:12:26.340959+00:00",
+      "has_human_approval": false,
+      "has_objection": true,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-dan-go-ai-me-002",
+      "member_id": "member-dan-go-ai-mediator",
+      "display_name": "dan-go-ai-mediator",
+      "actor_types": [
+        "ai"
+      ],
+      "directive_id": "directive-claim-proposal-002",
+      "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "globe_id": "globe-001",
+      "relation_types": [
+        "deliberation_related"
+      ],
+      "event_count": 1,
+      "latest_activity_at": "2026-05-30T01:15:00Z",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-jammy-house--005",
+      "member_id": "member-jammy-house-member-002",
+      "display_name": "jammy-house-member-002",
+      "actor_types": [
+        "human"
+      ],
+      "directive_id": "directive-claim-proposal-005",
+      "directive_title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+      "globe_id": "globe-003",
+      "relation_types": [
+        "proposer_related",
+        "execution_attempt"
+      ],
+      "event_count": 2,
+      "latest_activity_at": "2026-05-30T23:12:22.311734+00:00",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": false,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    },
+    {
+      "map_id": "map-jammy-house--005",
+      "member_id": "member-jammy-house-steward",
+      "display_name": "jammy-house-steward",
+      "actor_types": [
+        "human"
+      ],
+      "directive_id": "directive-claim-proposal-005",
+      "directive_title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+      "globe_id": "globe-003",
+      "relation_types": [
+        "voluntary_resolution_signal",
+        "feedback_bridge_related"
+      ],
+      "event_count": 2,
+      "latest_activity_at": "2026-05-31T04:27:33.201255+00:00",
+      "has_human_approval": false,
+      "has_objection": false,
+      "has_unresolved_signal": true,
+      "has_contested_signal": false,
+      "advisory_only": true,
+      "not_identity_verification": true,
+      "not_reputation_score": true,
+      "does_not_rank_members": true,
+      "does_not_allocate_responsibility": true
+    }
+  ],
+  "by_member": {
+    "member-bridge-target-linker": [
+      "map-bridge-targe-002"
+    ],
+    "member-dan-go-agent": [
+      "map-dan-go-agent-002"
+    ],
+    "member-masuo-komori": [
+      "map-masuo-komori-002"
+    ],
+    "member-founding-member-002": [
+      "map-founding-mem-002"
+    ],
+    "member-founding-member-003": [
+      "map-founding-mem-002"
+    ],
+    "member-dan-go-ai-mediator": [
+      "map-dan-go-ai-me-002"
+    ],
+    "member-jammy-house-member-002": [
+      "map-jammy-house--005"
+    ],
+    "member-jammy-house-steward": [
+      "map-jammy-house--005"
+    ]
+  },
+  "by_directive": {
+    "directive-claim-proposal-002": [
+      "map-bridge-targe-002",
+      "map-dan-go-agent-002",
+      "map-masuo-komori-002",
+      "map-founding-mem-002",
+      "map-founding-mem-002",
+      "map-dan-go-ai-me-002"
+    ],
+    "directive-claim-proposal-005": [
+      "map-jammy-house--005",
+      "map-jammy-house--005"
+    ]
+  },
+  "by_globe": {
+    "globe-001": [
+      "map-bridge-targe-002",
+      "map-dan-go-agent-002",
+      "map-masuo-komori-002",
+      "map-founding-mem-002",
+      "map-founding-mem-002",
+      "map-dan-go-ai-me-002"
+    ],
+    "globe-003": [
+      "map-jammy-house--005",
+      "map-jammy-house--005"
+    ]
+  }
+}

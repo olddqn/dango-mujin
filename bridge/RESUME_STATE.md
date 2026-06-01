@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Member Activity Heatmap
+# RESUME_STATE.md — Globe Member × Directive Participation Map
 
-> **STATUS: IN PROGRESS (feature/phase-39-member-activity-heatmap)**
+> **STATUS: IN PROGRESS (feature/phase-40-member-directive-map)**
 
-**Phase:** Globe Member Activity Heatmap (Phase 39)
-**Branch:** feature/phase-39-member-activity-heatmap
+**Phase:** Globe Member × Directive Participation Map (Phase 40)
+**Branch:** feature/phase-40-member-directive-map
 **Started:** 2026-06-01
 
 ---
@@ -59,7 +59,34 @@
 - Directive Dependency Map (Phase 37) — PR #31
 - Dependency Edge URL Enrichment (Phase 37b) — merged via PR #32
 - Globe Member Profile View (Phase 38) — PR #33
-- **Globe Member Activity Heatmap (Phase 39)** ← current commit
+- Globe Member Activity Heatmap (Phase 39) — PR #34
+- **Globe Member × Directive Participation Map (Phase 40)** ← current commit
+
+---
+
+## New Files (Phase 40)
+
+- `globe/runtime/member_directive_map.py` — Member × Directive map builder + CLI (8 entries, 11 relation types, advisory only)
+- `globe/reports/member_directive_map.json` — Generated JSON (8 entries, 8 members, 2 directives)
+- `globe/reports/member_directive_map.md` — Human-readable Markdown
+
+## Updated Files (Phase 40)
+
+- `globe/runtime/globe_server.py` — Added `_load_mdm()`, `_render_mdm_card()`, `render_member_directives_page()`, Phase 40 CSS; wired `/globe/member-directives` route with `?member=`, `?directive=`, `?globe=` query params; added "📊 Map →" to Globe list header; updated docstring to Phase 22–40
+- `globe/spec/GLOBE_SPEC.md` — Phase 40 section (11 relation types, HTTP routes, CLI, invariants)
+- `README.md` — Phase 40 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 40)
+
+```
+Member-directive map is advisory display only.
+Member-directive map is not identity verification.
+Member-directive map is not reputation score.
+Member-directive map does not rank members.
+Member-directive map does not allocate responsibility.
+Human review is required before any real-world action.
+```
 
 ---
 
