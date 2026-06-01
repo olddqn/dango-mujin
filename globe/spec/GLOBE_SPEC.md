@@ -2243,3 +2243,84 @@ python3 globe/runtime/governance_summary.py show-section attention
 - `globe/runtime/governance_summary.py` — governance 集計・CLI
 - `globe/reports/governance_summary.json` — 生成済み JSON (3 globes)
 - `globe/reports/governance_summary.md` — 生成済み Markdown
+
+---
+
+## Phase 45 — Protocol Phrase Ledger（フェーズ45）
+
+フェーズ45では、Phase 10〜44 で蓄積されたすべてのプロトコル句を横断収集・正規化・重複排除した
+**Protocol Phrase Ledger** を追加しました。
+これは語句の観察補助であり、法的根拠・強制・人間判断の上書きではありません。
+
+### 不変条件
+
+```python
+LEDGER_INVARIANTS = {
+    "protocol_phrase_ledger_is_advisory_display_only": True,
+    "protocol_phrase_ledger_creates_no_legal_authority": True,
+    "protocol_phrase_ledger_is_not_enforcement": True,
+    "protocol_phrase_ledger_does_not_override_human_judgment": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### フレーズタイプ（phrase_type）
+
+| タイプ | 意味 |
+|---|---|
+| `advisory` | advisory display only 系 |
+| `no_authority` | 権限不発生 |
+| `no_ranking` | ランキング否定 |
+| `no_allocation` | 配分否定 |
+| `no_proof` | 証明・根拠否定 |
+| `human_review` | 人間レビュー必須 |
+| `no_responsibility_assignment` | 責任割当て否定 |
+| `append_only` | append-only 宣言 |
+| `other` | その他 |
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/protocol_phrase_ledger.py summary
+python3 globe/runtime/protocol_phrase_ledger.py save
+python3 globe/runtime/protocol_phrase_ledger.py show-phase 44
+python3 globe/runtime/protocol_phrase_ledger.py show-type no_authority
+python3 globe/runtime/protocol_phrase_ledger.py search ranking
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/protocol-phrases` | 全フレーズ一覧 |
+| `/globe/protocol-phrases?phase=44` | phase でフィルタ |
+| `/globe/protocol-phrases?type=no_authority` | phrase_type でフィルタ |
+| `/globe/protocol-phrases?q=ranking` | テキスト検索 |
+
+### データソース
+
+- `bridge/RESUME_STATE.md` — Principle Accumulation テーブル（Phase 10〜37b）+ Protocol Phrases コードブロック（Phase 38〜44）
+- `globe/reports/*.json` — `advisory_phrases` 配列（補完・重複排除）
+
+### 集計結果（Phase 45 生成時）
+
+| 項目 | 値 |
+|---|---|
+| total_phrases（重複排除後） | 138 |
+| total_raw_occurrences | 170 |
+| 対応 phase 数 | Phase 10〜45（37b/27b 含む） |
+
+### プロトコル句
+
+- "Protocol phrase ledger is advisory display only."
+- "Protocol phrase ledger creates no legal authority."
+- "Protocol phrase ledger is not enforcement."
+- "Protocol phrase ledger does not override human judgment."
+- "Human review is required before any real-world action."
+
+### 生成ファイル
+
+- `globe/runtime/protocol_phrase_ledger.py` — フレーズ収集・正規化・CLI
+- `globe/reports/protocol_phrase_ledger.json` — 生成済み JSON (138 phrases)
+- `globe/reports/protocol_phrase_ledger.md` — 生成済み Markdown
