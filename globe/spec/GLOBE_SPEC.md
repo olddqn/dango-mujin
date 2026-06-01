@@ -2057,3 +2057,103 @@ python3 globe/runtime/resolution_timeline.py show-status unresolved
 - `globe/runtime/resolution_timeline.py` — タイムライン構築・CLI
 - `globe/reports/resolution_timeline.json` — 生成済み JSON (4 items)
 - `globe/reports/resolution_timeline.md` — 生成済み Markdown
+
+## Phase 43 — Cross-Directive Signal Aggregation（フェーズ43）
+
+フェーズ43では、resolution_status / objection / rollback / attention signal を
+Globe・Directive・Member・Status 単位で横断集計する
+**Cross-Directive Signal Aggregation** を追加しました。
+これは状態観察の補助であり、解決証明・優先順位・責任割当ではありません。
+
+### 不変条件
+
+```python
+AGG_INVARIANTS = {
+    "signal_aggregation_is_advisory_display_only": True,
+    "signal_aggregation_is_not_proof_of_resolution": True,
+    "signal_aggregation_does_not_assign_responsibility": True,
+    "signal_aggregation_creates_no_authority": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### 集計ディメンション
+
+| dimension | 説明 |
+|---|---|
+| `globe` | globe_id ごとに全 directive/member を横断集計 |
+| `directive` | directive_id ごとに全 member のシグナルを集計 |
+| `member` | member_id ごとに全 directive のシグナルを横断集計 |
+| `status` | resolution_status / event_type ごとに集計 |
+
+### 集計項目
+
+```python
+{
+    "agg_id": "agg-globe-globe-001",
+    "dimension": "globe",
+    "dimension_value": "globe-001",
+    "total_signal_count": 3,
+    "voluntary_resolution_signal_count": 1,
+    "unresolved_count": 0,
+    "contested_count": 1,
+    "partially_resolved_count": 1,
+    "resolved_count": 0,
+    "paused_count": 0,
+    "objection_count": 1,
+    "rollback_request_count": 0,
+    "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+    "latest_resolution_status": "partially_resolved",
+    "affected_directive_ids": ["directive-claim-proposal-002"],
+    "affected_member_ids": ["member-founding-member-003", "member-masuo-komori"],
+    "affected_globe_ids": ["globe-001"],
+    "advisory_only": True,
+    "not_proof_of_resolution": True,
+    "does_not_assign_responsibility": True,
+    "creates_no_authority": True,
+}
+```
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/cross_directive_signal_aggregation.py summary
+python3 globe/runtime/cross_directive_signal_aggregation.py save
+python3 globe/runtime/cross_directive_signal_aggregation.py show-globe globe-001
+python3 globe/runtime/cross_directive_signal_aggregation.py show-member member-masuo-komori
+python3 globe/runtime/cross_directive_signal_aggregation.py show-directive directive-claim-proposal-002
+python3 globe/runtime/cross_directive_signal_aggregation.py show-status unresolved
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/signals` | 全集計 (by_globe / by_directive / by_member / by_status) |
+| `/globe/signals?globe=globe-001` | globe でフィルタ |
+| `/globe/signals?member=member-masuo-komori` | member でフィルタ |
+| `/globe/signals?directive=directive-claim-proposal-002` | directive でフィルタ |
+| `/globe/signals?status=unresolved` | resolution_status でフィルタ |
+
+### プロトコル句
+
+- "Signal aggregation is advisory display only."
+- "Signal aggregation is not proof of resolution."
+- "Signal aggregation does not assign responsibility."
+- "Signal aggregation creates no authority."
+- "Human review is required before any real-world action."
+
+### 集計結果
+
+- total_signals: 4
+- by_globe: 2 records (globe-001: partially_resolved / globe-003: unresolved)
+- by_directive: 2 records
+- by_member: 3 records (masuo-komori × 2, founding-member-003 × 1, jammy-house-steward × 1)
+- by_status: 4 records (contested, objection, partially_resolved, unresolved)
+
+### 生成ファイル
+
+- `globe/runtime/cross_directive_signal_aggregation.py` — 集計構築・CLI
+- `globe/reports/cross_directive_signal_aggregation.json` — 生成済み JSON
+- `globe/reports/cross_directive_signal_aggregation.md` — 生成済み Markdown

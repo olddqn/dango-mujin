@@ -1,0 +1,352 @@
+{
+  "aggregation_id": "cross-directive-signal-aggregation-001",
+  "generated_at": "2026-06-01T11:58:23.660236+00:00",
+  "phase": "Phase 43",
+  "total_signals": 4,
+  "total_globes": 2,
+  "total_directives": 2,
+  "total_members_with_signals": 3,
+  "total_status_keys": 4,
+  "signal_aggregation_is_advisory_display_only": true,
+  "signal_aggregation_is_not_proof_of_resolution": true,
+  "signal_aggregation_does_not_assign_responsibility": true,
+  "signal_aggregation_creates_no_authority": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "advisory_phrases": [
+    "Signal aggregation is advisory display only.",
+    "Signal aggregation is not proof of resolution.",
+    "Signal aggregation does not assign responsibility.",
+    "Signal aggregation creates no authority.",
+    "Human review is required before any real-world action."
+  ],
+  "by_globe": [
+    {
+      "agg_id": "agg-globe-globe-001",
+      "dimension": "globe",
+      "dimension_value": "globe-001",
+      "total_signal_count": 3,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 0,
+      "contested_count": 1,
+      "partially_resolved_count": 1,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+      "latest_resolution_status": "partially_resolved",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-founding-member-003",
+        "member-masuo-komori"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-globe-globe-003",
+      "dimension": "globe",
+      "dimension_value": "globe-003",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 1,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:33.201255+00:00",
+      "latest_resolution_status": "unresolved",
+      "affected_globe_ids": [
+        "globe-003"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-005"
+      ],
+      "affected_member_ids": [
+        "member-jammy-house-steward"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    }
+  ],
+  "by_directive": [
+    {
+      "agg_id": "agg-directive-directive-claim-proposal-002",
+      "dimension": "directive",
+      "dimension_value": "directive-claim-proposal-002",
+      "total_signal_count": 3,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 0,
+      "contested_count": 1,
+      "partially_resolved_count": 1,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+      "latest_resolution_status": "partially_resolved",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-founding-member-003",
+        "member-masuo-komori"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-directive-directive-claim-proposal-005",
+      "dimension": "directive",
+      "dimension_value": "directive-claim-proposal-005",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 1,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:33.201255+00:00",
+      "latest_resolution_status": "unresolved",
+      "affected_globe_ids": [
+        "globe-003"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-005"
+      ],
+      "affected_member_ids": [
+        "member-jammy-house-steward"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    }
+  ],
+  "by_member": [
+    {
+      "agg_id": "agg-member-member-masuo-komori",
+      "dimension": "member",
+      "dimension_value": "member-masuo-komori",
+      "total_signal_count": 2,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 0,
+      "contested_count": 1,
+      "partially_resolved_count": 1,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+      "latest_resolution_status": "partially_resolved",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-masuo-komori"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-member-member-founding-member-003",
+      "dimension": "member",
+      "dimension_value": "member-founding-member-003",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 0,
+      "unresolved_count": 0,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-30T23:12:26.340959+00:00",
+      "latest_resolution_status": "",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-founding-member-003"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-member-member-jammy-house-steward",
+      "dimension": "member",
+      "dimension_value": "member-jammy-house-steward",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 1,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:33.201255+00:00",
+      "latest_resolution_status": "unresolved",
+      "affected_globe_ids": [
+        "globe-003"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-005"
+      ],
+      "affected_member_ids": [
+        "member-jammy-house-steward"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    }
+  ],
+  "by_status": [
+    {
+      "agg_id": "agg-status-contested",
+      "dimension": "status",
+      "dimension_value": "contested",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 0,
+      "unresolved_count": 0,
+      "contested_count": 1,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+      "latest_resolution_status": "contested",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-masuo-komori"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-status-objection",
+      "dimension": "status",
+      "dimension_value": "objection",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 0,
+      "unresolved_count": 0,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 1,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-30T23:12:26.340959+00:00",
+      "latest_resolution_status": "",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-founding-member-003"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-status-partially_resolved",
+      "dimension": "status",
+      "dimension_value": "partially_resolved",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 0,
+      "contested_count": 0,
+      "partially_resolved_count": 1,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:29.210356+00:00",
+      "latest_resolution_status": "partially_resolved",
+      "affected_globe_ids": [
+        "globe-001"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-002"
+      ],
+      "affected_member_ids": [
+        "member-masuo-komori"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    },
+    {
+      "agg_id": "agg-status-unresolved",
+      "dimension": "status",
+      "dimension_value": "unresolved",
+      "total_signal_count": 1,
+      "voluntary_resolution_signal_count": 1,
+      "unresolved_count": 1,
+      "contested_count": 0,
+      "partially_resolved_count": 0,
+      "resolved_count": 0,
+      "paused_count": 0,
+      "objection_count": 0,
+      "rollback_request_count": 0,
+      "latest_signal_at": "2026-05-31T04:27:33.201255+00:00",
+      "latest_resolution_status": "unresolved",
+      "affected_globe_ids": [
+        "globe-003"
+      ],
+      "affected_directive_ids": [
+        "directive-claim-proposal-005"
+      ],
+      "affected_member_ids": [
+        "member-jammy-house-steward"
+      ],
+      "advisory_only": true,
+      "not_proof_of_resolution": true,
+      "does_not_assign_responsibility": true,
+      "creates_no_authority": true
+    }
+  ]
+}
