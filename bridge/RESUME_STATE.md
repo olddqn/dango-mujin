@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Member × Directive Participation Map
+# RESUME_STATE.md — Globe Attention-Required Dashboard
 
-> **STATUS: IN PROGRESS (feature/phase-40-member-directive-map)**
+> **STATUS: IN PROGRESS (feature/phase-41-attention-dashboard)**
 
-**Phase:** Globe Member × Directive Participation Map (Phase 40)
-**Branch:** feature/phase-40-member-directive-map
+**Phase:** Globe Attention-Required Dashboard (Phase 41)
+**Branch:** feature/phase-41-attention-dashboard
 **Started:** 2026-06-01
 
 ---
@@ -60,7 +60,33 @@
 - Dependency Edge URL Enrichment (Phase 37b) — merged via PR #32
 - Globe Member Profile View (Phase 38) — PR #33
 - Globe Member Activity Heatmap (Phase 39) — PR #34
-- **Globe Member × Directive Participation Map (Phase 40)** ← current commit
+- Globe Member × Directive Participation Map (Phase 40) — PR #35
+- **Globe Attention-Required Dashboard (Phase 41)** ← current commit
+
+---
+
+## New Files (Phase 41)
+
+- `globe/runtime/attention_dashboard.py` — Attention dashboard builder + CLI (7 items, 7 attention types, advisory only)
+- `globe/reports/attention_dashboard.json` — Generated JSON (7 items)
+- `globe/reports/attention_dashboard.md` — Human-readable Markdown
+
+## Updated Files (Phase 41)
+
+- `globe/runtime/globe_server.py` — Added `_load_attention()`, `_render_attn_card()`, `render_attention_page()`, Phase 41 CSS; wired `/globe/attention` route with `?globe=`, `?directive=`, `?member=`, `?type=` query params; added "🚨 Attention →" to Globe list header; updated docstring to Phase 22–41
+- `globe/spec/GLOBE_SPEC.md` — Phase 41 section (7 attention types, HTTP routes, CLI, invariants, protocol phrases)
+- `README.md` — Phase 41 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 41)
+
+```
+Attention dashboard is advisory display only.
+Attention item is not priority score.
+Attention item creates no obligation.
+Attention item does not assign responsibility.
+Human review is required before any real-world action.
+```
 
 ---
 
