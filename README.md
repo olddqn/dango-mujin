@@ -608,6 +608,44 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 44 — Globe Governance Summary
+
+各 Globe の governance 状態 (proposals / directives / logs / attention / signals / members / dependencies)
+を横断集計する advisory ダッシュボード。格付け・ランキング・配分・権限付与ではない。
+
+**不変条件:**
+- Governance summary is advisory display only.
+- Governance summary is not governance score.
+- Governance summary does not rank globes.
+- Governance summary creates no authority.
+- Governance summary does not allocate resources.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/governance_summary.py summary
+python3 globe/runtime/governance_summary.py save
+python3 globe/runtime/governance_summary.py show-globe globe-001
+python3 globe/runtime/governance_summary.py show-section attention
+```
+
+**集計:** globe-001 (prop=2/1acc dir=1 log=6 attn=5 mem=8 dep=4) /
+globe-002 (prop=1 dir=0 log=0 attn=0 mem=1 dep=0) /
+globe-003 (prop=2/1acc dir=1 log=2 attn=2 mem=4 dep=4)
+
+**確認URL:**
+- http://localhost:7422/globe/governance
+- http://localhost:7422/globe/governance?globe=globe-001
+- http://localhost:7422/globe/governance?section=attention
+
+### 生成ファイル
+
+- `globe/runtime/governance_summary.py` — governance 集計・CLI (3 globes)
+- `globe/reports/governance_summary.json` — 生成済み JSON
+- `globe/reports/governance_summary.md` — 生成済み Markdown
+
+---
+
 ## Phase 43 — Cross-Directive Signal Aggregation
 
 resolution_status / objection / rollback / attention signal を

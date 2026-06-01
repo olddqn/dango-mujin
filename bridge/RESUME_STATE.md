@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Cross-Directive Signal Aggregation
+# RESUME_STATE.md — Globe Governance Summary
 
-> **STATUS: IN PROGRESS (feature/phase-43-signal-aggregation)**
+> **STATUS: IN PROGRESS (feature/phase-44-governance-summary)**
 
-**Phase:** Cross-Directive Signal Aggregation (Phase 43)
-**Branch:** feature/phase-43-signal-aggregation
+**Phase:** Globe Governance Summary (Phase 44)
+**Branch:** feature/phase-44-governance-summary
 **Started:** 2026-06-01
 
 ---
@@ -63,7 +63,34 @@
 - Globe Member × Directive Participation Map (Phase 40) — PR #35
 - Globe Attention-Required Dashboard (Phase 41) — PR #36
 - Globe Directive Resolution Timeline (Phase 42) — PR #37
-- **Cross-Directive Signal Aggregation (Phase 43)** ← current commit
+- Cross-Directive Signal Aggregation (Phase 43) — PR #38
+- **Globe Governance Summary (Phase 44)** ← current commit
+
+---
+
+## New Files (Phase 44)
+
+- `globe/runtime/governance_summary.py` — Governance summary builder + CLI (3 globes, 8 sections, advisory only)
+- `globe/reports/governance_summary.json` — Generated JSON (3 globes)
+- `globe/reports/governance_summary.md` — Human-readable Markdown
+
+## Updated Files (Phase 44)
+
+- `globe/runtime/globe_server.py` — Added `_load_gov()`, `_render_gov_card()`, `render_governance_page()`, Phase 44 CSS; wired `/globe/governance` route with `?globe=`, `?section=` query params; added "🏛 Governance →" to Globe list header; updated docstring to Phase 22–44
+- `globe/spec/GLOBE_SPEC.md` — Phase 44 section (8 sections, HTTP routes, CLI, invariants, protocol phrases)
+- `README.md` — Phase 44 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 44)
+
+```
+Governance summary is advisory display only.
+Governance summary is not governance score.
+Governance summary does not rank globes.
+Governance summary creates no authority.
+Governance summary does not allocate resources.
+Human review is required before any real-world action.
+```
 
 ---
 

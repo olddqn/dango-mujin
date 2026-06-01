@@ -2157,3 +2157,89 @@ python3 globe/runtime/cross_directive_signal_aggregation.py show-status unresolv
 - `globe/runtime/cross_directive_signal_aggregation.py` — 集計構築・CLI
 - `globe/reports/cross_directive_signal_aggregation.json` — 生成済み JSON
 - `globe/reports/cross_directive_signal_aggregation.md` — 生成済み Markdown
+
+## Phase 44 — Globe Governance Summary（フェーズ44）
+
+フェーズ44では、各 Globe の governance 状態を
+proposals / claims / directives / logs / attention / signals / members / dependencies
+の観点から横断集計する **Globe Governance Summary** を追加しました。
+これは governance の観察補助であり、格付け・ランキング・配分・権限付与ではありません。
+
+### 不変条件
+
+```python
+GOV_INVARIANTS = {
+    "governance_summary_is_advisory_display_only": True,
+    "governance_summary_is_not_governance_score": True,
+    "governance_summary_does_not_rank_globes": True,
+    "governance_summary_creates_no_authority": True,
+    "governance_summary_does_not_allocate_resources": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### 集計項目（Globe ごと）
+
+| 項目 | 説明 |
+|---|---|
+| `proposal_count` | Globe 内の提案数 |
+| `accepted_proposal_count` | 採択済み提案数 |
+| `claim_count` | Claim 変換済み数 |
+| `directive_count` | Directive 変換済み数 |
+| `execution_log_count` | 実行ログ総エントリ数 |
+| `human_approval_count` | 人間承認記録数 |
+| `observation_count` | 観察記録数 |
+| `objection_count` | 異議記録数 |
+| `rollback_request_count` | ロールバック要求数 |
+| `voluntary_resolution_signal_count` | 自発的解決シグナル数 |
+| `unresolved_signal_count` | 未解決シグナル数 |
+| `contested_signal_count` | contested シグナル数 |
+| `attention_item_count` | attention dashboard 掲載数 |
+| `member_count` | 観察メンバー数 |
+| `dependency_edge_count` | directive 依存関係エッジ数 |
+| `governance_observation_notes` | advisory 観察メモ |
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/governance_summary.py summary
+python3 globe/runtime/governance_summary.py save
+python3 globe/runtime/governance_summary.py show-globe globe-001
+python3 globe/runtime/governance_summary.py show-section attention
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/governance` | 全 Globe governance summary |
+| `/globe/governance?globe=globe-001` | globe でフィルタ |
+| `/globe/governance?section=attention` | section でフィルタ |
+
+### セクション一覧
+
+`proposals` / `directives` / `logs` / `attention` / `signals` / `members` / `dependencies`
+
+### プロトコル句
+
+- "Governance summary is advisory display only."
+- "Governance summary is not governance score."
+- "Governance summary does not rank globes."
+- "Governance summary creates no authority."
+- "Governance summary does not allocate resources."
+- "Human review is required before any real-world action."
+
+### 集計結果
+
+| globe_id | proposals | directives | logs | attention | members | dep_edges |
+|---|---|---|---|---|---|---|
+| globe-001 | 2 (1 accepted) | 1 | 6 | 5 | 8 | 4 |
+| globe-002 | 1 (0 accepted) | 0 | 0 | 0 | 1 | 0 |
+| globe-003 | 2 (1 accepted) | 1 | 2 | 2 | 4 | 4 |
+
+### 生成ファイル
+
+- `globe/runtime/governance_summary.py` — governance 集計・CLI
+- `globe/reports/governance_summary.json` — 生成済み JSON (3 globes)
+- `globe/reports/governance_summary.md` — 生成済み Markdown

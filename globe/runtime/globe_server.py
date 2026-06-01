@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–43)
+globe_server.py — Globe UI Server (Phase 22–44)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -62,6 +62,9 @@ Routes:
     /globe/signals?member=<member_id>            → filtered by member                 [Phase 43]
     /globe/signals?directive=<directive_id>      → filtered by directive              [Phase 43]
     /globe/signals?status=<status>               → filtered by status                 [Phase 43]
+    /globe/governance                            → Globe Governance Summary           [Phase 44]
+    /globe/governance?globe=<globe_id>           → filtered by globe                  [Phase 44]
+    /globe/governance?section=<section>          → filtered by section                [Phase 44]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1287,6 +1290,37 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .sig-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 .sig-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
                 font-size: 0.72rem; color: #2a3850; }
+
+/* Phase 44 — Globe Governance Summary */
+.gov-panel { background: #08080e; border: 1px solid #121624;
+             border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.gov-panel h3 { font-size: 0.88rem; color: #385080; margin-bottom: 14px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.gov-card { border: 1px solid #121a2c; border-radius: 6px;
+            padding: 12px 16px; margin-bottom: 12px; background: #09090f; }
+.gov-card-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.gov-globe-id { font-family: monospace; font-size: 0.80rem; color: #2060a0; }
+.gov-globe-name { font-size: 0.84rem; color: #5880c0; }
+.gov-counts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                   gap: 5px 10px; margin: 8px 0; }
+.gov-count-cell { font-size: 0.68rem; color: #2a3850; }
+.gov-count-cell .gov-label { color: #243040; }
+.gov-count-cell .gov-val { color: #4a6090; font-weight: 600; }
+.gov-count-cell .gov-val.attn { color: #b06020; }
+.gov-count-cell .gov-val.zero { color: #1e2838; }
+.gov-notes { margin-top: 8px; font-size: 0.68rem; color: #3a4a60; line-height: 1.8; }
+.gov-notes li { list-style: none; padding-left: 0; }
+.gov-notes li::before { content: "· "; color: #2a3850; }
+.gov-lat { font-size: 0.64rem; color: #243040; margin-top: 4px; }
+.gov-section-filter { margin-bottom: 12px; font-size: 0.78rem; }
+.gov-section-filter a { color: #3a5070; margin-right: 8px; }
+.gov-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.gov-filters a { color: #3a5070; margin-right: 8px; }
+.gov-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1824; padding-top: 8px; }
+.gov-total-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                 font-size: 0.72rem; color: #2a3850; }
+.gov-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3678,7 +3712,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a>'
         f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a>'
         f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a>'
-        f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a></h2>'
+        f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a>'
+        f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -5164,6 +5199,190 @@ def render_signals_page(
     )
 
 
+# ─── Phase 44: Globe Governance Summary ──────────────────────────────────────────
+
+_GOV_JSON_PATH = _REPORTS_DIR / "governance_summary.json"
+
+_GOV_SECTIONS: list[str] = [
+    "proposals", "directives", "logs", "attention", "signals", "members", "dependencies",
+]
+
+# Section → (label, fields_with_attn_flag)
+_GOV_SECTION_DEFS: dict[str, list[tuple[str, str, bool]]] = {
+    "proposals":    [("proposals", "proposal_count", False),
+                     ("accepted", "accepted_proposal_count", False),
+                     ("claims", "claim_count", False)],
+    "directives":   [("directives", "directive_count", False)],
+    "logs":         [("logs", "execution_log_count", False),
+                     ("approvals", "human_approval_count", False),
+                     ("obs", "observation_count", False),
+                     ("objections", "objection_count", True),
+                     ("rollbacks", "rollback_request_count", True),
+                     ("vrs", "voluntary_resolution_signal_count", False)],
+    "attention":    [("attention", "attention_item_count", True),
+                     ("unresolved", "unresolved_signal_count", True),
+                     ("contested", "contested_signal_count", True),
+                     ("objections", "objection_count", True)],
+    "signals":      [("vrs", "voluntary_resolution_signal_count", False),
+                     ("unresolved", "unresolved_signal_count", True),
+                     ("contested", "contested_signal_count", True),
+                     ("rollbacks", "rollback_request_count", True)],
+    "members":      [("members", "member_count", False)],
+    "dependencies": [("dep_edges", "dependency_edge_count", False)],
+}
+
+
+def _load_gov() -> dict:
+    """Phase 44 — load governance_summary.json or build on-the-fly via importlib."""
+    if _GOV_JSON_PATH.exists():
+        try:
+            return json.loads(_GOV_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "governance_summary",
+        _GLOBE_DIR / "runtime" / "governance_summary.py",
+    )
+    _mod = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    return _mod.build_summary()
+
+
+def _gov_val(n: int, attn: bool = False) -> str:
+    if n == 0:
+        return f'<span class="gov-val zero">0</span>'
+    cls = "gov-val attn" if attn else "gov-val"
+    return f'<span class="{cls}">{n}</span>'
+
+
+def _render_gov_card(g: dict, section: str | None = None) -> str:
+    """Phase 44 — render one Globe governance card."""
+    gid = _e(g.get("globe_id", ""))
+    gname = _e(g.get("globe_name", ""))
+    lat = (g.get("latest_activity_at") or "")[:19]
+
+    # Select which fields to show
+    if section and section in _GOV_SECTION_DEFS:
+        field_defs = _GOV_SECTION_DEFS[section]
+    else:
+        # Show all sections
+        field_defs = []
+        for defs in _GOV_SECTION_DEFS.values():
+            field_defs.extend(defs)
+
+    cells = ""
+    for label, field, is_attn in field_defs:
+        val = g.get(field, 0)
+        cells += (
+            f'<div class="gov-count-cell">'
+            f'<span class="gov-label">{label}: </span>'
+            + _gov_val(val, is_attn and val > 0)
+            + f'</div>'
+        )
+
+    notes_html = ""
+    notes = g.get("governance_observation_notes", [])
+    if notes:
+        notes_html = (
+            '<ul class="gov-notes">'
+            + "".join(f'<li>{_e(n)}</li>' for n in notes)
+            + '</ul>'
+        )
+
+    return (
+        f'<div class="gov-card">'
+        f'<div class="gov-card-header">'
+        f'<a href="/globe/{gid}" class="gov-globe-id">{gid}</a>'
+        f'<span class="gov-globe-name">{gname}</span>'
+        f'</div>'
+        f'<div class="gov-counts-grid">{cells}</div>'
+        + notes_html
+        + (f'<div class="gov-lat">latest activity: {lat}</div>' if lat else "")
+        + f'</div>'
+    )
+
+
+def render_governance_page(
+    globe_filter: str | None = None,
+    section_filter: str | None = None,
+) -> str:
+    """Phase 44 — Globe Governance Summary page."""
+    data = _load_gov()
+    globes: list[dict] = data.get("globes", [])
+
+    if globe_filter:
+        globes = [g for g in globes if g.get("globe_id") == globe_filter]
+
+    # Section filter links
+    section_links = " | ".join(
+        f'<a href="/globe/governance?section={s}">{s}</a>'
+        for s in _GOV_SECTIONS
+    )
+    section_html = (
+        f'<div class="gov-section-filter">'
+        f'<a href="/globe/governance">全て</a> | '
+        + section_links
+        + f'</div>'
+    )
+
+    # Total row
+    total_html = (
+        f'<div class="gov-total-row">'
+        f'<span>globes: {data.get("total_globes",0)}</span>'
+        f'<span>proposals: {data.get("total_proposals",0)}</span>'
+        f'<span>directives: {data.get("total_directives",0)}</span>'
+        f'<span>logs: {data.get("total_execution_log_entries",0)}</span>'
+        f'<span>attention: {data.get("total_attention_items",0)}</span>'
+        f'<span>members: {data.get("total_members_observed",0)}</span>'
+        f'<span>dep_edges: {data.get("total_dependency_edges",0)}</span>'
+        f'</div>'
+    )
+
+    cards = "".join(_render_gov_card(g, section_filter) for g in globes)
+    if not cards:
+        cards = '<div class="gov-empty">Globe なし</div>'
+
+    parts = []
+    if globe_filter:   parts.append(f"globe={globe_filter}")
+    if section_filter: parts.append(f"section={section_filter}")
+    scope_label = " · ".join(parts) if parts else "全て"
+
+    advisory_phrases = data.get("advisory_phrases", [
+        "Governance summary is advisory display only.",
+        "Governance summary is not governance score.",
+        "Governance summary does not rank globes.",
+        "Governance summary creates no authority.",
+        "Governance summary does not allocate resources.",
+        "Human review is required before any real-world action.",
+    ])
+    advisory_html = (
+        f'<div class="gov-advisory">'
+        + " ".join(f'"{_e(p)}"' for p in advisory_phrases)
+        + f'</div>'
+    )
+
+    body = (
+        f'<div class="gov-panel">'
+        f'<h3>🏛 Governance Summary'
+        f'&nbsp;<small style="font-size:0.65em;color:#2a3860">(Phase 44 · {_e(scope_label)})</small></h3>'
+        + section_html
+        + total_html
+        + cards
+        + advisory_html
+        + f'</div>'
+    )
+
+    return _page(
+        "Governance Summary",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/governance">Governance</a>',
+        f'<h2>🏛 Globe Governance Summary'
+        f'&nbsp;<small style="font-size:0.7em;color:#2a3860">({len(globes)} globes)</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -5201,6 +5420,14 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 44 — Globe Governance Summary (before /globe/<id> match)
+        if path == "/globe/governance":
+            self._send_html(render_governance_page(
+                globe_filter=_qs("globe"),
+                section_filter=_qs("section"),
+            ))
             return
 
         # Phase 43 — Cross-Directive Signal Aggregation (before /globe/<id> match)
