@@ -608,6 +608,43 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 45 — Protocol Phrase Ledger
+
+Phase 10〜44 で蓄積されたすべてのプロトコル句を横断収集・正規化・重複排除した advisory 台帳。
+法的根拠・強制・人間判断の上書きではない。
+
+**不変条件:**
+- Protocol phrase ledger is advisory display only.
+- Protocol phrase ledger creates no legal authority.
+- Protocol phrase ledger is not enforcement.
+- Protocol phrase ledger does not override human judgment.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/protocol_phrase_ledger.py summary
+python3 globe/runtime/protocol_phrase_ledger.py save
+python3 globe/runtime/protocol_phrase_ledger.py show-phase 44
+python3 globe/runtime/protocol_phrase_ledger.py show-type no_authority
+python3 globe/runtime/protocol_phrase_ledger.py search ranking
+```
+
+**集計:** total_phrases=138, total_raw_occurrences=170, 対応 phase=10〜45（37b/27b 含む）
+
+**確認URL:**
+- http://localhost:7422/globe/protocol-phrases
+- http://localhost:7422/globe/protocol-phrases?phase=44
+- http://localhost:7422/globe/protocol-phrases?type=no_authority
+- http://localhost:7422/globe/protocol-phrases?q=ranking
+
+### 生成ファイル
+
+- `globe/runtime/protocol_phrase_ledger.py` — フレーズ収集・正規化・CLI (138 phrases)
+- `globe/reports/protocol_phrase_ledger.json` — 生成済み JSON
+- `globe/reports/protocol_phrase_ledger.md` — 生成済み Markdown
+
+---
+
 ## Phase 44 — Globe Governance Summary
 
 各 Globe の governance 状態 (proposals / directives / logs / attention / signals / members / dependencies)

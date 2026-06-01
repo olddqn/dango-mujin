@@ -1,0 +1,2159 @@
+{
+  "ledger_id": "protocol-phrase-ledger-001",
+  "generated_at": "2026-06-01T12:17:51.300720+00:00",
+  "phase": "Phase 45",
+  "total_phrases": 138,
+  "total_unique_normalized": 138,
+  "total_raw_occurrences": 170,
+  "by_phrase_type": {
+    "advisory": 20,
+    "no_authority": 11,
+    "no_ranking": 20,
+    "no_allocation": 10,
+    "no_proof": 35,
+    "human_review": 2,
+    "no_responsibility_assignment": 5,
+    "append_only": 1,
+    "other": 34
+  },
+  "by_phase_first_seen": {
+    "10": 2,
+    "11": 2,
+    "12": 2,
+    "13": 2,
+    "14": 2,
+    "15": 2,
+    "16": 3,
+    "17": 3,
+    "18": 3,
+    "19": 3,
+    "20": 3,
+    "21": 3,
+    "22": 3,
+    "23": 3,
+    "24": 5,
+    "25": 4,
+    "26": 5,
+    "27": 5,
+    "27b": 4,
+    "28": 5,
+    "29": 5,
+    "30": 4,
+    "31": 4,
+    "32": 4,
+    "33": 4,
+    "34": 4,
+    "35": 4,
+    "36": 5,
+    "37": 4,
+    "37b": 4,
+    "38": 5,
+    "39": 5,
+    "40": 5,
+    "41": 4,
+    "42": 4,
+    "43": 4,
+    "44": 5
+  },
+  "protocol_phrase_ledger_is_advisory_display_only": true,
+  "protocol_phrase_ledger_creates_no_legal_authority": true,
+  "protocol_phrase_ledger_is_not_enforcement": true,
+  "protocol_phrase_ledger_does_not_override_human_judgment": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "advisory_phrases": [
+    "Protocol phrase ledger is advisory display only.",
+    "Protocol phrase ledger creates no legal authority.",
+    "Protocol phrase ledger is not enforcement.",
+    "Protocol phrase ledger does not override human judgment.",
+    "Human review is required before any real-world action."
+  ],
+  "entries": [
+    {
+      "phrase_id": "phrase-0001",
+      "phase": "10",
+      "all_phases": [
+        "10"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 469",
+      "phrase_text": "Dan-Go observes treasury context; it does not operate the treasury.",
+      "phrase_type": "other",
+      "normalized_phrase": "dan-go observes treasury context it does not operate the treasury",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0002",
+      "phase": "10",
+      "all_phases": [
+        "10"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 468",
+      "phrase_text": "Signal is not reward.",
+      "phrase_type": "other",
+      "normalized_phrase": "signal is not reward",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0003",
+      "phase": "11",
+      "all_phases": [
+        "11"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 470",
+      "phrase_text": "Contribution history is not credit.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "contribution history is not credit",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0004",
+      "phase": "11",
+      "all_phases": [
+        "11"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 471",
+      "phrase_text": "Dan-Go records contribution candidates; external systems may issue credit.",
+      "phrase_type": "other",
+      "normalized_phrase": "dan-go records contribution candidates external systems may issue credit",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0005",
+      "phase": "12",
+      "all_phases": [
+        "12"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 473",
+      "phrase_text": "Candidate credit is not external credit.",
+      "phrase_type": "other",
+      "normalized_phrase": "candidate credit is not external credit",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0006",
+      "phase": "12",
+      "all_phases": [
+        "12"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 472",
+      "phrase_text": "Observation is not issuance.",
+      "phrase_type": "other",
+      "normalized_phrase": "observation is not issuance",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0007",
+      "phase": "13",
+      "all_phases": [
+        "13"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 475",
+      "phrase_text": "Reflection is not judgment.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "reflection is not judgment",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0008",
+      "phase": "13",
+      "all_phases": [
+        "13"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 474",
+      "phrase_text": "Unrecognized contribution is still observable.",
+      "phrase_type": "other",
+      "normalized_phrase": "unrecognized contribution is still observable",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0009",
+      "phase": "14",
+      "all_phases": [
+        "14"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 476",
+      "phrase_text": "Appeal is not enforcement.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "appeal is not enforcement",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0010",
+      "phase": "14",
+      "all_phases": [
+        "14"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 477",
+      "phrase_text": "Recognition remains external.",
+      "phrase_type": "other",
+      "normalized_phrase": "recognition remains external",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0011",
+      "phase": "15",
+      "all_phases": [
+        "15"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 479",
+      "phrase_text": "Ledger is not judgment.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "ledger is not judgment",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0012",
+      "phase": "15",
+      "all_phases": [
+        "15"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 478",
+      "phrase_text": "Recognition history is not authority.",
+      "phrase_type": "other",
+      "normalized_phrase": "recognition history is not authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0013",
+      "phase": "16",
+      "all_phases": [
+        "16"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 481",
+      "phrase_text": "Commons is not ownership.",
+      "phrase_type": "other",
+      "normalized_phrase": "commons is not ownership",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0014",
+      "phase": "16",
+      "all_phases": [
+        "16"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 480",
+      "phrase_text": "Community is not authority.",
+      "phrase_type": "other",
+      "normalized_phrase": "community is not authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0015",
+      "phase": "16",
+      "all_phases": [
+        "16"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 482",
+      "phrase_text": "Participation is not control.",
+      "phrase_type": "other",
+      "normalized_phrase": "participation is not control",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0016",
+      "phase": "17",
+      "all_phases": [
+        "17"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 484",
+      "phrase_text": "Help is not command.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "help is not command",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0017",
+      "phase": "17",
+      "all_phases": [
+        "17"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 483",
+      "phrase_text": "Need is not debt.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "need is not debt",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0018",
+      "phase": "17",
+      "all_phases": [
+        "17"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 485",
+      "phrase_text": "Routing is not allocation.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "routing is not allocation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0019",
+      "phase": "18",
+      "all_phases": [
+        "18"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 488",
+      "phrase_text": "Care memory is not control.",
+      "phrase_type": "other",
+      "normalized_phrase": "care memory is not control",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0020",
+      "phase": "18",
+      "all_phases": [
+        "18"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 487",
+      "phrase_text": "Outcome is not judgment.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "outcome is not judgment",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0021",
+      "phase": "18",
+      "all_phases": [
+        "18"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 486",
+      "phrase_text": "Relief is not proof.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "relief is not proof",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0022",
+      "phase": "19",
+      "all_phases": [
+        "19"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 491",
+      "phrase_text": "Care loop is not obligation.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "care loop is not obligation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0023",
+      "phase": "19",
+      "all_phases": [
+        "19"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 490",
+      "phrase_text": "Follow-up is not blame.",
+      "phrase_type": "other",
+      "normalized_phrase": "follow-up is not blame",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0024",
+      "phase": "19",
+      "all_phases": [
+        "19"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 489",
+      "phrase_text": "Reopen is not failure.",
+      "phrase_type": "other",
+      "normalized_phrase": "reopen is not failure",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0025",
+      "phase": "20",
+      "all_phases": [
+        "20"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 493",
+      "phrase_text": "Learning is not prescription.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "learning is not prescription",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0026",
+      "phase": "20",
+      "all_phases": [
+        "20"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 492",
+      "phrase_text": "Pattern is not prediction.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "pattern is not prediction",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0027",
+      "phase": "20",
+      "all_phases": [
+        "20"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 494",
+      "phrase_text": "Recurrence is not ranking.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "recurrence is not ranking",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0028",
+      "phase": "21",
+      "all_phases": [
+        "21"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 495",
+      "phrase_text": "Forecast is not certainty.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "forecast is not certainty",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0029",
+      "phase": "21",
+      "all_phases": [
+        "21"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 497",
+      "phrase_text": "Hint is not allocation.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "hint is not allocation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0030",
+      "phase": "21",
+      "all_phases": [
+        "21"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 496",
+      "phrase_text": "Preparedness is not command.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "preparedness is not command",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0031",
+      "phase": "22",
+      "all_phases": [
+        "22"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 499",
+      "phrase_text": "Deliberation is not majority rule.",
+      "phrase_type": "other",
+      "normalized_phrase": "deliberation is not majority rule",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0032",
+      "phase": "22",
+      "all_phases": [
+        "22"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 498",
+      "phrase_text": "Globe is not state.",
+      "phrase_type": "other",
+      "normalized_phrase": "globe is not state",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0033",
+      "phase": "22",
+      "all_phases": [
+        "22"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 500",
+      "phrase_text": "Membership is not obligation.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "membership is not obligation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0034",
+      "phase": "23",
+      "all_phases": [
+        "23"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 502",
+      "phrase_text": "Claim is not command.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "claim is not command",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0035",
+      "phase": "23",
+      "all_phases": [
+        "23"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 503",
+      "phrase_text": "Conversion is not allocation.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "conversion is not allocation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0036",
+      "phase": "23",
+      "all_phases": [
+        "23"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 501",
+      "phrase_text": "Proposal is not execution.",
+      "phrase_type": "other",
+      "normalized_phrase": "proposal is not execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0037",
+      "phase": "24",
+      "all_phases": [
+        "24"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 504",
+      "phrase_text": "Claim is not execution.",
+      "phrase_type": "other",
+      "normalized_phrase": "claim is not execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0038",
+      "phase": "24",
+      "all_phases": [
+        "24"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 506",
+      "phrase_text": "Directive creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "directive creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0039",
+      "phase": "24",
+      "all_phases": [
+        "24"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 505",
+      "phrase_text": "Directive is not coercion.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "directive is not coercion",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0040",
+      "phase": "24",
+      "all_phases": [
+        "24"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 507",
+      "phrase_text": "Directive only describes a proposed executable path.",
+      "phrase_type": "other",
+      "normalized_phrase": "directive only describes a proposed executable path",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0041",
+      "phase": "24",
+      "all_phases": [
+        "24"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 508",
+      "phrase_text": "Human approval is required before real-world execution.",
+      "phrase_type": "human_review",
+      "normalized_phrase": "human approval is required before real-world execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0042",
+      "phase": "25",
+      "all_phases": [
+        "25"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 512",
+      "phrase_text": "Append-only: existing entries must never be rewritten.",
+      "phrase_type": "append_only",
+      "normalized_phrase": "append-only existing entries must never be rewritten",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0043",
+      "phase": "25",
+      "all_phases": [
+        "25"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 509",
+      "phrase_text": "Execution Log is not proof of execution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "execution log is not proof of execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0044",
+      "phase": "25",
+      "all_phases": [
+        "25"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 510",
+      "phrase_text": "Log entry is not legal authority.",
+      "phrase_type": "other",
+      "normalized_phrase": "log entry is not legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0045",
+      "phase": "25",
+      "all_phases": [
+        "25"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 511",
+      "phrase_text": "Objection and rollback request must always be recordable.",
+      "phrase_type": "other",
+      "normalized_phrase": "objection and rollback request must always be recordable",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0046",
+      "phase": "26",
+      "all_phases": [
+        "26"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 515",
+      "phrase_text": "Summary creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "summary creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0047",
+      "phase": "26",
+      "all_phases": [
+        "26"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 516",
+      "phrase_text": "Summary does not rank or punish participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "summary does not rank or punish participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0048",
+      "phase": "26",
+      "all_phases": [
+        "26"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 513",
+      "phrase_text": "Summary is advisory only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "summary is advisory only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0049",
+      "phase": "26",
+      "all_phases": [
+        "26"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 514",
+      "phrase_text": "Summary is not proof of execution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "summary is not proof of execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0050",
+      "phase": "26",
+      "all_phases": [
+        "26"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 517",
+      "phrase_text": "Summary must preserve objections and rollback requests.",
+      "phrase_type": "other",
+      "normalized_phrase": "summary must preserve objections and rollback requests",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0051",
+      "phase": "27",
+      "all_phases": [
+        "27"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 520",
+      "phrase_text": "Feedback bridge creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "feedback bridge creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0052",
+      "phase": "27",
+      "all_phases": [
+        "27"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 521",
+      "phrase_text": "Feedback bridge does not reopen a case automatically.",
+      "phrase_type": "other",
+      "normalized_phrase": "feedback bridge does not reopen a case automatically",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0053",
+      "phase": "27",
+      "all_phases": [
+        "27"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 519",
+      "phrase_text": "Feedback bridge is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "feedback bridge is not proof of resolution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0054",
+      "phase": "27",
+      "all_phases": [
+        "27",
+        "27b",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 522",
+      "phrase_text": "Human review is required before any real-world action.",
+      "phrase_type": "human_review",
+      "normalized_phrase": "human review is required before any real-world action",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0055",
+      "phase": "27",
+      "all_phases": [
+        "27"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 518",
+      "phrase_text": "Reality feedback is advisory only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "reality feedback is advisory only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0056",
+      "phase": "27b",
+      "all_phases": [
+        "27b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 523",
+      "phrase_text": "Bridge target link is advisory only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "bridge target link is advisory only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0057",
+      "phase": "27b",
+      "all_phases": [
+        "27b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 525",
+      "phrase_text": "Link candidate creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "link candidate creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0058",
+      "phase": "27b",
+      "all_phases": [
+        "27b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 526",
+      "phrase_text": "Link candidate does not reopen a case automatically.",
+      "phrase_type": "other",
+      "normalized_phrase": "link candidate does not reopen a case automatically",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0059",
+      "phase": "27b",
+      "all_phases": [
+        "27b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 524",
+      "phrase_text": "Link candidate is not proof of case relation.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "link candidate is not proof of case relation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0060",
+      "phase": "28",
+      "all_phases": [
+        "28"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 530",
+      "phrase_text": "UI display creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "ui display creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0061",
+      "phase": "28",
+      "all_phases": [
+        "28"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 531",
+      "phrase_text": "UI display does not approve execution.",
+      "phrase_type": "other",
+      "normalized_phrase": "ui display does not approve execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0062",
+      "phase": "28",
+      "all_phases": [
+        "28"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 528",
+      "phrase_text": "UI display is advisory only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "ui display is advisory only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0063",
+      "phase": "28",
+      "all_phases": [
+        "28"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 529",
+      "phrase_text": "UI display is not proof of execution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "ui display is not proof of execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0064",
+      "phase": "28",
+      "all_phases": [
+        "28"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 532",
+      "phrase_text": "UI display must preserve objections and rollback requests.",
+      "phrase_type": "other",
+      "normalized_phrase": "ui display must preserve objections and rollback requests",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0065",
+      "phase": "29",
+      "all_phases": [
+        "29"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 537",
+      "phrase_text": "Contested status must always remain recordable.",
+      "phrase_type": "other",
+      "normalized_phrase": "contested status must always remain recordable",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0066",
+      "phase": "29",
+      "all_phases": [
+        "29"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 536",
+      "phrase_text": "Resolution signal creates no legal authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "resolution signal creates no legal authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0067",
+      "phase": "29",
+      "all_phases": [
+        "29"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 535",
+      "phrase_text": "Resolution signal does not close support automatically.",
+      "phrase_type": "other",
+      "normalized_phrase": "resolution signal does not close support automatically",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0068",
+      "phase": "29",
+      "all_phases": [
+        "29"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 534",
+      "phrase_text": "Resolution signal is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "resolution signal is not proof of resolution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0069",
+      "phase": "29",
+      "all_phases": [
+        "29"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 533",
+      "phrase_text": "Resolution signal is self-reported only.",
+      "phrase_type": "other",
+      "normalized_phrase": "resolution signal is self-reported only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0070",
+      "phase": "30",
+      "all_phases": [
+        "30"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 541",
+      "phrase_text": "Cross-phase summary does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "cross-phase summary does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0071",
+      "phase": "30",
+      "all_phases": [
+        "30"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 540",
+      "phrase_text": "Cross-phase summary does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "cross-phase summary does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0072",
+      "phase": "30",
+      "all_phases": [
+        "30"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 538",
+      "phrase_text": "Cross-phase summary is advisory only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "cross-phase summary is advisory only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0073",
+      "phase": "30",
+      "all_phases": [
+        "30"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 539",
+      "phrase_text": "Cross-phase summary is not proof of impact.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "cross-phase summary is not proof of impact",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0074",
+      "phase": "31",
+      "all_phases": [
+        "31"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 543",
+      "phrase_text": "Search is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "search is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0075",
+      "phase": "31",
+      "all_phases": [
+        "31"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 546",
+      "phrase_text": "Search result does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "search result does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0076",
+      "phase": "31",
+      "all_phases": [
+        "31"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 545",
+      "phrase_text": "Search result does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "search result does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0077",
+      "phase": "31",
+      "all_phases": [
+        "31"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 544",
+      "phrase_text": "Search result is not proof of relevance.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "search result is not proof of relevance",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0078",
+      "phase": "32",
+      "all_phases": [
+        "32"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 551",
+      "phrase_text": "Timeline does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "timeline does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0079",
+      "phase": "32",
+      "all_phases": [
+        "32"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 550",
+      "phrase_text": "Timeline does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "timeline does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0080",
+      "phase": "32",
+      "all_phases": [
+        "32"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 548",
+      "phrase_text": "Timeline is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "timeline is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0081",
+      "phase": "32",
+      "all_phases": [
+        "32"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 549",
+      "phrase_text": "Timeline is not proof of impact.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "timeline is not proof of impact",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0082",
+      "phase": "33",
+      "all_phases": [
+        "33"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 556",
+      "phrase_text": "Comparison does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "comparison does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0083",
+      "phase": "33",
+      "all_phases": [
+        "33"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 555",
+      "phrase_text": "Comparison does not score proposals.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "comparison does not score proposals",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0084",
+      "phase": "33",
+      "all_phases": [
+        "33"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 553",
+      "phrase_text": "Comparison is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "comparison is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0085",
+      "phase": "33",
+      "all_phases": [
+        "33"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 554",
+      "phrase_text": "Comparison is not ranking.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "comparison is not ranking",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0086",
+      "phase": "34",
+      "all_phases": [
+        "34"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 561",
+      "phrase_text": "Heatmap does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "heatmap does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0087",
+      "phase": "34",
+      "all_phases": [
+        "34"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 560",
+      "phrase_text": "Heatmap does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "heatmap does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0088",
+      "phase": "34",
+      "all_phases": [
+        "34"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 558",
+      "phrase_text": "Heatmap is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "heatmap is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0089",
+      "phase": "34",
+      "all_phases": [
+        "34"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 559",
+      "phrase_text": "Heatmap is not proof of impact.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "heatmap is not proof of impact",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0090",
+      "phase": "35",
+      "all_phases": [
+        "35"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 566",
+      "phrase_text": "Checklist does not approve execution.",
+      "phrase_type": "other",
+      "normalized_phrase": "checklist does not approve execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0091",
+      "phase": "35",
+      "all_phases": [
+        "35"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 563",
+      "phrase_text": "Checklist is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "checklist is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0092",
+      "phase": "35",
+      "all_phases": [
+        "35"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 565",
+      "phrase_text": "Checklist is not proof of completion.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "checklist is not proof of completion",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0093",
+      "phase": "35",
+      "all_phases": [
+        "35"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 564",
+      "phrase_text": "Checklist is not proof of execution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "checklist is not proof of execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0094",
+      "phase": "36",
+      "all_phases": [
+        "36"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 572",
+      "phrase_text": "Feed does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "feed does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0095",
+      "phase": "36",
+      "all_phases": [
+        "36"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 571",
+      "phrase_text": "Feed does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "feed does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0096",
+      "phase": "36",
+      "all_phases": [
+        "36"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 568",
+      "phrase_text": "Feed is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "feed is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0097",
+      "phase": "36",
+      "all_phases": [
+        "36"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 569",
+      "phrase_text": "Feed is not proof of execution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "feed is not proof of execution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0098",
+      "phase": "36",
+      "all_phases": [
+        "36"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 570",
+      "phrase_text": "Feed is not proof of impact.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "feed is not proof of impact",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0099",
+      "phase": "37",
+      "all_phases": [
+        "37"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 577",
+      "phrase_text": "Dependency does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "normalized_phrase": "dependency does not allocate responsibility",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0100",
+      "phase": "37",
+      "all_phases": [
+        "37"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 576",
+      "phrase_text": "Dependency does not rank directives.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "dependency does not rank directives",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0101",
+      "phase": "37",
+      "all_phases": [
+        "37"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 575",
+      "phrase_text": "Dependency is not execution order.",
+      "phrase_type": "other",
+      "normalized_phrase": "dependency is not execution order",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0102",
+      "phase": "37",
+      "all_phases": [
+        "37"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 574",
+      "phrase_text": "Dependency map is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "dependency map is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0103",
+      "phase": "37b",
+      "all_phases": [
+        "37b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 582",
+      "phrase_text": "URL enrichment does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "normalized_phrase": "url enrichment does not allocate responsibility",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0104",
+      "phase": "37b",
+      "all_phases": [
+        "37b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 581",
+      "phrase_text": "URL enrichment does not rank directives.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "url enrichment does not rank directives",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0105",
+      "phase": "37b",
+      "all_phases": [
+        "37b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 579",
+      "phrase_text": "URL enrichment is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "url enrichment is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0106",
+      "phase": "37b",
+      "all_phases": [
+        "37b"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 580",
+      "phrase_text": "URL enrichment is not execution order.",
+      "phrase_type": "other",
+      "normalized_phrase": "url enrichment is not execution order",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0107",
+      "phase": "38",
+      "all_phases": [
+        "38"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 725",
+      "phrase_text": "Member profile creates no authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "member profile creates no authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0108",
+      "phase": "38",
+      "all_phases": [
+        "38"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 726",
+      "phrase_text": "Member profile does not rank participants.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member profile does not rank participants",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0109",
+      "phase": "38",
+      "all_phases": [
+        "38"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 722",
+      "phrase_text": "Member profile is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "member profile is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0110",
+      "phase": "38",
+      "all_phases": [
+        "38"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 723",
+      "phrase_text": "Member profile is not identity verification.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "member profile is not identity verification",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0111",
+      "phase": "38",
+      "all_phases": [
+        "38"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 724",
+      "phrase_text": "Member profile is not reputation score.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member profile is not reputation score",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0112",
+      "phase": "39",
+      "all_phases": [
+        "39"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 218",
+      "phrase_text": "Member activity heatmap creates no authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "member activity heatmap creates no authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0113",
+      "phase": "39",
+      "all_phases": [
+        "39"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 217",
+      "phrase_text": "Member activity heatmap does not rank members.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member activity heatmap does not rank members",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0114",
+      "phase": "39",
+      "all_phases": [
+        "39"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 214",
+      "phrase_text": "Member activity heatmap is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "member activity heatmap is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0115",
+      "phase": "39",
+      "all_phases": [
+        "39"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 215",
+      "phrase_text": "Member activity heatmap is not identity verification.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "member activity heatmap is not identity verification",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0116",
+      "phase": "39",
+      "all_phases": [
+        "39"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 216",
+      "phrase_text": "Member activity heatmap is not reputation score.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member activity heatmap is not reputation score",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0117",
+      "phase": "40",
+      "all_phases": [
+        "40"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 192",
+      "phrase_text": "Member-directive map does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "normalized_phrase": "member-directive map does not allocate responsibility",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0118",
+      "phase": "40",
+      "all_phases": [
+        "40"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 191",
+      "phrase_text": "Member-directive map does not rank members.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member-directive map does not rank members",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0119",
+      "phase": "40",
+      "all_phases": [
+        "40"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 188",
+      "phrase_text": "Member-directive map is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "member-directive map is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0120",
+      "phase": "40",
+      "all_phases": [
+        "40"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 189",
+      "phrase_text": "Member-directive map is not identity verification.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "member-directive map is not identity verification",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0121",
+      "phase": "40",
+      "all_phases": [
+        "40"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 190",
+      "phrase_text": "Member-directive map is not reputation score.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "member-directive map is not reputation score",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0122",
+      "phase": "41",
+      "all_phases": [
+        "41"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 163",
+      "phrase_text": "Attention dashboard is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "attention dashboard is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0123",
+      "phase": "41",
+      "all_phases": [
+        "41"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 165",
+      "phrase_text": "Attention item creates no obligation.",
+      "phrase_type": "other",
+      "normalized_phrase": "attention item creates no obligation",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0124",
+      "phase": "41",
+      "all_phases": [
+        "41"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 166",
+      "phrase_text": "Attention item does not assign responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "normalized_phrase": "attention item does not assign responsibility",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0125",
+      "phase": "41",
+      "all_phases": [
+        "41"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 164",
+      "phrase_text": "Attention item is not priority score.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "attention item is not priority score",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0126",
+      "phase": "42",
+      "all_phases": [
+        "42"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 141",
+      "phrase_text": "Resolution timeline creates no authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "resolution timeline creates no authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0127",
+      "phase": "42",
+      "all_phases": [
+        "42"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 140",
+      "phrase_text": "Resolution timeline does not close support.",
+      "phrase_type": "other",
+      "normalized_phrase": "resolution timeline does not close support",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0128",
+      "phase": "42",
+      "all_phases": [
+        "42"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 138",
+      "phrase_text": "Resolution timeline is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "resolution timeline is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0129",
+      "phase": "42",
+      "all_phases": [
+        "42"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 139",
+      "phrase_text": "Resolution timeline is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "resolution timeline is not proof of resolution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0130",
+      "phase": "43",
+      "all_phases": [
+        "43"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 116",
+      "phrase_text": "Signal aggregation creates no authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "signal aggregation creates no authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0131",
+      "phase": "43",
+      "all_phases": [
+        "43"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 115",
+      "phrase_text": "Signal aggregation does not assign responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "normalized_phrase": "signal aggregation does not assign responsibility",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0132",
+      "phase": "43",
+      "all_phases": [
+        "43"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 113",
+      "phrase_text": "Signal aggregation is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "signal aggregation is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0133",
+      "phase": "43",
+      "all_phases": [
+        "43"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 114",
+      "phrase_text": "Signal aggregation is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "normalized_phrase": "signal aggregation is not proof of resolution",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0134",
+      "phase": "44",
+      "all_phases": [
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 90",
+      "phrase_text": "Governance summary creates no authority.",
+      "phrase_type": "no_authority",
+      "normalized_phrase": "governance summary creates no authority",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0135",
+      "phase": "44",
+      "all_phases": [
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 91",
+      "phrase_text": "Governance summary does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "normalized_phrase": "governance summary does not allocate resources",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0136",
+      "phase": "44",
+      "all_phases": [
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 89",
+      "phrase_text": "Governance summary does not rank globes.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "governance summary does not rank globes",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0137",
+      "phase": "44",
+      "all_phases": [
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 87",
+      "phrase_text": "Governance summary is advisory display only.",
+      "phrase_type": "advisory",
+      "normalized_phrase": "governance summary is advisory display only",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    },
+    {
+      "phrase_id": "phrase-0138",
+      "phase": "44",
+      "all_phases": [
+        "44"
+      ],
+      "source_file": "RESUME_STATE.md",
+      "source_line_hint": "RESUME_STATE.md:line 88",
+      "phrase_text": "Governance summary is not governance score.",
+      "phrase_type": "no_ranking",
+      "normalized_phrase": "governance summary is not governance score",
+      "first_seen_at": "2026-06-01T12:17:51.300720+00:00",
+      "advisory_only": true,
+      "creates_no_legal_authority": true
+    }
+  ]
+}

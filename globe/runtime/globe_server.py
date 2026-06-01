@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–44)
+globe_server.py — Globe UI Server (Phase 22–45)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -65,6 +65,10 @@ Routes:
     /globe/governance                            → Globe Governance Summary           [Phase 44]
     /globe/governance?globe=<globe_id>           → filtered by globe                  [Phase 44]
     /globe/governance?section=<section>          → filtered by section                [Phase 44]
+    /globe/protocol-phrases                      → Protocol Phrase Ledger             [Phase 45]
+    /globe/protocol-phrases?phase=<phase>        → filtered by phase                  [Phase 45]
+    /globe/protocol-phrases?type=<type>          → filtered by phrase_type            [Phase 45]
+    /globe/protocol-phrases?q=<query>            → text search                        [Phase 45]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1321,6 +1325,41 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .gov-total-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
                  font-size: 0.72rem; color: #2a3850; }
 .gov-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+
+/* Phase 45 — Protocol Phrase Ledger */
+.ppl-panel { background: #08090e; border: 1px solid #10121c;
+             border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.ppl-panel h3 { font-size: 0.88rem; color: #203860; margin-bottom: 14px; border-bottom: 1px solid #0e1020; padding-bottom: 6px; }
+.ppl-card { border: 1px solid #0e1020; border-radius: 5px;
+            padding: 10px 12px; margin-bottom: 8px; background: #060810; }
+.ppl-card-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.ppl-phrase-id { font-family: monospace; font-size: 0.72rem; color: #283858; }
+.ppl-phase-badge { font-size: 0.68rem; font-family: monospace;
+                   background: #0e1424; color: #3a5080; padding: 1px 5px; border-radius: 3px; }
+.ppl-type-badge { font-size: 0.68rem; font-family: monospace; padding: 1px 5px; border-radius: 3px; }
+.ppl-type-badge.advisory               { background: #0e1a0e; color: #3a7040; }
+.ppl-type-badge.no_authority           { background: #1a0e10; color: #804040; }
+.ppl-type-badge.no_ranking             { background: #1a0e1a; color: #7040a0; }
+.ppl-type-badge.no_allocation          { background: #0e1a1a; color: #30707a; }
+.ppl-type-badge.no_proof               { background: #0e0e1a; color: #4060a0; }
+.ppl-type-badge.human_review           { background: #1a1a0e; color: #a08030; }
+.ppl-type-badge.no_responsibility_assignment { background: #1a100e; color: #906040; }
+.ppl-type-badge.append_only            { background: #101a0e; color: #608040; }
+.ppl-type-badge.other                  { background: #101010; color: #505060; }
+.ppl-text { font-size: 0.82rem; color: #4a6090; line-height: 1.5; margin-bottom: 4px; }
+.ppl-normalized { font-size: 0.66rem; font-family: monospace; color: #203040; margin-bottom: 4px; display: none; }
+.ppl-phases { font-size: 0.68rem; color: #2a3858; }
+.ppl-phases span { color: #3a5070; margin-right: 4px; }
+.ppl-source { font-size: 0.64rem; color: #1e2838; margin-top: 3px; }
+.ppl-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                font-size: 0.72rem; color: #2a3858; }
+.ppl-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.ppl-filters a { color: #3a5070; margin-right: 8px; }
+.ppl-type-nav { margin-bottom: 10px; font-size: 0.75rem; }
+.ppl-type-nav a { color: #3a5070; margin-right: 8px; }
+.ppl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1824; padding-top: 8px; }
+.ppl-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3713,7 +3752,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a>'
         f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a>'
         f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a>'
-        f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a></h2>'
+        f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a>'
+        f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -5383,6 +5423,171 @@ def render_governance_page(
     )
 
 
+# ─── Phase 45: Protocol Phrase Ledger ────────────────────────────────────────────
+
+_PPL_JSON_PATH = _REPORTS_DIR / "protocol_phrase_ledger.json"
+
+_PT_ICON: dict[str, str] = {
+    "advisory":                     "📋",
+    "no_authority":                 "🚫",
+    "no_ranking":                   "📊",
+    "no_allocation":                "💰",
+    "no_proof":                     "🔍",
+    "human_review":                 "👁",
+    "no_responsibility_assignment": "⚖️",
+    "append_only":                  "📝",
+    "other":                        "·",
+}
+
+
+def _load_ppl() -> dict:
+    """Phase 45 — load protocol_phrase_ledger.json or build on-the-fly via importlib."""
+    if _PPL_JSON_PATH.exists():
+        try:
+            return json.loads(_PPL_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "protocol_phrase_ledger",
+            _RUNTIME_DIR / "protocol_phrase_ledger.py",
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_ledger()
+    except Exception:
+        return {"entries": [], "meta": {}}
+
+
+def _render_phrase_card(entry: dict) -> str:
+    pt      = _e(entry.get("phrase_type", "other"))
+    pid     = _e(entry.get("phrase_id", ""))
+    phase   = _e(entry.get("first_seen_phase", ""))
+    text    = _e(entry.get("phrase_text", ""))
+    norm    = _e(entry.get("normalized_phrase", ""))
+    src     = _e(entry.get("source_file", ""))
+    phases  = entry.get("all_phases", [])
+    icon    = _PT_ICON.get(entry.get("phrase_type", "other"), "·")
+    phase_spans = " ".join(f'<span>Phase {_e(p)}</span>' for p in phases[:12])
+    if len(phases) > 12:
+        phase_spans += f' <span>+{len(phases)-12}</span>'
+    return (
+        f'<div class="ppl-card">'
+        f'<div class="ppl-card-header">'
+        f'<span class="ppl-phrase-id">{pid}</span>'
+        f'<span class="ppl-phase-badge">Phase {phase}</span>'
+        f'<span class="ppl-type-badge {_e(entry.get("phrase_type","other"))}">{icon} {pt}</span>'
+        f'</div>'
+        f'<div class="ppl-text">"{text}"</div>'
+        f'<div class="ppl-phases">{phase_spans}</div>'
+        f'<div class="ppl-source">{src}</div>'
+        f'</div>'
+    )
+
+
+def render_phrases_page(
+    phase_filter: str = "",
+    type_filter:  str = "",
+    query:        str = "",
+) -> str:
+    """Phase 45 — Protocol Phrase Ledger page."""
+    data    = _load_ppl()
+    entries = data.get("entries", [])
+    meta    = data.get("meta", {})
+
+    # apply filters
+    shown = entries
+    if phase_filter:
+        shown = [e for e in shown if phase_filter in e.get("all_phases", [])]
+    if type_filter:
+        shown = [e for e in shown if e.get("phrase_type", "") == type_filter]
+    if query:
+        ql = query.lower()
+        shown = [e for e in shown if ql in e.get("phrase_text", "").lower()
+                 or ql in e.get("normalized_phrase", "").lower()]
+
+    total   = meta.get("total_phrases", len(entries))
+    raw_occ = meta.get("total_raw_occurrences", 0)
+
+    # type nav
+    all_types = [
+        "advisory", "no_authority", "no_ranking", "no_allocation", "no_proof",
+        "human_review", "no_responsibility_assignment", "append_only", "other",
+    ]
+    type_links = " | ".join(
+        f'<a href="/globe/protocol-phrases?type={t}">{_PT_ICON.get(t,"·")} {t}</a>'
+        for t in all_types
+    )
+
+    # filter breadcrumb
+    crumb_parts = []
+    if phase_filter:
+        crumb_parts.append(f'phase={_e(phase_filter)} <a href="/globe/protocol-phrases">×</a>')
+    if type_filter:
+        crumb_parts.append(f'type={_e(type_filter)} <a href="/globe/protocol-phrases">×</a>')
+    if query:
+        crumb_parts.append(f'q={_e(query)} <a href="/globe/protocol-phrases">×</a>')
+    filter_html = (
+        f'<div class="ppl-filters">絞込: {" / ".join(crumb_parts)}</div>'
+        if crumb_parts else ""
+    )
+
+    stat_html = (
+        f'<div class="ppl-stat-row">'
+        f'<span>表示: <b>{len(shown)}</b></span>'
+        f'<span>総ユニーク: <b>{total}</b></span>'
+        f'<span>生occurrences: <b>{raw_occ}</b></span>'
+        f'</div>'
+    )
+
+    if shown:
+        cards = "".join(_render_phrase_card(e) for e in shown)
+    else:
+        cards = '<div class="ppl-empty">フレーズなし</div>'
+
+    advisory_phrases = [
+        "Protocol phrase ledger is advisory display only.",
+        "Protocol phrase ledger creates no legal authority.",
+        "Protocol phrase ledger is not enforcement.",
+        "Protocol phrase ledger does not override human judgment.",
+        "Human review is required before any real-world action.",
+    ]
+    advisory_html = (
+        '<div class="ppl-advisory">'
+        + " · ".join(f'<i>{_e(p)}</i>' for p in advisory_phrases)
+        + "</div>"
+    )
+
+    body = (
+        f'<div class="ppl-panel">'
+        f'<h3>📜 Protocol Phrase Ledger'
+        f'&nbsp;<small style="font-size:0.7em;color:#203858">(Phase 45)</small></h3>'
+        f'<div class="ppl-type-nav">{type_links}</div>'
+        f'{filter_html}'
+        f'{stat_html}'
+        f'{cards}'
+        f'{advisory_html}'
+        f'</div>'
+    )
+
+    scope_label = (
+        f"phase={phase_filter}" if phase_filter
+        else f"type={type_filter}" if type_filter
+        else f"q={query}" if query
+        else "全て"
+    )
+
+    return _page(
+        f"Protocol Phrases — {scope_label}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/protocol-phrases">Phrases</a>',
+        f'<h2>📜 Protocol Phrase Ledger'
+        f'&nbsp;<small style="font-size:0.65em;color:#203858">({len(shown)} phrases · {_e(scope_label)})</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -5420,6 +5625,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 45 — Protocol Phrase Ledger (before /globe/<id> match)
+        if path == "/globe/protocol-phrases":
+            self._send_html(render_phrases_page(
+                phase_filter=_qs("phase"),
+                type_filter=_qs("type"),
+                query=_qs("q"),
+            ))
             return
 
         # Phase 44 — Globe Governance Summary (before /globe/<id> match)

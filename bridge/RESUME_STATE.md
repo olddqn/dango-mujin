@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Governance Summary
+# RESUME_STATE.md — Protocol Phrase Ledger
 
-> **STATUS: IN PROGRESS (feature/phase-44-governance-summary)**
+> **STATUS: IN PROGRESS (feature/phase-45-protocol-phrase-ledger)**
 
-**Phase:** Globe Governance Summary (Phase 44)
-**Branch:** feature/phase-44-governance-summary
+**Phase:** Protocol Phrase Ledger (Phase 45)
+**Branch:** feature/phase-45-protocol-phrase-ledger
 **Started:** 2026-06-01
 
 ---
@@ -64,7 +64,33 @@
 - Globe Attention-Required Dashboard (Phase 41) — PR #36
 - Globe Directive Resolution Timeline (Phase 42) — PR #37
 - Cross-Directive Signal Aggregation (Phase 43) — PR #38
-- **Globe Governance Summary (Phase 44)** ← current commit
+- Globe Governance Summary (Phase 44) — PR #39
+- **Globe Protocol Phrase Ledger (Phase 45)** ← current commit
+
+---
+
+## New Files (Phase 45)
+
+- `globe/runtime/protocol_phrase_ledger.py` — Phrase ledger builder + CLI (138 unique phrases, 170 raw occurrences)
+- `globe/reports/protocol_phrase_ledger.json` — Generated JSON (138 phrases, Phase 10–45)
+- `globe/reports/protocol_phrase_ledger.md` — Human-readable Markdown
+
+## Updated Files (Phase 45)
+
+- `globe/runtime/globe_server.py` — Added `_load_ppl()`, `_render_phrase_card()`, `render_phrases_page()`, Phase 45 CSS; wired `/globe/protocol-phrases` route with `?phase=`, `?type=`, `?q=` query params; added "📜 Phrases →" to Globe list header; updated docstring to Phase 22–45
+- `globe/spec/GLOBE_SPEC.md` — Phase 45 section (9 phrase types, HTTP routes, CLI, invariants, protocol phrases)
+- `README.md` — Phase 45 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 45)
+
+```
+Protocol phrase ledger is advisory display only.
+Protocol phrase ledger creates no legal authority.
+Protocol phrase ledger is not enforcement.
+Protocol phrase ledger does not override human judgment.
+Human review is required before any real-world action.
+```
 
 ---
 
