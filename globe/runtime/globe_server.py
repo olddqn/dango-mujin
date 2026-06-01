@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–48)
+globe_server.py — Globe UI Server (Phase 22–49)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -81,6 +81,10 @@ Routes:
     /globe/deliberation-rounds?globe=<globe_id>  → filtered by globe                  [Phase 48]
     /globe/deliberation-rounds?proposal=<id>     → filtered by proposal               [Phase 48]
     /globe/deliberation-rounds?type=<round_type> → filtered by round_type             [Phase 48]
+    /globe/deliberation-health                   → Deliberation Health Check          [Phase 49]
+    /globe/deliberation-health?globe=<globe_id>  → filtered by globe                  [Phase 49]
+    /globe/deliberation-health?proposal=<id>     → filtered by proposal               [Phase 49]
+    /globe/deliberation-health?flag=<flag>       → filtered by flag                   [Phase 49]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1516,6 +1520,50 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .drt-advisory   { font-size: 0.70rem; color: #111c16; margin-top: 10px;
                   border-top: 1px solid #0a0e0c; padding-top: 8px; }
 .drt-empty      { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+
+/* Phase 49 — Deliberation Health Check */
+.dhc-panel { background: #060809; border: 1px solid #0c1018;
+             border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.dhc-panel h3 { font-size: 0.88rem; color: #202838; margin-bottom: 14px;
+                border-bottom: 1px solid #0a0e14; padding-bottom: 6px; }
+.dhc-card { border: 1px solid #0c1018; border-radius: 6px;
+            padding: 12px; margin-bottom: 10px; background: #040608; }
+.dhc-card-header { display: flex; align-items: baseline; gap: 8px;
+                   flex-wrap: wrap; margin-bottom: 8px; }
+.dhc-proposal-id { font-family: monospace; font-size: 0.78rem; color: #203040; }
+.dhc-title       { font-size: 0.83rem; color: #2a3850; }
+.dhc-status-badge { font-size: 0.66rem; font-family: monospace; padding: 1px 5px;
+                   border-radius: 3px; background: #0c1820; color: #3a5060; }
+.dhc-counts-row  { display: flex; flex-wrap: wrap; gap: 10px;
+                   font-size: 0.68rem; color: #1e2838; margin-bottom: 8px; }
+.dhc-count-chip  { background: #080c14; padding: 2px 6px; border-radius: 3px;
+                   font-family: monospace; }
+.dhc-count-chip.attn { color: #806030; background: #181008; }
+.dhc-flags       { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.dhc-flag        { font-size: 0.66rem; padding: 2px 6px; border-radius: 3px;
+                   font-family: monospace; }
+.dhc-flag.concerns     { background: #1a1008; color: #806030; }
+.dhc-flag.objections   { background: #180808; color: #804040; }
+.dhc-flag.common_ground { background: #0a1820; color: #3a5080; }
+.dhc-flag.candidate    { background: #081808; color: #306040; }
+.dhc-flag.unresolved   { background: #18100a; color: #804830; }
+.dhc-notes       { font-size: 0.78rem; color: #2a3850; margin-bottom: 8px; }
+.dhc-notes li    { list-style: disc; margin-left: 14px; margin-bottom: 3px;
+                   line-height: 1.5; }
+.dhc-questions   { font-size: 0.76rem; color: #1e3050; }
+.dhc-questions li { list-style: none; padding-left: 0; margin-bottom: 3px; }
+.dhc-questions li::before { content: "? "; color: #2a4060; }
+.dhc-links       { font-size: 0.64rem; color: #1e2838; margin-top: 6px; }
+.dhc-links a     { color: #2a4060; margin-right: 8px; }
+.dhc-stat-row    { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                   font-size: 0.70rem; color: #1e2838; }
+.dhc-flag-nav    { margin-bottom: 8px; font-size: 0.74rem; }
+.dhc-flag-nav a  { color: #2a3858; margin-right: 8px; }
+.dhc-filters     { margin-bottom: 10px; font-size: 0.78rem; }
+.dhc-filters a   { color: #2a3858; margin-right: 8px; }
+.dhc-advisory    { font-size: 0.70rem; color: #121820; margin-top: 10px;
+                   border-top: 1px solid #0a0c14; padding-top: 8px; }
+.dhc-empty       { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3912,7 +3960,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a>'
         f'&nbsp;<a href="/globe/phrase-genealogy" style="font-size:0.65em;color:#1e3040">🧬 Genealogy →</a>'
         f'&nbsp;<a href="/globe/consensus" style="font-size:0.65em;color:#1e3828">💬 Consensus →</a>'
-        f'&nbsp;<a href="/globe/deliberation-rounds" style="font-size:0.65em;color:#1e3830">🔄 Rounds →</a></h2>'
+        f'&nbsp;<a href="/globe/deliberation-rounds" style="font-size:0.65em;color:#1e3830">🔄 Rounds →</a>'
+        f'&nbsp;<a href="/globe/deliberation-health" style="font-size:0.65em;color:#203040">🩺 Health →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -6482,6 +6531,212 @@ def render_rounds_page(
     )
 
 
+# ─── Phase 49: Deliberation Health Check ─────────────────────────────────────────
+
+_DHC_JSON_PATH = _REPORTS_DIR / "deliberation_health_check.json"
+
+_DHC_FLAG_ICON: dict[str, str] = {
+    "concerns":      "⚠️",
+    "objections":    "▼",
+    "common_ground": "🤝",
+    "candidate":     "🌱",
+    "unresolved":    "⚡",
+}
+_DHC_FLAGS: list[str] = ["concerns", "objections", "common_ground", "candidate", "unresolved"]
+_DHC_FLAG_FIELD: dict[str, str] = {
+    "concerns":      "has_concerns",
+    "objections":    "has_objections",
+    "common_ground": "has_common_ground",
+    "candidate":     "has_consensus_candidate",
+    "unresolved":    "has_unresolved_condition",
+}
+
+
+def _load_dhc() -> dict:
+    """Phase 49 — load deliberation_health_check.json or build on-the-fly."""
+    if _DHC_JSON_PATH.exists():
+        try:
+            return json.loads(_DHC_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "deliberation_health_check",
+            _RUNTIME_DIR / "deliberation_health_check.py",
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_health_check()
+    except Exception:
+        return {"items": [], "total_proposals": 0, "flag_counts": {}}
+
+
+def _render_dhc_card(item: dict) -> str:
+    pid   = _e(item.get("proposal_id", ""))
+    title = _e(item.get("proposal_title", ""))
+    sta   = _e(item.get("status", ""))
+    dc    = item.get("deliberation_count", 0)
+    rc    = item.get("round_count", 0)
+
+    # counts chips
+    count_fields = [
+        ("issues",     item.get("issue_count", 0)),
+        ("stances",    item.get("stance_count", 0)),
+        ("cg",         item.get("common_ground_count", 0)),
+        ("conflicts",  item.get("conflict_count", 0)),
+        ("candidates", item.get("consensus_candidate_count", 0)),
+    ]
+    chips = "".join(
+        f'<span class="dhc-count-chip{"  attn" if cnt > 0 and label in ("conflicts","candidates") else ""}">'
+        f'{label}={cnt}</span>'
+        for label, cnt in count_fields
+    )
+
+    # flags
+    flags_html = ""
+    for f in _DHC_FLAGS:
+        field = _DHC_FLAG_FIELD[f]
+        if item.get(field):
+            flags_html += f'<span class="dhc-flag {f}">{_DHC_FLAG_ICON.get(f,"·")} {f}</span>'
+
+    # health notes
+    notes_html = "".join(
+        f'<li>{_e(n)}</li>'
+        for n in item.get("health_notes", [])
+    )
+
+    # suggested questions
+    qs_html = "".join(
+        f'<li>{_e(q)}</li>'
+        for q in item.get("suggested_next_questions", [])
+    )
+
+    # links to related pages
+    links_html = (
+        f'<div class="dhc-links">'
+        f'<a href="/globe/deliberation-rounds?proposal={pid}">🔄 rounds</a>'
+        f'<a href="/globe/consensus?proposal={pid}">💬 consensus</a>'
+        f'</div>'
+    )
+
+    return (
+        f'<div class="dhc-card">'
+        f'<div class="dhc-card-header">'
+        f'<span class="dhc-proposal-id">{pid}</span>'
+        f'<span class="dhc-title">{title}</span>'
+        f'<span class="dhc-status-badge">{sta}</span>'
+        f'<span style="font-size:0.62rem;color:#1e2838">delib={dc} rounds={rc}</span>'
+        f'</div>'
+        f'<div class="dhc-counts-row">{chips}</div>'
+        f'<div class="dhc-flags">{flags_html}</div>'
+        f'<ul class="dhc-notes">{notes_html}</ul>'
+        f'<ul class="dhc-questions">{qs_html}</ul>'
+        f'{links_html}'
+        f'</div>'
+    )
+
+
+def render_health_page(
+    globe_filter:    str = "",
+    proposal_filter: str = "",
+    flag_filter:     str = "",
+) -> str:
+    """Phase 49 — Deliberation Health Check page."""
+    data  = _load_dhc()
+    items = data.get("items", [])
+
+    # apply filters
+    shown = items
+    if globe_filter:
+        shown = [i for i in shown if i.get("globe_id") == globe_filter]
+    if proposal_filter:
+        shown = [i for i in shown if i.get("proposal_id") == proposal_filter]
+    if flag_filter:
+        field = _DHC_FLAG_FIELD.get(flag_filter)
+        if field:
+            shown = [i for i in shown if i.get(field)]
+
+    total = data.get("total_proposals", len(items))
+    fc    = data.get("flag_counts", {})
+
+    # flag nav
+    flag_links = " | ".join(
+        f'<a href="/globe/deliberation-health?flag={f}">{_DHC_FLAG_ICON.get(f,"·")} {f} ({fc.get("has_"+f, 0)})</a>'
+        for f in _DHC_FLAGS
+    )
+
+    # filter breadcrumb
+    crumb: list[str] = []
+    if globe_filter:
+        crumb.append(f'globe={_e(globe_filter)} <a href="/globe/deliberation-health">×</a>')
+    if proposal_filter:
+        crumb.append(f'proposal={_e(proposal_filter)} <a href="/globe/deliberation-health">×</a>')
+    if flag_filter:
+        crumb.append(f'flag={_e(flag_filter)} <a href="/globe/deliberation-health">×</a>')
+    filter_html = (
+        f'<div class="dhc-filters">絞込: {" / ".join(crumb)}</div>'
+        if crumb else ""
+    )
+
+    stat_html = (
+        f'<div class="dhc-stat-row">'
+        f'<span>表示: <b>{len(shown)}</b></span>'
+        f'<span>総 proposals: <b>{total}</b></span>'
+        f'</div>'
+    )
+
+    if shown:
+        cards = "".join(_render_dhc_card(i) for i in shown)
+    else:
+        cards = '<div class="dhc-empty">データなし</div>'
+
+    advisory_html = (
+        '<div class="dhc-advisory">'
+        + " · ".join(
+            f'<i>{_e(p)}</i>'
+            for p in [
+                "Deliberation health check is advisory display only.",
+                "Health check is not a score.",
+                "Health check is not ranking.",
+                "Health check is not final judgment.",
+                "Health check does not approve execution.",
+                "Human review is required before any real-world action.",
+            ]
+        )
+        + "</div>"
+    )
+
+    body = (
+        f'<div class="dhc-panel">'
+        f'<h3>🩺 Deliberation Health Check'
+        f'&nbsp;<small style="font-size:0.7em;color:#203040">(Phase 49)</small></h3>'
+        f'<div class="dhc-flag-nav">{flag_links}</div>'
+        f'{filter_html}'
+        f'{stat_html}'
+        f'{cards}'
+        f'{advisory_html}'
+        f'</div>'
+    )
+
+    scope_label = (
+        f"proposal={proposal_filter}" if proposal_filter
+        else f"globe={globe_filter}" if globe_filter
+        else f"flag={flag_filter}" if flag_filter
+        else "全て"
+    )
+
+    return _page(
+        f"Deliberation Health — {scope_label}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/consensus">Consensus</a> › '
+        f'<a href="/globe/deliberation-health">Health</a>',
+        f'<h2>🩺 Deliberation Health Check'
+        f'&nbsp;<small style="font-size:0.65em;color:#203040">({len(shown)} proposals · {_e(scope_label)})</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -6519,6 +6774,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 49 — Deliberation Health Check (before /globe/<id> match)
+        if path == "/globe/deliberation-health":
+            self._send_html(render_health_page(
+                globe_filter=_qs("globe"),
+                proposal_filter=_qs("proposal"),
+                flag_filter=_qs("flag"),
+            ))
             return
 
         # Phase 48 — Deliberation Round Tracker (before /globe/<id> match)

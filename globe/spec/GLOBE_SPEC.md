@@ -2572,3 +2572,76 @@ clarification=1 / synthesis=1 / candidate=1 / unresolved=1
 - `globe/runtime/deliberation_round_tracker.py` — Round Tracker ビルダー・CLI
 - `globe/reports/deliberation_round_tracker.json` — 生成済み JSON (13 rounds)
 - `globe/reports/deliberation_round_tracker.md` — 生成済み Markdown
+
+---
+
+## Phase 49 — Deliberation Health Check（フェーズ49）
+
+フェーズ49では、各 Proposal の話し合いについて
+論点・懸念・一致点・合意候補・未解決条件の網羅状況を
+advisory に確認する **Deliberation Health Check** を追加しました。
+これは点数化・格付け・最終判断ではありません。
+人間が話し合いの抜けや偏りに気づくための確認メモです。
+
+### 不変条件
+
+```python
+HEALTH_INVARIANTS = {
+    "deliberation_health_check_is_advisory_display_only": True,
+    "health_check_is_not_a_score":       True,
+    "health_check_is_not_ranking":       True,
+    "health_check_is_not_final_judgment": True,
+    "health_check_does_not_approve_execution": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### Flags
+
+| flag | フィールド | 意味 |
+|---|---|---|
+| `concerns` ⚠️ | `has_concerns` | 懸念が記録されている |
+| `objections` ▼ | `has_objections` | 反対意見が記録されている |
+| `common_ground` 🤝 | `has_common_ground` | 一致点候補がある |
+| `candidate` 🌱 | `has_consensus_candidate` | 合意候補がある |
+| `unresolved` ⚡ | `has_unresolved_condition` | 未解決条件が残っている |
+
+### health_notes と suggested_next_questions
+
+Rule-based で生成される advisory 観察メモと次の質問例。
+断定せず、"may indicate", "pending human verification" のような慎重な表現を使用。
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/deliberation_health_check.py summary
+python3 globe/runtime/deliberation_health_check.py save
+python3 globe/runtime/deliberation_health_check.py show-proposal proposal-002
+python3 globe/runtime/deliberation_health_check.py show-globe globe-001
+python3 globe/runtime/deliberation_health_check.py show-flag unresolved
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/deliberation-health` | 全 proposal の health check |
+| `/globe/deliberation-health?globe=globe-001` | globe でフィルタ |
+| `/globe/deliberation-health?proposal=proposal-002` | proposal でフィルタ |
+| `/globe/deliberation-health?flag=unresolved` | flag でフィルタ |
+
+### プロトコル句
+
+- "Deliberation health check is advisory display only."
+- "Health check is not a score."
+- "Health check is not ranking."
+- "Health check is not final judgment."
+- "Health check does not approve execution."
+- "Human review is required before any real-world action."
+
+### 生成ファイル
+
+- `globe/runtime/deliberation_health_check.py` — Health Check ビルダー・CLI
+- `globe/reports/deliberation_health_check.json` — 生成済み JSON (5 proposals)
+- `globe/reports/deliberation_health_check.md` — 生成済み Markdown
