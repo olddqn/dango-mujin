@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–39)
+globe_server.py — Globe UI Server (Phase 22–40)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -44,6 +44,10 @@ Routes:
     /globe/member-activity?member=<id>   → Heatmap for one member      [Phase 39]
     /globe/member-activity?globe=<id>    → Heatmap filtered by globe   [Phase 39]
     /globe/member-activity?date=<date>   → Heatmap filtered by date    [Phase 39]
+    /globe/member-directives              → Member × Directive Map      [Phase 40]
+    /globe/member-directives?member=<id> → Map for one member          [Phase 40]
+    /globe/member-directives?directive=<id> → Map for one directive     [Phase 40]
+    /globe/member-directives?globe=<id>  → Map filtered by globe       [Phase 40]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1113,6 +1117,41 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .mah-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                 border-top: 1px solid #0e1420; padding-top: 8px; }
 .mah-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 40 — Member × Directive Participation Map */
+.mdm-panel { background: #08090f; border: 1px solid #161e30;
+             border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.mdm-panel h3 { font-size: 0.88rem; color: #3a5060; margin-bottom: 14px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.mdm-dir-section { margin-bottom: 20px; }
+.mdm-dir-header { font-size: 0.84rem; color: #5878a0; margin-bottom: 6px;
+                  padding-bottom: 4px; border-bottom: 1px solid #101828; }
+.mdm-dir-title { font-size: 0.74rem; color: #3a4a60; font-style: italic; margin-bottom: 8px; }
+.mdm-card { border: 1px solid #1a2438; border-radius: 6px;
+            padding: 10px 14px; margin-bottom: 8px; background: #0e1020; }
+.mdm-card-header { display: flex; align-items: baseline; gap: 8px;
+                   flex-wrap: wrap; margin-bottom: 4px; }
+.mdm-icon { font-size: 1.0rem; flex-shrink: 0; }
+.mdm-mid { font-family: monospace; font-size: 0.76rem; color: #3a5070; }
+.mdm-name { font-size: 0.82rem; color: #6880a0; }
+.mdm-meta { font-size: 0.70rem; color: #2a3450; line-height: 1.7; margin-bottom: 5px; }
+.mdm-rel-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.mdm-rel-badge { font-size: 0.64rem; padding: 1px 6px; border-radius: 3px;
+                 background: #0c1428; color: #3a5880; }
+.mdm-rel-badge.attn { background: #140e08; color: #806040; }
+.mdm-attention { margin-top: 6px; padding: 5px 9px; border-radius: 3px;
+                 background: #14100a; border: 1px solid #28180a;
+                 font-size: 0.68rem; color: #806040; line-height: 1.7; }
+.mdm-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+                gap: 10px; margin-bottom: 16px; text-align: center;
+                font-size: 0.82rem; }
+.mdm-stat-row .ms-num { font-size: 1.3rem; color: #4a7090; }
+.mdm-stat-row .ms-lbl { color: #2a3450; font-size: 0.74rem; }
+.mdm-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.mdm-filters a { color: #3a5070; margin-right: 8px; }
+.mdm-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1420; padding-top: 8px; }
+.mdm-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3231,6 +3270,240 @@ def render_member_activity_page(
     )
 
 
+# ─── Phase 40: Member × Directive Participation Map ─────────────────────────────
+
+_MDM_JSON_PATH = _REPORTS_DIR / "member_directive_map.json"
+
+_REL_ICON: dict[str, str] = {
+    "proposer_related":             "✏️",
+    "deliberation_related":         "💬",
+    "human_approval":               "✅",
+    "observation":                  "👁️",
+    "objection":                    "⚠️",
+    "feedback":                     "🔄",
+    "rollback_request":             "↩️",
+    "voluntary_resolution_signal":  "🏳️",
+    "execution_attempt":            "▶️",
+    "timeline_related":             "🔗",
+    "feedback_bridge_related":      "🌉",
+}
+
+_REL_ATTN = frozenset({"objection", "voluntary_resolution_signal"})
+
+
+def _load_mdm() -> dict:
+    """Phase 40 — load member_directive_map.json or build on-the-fly via importlib."""
+    if _MDM_JSON_PATH.exists():
+        try:
+            return json.loads(_MDM_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "member_directive_map",
+        Path(__file__).parent / "member_directive_map.py",
+    )
+    if _spec and _spec.loader:
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)        # type: ignore[union-attr]
+        return _mod.build_map()
+    return {"entries": [], "by_member": {}, "by_directive": {}, "by_globe": {}}
+
+
+def _render_mdm_card(e: dict) -> str:
+    """Phase 40 — render one member × directive entry card."""
+    mid    = e.get("member_id", "")
+    name   = e.get("display_name", mid)
+    atypes = e.get("actor_types", ["human"])
+    icon   = {"human": "👤", "ai": "🤖", "system": "⚙️"}.get(
+        atypes[0] if atypes else "human", "👤"
+    )
+    did    = e.get("directive_id", "")
+    gid    = e.get("globe_id", "")
+    rels   = e.get("relation_types", [])
+    evts   = e.get("event_count", 0)
+    latest = (e.get("latest_activity_at") or "")[:19]
+
+    rel_badges = ""
+    for rt in rels:
+        ico = _REL_ICON.get(rt, "·")
+        css = "mdm-rel-badge attn" if rt in _REL_ATTN else "mdm-rel-badge"
+        rel_badges += f'<span class="{css}">{ico} {_e(rt)}</span>'
+
+    # Attention block
+    attn_parts = []
+    if e.get("has_objection"):
+        attn_parts.append("⚠️ objection — advisory only, requires human review")
+    if e.get("has_unresolved_signal"):
+        attn_parts.append("⚠️ unresolved_signal — voluntary_resolution_signal does not confirm resolution")
+    if e.get("has_contested_signal"):
+        attn_parts.append("⚠️ contested_signal — objection by another member exists")
+    attn_html = ""
+    if attn_parts:
+        attn_html = (
+            f'<div class="mdm-attention">'
+            + "<br>".join(_e(p) for p in attn_parts)
+            + "</div>"
+        )
+
+    # Directive link
+    dir_link = (
+        f'<a href="/globe/{_e(gid)}/directives/{_e(did)}" style="color:#3a5070">'
+        f'{_e(did)}</a>'
+        if gid else _e(did)
+    )
+
+    return f"""
+<div class="mdm-card">
+  <div class="mdm-card-header">
+    <span class="mdm-icon">{icon}</span>
+    <span class="mdm-mid"><a href="/globe/members/{_e(mid)}" style="color:#3a5070">{_e(mid)}</a></span>
+    <span class="mdm-name">{_e(name)}</span>
+  </div>
+  <div class="mdm-meta">directive: {dir_link} &nbsp;·&nbsp; globe: {_e(gid)} &nbsp;·&nbsp; events: {evts} &nbsp;·&nbsp; latest: {_e(latest or "N/A")}</div>
+  <div class="mdm-rel-badges">{rel_badges}</div>
+  {attn_html}
+</div>"""
+
+
+def render_member_directives_page(
+    member_filter:    str | None = None,
+    directive_filter: str | None = None,
+    globe_filter:     str | None = None,
+) -> str:
+    """Phase 40 — Member × Directive participation map page."""
+    data    = _load_mdm()
+    entries = data.get("entries", [])
+
+    # Apply filter
+    if member_filter:
+        entries = [e for e in entries if e.get("member_id") == member_filter]
+    elif directive_filter:
+        entries = [e for e in entries if e.get("directive_id") == directive_filter]
+    elif globe_filter:
+        entries = [e for e in entries if e.get("globe_id") == globe_filter]
+
+    # Scope label
+    if member_filter:
+        scope_label = f"member={member_filter}"
+    elif directive_filter:
+        scope_label = f"directive={directive_filter}"
+    elif globe_filter:
+        scope_label = f"globe={globe_filter}"
+    else:
+        scope_label = "全エントリ"
+
+    # Filter bar
+    all_entries  = data.get("entries", [])
+    all_mids     = sorted({e["member_id"] for e in all_entries})
+    all_dids     = sorted({e["directive_id"] for e in all_entries})
+    all_gids     = sorted({e["globe_id"] for e in all_entries})
+
+    member_links = (
+        '<a href="/globe/member-directives">全て</a>'
+        + "".join(
+            f'<a href="/globe/member-directives?member={_e(mid)}">'
+            f'👤 {_e(mid.removeprefix("member-"))}</a>'
+            for mid in all_mids
+        )
+    )
+    dir_links = (
+        '<a href="/globe/member-directives">全て</a>'
+        + "".join(
+            f'<a href="/globe/member-directives?directive={_e(did)}">'
+            f'📋 {_e(did)}</a>'
+            for did in all_dids
+        )
+    )
+    globe_links = (
+        '<a href="/globe/member-directives">全て</a>'
+        + "".join(
+            f'<a href="/globe/member-directives?globe={_e(gid)}">'
+            f'🌐 {_e(gid)}</a>'
+            for gid in all_gids
+        )
+    )
+    filter_html = (
+        f'<div class="mdm-filters">Member: {member_links}</div>'
+        f'<div class="mdm-filters">Directive: {dir_links}</div>'
+        f'<div class="mdm-filters">Globe: {globe_links}</div>'
+    )
+
+    # Group entries by directive for display
+    by_did: dict[str, list[dict]] = {}
+    for e in entries:
+        by_did.setdefault(e["directive_id"], []).append(e)
+
+    sections_html = ""
+    if by_did:
+        for did in sorted(by_did.keys()):
+            ents    = by_did[did]
+            title   = ents[0].get("directive_title", did) if ents else did
+            gid     = ents[0].get("globe_id", "") if ents else ""
+            dir_url = f"/globe/{_e(gid)}/directives/{_e(did)}" if gid else f"/globe/directives/{_e(did)}"
+            cards   = "".join(_render_mdm_card(e) for e in ents)
+            sections_html += f"""
+<div class="mdm-dir-section">
+  <div class="mdm-dir-header">
+    📋 <a href="{dir_url}" style="color:#5878a0">{_e(did)}</a>
+    &nbsp;·&nbsp; {len(ents)} member(s)
+  </div>
+  <div class="mdm-dir-title">{_e(title)}</div>
+  {cards}
+</div>"""
+    else:
+        sections_html = '<div class="mdm-empty">この条件に合うエントリが見つかりません。</div>'
+
+    # Stats
+    total_attn = sum(
+        1 for e in entries
+        if e.get("has_objection") or e.get("has_unresolved_signal") or e.get("has_contested_signal")
+    )
+    stat_html = (
+        f'<div class="mdm-stat-row">'
+        f'<div><div class="ms-num">{len(entries)}</div><div class="ms-lbl">entries</div></div>'
+        f'<div><div class="ms-num">{len({e["member_id"] for e in entries})}</div><div class="ms-lbl">members</div></div>'
+        f'<div><div class="ms-num">{len(by_did)}</div><div class="ms-lbl">directives</div></div>'
+        f'<div><div class="ms-num">{total_attn}</div><div class="ms-lbl">⚠️ attention</div></div>'
+        f'</div>'
+    )
+
+    advisory = (
+        '<div class="mdm-advisory">'
+        'Member-directive map is advisory display only. '
+        'Member-directive map is not identity verification. '
+        'Member-directive map is not reputation score. '
+        'Member-directive map does not rank members. '
+        'Member-directive map does not allocate responsibility. '
+        'Human review is required before any real-world action.'
+        '</div>'
+    )
+
+    body = f"""
+<div class="mdm-panel">
+  <h3>📊 Member × Directive Participation Map
+    <small style="font-size:0.65em;color:#3a4258">(Phase 40 · {_e(scope_label)})</small>
+  </h3>
+  {stat_html}
+  {filter_html}
+  {sections_html}
+  {advisory}
+</div>
+  <a href="/globe/members">← Members 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/member-activity">🌡️ Heatmap</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/dependencies">🗺️ Dependencies</a>"""
+
+    return _page(
+        f"Member Directives — {scope_label} — Dan-Go Globe",
+        (f'<a href="/globe">Globe</a> › '
+         f'<a href="/globe/member-directives">Member Directives</a>'
+         + (f' › {_e(scope_label)}' if scope_label != "全エントリ" else "")),
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -3266,7 +3539,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a>'
         f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a>'
         f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a>'
-        f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a></h2>'
+        f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a>'
+        f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -4150,6 +4424,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 40 — Member × Directive Participation Map (before /globe/<id> match)
+        if path == "/globe/member-directives":
+            self._send_html(render_member_directives_page(
+                member_filter=_qs("member"),
+                directive_filter=_qs("directive"),
+                globe_filter=_qs("globe"),
+            ))
             return
 
         # Phase 39 — Member Activity Heatmap (before /globe/<id> match)
