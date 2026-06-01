@@ -1,0 +1,456 @@
+{
+  "tracker_id": "deliberation-round-tracker-phase-48",
+  "generated_at": "2026-06-01T13:32:28.081943+00:00",
+  "phase": "48",
+  "total_proposals": 5,
+  "total_deliberations": 8,
+  "total_rounds": 13,
+  "rounds_by_type": {
+    "proposal_opened": 5,
+    "initial_response": 3,
+    "concern_round": 1,
+    "clarification_round": 1,
+    "synthesis_round": 1,
+    "consensus_candidate_round": 1,
+    "unresolved_condition_round": 1
+  },
+  "deliberation_rounds_are_advisory_display_only": true,
+  "deliberation_round_is_not_voting": true,
+  "deliberation_round_is_not_final_agreement": true,
+  "deliberation_round_does_not_approve_execution": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "credit_issued": false,
+  "advisory_phrases": [
+    "Deliberation rounds are advisory display only.",
+    "Deliberation round is not voting.",
+    "Deliberation round is not final agreement.",
+    "Deliberation round does not approve execution.",
+    "Human review is required before any real-world action."
+  ],
+  "proposal_summaries": [
+    {
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "title": "Dan-Go プロトコルを第零国家の公式合意形成ルールとして採用する",
+      "status": "discussion",
+      "round_count": 5,
+      "latest_round_type": "consensus_candidate_round",
+      "latest_round_at": "2026-05-30T00:21:00Z",
+      "has_consensus_candidate": true,
+      "has_conflict": false,
+      "has_unresolved_condition": false,
+      "has_common_ground": false,
+      "advisory_only": true
+    },
+    {
+      "proposal_id": "proposal-002",
+      "globe_id": "globe-001",
+      "title": "難民・避難民支援を第零国家の優先課題として位置づける",
+      "status": "accepted",
+      "round_count": 3,
+      "latest_round_type": "unresolved_condition_round",
+      "latest_round_at": "2026-05-30T01:15:00Z",
+      "has_consensus_candidate": true,
+      "has_conflict": true,
+      "has_unresolved_condition": true,
+      "has_common_ground": true,
+      "advisory_only": true
+    },
+    {
+      "proposal_id": "proposal-005",
+      "globe_id": "globe-003",
+      "title": "住居アドボカシー継続のための合意形成プロセスを確立する",
+      "status": "accepted",
+      "round_count": 1,
+      "latest_round_type": "proposal_opened",
+      "latest_round_at": "2026-05-30T04:00:00Z",
+      "has_consensus_candidate": false,
+      "has_conflict": false,
+      "has_unresolved_condition": false,
+      "has_common_ground": false,
+      "advisory_only": true
+    },
+    {
+      "proposal_id": "proposal-003",
+      "globe_id": "globe-002",
+      "title": "プライバシー保護ツールの共同開発と相互扶助的配布",
+      "status": "draft",
+      "round_count": 1,
+      "latest_round_type": "proposal_opened",
+      "latest_round_at": "2026-05-30T02:00:00Z",
+      "has_consensus_candidate": false,
+      "has_conflict": false,
+      "has_unresolved_condition": false,
+      "has_common_ground": false,
+      "advisory_only": true
+    },
+    {
+      "proposal_id": "proposal-004",
+      "globe_id": "globe-003",
+      "title": "食料支援の定期化と相互扶助スケジュールの確立",
+      "status": "discussion",
+      "round_count": 3,
+      "latest_round_type": "clarification_round",
+      "latest_round_at": "2026-05-30T03:15:00Z",
+      "has_consensus_candidate": false,
+      "has_conflict": false,
+      "has_unresolved_condition": false,
+      "has_common_ground": false,
+      "advisory_only": true
+    }
+  ],
+  "rounds": [
+    {
+      "round_id": "round-proposal-001-000",
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "round_index": 0,
+      "round_type": "proposal_opened",
+      "source_ids": [
+        "proposal-001"
+      ],
+      "speakers": [
+        "founding-member-001"
+      ],
+      "summary_text": "[Proposal opened by founding-member-001] 提案：Dan-GoのMujinプロトコル（MUJIN_PROTOCOL.md参照）を第零国家の公式な合意形成・意思決定フレームワークとして正式に採用する。\n\n理由：\n1. Dan-Goは多数決ではなく熟議・合意形成を重視する。\n2. AIエ…",
+      "detected_issues": [],
+      "detected_stances": [],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T00:00:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-001-001",
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "round_index": 1,
+      "round_type": "initial_response",
+      "source_ids": [
+        "delib-001"
+      ],
+      "speakers": [
+        "founding-member-001"
+      ],
+      "summary_text": "[Initial response from founding-member-001] Dan-Goを公式フレームワークとして採用することを提案します。特に、AIが論点を整理し、反対意見を保存するという点が重要です。多数決ではなく、すべての声が記録される仕組みが必要です。",
+      "detected_issues": [
+        "issue-proposal-001-001"
+      ],
+      "detected_stances": [
+        "stance-delib-001"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T00:10:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-001-002",
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "round_index": 2,
+      "round_type": "synthesis_round",
+      "source_ids": [
+        "delib-002"
+      ],
+      "speakers": [
+        "Dan-Go AI Mediator"
+      ],
+      "summary_text": "[Synthesis by Dan-Go AI Mediator] 提案の論点を整理します。\n\n【支持意見の核心】\n- 熟議プロセスの透明性\n- AI協働による処理能力の拡張\n- 履歴の公開監査可能性\n\n【懸念点の核心】\n- AI依存リスク：AIが判断するのではなく、あくまで人間の判断を支援する立場であるこ…",
+      "detected_issues": [],
+      "detected_stances": [
+        "stance-delib-002"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T00:15:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-001-003",
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "round_index": 3,
+      "round_type": "concern_round",
+      "source_ids": [
+        "delib-003"
+      ],
+      "speakers": [
+        "founding-member-003"
+      ],
+      "summary_text": "[Concern raised by founding-member-003] 懸念：AIへの過度な依存は、技術が使えない人を排除するリスクがある。Dan-Goは技術なしでも参加できる経路を確保すべきだ。この提案を採用する場合、アナログ参加経路の保証を条件としたい。",
+      "detected_issues": [],
+      "detected_stances": [
+        "stance-delib-003"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T00:20:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-001-004",
+      "proposal_id": "proposal-001",
+      "globe_id": "globe-001",
+      "round_index": 4,
+      "round_type": "consensus_candidate_round",
+      "source_ids": [
+        "delib-004"
+      ],
+      "speakers": [
+        "Dan-Go Protocol"
+      ],
+      "summary_text": "[Consensus candidate surfaced by Dan-Go Protocol] 少数意見を記録します：founding-member-003はアナログ参加経路の保証を条件として提示しました。この条件は本提案の修正案として記録され、次の熟議ラウンドで検討されます。反対意見は削除されません。",
+      "detected_issues": [],
+      "detected_stances": [
+        "stance-delib-004"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [
+        "cand-proposal-001-001",
+        "cand-proposal-001-002"
+      ],
+      "created_at": "2026-05-30T00:21:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-002-000",
+      "proposal_id": "proposal-002",
+      "globe_id": "globe-001",
+      "round_index": 0,
+      "round_type": "proposal_opened",
+      "source_ids": [
+        "proposal-002"
+      ],
+      "speakers": [
+        "founding-member-002"
+      ],
+      "summary_text": "[Proposal opened by founding-member-002] 提案：難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける。具体的には、D.R.A.（難民支援行動）との連携を深め、住居・食料・法的支援・コミュニティ統合のための相互扶助ルートを構築する。\n\n背景：既存の国家・機関による支…",
+      "detected_issues": [],
+      "detected_stances": [],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T01:00:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-002-001",
+      "proposal_id": "proposal-002",
+      "globe_id": "globe-001",
+      "round_index": 1,
+      "round_type": "initial_response",
+      "source_ids": [
+        "delib-005"
+      ],
+      "speakers": [
+        "founding-member-002"
+      ],
+      "summary_text": "[Initial response from founding-member-002] 難民支援を優先課題とする理由：既存の国家・NGOの支援には構造的な限界がある。自由参加型の草の根ネットワークは、そのギャップを埋めることができる。D.R.A.との連携はすでにPhase 17-19で実績がある。",
+      "detected_issues": [
+        "issue-proposal-002-001"
+      ],
+      "detected_stances": [
+        "stance-delib-005"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T01:10:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-002-002",
+      "proposal_id": "proposal-002",
+      "globe_id": "globe-001",
+      "round_index": 2,
+      "round_type": "unresolved_condition_round",
+      "source_ids": [
+        "delib-006"
+      ],
+      "speakers": [
+        "Dan-Go AI Mediator"
+      ],
+      "summary_text": "[Unresolved condition noted by Dan-Go AI Mediator] 投票フェーズに移行する前に、以下の論点を確認します。\n\n【合意点】\n- 難民支援の必要性（全員が認識）\n- D.R.A.との既存連携の継続\n\n【未解決点】\n- 「優先課題」の定義：他の課題との優先順位付けをどう行うか\n- リソース配分：コミ…",
+      "detected_issues": [
+        "issue-proposal-002-002",
+        "issue-proposal-002-003"
+      ],
+      "detected_stances": [
+        "stance-delib-006"
+      ],
+      "detected_common_ground": [
+        "cg-proposal-002-001",
+        "cg-proposal-002-002"
+      ],
+      "detected_conflicts": [
+        "conflict-proposal-002-001",
+        "conflict-proposal-002-002",
+        "conflict-proposal-002-003"
+      ],
+      "detected_candidates": [
+        "cand-proposal-002-001",
+        "cand-proposal-002-002"
+      ],
+      "created_at": "2026-05-30T01:15:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-005-000",
+      "proposal_id": "proposal-005",
+      "globe_id": "globe-003",
+      "round_index": 0,
+      "round_type": "proposal_opened",
+      "source_ids": [
+        "proposal-005"
+      ],
+      "speakers": [
+        "jammy-house-member-002"
+      ],
+      "summary_text": "[Proposal opened by jammy-house-member-002] 提案：Jammy Houseにおけるテナンシー問題を、個別対応から合意形成プロセスへと移行する。具体的には、住居問題が発生した場合に熟議→提案→実行のフローを通じて対応する仕組みを確立する。\n\nPhase 17-20で観察された未解決テナン…",
+      "detected_issues": [],
+      "detected_stances": [],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T04:00:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-003-000",
+      "proposal_id": "proposal-003",
+      "globe_id": "globe-002",
+      "round_index": 0,
+      "round_type": "proposal_opened",
+      "source_ids": [
+        "proposal-003"
+      ],
+      "speakers": [
+        "yacypherpunks-member-001"
+      ],
+      "summary_text": "[Proposal opened by yacypherpunks-member-001] 提案：YaCypherpunks Commonsとして、プライバシー保護ツールを共同開発し、技術的アクセスが困難なコミュニティへの相互扶助的配布を行う。\n\n具体的手段：\n- ワークショップによる技術共有\n- 翻訳・多言語化\n- オフラインで…",
+      "detected_issues": [],
+      "detected_stances": [],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T02:00:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-004-000",
+      "proposal_id": "proposal-004",
+      "globe_id": "globe-003",
+      "round_index": 0,
+      "round_type": "proposal_opened",
+      "source_ids": [
+        "proposal-004"
+      ],
+      "speakers": [
+        "jammy-house-member-001"
+      ],
+      "summary_text": "[Proposal opened by jammy-house-member-001] 提案：Jammy Houseにおける食料支援を、アドホックな対応から定期的な相互扶助スケジュールへと移行する。Phase 17-20で観察された食料支援ニーズの繰り返しパターンを踏まえ、週次の食事準備協力と月次のフードパントリー訪問をスケジ…",
+      "detected_issues": [],
+      "detected_stances": [],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T03:00:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-004-001",
+      "proposal_id": "proposal-004",
+      "globe_id": "globe-003",
+      "round_index": 1,
+      "round_type": "initial_response",
+      "source_ids": [
+        "delib-007"
+      ],
+      "speakers": [
+        "jammy-house-member-001"
+      ],
+      "summary_text": "[Initial response from jammy-house-member-001] Phase 17-20のデータを見ると、食料支援ニーズが3回以上繰り返し観察されています。アドホックな対応を続けることは、支援する側にも疲弊をもたらします。定期化は義務ではなく、持続可能性のためです。",
+      "detected_issues": [],
+      "detected_stances": [
+        "stance-delib-007"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T03:10:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    },
+    {
+      "round_id": "round-proposal-004-002",
+      "proposal_id": "proposal-004",
+      "globe_id": "globe-003",
+      "round_index": 2,
+      "round_type": "clarification_round",
+      "source_ids": [
+        "delib-008"
+      ],
+      "speakers": [
+        "Dan-Go AI Mediator"
+      ],
+      "summary_text": "[Clarification / question from Dan-Go AI Mediator] Phase 17-20のケアループ・パターン記録から関連データを参照します。\n\n参照データ：\n- aid-pattern-001: recurring_food_support (観察回数: 3回, jammy-house-001)\n- c…",
+      "detected_issues": [],
+      "detected_stances": [
+        "stance-delib-008"
+      ],
+      "detected_common_ground": [],
+      "detected_conflicts": [],
+      "detected_candidates": [],
+      "created_at": "2026-05-30T03:15:00Z",
+      "advisory_only": true,
+      "not_voting": true,
+      "not_final_agreement": true,
+      "does_not_approve_execution": true
+    }
+  ]
+}

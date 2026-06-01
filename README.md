@@ -608,6 +608,43 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 48 — Deliberation Round Tracker
+
+各 Proposal の deliberation を advisory な "round" timeline として整理する。
+投票・採決・承認・実行ではなく、話し合いの進行状況を visible にする layer。
+
+**不変条件:**
+- Deliberation rounds are advisory display only.
+- Deliberation round is not voting.
+- Deliberation round is not final agreement.
+- Deliberation round does not approve execution.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/deliberation_round_tracker.py summary
+python3 globe/runtime/deliberation_round_tracker.py save
+python3 globe/runtime/deliberation_round_tracker.py show-proposal proposal-002
+python3 globe/runtime/deliberation_round_tracker.py show-globe globe-001
+python3 globe/runtime/deliberation_round_tracker.py show-round-type consensus_candidate_round
+```
+
+**集計:** total_rounds=13, 7 round types, 5 proposals
+
+**確認URL:**
+- http://localhost:7422/globe/deliberation-rounds
+- http://localhost:7422/globe/deliberation-rounds?globe=globe-001
+- http://localhost:7422/globe/deliberation-rounds?proposal=proposal-002
+- http://localhost:7422/globe/deliberation-rounds?type=consensus_candidate_round
+
+### 生成ファイル
+
+- `globe/runtime/deliberation_round_tracker.py` — Round Tracker ビルダー・CLI (13 rounds)
+- `globe/reports/deliberation_round_tracker.json` — 生成済み JSON
+- `globe/reports/deliberation_round_tracker.md` — 生成済み Markdown
+
+---
+
 ## Phase 47 — Consensus Discovery Layer
 
 Proposal / Deliberation の内容から論点・立場・一致点・対立点・誤解の可能性・合意候補を

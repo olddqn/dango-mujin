@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Consensus Discovery Layer
+# RESUME_STATE.md — Deliberation Round Tracker
 
-> **STATUS: IN PROGRESS (feature/phase-47-consensus-discovery)**
+> **STATUS: IN PROGRESS (feature/phase-48-deliberation-rounds)**
 
-**Phase:** Consensus Discovery Layer (Phase 47)
-**Branch:** feature/phase-47-consensus-discovery
+**Phase:** Deliberation Round Tracker (Phase 48)
+**Branch:** feature/phase-48-deliberation-rounds
 **Started:** 2026-06-01
 
 ---
@@ -67,7 +67,33 @@
 - Globe Governance Summary (Phase 44) — PR #39
 - Globe Protocol Phrase Ledger (Phase 45) — PR #40, merged
 - Globe Phrase Genealogy View (Phase 46) — PR #41, merged
-- **Globe Consensus Discovery Layer (Phase 47)** ← current
+- Globe Consensus Discovery Layer (Phase 47) — PR #42, merged
+- **Globe Deliberation Round Tracker (Phase 48)** ← current
+
+---
+
+## New Files (Phase 48)
+
+- `globe/runtime/deliberation_round_tracker.py` — Round Tracker builder + CLI (13 rounds, 7 round types)
+- `globe/reports/deliberation_round_tracker.json` — Generated JSON
+- `globe/reports/deliberation_round_tracker.md` — Human-readable Markdown
+
+## Updated Files (Phase 48)
+
+- `globe/runtime/globe_server.py` — Added `_load_drt()`, `_render_drt_round()`, `_render_drt_proposal_block()`, `render_rounds_page()`, Phase 48 CSS; wired `/globe/deliberation-rounds` route with `?globe=`, `?proposal=`, `?type=` filters; added "🔄 Rounds →" to Globe list header; updated docstring to Phase 22–48
+- `globe/spec/GLOBE_SPEC.md` — Phase 48 section (7 round types, HTTP routes, CLI, invariants)
+- `README.md` — Phase 48 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 48)
+
+```
+Deliberation rounds are advisory display only.
+Deliberation round is not voting.
+Deliberation round is not final agreement.
+Deliberation round does not approve execution.
+Human review is required before any real-world action.
+```
 
 ---
 

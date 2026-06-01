@@ -2493,3 +2493,82 @@ issues=4 / stances=8 / common_ground=2 / conflict_points=3 / misunderstandings=0
 - `globe/runtime/consensus_discovery.py` — Consensus Discovery ビルダー・CLI
 - `globe/reports/consensus_discovery.json` — 生成済み JSON (21 items)
 - `globe/reports/consensus_discovery.md` — 生成済み Markdown
+
+---
+
+## Phase 48 — Deliberation Round Tracker（フェーズ48）
+
+フェーズ48では、各 Proposal の deliberation を
+`proposal_opened` → `initial_response` → `concern_round` → `synthesis_round` →
+`consensus_candidate_round` / `unresolved_condition_round`
+のタイムライン化された **round** として整理します。
+これは投票・採決・承認・実行ではなく、話し合いの進行状況を advisory に可視化するものです。
+
+### 不変条件
+
+```python
+ROUND_INVARIANTS = {
+    "deliberation_rounds_are_advisory_display_only":    True,
+    "deliberation_round_is_not_voting":                 True,
+    "deliberation_round_is_not_final_agreement":        True,
+    "deliberation_round_does_not_approve_execution":    True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### Round Types
+
+| round_type | icon | 説明 |
+|---|---|---|
+| `proposal_opened` | 📄 | 提案が開かれた |
+| `initial_response` | 💬 | 最初の人間による応答 |
+| `concern_round` | ⚠️ | 懸念・異議が提起された |
+| `clarification_round` | 🔍 | 確認・定義・質問 |
+| `synthesis_round` | 🧩 | AI/system による整理・要約 |
+| `consensus_candidate_round` | 🌱 | 合意候補が浮上した |
+| `unresolved_condition_round` | ⚡ | 未解決条件が記録された |
+
+### Round Item 構造
+
+各 round は `advisory_only: true`, `not_voting: true`, `not_final_agreement: true`,
+`does_not_approve_execution: true` を持ち、
+consensus_discovery のアイテムID へのリンクを含む。
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/deliberation_round_tracker.py summary
+python3 globe/runtime/deliberation_round_tracker.py save
+python3 globe/runtime/deliberation_round_tracker.py show-proposal proposal-002
+python3 globe/runtime/deliberation_round_tracker.py show-globe globe-001
+python3 globe/runtime/deliberation_round_tracker.py show-round-type consensus_candidate_round
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/deliberation-rounds` | 全 proposal の round timeline |
+| `/globe/deliberation-rounds?globe=globe-001` | globe でフィルタ |
+| `/globe/deliberation-rounds?proposal=proposal-002` | proposal でフィルタ |
+| `/globe/deliberation-rounds?type=consensus_candidate_round` | round_type でフィルタ |
+
+### 集計結果（Phase 48 生成時）
+
+total_rounds=13 / proposal_opened=5 / initial_response=3 / concern=1 /
+clarification=1 / synthesis=1 / candidate=1 / unresolved=1
+
+### プロトコル句
+
+- "Deliberation rounds are advisory display only."
+- "Deliberation round is not voting."
+- "Deliberation round is not final agreement."
+- "Deliberation round does not approve execution."
+- "Human review is required before any real-world action."
+
+### 生成ファイル
+
+- `globe/runtime/deliberation_round_tracker.py` — Round Tracker ビルダー・CLI
+- `globe/reports/deliberation_round_tracker.json` — 生成済み JSON (13 rounds)
+- `globe/reports/deliberation_round_tracker.md` — 生成済み Markdown
