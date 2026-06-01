@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–47)
+globe_server.py — Globe UI Server (Phase 22–48)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -77,6 +77,10 @@ Routes:
     /globe/consensus?globe=<globe_id>            → filtered by globe                  [Phase 47]
     /globe/consensus?proposal=<proposal_id>      → filtered by proposal               [Phase 47]
     /globe/consensus?type=<item_type>            → filtered by item type              [Phase 47]
+    /globe/deliberation-rounds                   → Deliberation Round Tracker         [Phase 48]
+    /globe/deliberation-rounds?globe=<globe_id>  → filtered by globe                  [Phase 48]
+    /globe/deliberation-rounds?proposal=<id>     → filtered by proposal               [Phase 48]
+    /globe/deliberation-rounds?type=<round_type> → filtered by round_type             [Phase 48]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1463,6 +1467,55 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .cd-advisory  { font-size: 0.70rem; color: #121c18; margin-top: 10px;
                 border-top: 1px solid #0a0e0c; padding-top: 8px; }
 .cd-empty     { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+
+/* Phase 48 — Deliberation Round Tracker */
+.drt-panel { background: #060a08; border: 1px solid #0c1410;
+             border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.drt-panel h3 { font-size: 0.88rem; color: #1e3828; margin-bottom: 14px;
+                border-bottom: 1px solid #0a100c; padding-bottom: 6px; }
+.drt-proposal-block { border: 1px solid #0c1410; border-radius: 6px;
+                      padding: 12px; margin-bottom: 14px; background: #040608; }
+.drt-proposal-header { display: flex; align-items: baseline; gap: 8px;
+                        flex-wrap: wrap; margin-bottom: 10px; }
+.drt-proposal-id    { font-family: monospace; font-size: 0.78rem; color: #1e3828; }
+.drt-proposal-title { font-size: 0.83rem; color: #2a4838; }
+.drt-status-badge   { font-size: 0.66rem; font-family: monospace; padding: 1px 5px;
+                      border-radius: 3px; background: #0c1810; color: #3a6040; }
+.drt-flag           { font-size: 0.64rem; font-family: monospace; padding: 1px 4px;
+                      border-radius: 3px; margin-right: 3px; }
+.drt-flag.cand      { background: #0a180a; color: #3a7040; }
+.drt-flag.conflict  { background: #1a0808; color: #804040; }
+.drt-flag.unresolved { background: #181008; color: #806030; }
+.drt-flag.cg        { background: #0a1020; color: #3a5080; }
+/* round timeline */
+.drt-timeline { position: relative; padding-left: 16px;
+                border-left: 1px solid #0e1810; margin-left: 4px; }
+.drt-round { margin-bottom: 8px; }
+.drt-round-header { display: flex; align-items: baseline; gap: 6px;
+                    flex-wrap: wrap; margin-bottom: 3px; }
+.drt-round-badge { font-size: 0.68rem; font-family: monospace;
+                   padding: 1px 6px; border-radius: 3px; }
+.drt-round-badge.proposal_opened          { background: #0c1810; color: #406050; }
+.drt-round-badge.initial_response         { background: #0a1020; color: #3a5080; }
+.drt-round-badge.concern_round            { background: #1a1008; color: #806030; }
+.drt-round-badge.clarification_round      { background: #10100a; color: #607040; }
+.drt-round-badge.synthesis_round          { background: #0a1018; color: #305878; }
+.drt-round-badge.consensus_candidate_round { background: #081808; color: #306040; }
+.drt-round-badge.unresolved_condition_round { background: #180808; color: #804040; }
+.drt-round-idx  { font-size: 0.64rem; font-family: monospace; color: #1e2828; }
+.drt-round-spk  { font-size: 0.66rem; color: #2a3838; }
+.drt-round-smry { font-size: 0.80rem; color: #2a4038; line-height: 1.5; margin: 2px 0 4px; }
+.drt-round-links { font-size: 0.64rem; color: #1e2830; }
+.drt-round-links span { margin-right: 6px; }
+.drt-stat-row   { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                  font-size: 0.70rem; color: #1e2830; }
+.drt-type-nav   { margin-bottom: 8px; font-size: 0.74rem; }
+.drt-type-nav a { color: #2a4030; margin-right: 8px; }
+.drt-filters    { margin-bottom: 10px; font-size: 0.78rem; }
+.drt-filters a  { color: #2a4030; margin-right: 8px; }
+.drt-advisory   { font-size: 0.70rem; color: #111c16; margin-top: 10px;
+                  border-top: 1px solid #0a0e0c; padding-top: 8px; }
+.drt-empty      { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3858,7 +3911,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a>'
         f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a>'
         f'&nbsp;<a href="/globe/phrase-genealogy" style="font-size:0.65em;color:#1e3040">🧬 Genealogy →</a>'
-        f'&nbsp;<a href="/globe/consensus" style="font-size:0.65em;color:#1e3828">💬 Consensus →</a></h2>'
+        f'&nbsp;<a href="/globe/consensus" style="font-size:0.65em;color:#1e3828">💬 Consensus →</a>'
+        f'&nbsp;<a href="/globe/deliberation-rounds" style="font-size:0.65em;color:#1e3830">🔄 Rounds →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -6185,6 +6239,249 @@ def render_consensus_page(
     )
 
 
+# ─── Phase 48: Deliberation Round Tracker ────────────────────────────────────────
+
+_DRT_JSON_PATH = _REPORTS_DIR / "deliberation_round_tracker.json"
+
+_DRT_RT_ICON: dict[str, str] = {
+    "proposal_opened":           "📄",
+    "initial_response":          "💬",
+    "concern_round":             "⚠️",
+    "clarification_round":       "🔍",
+    "synthesis_round":           "🧩",
+    "consensus_candidate_round": "🌱",
+    "unresolved_condition_round": "⚡",
+}
+_DRT_RT_TYPES: list[str] = [
+    "proposal_opened", "initial_response", "concern_round",
+    "clarification_round", "synthesis_round",
+    "consensus_candidate_round", "unresolved_condition_round",
+]
+
+
+def _load_drt() -> dict:
+    """Phase 48 — load deliberation_round_tracker.json or build on-the-fly."""
+    if _DRT_JSON_PATH.exists():
+        try:
+            return json.loads(_DRT_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "deliberation_round_tracker",
+            _RUNTIME_DIR / "deliberation_round_tracker.py",
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_tracker()
+    except Exception:
+        return {"rounds": [], "proposal_summaries": [], "total_rounds": 0}
+
+
+def _render_drt_round(r: dict) -> str:
+    rt   = r.get("round_type", "")
+    idx  = r.get("round_index", 0)
+    spks = ", ".join(_e(s) for s in r.get("speakers", []))
+    smry = _e(r.get("summary_text", ""))
+    icon = _DRT_RT_ICON.get(rt, "·")
+
+    links_parts: list[str] = []
+    for key, label in [
+        ("detected_issues",        "issues"),
+        ("detected_common_ground", "cg"),
+        ("detected_conflicts",     "conflicts"),
+        ("detected_candidates",    "candidates"),
+    ]:
+        items = r.get(key, [])
+        if items:
+            links_parts.append(f'<span>{label}: {_e(", ".join(items))}</span>')
+
+    links_html = (
+        f'<div class="drt-round-links">{"".join(links_parts)}</div>'
+        if links_parts else ""
+    )
+
+    return (
+        f'<div class="drt-round">'
+        f'<div class="drt-round-header">'
+        f'<span class="drt-round-idx">#{idx}</span>'
+        f'<span class="drt-round-badge {_e(rt)}">{icon} {_e(rt)}</span>'
+        f'<span class="drt-round-spk">{spks}</span>'
+        f'</div>'
+        f'<div class="drt-round-smry">{smry}</div>'
+        f'{links_html}'
+        f'</div>'
+    )
+
+
+def _render_drt_proposal_block(ps: dict, rounds: list[dict]) -> str:
+    pid   = ps.get("proposal_id", "")
+    gid   = ps.get("globe_id", "")
+    title = _e(ps.get("title", ""))
+    sta   = _e(ps.get("status", ""))
+    rc    = ps.get("round_count", 0)
+    latest = _e(ps.get("latest_round_type", ""))
+
+    flags_html = ""
+    if ps.get("has_consensus_candidate"):
+        flags_html += '<span class="drt-flag cand">🌱 candidate</span>'
+    if ps.get("has_conflict"):
+        flags_html += '<span class="drt-flag conflict">⚡ conflict</span>'
+    if ps.get("has_unresolved_condition"):
+        flags_html += '<span class="drt-flag unresolved">⚠️ unresolved</span>'
+    if ps.get("has_common_ground"):
+        flags_html += '<span class="drt-flag cg">🤝 common_ground</span>'
+
+    p_rounds = [r for r in rounds if r.get("proposal_id") == pid]
+    if not p_rounds:
+        return ""
+
+    rounds_html = "".join(_render_drt_round(r) for r in p_rounds)
+
+    return (
+        f'<div class="drt-proposal-block">'
+        f'<div class="drt-proposal-header">'
+        f'<span class="drt-proposal-id">{_e(pid)}</span>'
+        f'<span class="drt-proposal-title">{title}</span>'
+        f'<span class="drt-status-badge">{sta}</span>'
+        f'<span style="font-size:0.62rem;color:#1e2828">rounds={rc}</span>'
+        f'{flags_html}'
+        f'</div>'
+        f'<div class="drt-timeline">{rounds_html}</div>'
+        f'</div>'
+    )
+
+
+def render_rounds_page(
+    globe_filter:    str = "",
+    proposal_filter: str = "",
+    type_filter:     str = "",
+) -> str:
+    """Phase 48 — Deliberation Round Tracker page."""
+    data = _load_drt()
+    pss  = data.get("proposal_summaries", [])
+    rounds_all = data.get("rounds", [])
+
+    # filter
+    shown_pss = pss
+    if globe_filter:
+        shown_pss = [ps for ps in shown_pss if ps.get("globe_id") == globe_filter]
+    if proposal_filter:
+        shown_pss = [ps for ps in shown_pss if ps.get("proposal_id") == proposal_filter]
+
+    shown_rounds = rounds_all
+    if globe_filter:
+        shown_rounds = [r for r in shown_rounds if r.get("globe_id") == globe_filter]
+    if proposal_filter:
+        shown_rounds = [r for r in shown_rounds if r.get("proposal_id") == proposal_filter]
+    if type_filter:
+        shown_rounds = [r for r in shown_rounds if r.get("round_type") == type_filter]
+        shown_pss    = [
+            ps for ps in shown_pss
+            if any(r.get("proposal_id") == ps.get("proposal_id") for r in shown_rounds)
+        ]
+
+    total_rounds = data.get("total_rounds", 0)
+    rbt          = data.get("rounds_by_type", {})
+
+    # type nav
+    type_links = " | ".join(
+        f'<a href="/globe/deliberation-rounds?type={rt}">'
+        f'{_DRT_RT_ICON.get(rt,"·")} {rt.replace("_round","").replace("_"," ")}</a>'
+        for rt in _DRT_RT_TYPES
+    )
+
+    # filter breadcrumb
+    crumb: list[str] = []
+    if globe_filter:
+        crumb.append(f'globe={_e(globe_filter)} <a href="/globe/deliberation-rounds">×</a>')
+    if proposal_filter:
+        crumb.append(f'proposal={_e(proposal_filter)} <a href="/globe/deliberation-rounds">×</a>')
+    if type_filter:
+        crumb.append(f'type={_e(type_filter)} <a href="/globe/deliberation-rounds">×</a>')
+    filter_html = (
+        f'<div class="drt-filters">絞込: {" / ".join(crumb)}</div>'
+        if crumb else ""
+    )
+
+    counts_summary = " · ".join(
+        f'{_DRT_RT_ICON.get(rt,"·")} {rt.replace("_round","").replace("_"," ")}={cnt}'
+        for rt, cnt in rbt.items() if cnt
+    )
+    stat_html = (
+        f'<div class="drt-stat-row">'
+        f'<span>proposals: <b>{len(shown_pss)}</b></span>'
+        f'<span>rounds shown: <b>{len(shown_rounds)}</b></span>'
+        f'<span>total: <b>{total_rounds}</b></span>'
+        f'</div>'
+        f'<div style="font-size:0.66rem;color:#1e2828;margin-bottom:8px">{counts_summary}</div>'
+    )
+
+    if type_filter:
+        # flat list of matching rounds
+        blocks_html = "".join(
+            f'<div class="drt-proposal-block">'
+            f'<div class="drt-proposal-header">'
+            f'<span class="drt-proposal-id">{_e(r.get("proposal_id",""))}</span>'
+            f'</div>'
+            f'<div class="drt-timeline">{_render_drt_round(r)}</div>'
+            f'</div>'
+            for r in shown_rounds
+        ) or '<div class="drt-empty">該当 round なし</div>'
+    else:
+        blocks = [
+            _render_drt_proposal_block(ps, shown_rounds)
+            for ps in shown_pss
+        ]
+        blocks_html = "".join(b for b in blocks if b) \
+            or '<div class="drt-empty">データなし</div>'
+
+    advisory_html = (
+        '<div class="drt-advisory">'
+        + " · ".join(
+            f'<i>{_e(p)}</i>'
+            for p in [
+                "Deliberation rounds are advisory display only.",
+                "Deliberation round is not voting.",
+                "Deliberation round is not final agreement.",
+                "Deliberation round does not approve execution.",
+                "Human review is required before any real-world action.",
+            ]
+        )
+        + "</div>"
+    )
+
+    body = (
+        f'<div class="drt-panel">'
+        f'<h3>🔄 Deliberation Round Tracker'
+        f'&nbsp;<small style="font-size:0.7em;color:#1e3828">(Phase 48)</small></h3>'
+        f'<div class="drt-type-nav">{type_links}</div>'
+        f'{filter_html}'
+        f'{stat_html}'
+        f'{blocks_html}'
+        f'{advisory_html}'
+        f'</div>'
+    )
+
+    scope_label = (
+        f"proposal={proposal_filter}" if proposal_filter
+        else f"globe={globe_filter}" if globe_filter
+        else f"type={type_filter}" if type_filter
+        else "全て"
+    )
+
+    return _page(
+        f"Deliberation Rounds — {scope_label}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/consensus">Consensus</a> › '
+        f'<a href="/globe/deliberation-rounds">Rounds</a>',
+        f'<h2>🔄 Deliberation Round Tracker'
+        f'&nbsp;<small style="font-size:0.65em;color:#1e3830">({len(shown_pss)} proposals · {_e(scope_label)})</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -6222,6 +6519,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 48 — Deliberation Round Tracker (before /globe/<id> match)
+        if path == "/globe/deliberation-rounds":
+            self._send_html(render_rounds_page(
+                globe_filter=_qs("globe"),
+                proposal_filter=_qs("proposal"),
+                type_filter=_qs("type"),
+            ))
             return
 
         # Phase 47 — Consensus Discovery Layer (before /globe/<id> match)
