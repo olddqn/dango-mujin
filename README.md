@@ -608,6 +608,46 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 47 — Consensus Discovery Layer
+
+Proposal / Deliberation の内容から論点・立場・一致点・対立点・誤解の可能性・合意候補を
+rule-based で抽出する advisory 談合支援レイヤー。
+投票・採決・命令・強制ではない。
+
+**不変条件:**
+- Consensus discovery is advisory display only.
+- Consensus discovery is not voting.
+- Consensus candidate is not final agreement.
+- Consensus discovery does not approve execution.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/consensus_discovery.py summary
+python3 globe/runtime/consensus_discovery.py save
+python3 globe/runtime/consensus_discovery.py show-proposal proposal-002
+python3 globe/runtime/consensus_discovery.py show-globe globe-001
+python3 globe/runtime/consensus_discovery.py show-type candidate
+```
+
+**集計:** issues=4, stances=8, common_ground=2, conflict=3, candidates=4 (total=21)
+
+**確認URL:**
+- http://localhost:7422/globe/consensus
+- http://localhost:7422/globe/consensus?globe=globe-001
+- http://localhost:7422/globe/consensus?proposal=proposal-002
+- http://localhost:7422/globe/consensus?type=common_ground
+- http://localhost:7422/globe/consensus?type=conflict
+- http://localhost:7422/globe/consensus?type=candidate
+
+### 生成ファイル
+
+- `globe/runtime/consensus_discovery.py` — Consensus Discovery ビルダー・CLI (21 items)
+- `globe/reports/consensus_discovery.json` — 生成済み JSON
+- `globe/reports/consensus_discovery.md` — 生成済み Markdown
+
+---
+
 ## Phase 46 — Phrase Genealogy View
 
 Protocol Phrase Ledger の各フレーズについて、初出 Phase・引き継ぎ Phase・
