@@ -1689,3 +1689,89 @@ python3 globe/runtime/member_profile.py show-globe globe-001
 - `globe/runtime/member_profile.py` — プロフィール構築・CLI
 - `globe/reports/member_profiles.json` — 生成済み JSON (12 members)
 - `globe/reports/member_profiles.md` — 生成済み Markdown
+
+---
+
+## Phase 39 — Globe Member Activity Heatmap（フェーズ39）
+
+フェーズ39では、Member ごとの活動を日付 × Globe × activity type の heatmap として
+表示する **Globe Member Activity Heatmap** を追加しました。
+これは貢献の観察補助であり、評価・ランキング・信用スコア・権限付与ではありません。
+
+### 不変条件
+
+```python
+HEATMAP_INVARIANTS = {
+    "member_activity_heatmap_is_advisory_display_only": True,
+    "member_activity_heatmap_is_not_identity_verification": True,
+    "member_activity_heatmap_is_not_reputation_score": True,
+    "member_activity_heatmap_does_not_rank_members": True,
+    "member_activity_heatmap_creates_no_authority": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### Protocol Phrases
+
+```
+Member activity heatmap is advisory display only.
+Member activity heatmap is not identity verification.
+Member activity heatmap is not reputation score.
+Member activity heatmap does not rank members.
+Member activity heatmap creates no authority.
+Human review is required before any real-world action.
+```
+
+### Activity Types（12種）
+
+| activity_type | ソース |
+|---|---|
+| proposal | proposals.json |
+| deliberation | deliberations.json |
+| human_approval | logs/*.jsonl |
+| observation | logs/*.jsonl |
+| objection | logs/*.jsonl |
+| feedback | logs/*.jsonl |
+| rollback_request | logs/*.jsonl |
+| voluntary_resolution_signal | logs/*.jsonl |
+| execution_attempt | logs/*.jsonl |
+| execution_log | logs/*.jsonl (不明 entry_type のフォールバック) |
+| timeline_event | contribution_timeline.json (bridge_target_link 等) |
+| feed_item | globe_feed.json (未利用 — actor 情報なし) |
+
+### 集計項目
+
+- `total_events` — 全イベント数
+- `by_activity_type` — activity type 別カウント
+- `by_globe` — Globe 別カウント
+- `by_date` — 日付別 activity type カウント
+- `latest_activity_at` — 最終活動日時
+- `objection_count` — 異議申立数（advisory only）
+- `unresolved_signal_count` — 未解決シグナル数
+- `contested_signal_count` — 他メンバー異議ありシグナル数
+
+### HTTP Routes
+
+```
+/globe/member-activity                → 全メンバーヒートマップ
+/globe/member-activity?member=<id>   → 特定メンバーのヒートマップ
+/globe/member-activity?globe=<id>    → Globe でフィルター
+/globe/member-activity?date=<date>   → 日付でフィルター
+```
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_activity_heatmap.py summary
+python3 globe/runtime/member_activity_heatmap.py save
+python3 globe/runtime/member_activity_heatmap.py show-member member-masuo-komori
+python3 globe/runtime/member_activity_heatmap.py show-globe globe-001
+python3 globe/runtime/member_activity_heatmap.py show-date 2026-05-31
+```
+
+### 生成ファイル
+
+- `globe/runtime/member_activity_heatmap.py` — ヒートマップ構築・CLI (12 members, 25 events, 2 dates)
+- `globe/reports/member_activity_heatmap.json` — 生成済み JSON
+- `globe/reports/member_activity_heatmap.md` — 生成済み Markdown

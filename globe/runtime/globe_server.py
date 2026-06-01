@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–38)
+globe_server.py — Globe UI Server (Phase 22–39)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -40,6 +40,10 @@ Routes:
     /globe/members                        → Member Profile list         [Phase 38]
     /globe/members?globe=<globe_id>       → Members filtered by globe   [Phase 38]
     /globe/members/<member_id>            → Member detail page          [Phase 38]
+    /globe/member-activity                → Member Activity Heatmap     [Phase 39]
+    /globe/member-activity?member=<id>   → Heatmap for one member      [Phase 39]
+    /globe/member-activity?globe=<id>    → Heatmap filtered by globe   [Phase 39]
+    /globe/member-activity?date=<date>   → Heatmap filtered by date    [Phase 39]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1067,6 +1071,48 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .mp-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .mp-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 39 — Member Activity Heatmap */
+.mah-panel { background: #08090f; border: 1px solid #161e30;
+             border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.mah-panel h3 { font-size: 0.88rem; color: #3a4870; margin-bottom: 14px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.mah-card { border: 1px solid #1a2440; border-radius: 6px;
+            padding: 12px 16px; margin-bottom: 12px; background: #0e1020; }
+.mah-card-header { display: flex; align-items: baseline; gap: 8px;
+                   flex-wrap: wrap; margin-bottom: 4px; }
+.mah-icon { font-size: 1.1rem; flex-shrink: 0; }
+.mah-id { font-family: monospace; font-size: 0.78rem; color: #3a4870; }
+.mah-name { font-size: 0.85rem; color: #7080a0; margin-bottom: 4px; }
+.mah-meta { font-size: 0.72rem; color: #2a3450; line-height: 1.6; margin-bottom: 6px; }
+.mah-date-grid { margin-top: 8px; }
+.mah-date-row { display: flex; align-items: flex-start; gap: 8px;
+                padding: 4px 0; border-bottom: 1px solid #0e1220;
+                font-size: 0.70rem; }
+.mah-date-label { flex-shrink: 0; width: 80px; color: #3a4a60;
+                  font-family: monospace; padding-top: 2px; }
+.mah-type-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.mah-type-chip { font-size: 0.66rem; padding: 1px 6px; border-radius: 3px;
+                 background: #10121c; color: #2a3a52; white-space: nowrap; }
+.mah-type-chip.active { background: #0e1830; color: #4a70a0; font-weight: 600; }
+.mah-type-chip.attn { background: #1a1008; color: #906030; }
+.mah-totals { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.mah-total-chip { font-size: 0.66rem; padding: 2px 7px; border-radius: 3px;
+                  background: #0e1020; color: #2a3a52; }
+.mah-total-chip.has-val { background: #0c1428; color: #3a5888; }
+.mah-attention { margin-top: 8px; padding: 6px 10px; border-radius: 4px;
+                 background: #14100a; border: 1px solid #2a1e0a;
+                 font-size: 0.70rem; color: #806040; line-height: 1.7; }
+.mah-stat-row { display: grid; grid-template-columns: repeat(4, 1fr);
+                gap: 10px; margin-bottom: 16px; text-align: center;
+                font-size: 0.82rem; }
+.mah-stat-row .ms-num { font-size: 1.3rem; color: #5070a0; }
+.mah-stat-row .ms-lbl { color: #2a3450; font-size: 0.74rem; }
+.mah-filters { margin-bottom: 14px; font-size: 0.78rem; }
+.mah-filters a { color: #3a4878; margin-right: 8px; }
+.mah-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1420; padding-top: 8px; }
+.mah-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -2920,6 +2966,271 @@ def render_member_detail(member_id: str) -> str | None:
     )
 
 
+# ─── Phase 39: Member Activity Heatmap ─────────────────────────────────────────
+
+_HEATMAP_JSON_PATH = _REPORTS_DIR / "member_activity_heatmap.json"
+
+_AT_ICON: dict[str, str] = {
+    "proposal":                    "📋",
+    "deliberation":                "💬",
+    "human_approval":              "✅",
+    "observation":                 "👁️",
+    "objection":                   "⚠️",
+    "feedback":                    "🔄",
+    "rollback_request":            "↩️",
+    "voluntary_resolution_signal": "🏳️",
+    "execution_attempt":           "▶️",
+    "execution_log":               "📝",
+    "timeline_event":              "🔗",
+    "feed_item":                   "📰",
+}
+
+_ALL_ACTIVITY_TYPES: list[str] = [
+    "proposal", "deliberation", "human_approval", "observation",
+    "objection", "feedback", "rollback_request",
+    "voluntary_resolution_signal", "execution_attempt",
+    "execution_log", "timeline_event", "feed_item",
+]
+
+
+def _load_heatmap() -> dict:
+    """Phase 39 — load member_activity_heatmap.json or build on-the-fly."""
+    if _HEATMAP_JSON_PATH.exists():
+        try:
+            return json.loads(_HEATMAP_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    # Fallback: import and build
+    import importlib, importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "member_activity_heatmap",
+        Path(__file__).parent / "member_activity_heatmap.py",
+    )
+    if _spec and _spec.loader:
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)        # type: ignore[union-attr]
+        return _mod.build_heatmap()
+    return {"members": [], "by_date_summary": {}, "all_dates": []}
+
+
+def _render_mah_card(m: dict, date_filter: str | None = None) -> str:
+    """Phase 39 — render one member activity heatmap card."""
+    mid   = m.get("member_id", "")
+    name  = m.get("display_name", mid)
+    atypes = m.get("actor_types", ["human"])
+    icon  = {"human": "👤", "ai": "🤖", "system": "⚙️"}.get(
+        atypes[0] if atypes else "human", "👤"
+    )
+    globes = ", ".join(m.get("globe_ids", []))
+    total  = m.get("total_events", 0)
+    latest = (m.get("latest_activity_at") or "")[:19]
+    by_date: dict[str, dict[str, int]] = m.get("by_date", {})
+    by_at:   dict[str, int]            = m.get("by_activity_type", {})
+
+    # Date rows — show all dates (or only date_filter date if set)
+    date_rows_html = ""
+    dates_to_show = sorted(by_date.keys())
+    if date_filter and date_filter in by_date:
+        dates_to_show = [date_filter]
+    elif date_filter:
+        dates_to_show = []
+    for date in dates_to_show:
+        acts = by_date[date]
+        chips = ""
+        for at in _ALL_ACTIVITY_TYPES:
+            cnt = acts.get(at, 0)
+            ai  = _AT_ICON.get(at, "·")
+            if cnt:
+                css = "mah-type-chip active" + (" attn" if at == "objection" else "")
+                chips += f'<span class="{css}">{ai} {_e(at)}: {cnt}</span>'
+        if chips:
+            date_rows_html += (
+                f'<div class="mah-date-row">'
+                f'<span class="mah-date-label">{_e(date)}</span>'
+                f'<div class="mah-type-chips">{chips}</div>'
+                f'</div>'
+            )
+
+    # Activity type totals
+    totals_html = ""
+    for at in _ALL_ACTIVITY_TYPES:
+        cnt = by_at.get(at, 0)
+        ai  = _AT_ICON.get(at, "·")
+        cls = "mah-total-chip has-val" if cnt else "mah-total-chip"
+        if cnt:
+            totals_html += f'<span class="{cls}">{ai} {_e(at)}: {cnt}</span>'
+
+    # Attention items
+    attn_parts = []
+    if m.get("objection_count", 0):
+        attn_parts.append(
+            f"⚠️ objections: {m['objection_count']} — advisory only, requires human review"
+        )
+    if m.get("unresolved_signal_count", 0):
+        attn_parts.append(
+            f"⚠️ unresolved_signals: {m['unresolved_signal_count']}"
+            " — voluntary_resolution_signal does not confirm resolution"
+        )
+    if m.get("contested_signal_count", 0):
+        attn_parts.append(
+            f"⚠️ contested_signals: {m['contested_signal_count']}"
+            " — objection by another member exists, human review required"
+        )
+    attn_html = ""
+    if attn_parts:
+        attn_inner = "<br>".join(_e(p) for p in attn_parts)
+        attn_html = f'<div class="mah-attention">{attn_inner}</div>'
+
+    profile_link = f'<a href="/globe/members/{_e(mid)}" style="color:#3a4878">👤 Profile</a>'
+
+    return f"""
+<div class="mah-card">
+  <div class="mah-card-header">
+    <span class="mah-icon">{icon}</span>
+    <span class="mah-id"><a href="/globe/members/{_e(mid)}" style="color:#3a4878">{_e(mid)}</a></span>
+    <span class="mah-name">{_e(name)}</span>
+  </div>
+  <div class="mah-meta">globes: {_e(globes)} &nbsp;·&nbsp; types: {_e(", ".join(atypes))} &nbsp;·&nbsp; total: {total} events &nbsp;·&nbsp; latest: {_e(latest or "N/A")}</div>
+  <div class="mah-date-grid">{date_rows_html if date_rows_html else '<span style="color:#2a3040;font-size:0.70rem">（no date data）</span>'}</div>
+  <div class="mah-totals">{totals_html}</div>
+  {attn_html}
+  <div style="margin-top:6px;font-size:0.68rem">{profile_link}</div>
+</div>"""
+
+
+def render_member_activity_page(
+    member_filter: str | None = None,
+    globe_filter:  str | None = None,
+    date_filter:   str | None = None,
+) -> str:
+    """Phase 39 — Member activity heatmap page."""
+    data     = _load_heatmap()
+    all_mem  = data.get("members", [])
+    all_dates = data.get("all_dates", [])
+    by_date_summary = data.get("by_date_summary", {})
+
+    # Apply filters
+    members = all_mem
+    if member_filter:
+        members = [m for m in members if m.get("member_id") == member_filter]
+    elif globe_filter:
+        members = [m for m in members if globe_filter in m.get("globe_ids", [])]
+    elif date_filter:
+        members = [m for m in members if date_filter in m.get("by_date", {})]
+
+    # Scope label
+    if member_filter:
+        scope_label = f"member={member_filter}"
+    elif globe_filter:
+        scope_label = f"globe={globe_filter}"
+    elif date_filter:
+        scope_label = f"date={date_filter}"
+    else:
+        scope_label = "全メンバー"
+
+    # Filter bar — member / globe / date quick links
+    # Globe filter links
+    all_globe_ids: set[str] = set()
+    for m in all_mem:
+        all_globe_ids.update(m.get("globe_ids", []))
+    globe_links = '<a href="/globe/member-activity">全て</a>'
+    for gid in sorted(all_globe_ids):
+        cnt = sum(1 for m in all_mem if gid in m.get("globe_ids", []))
+        globe_links += (
+            f'<a href="/globe/member-activity?globe={_e(gid)}">'
+            f'🌐 {_e(gid)} ({cnt})</a>'
+        )
+    # Date filter links
+    date_links = ""
+    for d in sorted(all_dates):
+        summ = by_date_summary.get(d, {})
+        ev = summ.get("total_events", 0)
+        date_links += (
+            f'<a href="/globe/member-activity?date={_e(d)}">'
+            f'📅 {_e(d)} ({ev})</a>'
+        )
+
+    filter_html = (
+        f'<div class="mah-filters">'
+        f'Globe: {globe_links}</div>'
+        f'<div class="mah-filters">Date: {date_links}</div>'
+    )
+
+    # Date summary bar (for date filter)
+    date_bar_html = ""
+    if date_filter:
+        summ = by_date_summary.get(date_filter, {})
+        if summ:
+            at_str = "  ".join(
+                f"{_AT_ICON.get(k,'·')} {_e(k)}: {v}"
+                for k, v in summ.get("by_activity_type", {}).items() if v
+            )
+            date_bar_html = (
+                f'<div style="background:#0a0e16;border:1px solid #14203a;'
+                f'border-radius:5px;padding:8px 14px;margin-bottom:12px;font-size:0.76rem">'
+                f'📅 {_e(date_filter)} — {summ.get("total_events",0)} events &nbsp; {at_str}'
+                f'</div>'
+            )
+
+    # Member cards
+    if members:
+        cards_html = "".join(_render_mah_card(m, date_filter) for m in members)
+    else:
+        cards_html = '<div class="mah-empty">この条件に合うメンバーが見つかりません。</div>'
+
+    # Summary stats
+    total_ev = sum(m.get("total_events", 0) for m in members)
+    dr_start = all_dates[0] if all_dates else "N/A"
+    dr_end   = all_dates[-1] if all_dates else "N/A"
+    stat_html = (
+        f'<div class="mah-stat-row">'
+        f'<div><div class="ms-num">{len(members)}</div><div class="ms-lbl">members</div></div>'
+        f'<div><div class="ms-num">{total_ev}</div><div class="ms-lbl">events</div></div>'
+        f'<div><div class="ms-num">{len(all_dates)}</div><div class="ms-lbl">active dates</div></div>'
+        f'<div><div class="ms-num">{len(all_globe_ids)}</div><div class="ms-lbl">globes</div></div>'
+        f'</div>'
+    )
+
+    advisory = (
+        '<div class="mah-advisory">'
+        'Member activity heatmap is advisory display only. '
+        'Member activity heatmap is not identity verification. '
+        'Member activity heatmap is not reputation score. '
+        'Member activity heatmap does not rank members. '
+        'Member activity heatmap creates no authority. '
+        'Human review is required before any real-world action.'
+        '</div>'
+    )
+
+    body = f"""
+<div class="mah-panel">
+  <h3>🌡️ Member Activity Heatmap
+    <small style="font-size:0.65em;color:#3a4258">(Phase 39 · {_e(scope_label)})</small>
+  </h3>
+  {stat_html}
+  {filter_html}
+  {date_bar_html}
+  <div style="font-size:0.80rem;color:#4a5870;margin-bottom:10px">
+    👥 Members ({len(members)}) — {_e(scope_label)}
+  </div>
+  {cards_html}
+  {advisory}
+</div>
+  <a href="/globe/members">← Members 一覧</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/dependencies">🗺️ Dependencies</a>
+  &nbsp;·&nbsp;
+  <a href="/globe/feed">📰 Feed</a>"""
+
+    return _page(
+        f"Member Activity — {scope_label} — Dan-Go Globe",
+        (f'<a href="/globe">Globe</a> › '
+         f'<a href="/globe/member-activity">Member Activity</a>'
+         + (f' › {_e(scope_label)}' if scope_label != "全メンバー" else "")),
+        body,
+    )
+
+
 # ─── Page renderers ────────────────────────────────────────────────────────────
 
 def render_globe_list() -> str:
@@ -2954,7 +3265,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/activity" style="font-size:0.65em;color:#3a4a60">🗓 Activity →</a>'
         f'&nbsp;<a href="/globe/feed" style="font-size:0.65em;color:#2a4a68">📰 Feed →</a>'
         f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a>'
-        f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a></h2>'
+        f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a>'
+        f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -3838,6 +4150,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 39 — Member Activity Heatmap (before /globe/<id> match)
+        if path == "/globe/member-activity":
+            self._send_html(render_member_activity_page(
+                member_filter=_qs("member"),
+                globe_filter=_qs("globe"),
+                date_filter=_qs("date"),
+            ))
             return
 
         # Phase 38 — Member Profile list (before /globe/<id> match)

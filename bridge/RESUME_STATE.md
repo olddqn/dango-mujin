@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Member Profile View
+# RESUME_STATE.md — Globe Member Activity Heatmap
 
-> **STATUS: IN PROGRESS (feature/phase-38-member-profile)**
+> **STATUS: IN PROGRESS (feature/phase-39-member-activity-heatmap)**
 
-**Phase:** Globe Member Profile View (Phase 38)
-**Branch:** feature/phase-38-member-profile
+**Phase:** Globe Member Activity Heatmap (Phase 39)
+**Branch:** feature/phase-39-member-activity-heatmap
 **Started:** 2026-06-01
 
 ---
@@ -58,7 +58,34 @@
 - Globe Feed / Changelog (Phase 36) — PR #30, merged
 - Directive Dependency Map (Phase 37) — PR #31
 - Dependency Edge URL Enrichment (Phase 37b) — merged via PR #32
-- **Globe Member Profile View (Phase 38)** ← current commit
+- Globe Member Profile View (Phase 38) — PR #33
+- **Globe Member Activity Heatmap (Phase 39)** ← current commit
+
+---
+
+## New Files (Phase 39)
+
+- `globe/runtime/member_activity_heatmap.py` — Heatmap builder + CLI (12 members, 25 events, 2 dates, advisory only)
+- `globe/reports/member_activity_heatmap.json` — Generated heatmap JSON
+- `globe/reports/member_activity_heatmap.md` — Human-readable heatmap Markdown
+
+## Updated Files (Phase 39)
+
+- `globe/runtime/globe_server.py` — Added `_load_heatmap()`, `_render_mah_card()`, `render_member_activity_page()`, Phase 39 CSS; wired `/globe/member-activity` route with `?member=`, `?globe=`, `?date=` query params; added "🌡️ Heatmap →" to Globe list header; updated docstring to Phase 22–39
+- `globe/spec/GLOBE_SPEC.md` — Phase 39 section (12 activity types, HTTP routes, CLI, invariants)
+- `README.md` — Phase 39 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 39)
+
+```
+Member activity heatmap is advisory display only.
+Member activity heatmap is not identity verification.
+Member activity heatmap is not reputation score.
+Member activity heatmap does not rank members.
+Member activity heatmap creates no authority.
+Human review is required before any real-world action.
+```
 
 ---
 

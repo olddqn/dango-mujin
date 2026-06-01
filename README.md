@@ -562,6 +562,56 @@ HTTP URL:
 
 ---
 
+## Phase 39 — Globe Member Activity Heatmap
+
+Member ごとの活動を 日付 × Globe × activity type の heatmap として表示。
+貢献の観察補助 — 評価・ランキング・信用スコア・権限付与ではない。
+
+> **"Member activity heatmap is advisory display only."**
+> **"Member activity heatmap is not identity verification."**
+> **"Member activity heatmap is not reputation score."**
+> **"Member activity heatmap does not rank members."**
+> **"Member activity heatmap creates no authority."**
+
+### データ集計
+
+6ソース（proposals/deliberations/logs/rfb/contribution_timeline/globe_feed）から
+12 members × 2 dates × 12 activity types の heatmap を構築。
+total_events: 25 (2026-05-30: 19 events, 2026-05-31: 6 events)。
+
+### CLIコマンド
+
+```bash
+python3 globe/runtime/member_activity_heatmap.py summary
+# total_members: 12, total_events: 25, date_range: 2026-05-30 — 2026-05-31
+
+python3 globe/runtime/member_activity_heatmap.py show-member member-masuo-komori
+# 2026-05-30: human_approval:2
+# 2026-05-31: voluntary_resolution_signal:1
+# ⚠️ unresolved_signals: 1, contested_signals: 1
+
+python3 globe/runtime/member_activity_heatmap.py show-globe globe-001
+# 8 members, 19 events (mostly 2026-05-30)
+
+python3 globe/runtime/member_activity_heatmap.py show-date 2026-05-31
+# 3 members active: bridge-target-linker, masuo-komori, jammy-house-steward
+```
+
+### URL確認
+
+- http://localhost:7422/globe/member-activity
+- http://localhost:7422/globe/member-activity?member=member-masuo-komori
+- http://localhost:7422/globe/member-activity?globe=globe-001
+- http://localhost:7422/globe/member-activity?date=2026-05-31
+
+### 生成ファイル
+
+- `globe/runtime/member_activity_heatmap.py` — ヒートマップ構築・CLI (12 members, 25 events)
+- `globe/reports/member_activity_heatmap.json` — 生成済み JSON
+- `globe/reports/member_activity_heatmap.md` — 生成済み Markdown
+
+---
+
 ## Phase 38 — Globe Member Profile View
 
 フェーズ38では、Globe内メンバーの活動履歴を advisory display として可視化する
