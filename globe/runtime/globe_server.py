@@ -5502,8 +5502,9 @@ def render_phrases_page(
         shown = [e for e in shown if e.get("phrase_type", "") == type_filter]
     if query:
         ql = query.lower()
-        shown = [e for e in shown if ql in e.get("phrase_text", "").lower()
-                 or ql in e.get("normalized_phrase", "").lower()]
+        shown = [e for e in shown if ql in e.get("normalized_phrase", "")
+                 or ql in e.get("phrase_type", "")
+                 or ql in " ".join(e.get("all_phases", []))]
 
     total   = data.get("total_phrases", len(entries))
     raw_occ = data.get("total_raw_occurrences", 0)
