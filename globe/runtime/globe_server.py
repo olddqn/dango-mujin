@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–45)
+globe_server.py — Globe UI Server (Phase 22–46)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -69,6 +69,10 @@ Routes:
     /globe/protocol-phrases?phase=<phase>        → filtered by phase                  [Phase 45]
     /globe/protocol-phrases?type=<type>          → filtered by phrase_type            [Phase 45]
     /globe/protocol-phrases?q=<query>            → text search                        [Phase 45]
+    /globe/phrase-genealogy                      → Phrase Genealogy View              [Phase 46]
+    /globe/phrase-genealogy?type=<type>          → filtered by phrase_type            [Phase 46]
+    /globe/phrase-genealogy?phase=<phase>        → filtered by phase                  [Phase 46]
+    /globe/phrase-genealogy?q=<query>            → text search                        [Phase 46]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1360,6 +1364,55 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .ppl-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                 border-top: 1px solid #0e1824; padding-top: 8px; }
 .ppl-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+
+/* Phase 46 — Phrase Genealogy View */
+.gen-panel { background: #08090e; border: 1px solid #0e1018;
+             border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.gen-panel h3 { font-size: 0.88rem; color: #1e3050; margin-bottom: 14px;
+                border-bottom: 1px solid #0a1018; padding-bottom: 6px; }
+.gen-card { border-radius: 5px; padding: 10px 12px; margin-bottom: 8px;
+            background: #050810; }
+.gen-card.foundational { border-left: 3px solid #3a8060; border: 1px solid #0e1a14; border-left-width: 3px; }
+.gen-card.repeated     { border-left: 3px solid #4060a0; border: 1px solid #0e1020; border-left-width: 3px; }
+.gen-card.recent       { border-left: 3px solid #806030; border: 1px solid #181008; border-left-width: 3px; }
+.gen-card.single_phase { border: 1px solid #0a0c14; }
+.gen-card-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.gen-gid  { font-family: monospace; font-size: 0.70rem; color: #1e2838; }
+.gen-fp-badge { font-size: 0.68rem; font-family: monospace;
+                background: #0a1020; color: #2a4060; padding: 1px 5px; border-radius: 3px; }
+.gen-cls-badge { font-size: 0.68rem; font-family: monospace; padding: 1px 6px; border-radius: 3px; }
+.gen-cls-badge.foundational { background: #0a1810; color: #3a8060; }
+.gen-cls-badge.repeated     { background: #0a1020; color: #4060a0; }
+.gen-cls-badge.recent       { background: #181008; color: #806030; }
+.gen-cls-badge.single_phase { background: #0c0c14; color: #3a3a50; }
+.gen-type-badge { font-size: 0.66rem; font-family: monospace; padding: 1px 5px; border-radius: 3px; }
+.gen-type-badge.advisory               { background: #0e1a0e; color: #3a7040; }
+.gen-type-badge.no_authority           { background: #1a0e10; color: #804040; }
+.gen-type-badge.no_ranking             { background: #1a0e1a; color: #7040a0; }
+.gen-type-badge.no_allocation          { background: #0e1a1a; color: #30707a; }
+.gen-type-badge.no_proof               { background: #0e0e1a; color: #4060a0; }
+.gen-type-badge.human_review           { background: #1a1a0e; color: #a08030; }
+.gen-type-badge.no_responsibility_assignment { background: #1a100e; color: #906040; }
+.gen-type-badge.append_only            { background: #101a0e; color: #608040; }
+.gen-type-badge.other                  { background: #101010; color: #505060; }
+.gen-text  { font-size: 0.82rem; color: #3a5080; line-height: 1.5; margin-bottom: 4px; }
+.gen-phases { font-size: 0.68rem; color: #2a3858; margin-bottom: 3px; }
+.gen-phases span { color: #3a5070; margin-right: 3px; }
+.gen-count { font-size: 0.72rem; color: #283048; }
+.gen-note  { font-size: 0.70rem; color: #2a3850; line-height: 1.5; margin-top: 4px;
+             font-style: italic; border-top: 1px solid #0a0c14; padding-top: 4px; }
+.gen-link  { font-size: 0.66rem; color: #1e2838; margin-top: 3px; }
+.gen-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                font-size: 0.72rem; color: #1e2838; }
+.gen-cls-nav { margin-bottom: 10px; font-size: 0.75rem; }
+.gen-cls-nav a { color: #2a4060; margin-right: 8px; }
+.gen-type-nav { margin-bottom: 8px; font-size: 0.72rem; }
+.gen-type-nav a { color: #2a3858; margin-right: 8px; }
+.gen-filters { margin-bottom: 10px; font-size: 0.78rem; }
+.gen-filters a { color: #2a4060; margin-right: 8px; }
+.gen-advisory { font-size: 0.70rem; color: #141e28; margin-top: 10px;
+                border-top: 1px solid #0a0e18; padding-top: 8px; }
+.gen-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3753,7 +3806,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a>'
         f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a>'
         f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a>'
-        f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a></h2>'
+        f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a>'
+        f'&nbsp;<a href="/globe/phrase-genealogy" style="font-size:0.65em;color:#1e3040">🧬 Genealogy →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -5587,6 +5641,215 @@ def render_phrases_page(
     )
 
 
+# ─── Phase 46: Phrase Genealogy View ─────────────────────────────────────────────
+
+_GEN_JSON_PATH = _REPORTS_DIR / "phrase_genealogy.json"
+
+_GEN_CLS_ICON: dict[str, str] = {
+    "foundational": "🌳",
+    "repeated":     "🔁",
+    "recent":       "🌱",
+    "single_phase": "·",
+}
+_GEN_CLS_LABEL: dict[str, str] = {
+    "foundational": "foundational",
+    "repeated":     "repeated",
+    "recent":       "recent",
+    "single_phase": "single_phase",
+}
+_GEN_PT_ICON: dict[str, str] = {
+    "advisory":                     "📋",
+    "no_authority":                 "🚫",
+    "no_ranking":                   "📊",
+    "no_allocation":                "💰",
+    "no_proof":                     "🔍",
+    "human_review":                 "👁",
+    "no_responsibility_assignment": "⚖️",
+    "append_only":                  "📝",
+    "other":                        "·",
+}
+
+
+def _load_gen() -> dict:
+    """Phase 46 — load phrase_genealogy.json or build on-the-fly via importlib."""
+    if _GEN_JSON_PATH.exists():
+        try:
+            return json.loads(_GEN_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "phrase_genealogy",
+            _RUNTIME_DIR / "phrase_genealogy.py",
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_genealogy()
+    except Exception:
+        return {"nodes": [], "total_nodes": 0}
+
+
+def _render_gen_card(node: dict) -> str:
+    gid   = _e(node.get("genealogy_id", ""))
+    pid   = _e(node.get("phrase_id", ""))
+    text  = _e(node.get("phrase_text", ""))
+    pt    = node.get("phrase_type", "other")
+    fp    = _e(node.get("first_phase", ""))
+    pc    = node.get("phase_count", 0)
+    cls   = node.get("continuity_class", "single_phase")
+    note  = _e(node.get("continuity_note", ""))
+    phases = node.get("phases_seen", [])
+
+    icon_cls  = _GEN_CLS_ICON.get(cls, "·")
+    icon_pt   = _GEN_PT_ICON.get(pt, "·")
+    shown_phases = phases[:10]
+    phase_spans  = " ".join(f'<span>Phase {_e(p)}</span>' for p in shown_phases)
+    if len(phases) > 10:
+        phase_spans += f' <span>+{len(phases)-10}</span>'
+
+    ledger_link = (
+        f'<div class="gen-link"><a href="/globe/protocol-phrases?phase={_e(fp)}">📜 ledger phase={_e(fp)}</a></div>'
+        if fp else ""
+    )
+
+    return (
+        f'<div class="gen-card {_e(cls)}">'
+        f'<div class="gen-card-header">'
+        f'<span class="gen-gid">{gid}</span>'
+        f'<span class="gen-fp-badge">Phase {fp}</span>'
+        f'<span class="gen-cls-badge {_e(cls)}">{icon_cls} {_e(cls)}</span>'
+        f'<span class="gen-type-badge {_e(pt)}">{icon_pt} {_e(pt)}</span>'
+        f'</div>'
+        f'<div class="gen-text">"{text}"</div>'
+        f'<div class="gen-count">×{pc} phase(s)</div>'
+        f'<div class="gen-phases">{phase_spans}</div>'
+        f'<div class="gen-note">{note}</div>'
+        f'{ledger_link}'
+        f'</div>'
+    )
+
+
+def render_genealogy_page(
+    phase_filter: str = "",
+    type_filter:  str = "",
+    query:        str = "",
+) -> str:
+    """Phase 46 — Phrase Genealogy View page."""
+    data  = _load_gen()
+    nodes = data.get("nodes", [])
+
+    # apply filters
+    shown = nodes
+    if phase_filter:
+        shown = [n for n in shown if phase_filter in n.get("phases_seen", [])]
+    if type_filter:
+        shown = [n for n in shown if n.get("phrase_type", "") == type_filter]
+    if query:
+        ql = query.lower()
+        shown = [
+            n for n in shown
+            if ql in n.get("normalized_phrase", "")
+            or ql in n.get("phrase_type", "")
+            or ql in " ".join(n.get("phases_seen", []))
+            or ql in n.get("continuity_class", "")
+        ]
+
+    total = data.get("total_nodes", len(nodes))
+
+    # continuity class nav
+    all_cls = ["foundational", "repeated", "recent", "single_phase"]
+    cls_links = " | ".join(
+        f'<a href="/globe/phrase-genealogy?q={c}">{_GEN_CLS_ICON.get(c,"·")} {c}</a>'
+        for c in all_cls
+    )
+
+    # type nav
+    all_types = [
+        "advisory", "no_authority", "no_ranking", "no_allocation", "no_proof",
+        "human_review", "no_responsibility_assignment", "append_only", "other",
+    ]
+    type_links = " | ".join(
+        f'<a href="/globe/phrase-genealogy?type={t}">{_GEN_PT_ICON.get(t,"·")} {t}</a>'
+        for t in all_types
+    )
+
+    # filter breadcrumb
+    crumb_parts = []
+    if phase_filter:
+        crumb_parts.append(f'phase={_e(phase_filter)} <a href="/globe/phrase-genealogy">×</a>')
+    if type_filter:
+        crumb_parts.append(f'type={_e(type_filter)} <a href="/globe/phrase-genealogy">×</a>')
+    if query:
+        crumb_parts.append(f'q={_e(query)} <a href="/globe/phrase-genealogy">×</a>')
+    filter_html = (
+        f'<div class="gen-filters">絞込: {" / ".join(crumb_parts)}</div>'
+        if crumb_parts else ""
+    )
+
+    stat_html = (
+        f'<div class="gen-stat-row">'
+        f'<span>表示: <b>{len(shown)}</b></span>'
+        f'<span>総ノード: <b>{total}</b></span>'
+        f'</div>'
+    )
+
+    by_cls = data.get("by_continuity_class", {})
+    cls_summary = " · ".join(
+        f'{_GEN_CLS_ICON.get(c,"·")} {c}={by_cls.get(c,0)}'
+        for c in all_cls if by_cls.get(c, 0) > 0
+    )
+
+    if shown:
+        cards = "".join(_render_gen_card(n) for n in shown)
+    else:
+        cards = '<div class="gen-empty">系譜ノードなし</div>'
+
+    advisory_phrases = [
+        "Phrase genealogy is advisory display only.",
+        "Phrase genealogy creates no legal authority.",
+        "Phrase genealogy is not enforcement.",
+        "Phrase genealogy does not override human judgment.",
+        "Human review is required before any real-world action.",
+    ]
+    advisory_html = (
+        '<div class="gen-advisory">'
+        + " · ".join(f'<i>{_e(p)}</i>' for p in advisory_phrases)
+        + "</div>"
+    )
+
+    body = (
+        f'<div class="gen-panel">'
+        f'<h3>🧬 Phrase Genealogy'
+        f'&nbsp;<small style="font-size:0.7em;color:#1e3050">(Phase 46)</small></h3>'
+        f'<div class="gen-cls-nav">{cls_links}</div>'
+        f'<div class="gen-type-nav">{type_links}</div>'
+        f'{filter_html}'
+        f'{stat_html}'
+        f'<div style="font-size:0.70rem;color:#1e2838;margin-bottom:8px">{cls_summary}</div>'
+        f'{cards}'
+        f'{advisory_html}'
+        f'</div>'
+    )
+
+    scope_label = (
+        f"phase={phase_filter}" if phase_filter
+        else f"type={type_filter}" if type_filter
+        else f"q={query}" if query
+        else "全て"
+    )
+
+    return _page(
+        f"Phrase Genealogy — {scope_label}",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/protocol-phrases">Phrases</a> › '
+        f'<a href="/globe/phrase-genealogy">Genealogy</a>',
+        f'<h2>🧬 Phrase Genealogy'
+        f'&nbsp;<small style="font-size:0.65em;color:#1e3050">({len(shown)} nodes · {_e(scope_label)})</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -5624,6 +5887,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 46 — Phrase Genealogy View (before /globe/<id> match)
+        if path == "/globe/phrase-genealogy":
+            self._send_html(render_genealogy_page(
+                phase_filter=_qs("phase"),
+                type_filter=_qs("type"),
+                query=_qs("q"),
+            ))
             return
 
         # Phase 45 — Protocol Phrase Ledger (before /globe/<id> match)

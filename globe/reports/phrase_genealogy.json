@@ -1,0 +1,3365 @@
+{
+  "genealogy_id": "phrase-genealogy-phase-46",
+  "generated_at": "2026-06-01T12:55:44.124855+00:00",
+  "phase": "46",
+  "total_nodes": 142,
+  "by_continuity_class": {
+    "foundational": 1,
+    "repeated": 0,
+    "recent": 26,
+    "single_phase": 115
+  },
+  "by_phrase_type": {
+    "no_proof": 36,
+    "other": 35,
+    "advisory": 21,
+    "no_ranking": 20,
+    "no_authority": 12,
+    "no_allocation": 10,
+    "no_responsibility_assignment": 5,
+    "human_review": 2,
+    "append_only": 1
+  },
+  "by_first_phase": {
+    "10": 2,
+    "11": 2,
+    "12": 2,
+    "13": 2,
+    "14": 2,
+    "15": 2,
+    "16": 3,
+    "17": 3,
+    "18": 3,
+    "19": 3,
+    "20": 3,
+    "21": 3,
+    "22": 3,
+    "23": 3,
+    "24": 5,
+    "25": 4,
+    "26": 5,
+    "27": 5,
+    "27b": 4,
+    "28": 5,
+    "29": 5,
+    "30": 4,
+    "31": 4,
+    "32": 4,
+    "33": 4,
+    "34": 4,
+    "35": 4,
+    "36": 5,
+    "37": 4,
+    "37b": 4,
+    "38": 5,
+    "39": 5,
+    "40": 5,
+    "41": 4,
+    "42": 4,
+    "43": 4,
+    "44": 5,
+    "45": 4
+  },
+  "phrase_genealogy_is_advisory_display_only": true,
+  "phrase_genealogy_creates_no_legal_authority": true,
+  "phrase_genealogy_is_not_enforcement": true,
+  "phrase_genealogy_does_not_override_human_judgment": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "hard_enforcement": false,
+  "credit_issued": false,
+  "advisory_phrases": [
+    "Phrase genealogy is advisory display only.",
+    "Phrase genealogy creates no legal authority.",
+    "Phrase genealogy is not enforcement.",
+    "Phrase genealogy does not override human judgment.",
+    "Human review is required before any real-world action."
+  ],
+  "nodes": [
+    {
+      "genealogy_id": "gen-phrase-0001",
+      "phrase_id": "phrase-0001",
+      "normalized_phrase": "dan-go observes treasury context it does not operate the treasury",
+      "phrase_text": "Dan-Go observes treasury context; it does not operate the treasury.",
+      "phrase_type": "other",
+      "first_phase": "10",
+      "phases_seen": [
+        "10"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 495"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 10. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0002",
+      "phrase_id": "phrase-0002",
+      "normalized_phrase": "signal is not reward",
+      "phrase_text": "Signal is not reward.",
+      "phrase_type": "other",
+      "first_phase": "10",
+      "phases_seen": [
+        "10"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 494"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 10. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0003",
+      "phrase_id": "phrase-0003",
+      "normalized_phrase": "contribution history is not credit",
+      "phrase_text": "Contribution history is not credit.",
+      "phrase_type": "no_proof",
+      "first_phase": "11",
+      "phases_seen": [
+        "11"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 496"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 11. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0004",
+      "phrase_id": "phrase-0004",
+      "normalized_phrase": "dan-go records contribution candidates external systems may issue credit",
+      "phrase_text": "Dan-Go records contribution candidates; external systems may issue credit.",
+      "phrase_type": "other",
+      "first_phase": "11",
+      "phases_seen": [
+        "11"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 497"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 11. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0005",
+      "phrase_id": "phrase-0005",
+      "normalized_phrase": "candidate credit is not external credit",
+      "phrase_text": "Candidate credit is not external credit.",
+      "phrase_type": "other",
+      "first_phase": "12",
+      "phases_seen": [
+        "12"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 499"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 12. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0006",
+      "phrase_id": "phrase-0006",
+      "normalized_phrase": "observation is not issuance",
+      "phrase_text": "Observation is not issuance.",
+      "phrase_type": "other",
+      "first_phase": "12",
+      "phases_seen": [
+        "12"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 498"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 12. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0007",
+      "phrase_id": "phrase-0007",
+      "normalized_phrase": "reflection is not judgment",
+      "phrase_text": "Reflection is not judgment.",
+      "phrase_type": "no_proof",
+      "first_phase": "13",
+      "phases_seen": [
+        "13"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 501"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 13. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0008",
+      "phrase_id": "phrase-0008",
+      "normalized_phrase": "unrecognized contribution is still observable",
+      "phrase_text": "Unrecognized contribution is still observable.",
+      "phrase_type": "other",
+      "first_phase": "13",
+      "phases_seen": [
+        "13"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 500"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 13. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0009",
+      "phrase_id": "phrase-0009",
+      "normalized_phrase": "appeal is not enforcement",
+      "phrase_text": "Appeal is not enforcement.",
+      "phrase_type": "no_proof",
+      "first_phase": "14",
+      "phases_seen": [
+        "14"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 502"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 14. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0010",
+      "phrase_id": "phrase-0010",
+      "normalized_phrase": "recognition remains external",
+      "phrase_text": "Recognition remains external.",
+      "phrase_type": "other",
+      "first_phase": "14",
+      "phases_seen": [
+        "14"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 503"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 14. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0011",
+      "phrase_id": "phrase-0011",
+      "normalized_phrase": "ledger is not judgment",
+      "phrase_text": "Ledger is not judgment.",
+      "phrase_type": "no_proof",
+      "first_phase": "15",
+      "phases_seen": [
+        "15"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 505"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 15. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0012",
+      "phrase_id": "phrase-0012",
+      "normalized_phrase": "recognition history is not authority",
+      "phrase_text": "Recognition history is not authority.",
+      "phrase_type": "other",
+      "first_phase": "15",
+      "phases_seen": [
+        "15"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 504"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 15. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0013",
+      "phrase_id": "phrase-0013",
+      "normalized_phrase": "commons is not ownership",
+      "phrase_text": "Commons is not ownership.",
+      "phrase_type": "other",
+      "first_phase": "16",
+      "phases_seen": [
+        "16"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 507"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 16. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0014",
+      "phrase_id": "phrase-0014",
+      "normalized_phrase": "community is not authority",
+      "phrase_text": "Community is not authority.",
+      "phrase_type": "other",
+      "first_phase": "16",
+      "phases_seen": [
+        "16"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 506"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 16. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0015",
+      "phrase_id": "phrase-0015",
+      "normalized_phrase": "participation is not control",
+      "phrase_text": "Participation is not control.",
+      "phrase_type": "other",
+      "first_phase": "16",
+      "phases_seen": [
+        "16"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 508"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 16. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0016",
+      "phrase_id": "phrase-0016",
+      "normalized_phrase": "help is not command",
+      "phrase_text": "Help is not command.",
+      "phrase_type": "no_proof",
+      "first_phase": "17",
+      "phases_seen": [
+        "17"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 510"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 17. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0017",
+      "phrase_id": "phrase-0017",
+      "normalized_phrase": "need is not debt",
+      "phrase_text": "Need is not debt.",
+      "phrase_type": "no_proof",
+      "first_phase": "17",
+      "phases_seen": [
+        "17"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 509"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 17. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0018",
+      "phrase_id": "phrase-0018",
+      "normalized_phrase": "routing is not allocation",
+      "phrase_text": "Routing is not allocation.",
+      "phrase_type": "no_allocation",
+      "first_phase": "17",
+      "phases_seen": [
+        "17"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 511"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 17. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0019",
+      "phrase_id": "phrase-0019",
+      "normalized_phrase": "care memory is not control",
+      "phrase_text": "Care memory is not control.",
+      "phrase_type": "other",
+      "first_phase": "18",
+      "phases_seen": [
+        "18"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 514"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 18. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0020",
+      "phrase_id": "phrase-0020",
+      "normalized_phrase": "outcome is not judgment",
+      "phrase_text": "Outcome is not judgment.",
+      "phrase_type": "no_proof",
+      "first_phase": "18",
+      "phases_seen": [
+        "18"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 513"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 18. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0021",
+      "phrase_id": "phrase-0021",
+      "normalized_phrase": "relief is not proof",
+      "phrase_text": "Relief is not proof.",
+      "phrase_type": "no_proof",
+      "first_phase": "18",
+      "phases_seen": [
+        "18"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 512"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 18. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0022",
+      "phrase_id": "phrase-0022",
+      "normalized_phrase": "care loop is not obligation",
+      "phrase_text": "Care loop is not obligation.",
+      "phrase_type": "no_proof",
+      "first_phase": "19",
+      "phases_seen": [
+        "19"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 517"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 19. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0023",
+      "phrase_id": "phrase-0023",
+      "normalized_phrase": "follow-up is not blame",
+      "phrase_text": "Follow-up is not blame.",
+      "phrase_type": "other",
+      "first_phase": "19",
+      "phases_seen": [
+        "19"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 516"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 19. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0024",
+      "phrase_id": "phrase-0024",
+      "normalized_phrase": "reopen is not failure",
+      "phrase_text": "Reopen is not failure.",
+      "phrase_type": "other",
+      "first_phase": "19",
+      "phases_seen": [
+        "19"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 515"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 19. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0025",
+      "phrase_id": "phrase-0025",
+      "normalized_phrase": "learning is not prescription",
+      "phrase_text": "Learning is not prescription.",
+      "phrase_type": "no_proof",
+      "first_phase": "20",
+      "phases_seen": [
+        "20"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 519"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 20. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0026",
+      "phrase_id": "phrase-0026",
+      "normalized_phrase": "pattern is not prediction",
+      "phrase_text": "Pattern is not prediction.",
+      "phrase_type": "no_proof",
+      "first_phase": "20",
+      "phases_seen": [
+        "20"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 518"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 20. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0027",
+      "phrase_id": "phrase-0027",
+      "normalized_phrase": "recurrence is not ranking",
+      "phrase_text": "Recurrence is not ranking.",
+      "phrase_type": "no_ranking",
+      "first_phase": "20",
+      "phases_seen": [
+        "20"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 520"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 20. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0028",
+      "phrase_id": "phrase-0028",
+      "normalized_phrase": "forecast is not certainty",
+      "phrase_text": "Forecast is not certainty.",
+      "phrase_type": "no_proof",
+      "first_phase": "21",
+      "phases_seen": [
+        "21"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 521"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 21. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0029",
+      "phrase_id": "phrase-0029",
+      "normalized_phrase": "hint is not allocation",
+      "phrase_text": "Hint is not allocation.",
+      "phrase_type": "no_allocation",
+      "first_phase": "21",
+      "phases_seen": [
+        "21"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 523"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 21. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0030",
+      "phrase_id": "phrase-0030",
+      "normalized_phrase": "preparedness is not command",
+      "phrase_text": "Preparedness is not command.",
+      "phrase_type": "no_proof",
+      "first_phase": "21",
+      "phases_seen": [
+        "21"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 522"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 21. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0031",
+      "phrase_id": "phrase-0031",
+      "normalized_phrase": "deliberation is not majority rule",
+      "phrase_text": "Deliberation is not majority rule.",
+      "phrase_type": "other",
+      "first_phase": "22",
+      "phases_seen": [
+        "22"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 525"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 22. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0032",
+      "phrase_id": "phrase-0032",
+      "normalized_phrase": "globe is not state",
+      "phrase_text": "Globe is not state.",
+      "phrase_type": "other",
+      "first_phase": "22",
+      "phases_seen": [
+        "22"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 524"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 22. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0033",
+      "phrase_id": "phrase-0033",
+      "normalized_phrase": "membership is not obligation",
+      "phrase_text": "Membership is not obligation.",
+      "phrase_type": "no_proof",
+      "first_phase": "22",
+      "phases_seen": [
+        "22"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 526"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 22. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0034",
+      "phrase_id": "phrase-0034",
+      "normalized_phrase": "claim is not command",
+      "phrase_text": "Claim is not command.",
+      "phrase_type": "no_proof",
+      "first_phase": "23",
+      "phases_seen": [
+        "23"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 528"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 23. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0035",
+      "phrase_id": "phrase-0035",
+      "normalized_phrase": "conversion is not allocation",
+      "phrase_text": "Conversion is not allocation.",
+      "phrase_type": "no_allocation",
+      "first_phase": "23",
+      "phases_seen": [
+        "23"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 529"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 23. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0036",
+      "phrase_id": "phrase-0036",
+      "normalized_phrase": "proposal is not execution",
+      "phrase_text": "Proposal is not execution.",
+      "phrase_type": "other",
+      "first_phase": "23",
+      "phases_seen": [
+        "23"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 527"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 23. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0037",
+      "phrase_id": "phrase-0037",
+      "normalized_phrase": "claim is not execution",
+      "phrase_text": "Claim is not execution.",
+      "phrase_type": "other",
+      "first_phase": "24",
+      "phases_seen": [
+        "24"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 530"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 24. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0038",
+      "phrase_id": "phrase-0038",
+      "normalized_phrase": "directive creates no legal authority",
+      "phrase_text": "Directive creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "24",
+      "phases_seen": [
+        "24"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 532"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 24. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0039",
+      "phrase_id": "phrase-0039",
+      "normalized_phrase": "directive is not coercion",
+      "phrase_text": "Directive is not coercion.",
+      "phrase_type": "no_proof",
+      "first_phase": "24",
+      "phases_seen": [
+        "24"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 531"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 24. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0040",
+      "phrase_id": "phrase-0040",
+      "normalized_phrase": "directive only describes a proposed executable path",
+      "phrase_text": "Directive only describes a proposed executable path.",
+      "phrase_type": "other",
+      "first_phase": "24",
+      "phases_seen": [
+        "24"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 533"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 24. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0041",
+      "phrase_id": "phrase-0041",
+      "normalized_phrase": "human approval is required before real-world execution",
+      "phrase_text": "Human approval is required before real-world execution.",
+      "phrase_type": "human_review",
+      "first_phase": "24",
+      "phases_seen": [
+        "24"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 534"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 24. Advisory human review statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0042",
+      "phrase_id": "phrase-0042",
+      "normalized_phrase": "append-only existing entries must never be rewritten",
+      "phrase_text": "Append-only: existing entries must never be rewritten.",
+      "phrase_type": "append_only",
+      "first_phase": "25",
+      "phases_seen": [
+        "25"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 538"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 25. Advisory append only statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0043",
+      "phrase_id": "phrase-0043",
+      "normalized_phrase": "execution log is not proof of execution",
+      "phrase_text": "Execution Log is not proof of execution.",
+      "phrase_type": "no_proof",
+      "first_phase": "25",
+      "phases_seen": [
+        "25"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 535"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 25. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0044",
+      "phrase_id": "phrase-0044",
+      "normalized_phrase": "log entry is not legal authority",
+      "phrase_text": "Log entry is not legal authority.",
+      "phrase_type": "other",
+      "first_phase": "25",
+      "phases_seen": [
+        "25"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 536"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 25. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0045",
+      "phrase_id": "phrase-0045",
+      "normalized_phrase": "objection and rollback request must always be recordable",
+      "phrase_text": "Objection and rollback request must always be recordable.",
+      "phrase_type": "other",
+      "first_phase": "25",
+      "phases_seen": [
+        "25"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 537"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 25. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0046",
+      "phrase_id": "phrase-0046",
+      "normalized_phrase": "summary creates no legal authority",
+      "phrase_text": "Summary creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "26",
+      "phases_seen": [
+        "26"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 541"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 26. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0047",
+      "phrase_id": "phrase-0047",
+      "normalized_phrase": "summary does not rank or punish participants",
+      "phrase_text": "Summary does not rank or punish participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "26",
+      "phases_seen": [
+        "26"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 542"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 26. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0048",
+      "phrase_id": "phrase-0048",
+      "normalized_phrase": "summary is advisory only",
+      "phrase_text": "Summary is advisory only.",
+      "phrase_type": "advisory",
+      "first_phase": "26",
+      "phases_seen": [
+        "26"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 539"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 26. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0049",
+      "phrase_id": "phrase-0049",
+      "normalized_phrase": "summary is not proof of execution",
+      "phrase_text": "Summary is not proof of execution.",
+      "phrase_type": "no_proof",
+      "first_phase": "26",
+      "phases_seen": [
+        "26"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 540"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 26. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0050",
+      "phrase_id": "phrase-0050",
+      "normalized_phrase": "summary must preserve objections and rollback requests",
+      "phrase_text": "Summary must preserve objections and rollback requests.",
+      "phrase_type": "other",
+      "first_phase": "26",
+      "phases_seen": [
+        "26"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 543"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 26. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0051",
+      "phrase_id": "phrase-0051",
+      "normalized_phrase": "feedback bridge creates no legal authority",
+      "phrase_text": "Feedback bridge creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "27",
+      "phases_seen": [
+        "27"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 546"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0052",
+      "phrase_id": "phrase-0052",
+      "normalized_phrase": "feedback bridge does not reopen a case automatically",
+      "phrase_text": "Feedback bridge does not reopen a case automatically.",
+      "phrase_type": "other",
+      "first_phase": "27",
+      "phases_seen": [
+        "27"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 547"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0053",
+      "phrase_id": "phrase-0053",
+      "normalized_phrase": "feedback bridge is not proof of resolution",
+      "phrase_text": "Feedback bridge is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "first_phase": "27",
+      "phases_seen": [
+        "27"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 545"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0054",
+      "phrase_id": "phrase-0054",
+      "normalized_phrase": "human review is required before any real-world action",
+      "phrase_text": "Human review is required before any real-world action.",
+      "phrase_type": "human_review",
+      "first_phase": "27",
+      "phases_seen": [
+        "27",
+        "27b",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+      ],
+      "phase_count": 18,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 548"
+      ],
+      "continuity_class": "foundational",
+      "continuity_note": "Foundational principle — present across 18 phases (Phase 27–45). Establishes a persistent human review constraint.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0055",
+      "phrase_id": "phrase-0055",
+      "normalized_phrase": "reality feedback is advisory only",
+      "phrase_text": "Reality feedback is advisory only.",
+      "phrase_type": "advisory",
+      "first_phase": "27",
+      "phases_seen": [
+        "27"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 544"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0056",
+      "phrase_id": "phrase-0056",
+      "normalized_phrase": "bridge target link is advisory only",
+      "phrase_text": "Bridge target link is advisory only.",
+      "phrase_type": "advisory",
+      "first_phase": "27b",
+      "phases_seen": [
+        "27b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 549"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27b. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0057",
+      "phrase_id": "phrase-0057",
+      "normalized_phrase": "link candidate creates no legal authority",
+      "phrase_text": "Link candidate creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "27b",
+      "phases_seen": [
+        "27b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 551"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27b. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0058",
+      "phrase_id": "phrase-0058",
+      "normalized_phrase": "link candidate does not reopen a case automatically",
+      "phrase_text": "Link candidate does not reopen a case automatically.",
+      "phrase_type": "other",
+      "first_phase": "27b",
+      "phases_seen": [
+        "27b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 552"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27b. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0059",
+      "phrase_id": "phrase-0059",
+      "normalized_phrase": "link candidate is not proof of case relation",
+      "phrase_text": "Link candidate is not proof of case relation.",
+      "phrase_type": "no_proof",
+      "first_phase": "27b",
+      "phases_seen": [
+        "27b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 550"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 27b. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0060",
+      "phrase_id": "phrase-0060",
+      "normalized_phrase": "ui display creates no legal authority",
+      "phrase_text": "UI display creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "28",
+      "phases_seen": [
+        "28"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 556"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 28. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0061",
+      "phrase_id": "phrase-0061",
+      "normalized_phrase": "ui display does not approve execution",
+      "phrase_text": "UI display does not approve execution.",
+      "phrase_type": "other",
+      "first_phase": "28",
+      "phases_seen": [
+        "28"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 557"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 28. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0062",
+      "phrase_id": "phrase-0062",
+      "normalized_phrase": "ui display is advisory only",
+      "phrase_text": "UI display is advisory only.",
+      "phrase_type": "advisory",
+      "first_phase": "28",
+      "phases_seen": [
+        "28"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 554"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 28. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0063",
+      "phrase_id": "phrase-0063",
+      "normalized_phrase": "ui display is not proof of execution",
+      "phrase_text": "UI display is not proof of execution.",
+      "phrase_type": "no_proof",
+      "first_phase": "28",
+      "phases_seen": [
+        "28"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 555"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 28. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0064",
+      "phrase_id": "phrase-0064",
+      "normalized_phrase": "ui display must preserve objections and rollback requests",
+      "phrase_text": "UI display must preserve objections and rollback requests.",
+      "phrase_type": "other",
+      "first_phase": "28",
+      "phases_seen": [
+        "28"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 558"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 28. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0065",
+      "phrase_id": "phrase-0065",
+      "normalized_phrase": "contested status must always remain recordable",
+      "phrase_text": "Contested status must always remain recordable.",
+      "phrase_type": "other",
+      "first_phase": "29",
+      "phases_seen": [
+        "29"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 563"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 29. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0066",
+      "phrase_id": "phrase-0066",
+      "normalized_phrase": "resolution signal creates no legal authority",
+      "phrase_text": "Resolution signal creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "29",
+      "phases_seen": [
+        "29"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 562"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 29. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0067",
+      "phrase_id": "phrase-0067",
+      "normalized_phrase": "resolution signal does not close support automatically",
+      "phrase_text": "Resolution signal does not close support automatically.",
+      "phrase_type": "other",
+      "first_phase": "29",
+      "phases_seen": [
+        "29"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 561"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 29. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0068",
+      "phrase_id": "phrase-0068",
+      "normalized_phrase": "resolution signal is not proof of resolution",
+      "phrase_text": "Resolution signal is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "first_phase": "29",
+      "phases_seen": [
+        "29"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 560"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 29. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0069",
+      "phrase_id": "phrase-0069",
+      "normalized_phrase": "resolution signal is self-reported only",
+      "phrase_text": "Resolution signal is self-reported only.",
+      "phrase_type": "other",
+      "first_phase": "29",
+      "phases_seen": [
+        "29"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 559"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 29. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0070",
+      "phrase_id": "phrase-0070",
+      "normalized_phrase": "cross-phase summary does not allocate resources",
+      "phrase_text": "Cross-phase summary does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "30",
+      "phases_seen": [
+        "30"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 567"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 30. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0071",
+      "phrase_id": "phrase-0071",
+      "normalized_phrase": "cross-phase summary does not rank participants",
+      "phrase_text": "Cross-phase summary does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "30",
+      "phases_seen": [
+        "30"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 566"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 30. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0072",
+      "phrase_id": "phrase-0072",
+      "normalized_phrase": "cross-phase summary is advisory only",
+      "phrase_text": "Cross-phase summary is advisory only.",
+      "phrase_type": "advisory",
+      "first_phase": "30",
+      "phases_seen": [
+        "30"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 564"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 30. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0073",
+      "phrase_id": "phrase-0073",
+      "normalized_phrase": "cross-phase summary is not proof of impact",
+      "phrase_text": "Cross-phase summary is not proof of impact.",
+      "phrase_type": "no_proof",
+      "first_phase": "30",
+      "phases_seen": [
+        "30"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 565"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 30. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0074",
+      "phrase_id": "phrase-0074",
+      "normalized_phrase": "search is advisory display only",
+      "phrase_text": "Search is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "31",
+      "phases_seen": [
+        "31"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 569"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 31. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0075",
+      "phrase_id": "phrase-0075",
+      "normalized_phrase": "search result does not allocate resources",
+      "phrase_text": "Search result does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "31",
+      "phases_seen": [
+        "31"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 572"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 31. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0076",
+      "phrase_id": "phrase-0076",
+      "normalized_phrase": "search result does not rank participants",
+      "phrase_text": "Search result does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "31",
+      "phases_seen": [
+        "31"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 571"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 31. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0077",
+      "phrase_id": "phrase-0077",
+      "normalized_phrase": "search result is not proof of relevance",
+      "phrase_text": "Search result is not proof of relevance.",
+      "phrase_type": "no_proof",
+      "first_phase": "31",
+      "phases_seen": [
+        "31"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 570"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 31. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0078",
+      "phrase_id": "phrase-0078",
+      "normalized_phrase": "timeline does not allocate resources",
+      "phrase_text": "Timeline does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "32",
+      "phases_seen": [
+        "32"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 577"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 32. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0079",
+      "phrase_id": "phrase-0079",
+      "normalized_phrase": "timeline does not rank participants",
+      "phrase_text": "Timeline does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "32",
+      "phases_seen": [
+        "32"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 576"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 32. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0080",
+      "phrase_id": "phrase-0080",
+      "normalized_phrase": "timeline is advisory display only",
+      "phrase_text": "Timeline is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "32",
+      "phases_seen": [
+        "32"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 574"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 32. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0081",
+      "phrase_id": "phrase-0081",
+      "normalized_phrase": "timeline is not proof of impact",
+      "phrase_text": "Timeline is not proof of impact.",
+      "phrase_type": "no_proof",
+      "first_phase": "32",
+      "phases_seen": [
+        "32"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 575"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 32. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0082",
+      "phrase_id": "phrase-0082",
+      "normalized_phrase": "comparison does not allocate resources",
+      "phrase_text": "Comparison does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "33",
+      "phases_seen": [
+        "33"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 582"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 33. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0083",
+      "phrase_id": "phrase-0083",
+      "normalized_phrase": "comparison does not score proposals",
+      "phrase_text": "Comparison does not score proposals.",
+      "phrase_type": "no_ranking",
+      "first_phase": "33",
+      "phases_seen": [
+        "33"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 581"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 33. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0084",
+      "phrase_id": "phrase-0084",
+      "normalized_phrase": "comparison is advisory display only",
+      "phrase_text": "Comparison is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "33",
+      "phases_seen": [
+        "33"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 579"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 33. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0085",
+      "phrase_id": "phrase-0085",
+      "normalized_phrase": "comparison is not ranking",
+      "phrase_text": "Comparison is not ranking.",
+      "phrase_type": "no_ranking",
+      "first_phase": "33",
+      "phases_seen": [
+        "33"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 580"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 33. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0086",
+      "phrase_id": "phrase-0086",
+      "normalized_phrase": "heatmap does not allocate resources",
+      "phrase_text": "Heatmap does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "34",
+      "phases_seen": [
+        "34"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 587"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 34. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0087",
+      "phrase_id": "phrase-0087",
+      "normalized_phrase": "heatmap does not rank participants",
+      "phrase_text": "Heatmap does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "34",
+      "phases_seen": [
+        "34"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 586"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 34. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0088",
+      "phrase_id": "phrase-0088",
+      "normalized_phrase": "heatmap is advisory display only",
+      "phrase_text": "Heatmap is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "34",
+      "phases_seen": [
+        "34"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 584"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 34. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0089",
+      "phrase_id": "phrase-0089",
+      "normalized_phrase": "heatmap is not proof of impact",
+      "phrase_text": "Heatmap is not proof of impact.",
+      "phrase_type": "no_proof",
+      "first_phase": "34",
+      "phases_seen": [
+        "34"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 585"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 34. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0090",
+      "phrase_id": "phrase-0090",
+      "normalized_phrase": "checklist does not approve execution",
+      "phrase_text": "Checklist does not approve execution.",
+      "phrase_type": "other",
+      "first_phase": "35",
+      "phases_seen": [
+        "35"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 592"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 35. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0091",
+      "phrase_id": "phrase-0091",
+      "normalized_phrase": "checklist is advisory display only",
+      "phrase_text": "Checklist is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "35",
+      "phases_seen": [
+        "35"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 589"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 35. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0092",
+      "phrase_id": "phrase-0092",
+      "normalized_phrase": "checklist is not proof of completion",
+      "phrase_text": "Checklist is not proof of completion.",
+      "phrase_type": "no_proof",
+      "first_phase": "35",
+      "phases_seen": [
+        "35"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 591"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 35. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0093",
+      "phrase_id": "phrase-0093",
+      "normalized_phrase": "checklist is not proof of execution",
+      "phrase_text": "Checklist is not proof of execution.",
+      "phrase_type": "no_proof",
+      "first_phase": "35",
+      "phases_seen": [
+        "35"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 590"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 35. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0094",
+      "phrase_id": "phrase-0094",
+      "normalized_phrase": "feed does not allocate resources",
+      "phrase_text": "Feed does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "36",
+      "phases_seen": [
+        "36"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 598"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 36. Advisory no allocation statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0095",
+      "phrase_id": "phrase-0095",
+      "normalized_phrase": "feed does not rank participants",
+      "phrase_text": "Feed does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "36",
+      "phases_seen": [
+        "36"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 597"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 36. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0096",
+      "phrase_id": "phrase-0096",
+      "normalized_phrase": "feed is advisory display only",
+      "phrase_text": "Feed is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "36",
+      "phases_seen": [
+        "36"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 594"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 36. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0097",
+      "phrase_id": "phrase-0097",
+      "normalized_phrase": "feed is not proof of execution",
+      "phrase_text": "Feed is not proof of execution.",
+      "phrase_type": "no_proof",
+      "first_phase": "36",
+      "phases_seen": [
+        "36"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 595"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 36. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0098",
+      "phrase_id": "phrase-0098",
+      "normalized_phrase": "feed is not proof of impact",
+      "phrase_text": "Feed is not proof of impact.",
+      "phrase_type": "no_proof",
+      "first_phase": "36",
+      "phases_seen": [
+        "36"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 596"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 36. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0099",
+      "phrase_id": "phrase-0099",
+      "normalized_phrase": "dependency does not allocate responsibility",
+      "phrase_text": "Dependency does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "first_phase": "37",
+      "phases_seen": [
+        "37"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 603"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37. Advisory no responsibility assignment statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0100",
+      "phrase_id": "phrase-0100",
+      "normalized_phrase": "dependency does not rank directives",
+      "phrase_text": "Dependency does not rank directives.",
+      "phrase_type": "no_ranking",
+      "first_phase": "37",
+      "phases_seen": [
+        "37"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 602"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0101",
+      "phrase_id": "phrase-0101",
+      "normalized_phrase": "dependency is not execution order",
+      "phrase_text": "Dependency is not execution order.",
+      "phrase_type": "other",
+      "first_phase": "37",
+      "phases_seen": [
+        "37"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 601"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0102",
+      "phrase_id": "phrase-0102",
+      "normalized_phrase": "dependency map is advisory display only",
+      "phrase_text": "Dependency map is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "37",
+      "phases_seen": [
+        "37"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 600"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0103",
+      "phrase_id": "phrase-0103",
+      "normalized_phrase": "url enrichment does not allocate responsibility",
+      "phrase_text": "URL enrichment does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "first_phase": "37b",
+      "phases_seen": [
+        "37b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 608"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37b. Advisory no responsibility assignment statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0104",
+      "phrase_id": "phrase-0104",
+      "normalized_phrase": "url enrichment does not rank directives",
+      "phrase_text": "URL enrichment does not rank directives.",
+      "phrase_type": "no_ranking",
+      "first_phase": "37b",
+      "phases_seen": [
+        "37b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 607"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37b. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0105",
+      "phrase_id": "phrase-0105",
+      "normalized_phrase": "url enrichment is advisory display only",
+      "phrase_text": "URL enrichment is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "37b",
+      "phases_seen": [
+        "37b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 605"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37b. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0106",
+      "phrase_id": "phrase-0106",
+      "normalized_phrase": "url enrichment is not execution order",
+      "phrase_text": "URL enrichment is not execution order.",
+      "phrase_type": "other",
+      "first_phase": "37b",
+      "phases_seen": [
+        "37b"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 606"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 37b. Advisory other statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0107",
+      "phrase_id": "phrase-0107",
+      "normalized_phrase": "member profile creates no authority",
+      "phrase_text": "Member profile creates no authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "38",
+      "phases_seen": [
+        "38"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 751"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 38. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0108",
+      "phrase_id": "phrase-0108",
+      "normalized_phrase": "member profile does not rank participants",
+      "phrase_text": "Member profile does not rank participants.",
+      "phrase_type": "no_ranking",
+      "first_phase": "38",
+      "phases_seen": [
+        "38"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 752"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 38. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0109",
+      "phrase_id": "phrase-0109",
+      "normalized_phrase": "member profile is advisory display only",
+      "phrase_text": "Member profile is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "38",
+      "phases_seen": [
+        "38"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 748"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 38. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0110",
+      "phrase_id": "phrase-0110",
+      "normalized_phrase": "member profile is not identity verification",
+      "phrase_text": "Member profile is not identity verification.",
+      "phrase_type": "no_proof",
+      "first_phase": "38",
+      "phases_seen": [
+        "38"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 749"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 38. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0111",
+      "phrase_id": "phrase-0111",
+      "normalized_phrase": "member profile is not reputation score",
+      "phrase_text": "Member profile is not reputation score.",
+      "phrase_type": "no_ranking",
+      "first_phase": "38",
+      "phases_seen": [
+        "38"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 750"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 38. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0112",
+      "phrase_id": "phrase-0112",
+      "normalized_phrase": "member activity heatmap creates no authority",
+      "phrase_text": "Member activity heatmap creates no authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "39",
+      "phases_seen": [
+        "39"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 244"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 39. Advisory no authority statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0113",
+      "phrase_id": "phrase-0113",
+      "normalized_phrase": "member activity heatmap does not rank members",
+      "phrase_text": "Member activity heatmap does not rank members.",
+      "phrase_type": "no_ranking",
+      "first_phase": "39",
+      "phases_seen": [
+        "39"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 243"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 39. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0114",
+      "phrase_id": "phrase-0114",
+      "normalized_phrase": "member activity heatmap is advisory display only",
+      "phrase_text": "Member activity heatmap is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "39",
+      "phases_seen": [
+        "39"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 240"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 39. Advisory advisory statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0115",
+      "phrase_id": "phrase-0115",
+      "normalized_phrase": "member activity heatmap is not identity verification",
+      "phrase_text": "Member activity heatmap is not identity verification.",
+      "phrase_type": "no_proof",
+      "first_phase": "39",
+      "phases_seen": [
+        "39"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 241"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 39. Advisory no proof statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0116",
+      "phrase_id": "phrase-0116",
+      "normalized_phrase": "member activity heatmap is not reputation score",
+      "phrase_text": "Member activity heatmap is not reputation score.",
+      "phrase_type": "no_ranking",
+      "first_phase": "39",
+      "phases_seen": [
+        "39"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 242"
+      ],
+      "continuity_class": "single_phase",
+      "continuity_note": "Introduced in Phase 39. Advisory no ranking statement scoped to this phase.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0117",
+      "phrase_id": "phrase-0117",
+      "normalized_phrase": "member-directive map does not allocate responsibility",
+      "phrase_text": "Member-directive map does not allocate responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "first_phase": "40",
+      "phases_seen": [
+        "40"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 218"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 40. Reflects latest no responsibility assignment framing as of Phase 40.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0118",
+      "phrase_id": "phrase-0118",
+      "normalized_phrase": "member-directive map does not rank members",
+      "phrase_text": "Member-directive map does not rank members.",
+      "phrase_type": "no_ranking",
+      "first_phase": "40",
+      "phases_seen": [
+        "40"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 217"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 40. Reflects latest no ranking framing as of Phase 40.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0119",
+      "phrase_id": "phrase-0119",
+      "normalized_phrase": "member-directive map is advisory display only",
+      "phrase_text": "Member-directive map is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "40",
+      "phases_seen": [
+        "40"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 214"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 40. Reflects latest advisory framing as of Phase 40.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0120",
+      "phrase_id": "phrase-0120",
+      "normalized_phrase": "member-directive map is not identity verification",
+      "phrase_text": "Member-directive map is not identity verification.",
+      "phrase_type": "no_proof",
+      "first_phase": "40",
+      "phases_seen": [
+        "40"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 215"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 40. Reflects latest no proof framing as of Phase 40.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0121",
+      "phrase_id": "phrase-0121",
+      "normalized_phrase": "member-directive map is not reputation score",
+      "phrase_text": "Member-directive map is not reputation score.",
+      "phrase_type": "no_ranking",
+      "first_phase": "40",
+      "phases_seen": [
+        "40"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 216"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 40. Reflects latest no ranking framing as of Phase 40.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0122",
+      "phrase_id": "phrase-0122",
+      "normalized_phrase": "attention dashboard is advisory display only",
+      "phrase_text": "Attention dashboard is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "41",
+      "phases_seen": [
+        "41"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 189"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 41. Reflects latest advisory framing as of Phase 41.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0123",
+      "phrase_id": "phrase-0123",
+      "normalized_phrase": "attention item creates no obligation",
+      "phrase_text": "Attention item creates no obligation.",
+      "phrase_type": "other",
+      "first_phase": "41",
+      "phases_seen": [
+        "41"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 191"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 41. Reflects latest other framing as of Phase 41.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0124",
+      "phrase_id": "phrase-0124",
+      "normalized_phrase": "attention item does not assign responsibility",
+      "phrase_text": "Attention item does not assign responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "first_phase": "41",
+      "phases_seen": [
+        "41"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 192"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 41. Reflects latest no responsibility assignment framing as of Phase 41.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0125",
+      "phrase_id": "phrase-0125",
+      "normalized_phrase": "attention item is not priority score",
+      "phrase_text": "Attention item is not priority score.",
+      "phrase_type": "no_ranking",
+      "first_phase": "41",
+      "phases_seen": [
+        "41"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 190"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 41. Reflects latest no ranking framing as of Phase 41.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0126",
+      "phrase_id": "phrase-0126",
+      "normalized_phrase": "resolution timeline creates no authority",
+      "phrase_text": "Resolution timeline creates no authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "42",
+      "phases_seen": [
+        "42"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 167"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 42. Reflects latest no authority framing as of Phase 42.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0127",
+      "phrase_id": "phrase-0127",
+      "normalized_phrase": "resolution timeline does not close support",
+      "phrase_text": "Resolution timeline does not close support.",
+      "phrase_type": "other",
+      "first_phase": "42",
+      "phases_seen": [
+        "42"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 166"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 42. Reflects latest other framing as of Phase 42.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0128",
+      "phrase_id": "phrase-0128",
+      "normalized_phrase": "resolution timeline is advisory display only",
+      "phrase_text": "Resolution timeline is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "42",
+      "phases_seen": [
+        "42"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 164"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 42. Reflects latest advisory framing as of Phase 42.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0129",
+      "phrase_id": "phrase-0129",
+      "normalized_phrase": "resolution timeline is not proof of resolution",
+      "phrase_text": "Resolution timeline is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "first_phase": "42",
+      "phases_seen": [
+        "42"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 165"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 42. Reflects latest no proof framing as of Phase 42.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0130",
+      "phrase_id": "phrase-0130",
+      "normalized_phrase": "signal aggregation creates no authority",
+      "phrase_text": "Signal aggregation creates no authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "43",
+      "phases_seen": [
+        "43"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 142"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 43. Reflects latest no authority framing as of Phase 43.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0131",
+      "phrase_id": "phrase-0131",
+      "normalized_phrase": "signal aggregation does not assign responsibility",
+      "phrase_text": "Signal aggregation does not assign responsibility.",
+      "phrase_type": "no_responsibility_assignment",
+      "first_phase": "43",
+      "phases_seen": [
+        "43"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 141"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 43. Reflects latest no responsibility assignment framing as of Phase 43.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0132",
+      "phrase_id": "phrase-0132",
+      "normalized_phrase": "signal aggregation is advisory display only",
+      "phrase_text": "Signal aggregation is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "43",
+      "phases_seen": [
+        "43"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 139"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 43. Reflects latest advisory framing as of Phase 43.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0133",
+      "phrase_id": "phrase-0133",
+      "normalized_phrase": "signal aggregation is not proof of resolution",
+      "phrase_text": "Signal aggregation is not proof of resolution.",
+      "phrase_type": "no_proof",
+      "first_phase": "43",
+      "phases_seen": [
+        "43"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 140"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 43. Reflects latest no proof framing as of Phase 43.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0134",
+      "phrase_id": "phrase-0134",
+      "normalized_phrase": "governance summary creates no authority",
+      "phrase_text": "Governance summary creates no authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "44",
+      "phases_seen": [
+        "44"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 116"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 44. Reflects latest no authority framing as of Phase 44.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0135",
+      "phrase_id": "phrase-0135",
+      "normalized_phrase": "governance summary does not allocate resources",
+      "phrase_text": "Governance summary does not allocate resources.",
+      "phrase_type": "no_allocation",
+      "first_phase": "44",
+      "phases_seen": [
+        "44"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 117"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 44. Reflects latest no allocation framing as of Phase 44.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0136",
+      "phrase_id": "phrase-0136",
+      "normalized_phrase": "governance summary does not rank globes",
+      "phrase_text": "Governance summary does not rank globes.",
+      "phrase_type": "no_ranking",
+      "first_phase": "44",
+      "phases_seen": [
+        "44"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 115"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 44. Reflects latest no ranking framing as of Phase 44.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0137",
+      "phrase_id": "phrase-0137",
+      "normalized_phrase": "governance summary is advisory display only",
+      "phrase_text": "Governance summary is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "44",
+      "phases_seen": [
+        "44"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 113"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 44. Reflects latest advisory framing as of Phase 44.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0138",
+      "phrase_id": "phrase-0138",
+      "normalized_phrase": "governance summary is not governance score",
+      "phrase_text": "Governance summary is not governance score.",
+      "phrase_type": "no_ranking",
+      "first_phase": "44",
+      "phases_seen": [
+        "44"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 114"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 44. Reflects latest no ranking framing as of Phase 44.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0139",
+      "phrase_id": "phrase-0139",
+      "normalized_phrase": "protocol phrase ledger creates no legal authority",
+      "phrase_text": "Protocol phrase ledger creates no legal authority.",
+      "phrase_type": "no_authority",
+      "first_phase": "45",
+      "phases_seen": [
+        "45"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 89"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 45. Reflects latest no authority framing as of Phase 45.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0140",
+      "phrase_id": "phrase-0140",
+      "normalized_phrase": "protocol phrase ledger does not override human judgment",
+      "phrase_text": "Protocol phrase ledger does not override human judgment.",
+      "phrase_type": "other",
+      "first_phase": "45",
+      "phases_seen": [
+        "45"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 91"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 45. Reflects latest other framing as of Phase 45.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0141",
+      "phrase_id": "phrase-0141",
+      "normalized_phrase": "protocol phrase ledger is advisory display only",
+      "phrase_text": "Protocol phrase ledger is advisory display only.",
+      "phrase_type": "advisory",
+      "first_phase": "45",
+      "phases_seen": [
+        "45"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 88"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 45. Reflects latest advisory framing as of Phase 45.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    },
+    {
+      "genealogy_id": "gen-phrase-0142",
+      "phrase_id": "phrase-0142",
+      "normalized_phrase": "protocol phrase ledger is not enforcement",
+      "phrase_text": "Protocol phrase ledger is not enforcement.",
+      "phrase_type": "no_proof",
+      "first_phase": "45",
+      "phases_seen": [
+        "45"
+      ],
+      "phase_count": 1,
+      "source_files": [
+        "RESUME_STATE.md"
+      ],
+      "source_line_hints": [
+        "RESUME_STATE.md:line 90"
+      ],
+      "continuity_class": "recent",
+      "continuity_note": "Recent addition — introduced in Phase 45. Reflects latest no proof framing as of Phase 45.",
+      "advisory_only": true,
+      "creates_no_legal_authority": true,
+      "not_enforcement": true
+    }
+  ]
+}
