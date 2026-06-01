@@ -608,6 +608,41 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 49 — Deliberation Health Check
+
+各 Proposal の話し合いについて、論点・懸念・一致点・合意候補・未解決条件の
+網羅状況を advisory に確認する health check メモ。
+スコア・格付け・最終判断ではない。
+
+**不変条件:**
+- Deliberation health check is advisory display only.
+- Health check is not a score.
+- Health check is not ranking.
+- Health check is not final judgment.
+- Health check does not approve execution.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/deliberation_health_check.py summary
+python3 globe/runtime/deliberation_health_check.py show-proposal proposal-002
+python3 globe/runtime/deliberation_health_check.py show-flag unresolved
+```
+
+**確認URL:**
+- http://localhost:7422/globe/deliberation-health
+- http://localhost:7422/globe/deliberation-health?globe=globe-001
+- http://localhost:7422/globe/deliberation-health?proposal=proposal-002
+- http://localhost:7422/globe/deliberation-health?flag=unresolved
+
+### 生成ファイル
+
+- `globe/runtime/deliberation_health_check.py` — Health Check ビルダー・CLI
+- `globe/reports/deliberation_health_check.json` — 生成済み JSON
+- `globe/reports/deliberation_health_check.md` — 生成済み Markdown
+
+---
+
 ## Phase 48 — Deliberation Round Tracker
 
 各 Proposal の deliberation を advisory な "round" timeline として整理する。

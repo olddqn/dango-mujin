@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Deliberation Round Tracker
+# RESUME_STATE.md — Deliberation Health Check
 
-> **STATUS: IN PROGRESS (feature/phase-48-deliberation-rounds)**
+> **STATUS: IN PROGRESS (feature/phase-49-deliberation-health)**
 
-**Phase:** Deliberation Round Tracker (Phase 48)
-**Branch:** feature/phase-48-deliberation-rounds
+**Phase:** Deliberation Health Check (Phase 49)
+**Branch:** feature/phase-49-deliberation-health
 **Started:** 2026-06-01
 
 ---
@@ -68,7 +68,34 @@
 - Globe Protocol Phrase Ledger (Phase 45) — PR #40, merged
 - Globe Phrase Genealogy View (Phase 46) — PR #41, merged
 - Globe Consensus Discovery Layer (Phase 47) — PR #42, merged
-- **Globe Deliberation Round Tracker (Phase 48)** ← current
+- Globe Deliberation Round Tracker (Phase 48) — PR #43, merged
+- **Globe Deliberation Health Check (Phase 49)** ← current
+
+---
+
+## New Files (Phase 49)
+
+- `globe/runtime/deliberation_health_check.py` — Health Check builder + CLI (5 proposals, 5 flag types)
+- `globe/reports/deliberation_health_check.json` — Generated JSON
+- `globe/reports/deliberation_health_check.md` — Human-readable Markdown
+
+## Updated Files (Phase 49)
+
+- `globe/runtime/globe_server.py` — Added `_load_dhc()`, `_render_dhc_card()`, `render_health_page()`, Phase 49 CSS; wired `/globe/deliberation-health` route with `?globe=`, `?proposal=`, `?flag=`; added "🩺 Health →" header; updated docstring to Phase 22–49
+- `globe/spec/GLOBE_SPEC.md` — Phase 49 section
+- `README.md` — Phase 49 section
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 49)
+
+```
+Deliberation health check is advisory display only.
+Health check is not a score.
+Health check is not ranking.
+Health check is not final judgment.
+Health check does not approve execution.
+Human review is required before any real-world action.
+```
 
 ---
 
