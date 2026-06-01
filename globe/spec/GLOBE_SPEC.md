@@ -2420,3 +2420,76 @@ python3 globe/runtime/phrase_genealogy.py search ranking
 - `globe/runtime/phrase_genealogy.py` — 系譜ビルダー・CLI
 - `globe/reports/phrase_genealogy.json` — 生成済み JSON (142 nodes)
 - `globe/reports/phrase_genealogy.md` — 生成済み Markdown
+
+---
+
+## Phase 47 — Consensus Discovery Layer（フェーズ47）
+
+フェーズ47では、Proposal / Deliberation の内容から
+論点・立場・一致点・対立点・誤解の可能性・合意候補を
+rule-based / keyword-based で抽出・記録・表示する
+**Consensus Discovery Layer** を追加しました。
+これは投票・採決・命令・強制ではなく、話し合いを前に進めるための advisory layer です。
+
+### 不変条件
+
+```python
+CONSENSUS_INVARIANTS = {
+    "consensus_discovery_is_advisory_display_only":     True,
+    "consensus_discovery_is_not_voting":                True,
+    "consensus_candidate_is_not_final_agreement":       True,
+    "consensus_discovery_does_not_approve_execution":   True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### 抽出アイテム種別
+
+| 種別 | 記号 | 説明 |
+|---|---|---|
+| `issues` | 🔎 | 論点 |
+| `stances` | 💬 | 立場 (support/concern/objection/clarification/neutral) |
+| `common_ground` | 🤝 | 一致点候補 |
+| `conflict_points` | ⚡ | 対立点・未解決点候補 |
+| `misunderstandings` | ❓ | 誤解の可能性候補 |
+| `consensus_candidates` | 🌱 | 合意候補 (not_final_agreement: true) |
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/consensus_discovery.py summary
+python3 globe/runtime/consensus_discovery.py save
+python3 globe/runtime/consensus_discovery.py show-proposal proposal-002
+python3 globe/runtime/consensus_discovery.py show-globe globe-001
+python3 globe/runtime/consensus_discovery.py show-type candidate
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/consensus` | 全 proposal の consensus discovery |
+| `/globe/consensus?globe=globe-001` | globe でフィルタ |
+| `/globe/consensus?proposal=proposal-002` | proposal でフィルタ |
+| `/globe/consensus?type=common_ground` | 一致点のみ |
+| `/globe/consensus?type=conflict` | 対立点のみ |
+| `/globe/consensus?type=candidate` | 合意候補のみ |
+
+### 集計結果（Phase 47 生成時）
+
+issues=4 / stances=8 / common_ground=2 / conflict_points=3 / misunderstandings=0 / consensus_candidates=4 / total=21
+
+### プロトコル句
+
+- "Consensus discovery is advisory display only."
+- "Consensus discovery is not voting."
+- "Consensus candidate is not final agreement."
+- "Consensus discovery does not approve execution."
+- "Human review is required before any real-world action."
+
+### 生成ファイル
+
+- `globe/runtime/consensus_discovery.py` — Consensus Discovery ビルダー・CLI
+- `globe/reports/consensus_discovery.json` — 生成済み JSON (21 items)
+- `globe/reports/consensus_discovery.md` — 生成済み Markdown

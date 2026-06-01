@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–46)
+globe_server.py — Globe UI Server (Phase 22–47)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -73,6 +73,10 @@ Routes:
     /globe/phrase-genealogy?type=<type>          → filtered by phrase_type            [Phase 46]
     /globe/phrase-genealogy?phase=<phase>        → filtered by phase                  [Phase 46]
     /globe/phrase-genealogy?q=<query>            → text search                        [Phase 46]
+    /globe/consensus                             → Consensus Discovery Layer          [Phase 47]
+    /globe/consensus?globe=<globe_id>            → filtered by globe                  [Phase 47]
+    /globe/consensus?proposal=<proposal_id>      → filtered by proposal               [Phase 47]
+    /globe/consensus?type=<item_type>            → filtered by item type              [Phase 47]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1413,6 +1417,52 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .gen-advisory { font-size: 0.70rem; color: #141e28; margin-top: 10px;
                 border-top: 1px solid #0a0e18; padding-top: 8px; }
 .gen-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+
+/* Phase 47 — Consensus Discovery Layer */
+.cd-panel { background: #07090c; border: 1px solid #0c1018;
+            border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.cd-panel h3 { font-size: 0.88rem; color: #1e3828; margin-bottom: 14px;
+               border-bottom: 1px solid #0a1010; padding-bottom: 6px; }
+.cd-proposal-block { border: 1px solid #0c1018; border-radius: 6px;
+                     padding: 12px; margin-bottom: 12px; background: #050710; }
+.cd-proposal-header { display: flex; align-items: baseline; gap: 8px;
+                       flex-wrap: wrap; margin-bottom: 8px; }
+.cd-proposal-id   { font-family: monospace; font-size: 0.78rem; color: #1e3830; }
+.cd-proposal-title { font-size: 0.84rem; color: #2a4838; }
+.cd-status-badge  { font-size: 0.66rem; font-family: monospace; padding: 1px 5px;
+                    border-radius: 3px; background: #0c1810; color: #3a6040; }
+.cd-section-label { font-size: 0.72rem; color: #1e3020; margin: 6px 0 4px;
+                    font-family: monospace; }
+.cd-item { border: 1px solid #0c1010; border-radius: 4px; padding: 8px 10px;
+           margin-bottom: 5px; background: #040608; }
+.cd-item.issue          { border-left: 2px solid #30507a; }
+.cd-item.stance         { border-left: 2px solid #3a6040; }
+.cd-item.common_ground  { border-left: 2px solid #508050; }
+.cd-item.conflict       { border-left: 2px solid #804040; }
+.cd-item.misunderstanding { border-left: 2px solid #807040; }
+.cd-item.candidate      { border-left: 2px solid #206050; }
+.cd-item-id   { font-family: monospace; font-size: 0.66rem; color: #1e2830; }
+.cd-item-text { font-size: 0.80rem; color: #3a5060; line-height: 1.5; margin: 3px 0; }
+.cd-stance-type { font-size: 0.66rem; font-family: monospace; padding: 1px 4px;
+                  border-radius: 3px; margin-right: 4px; }
+.cd-stance-type.support       { background: #0a1808; color: #406040; }
+.cd-stance-type.concern       { background: #1a1008; color: #806030; }
+.cd-stance-type.objection     { background: #1a0808; color: #804040; }
+.cd-stance-type.clarification { background: #0a1020; color: #406080; }
+.cd-stance-type.neutral       { background: #101010; color: #505060; }
+.cd-speaker   { font-size: 0.66rem; color: #283838; }
+.cd-kw        { font-size: 0.64rem; color: #1e2830; font-style: italic; }
+.cd-not-final { font-size: 0.64rem; color: #206050; margin-top: 2px; }
+.cd-src       { font-size: 0.62rem; color: #161e28; margin-top: 2px; }
+.cd-stat-row  { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                font-size: 0.70rem; color: #1e2830; }
+.cd-type-nav  { margin-bottom: 8px; font-size: 0.74rem; }
+.cd-type-nav a { color: #2a4838; margin-right: 8px; }
+.cd-filters   { margin-bottom: 10px; font-size: 0.78rem; }
+.cd-filters a { color: #2a4838; margin-right: 8px; }
+.cd-advisory  { font-size: 0.70rem; color: #121c18; margin-top: 10px;
+                border-top: 1px solid #0a0e0c; padding-top: 8px; }
+.cd-empty     { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3807,7 +3857,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a>'
         f'&nbsp;<a href="/globe/governance" style="font-size:0.65em;color:#2a3858">🏛 Governance →</a>'
         f'&nbsp;<a href="/globe/protocol-phrases" style="font-size:0.65em;color:#203050">📜 Phrases →</a>'
-        f'&nbsp;<a href="/globe/phrase-genealogy" style="font-size:0.65em;color:#1e3040">🧬 Genealogy →</a></h2>'
+        f'&nbsp;<a href="/globe/phrase-genealogy" style="font-size:0.65em;color:#1e3040">🧬 Genealogy →</a>'
+        f'&nbsp;<a href="/globe/consensus" style="font-size:0.65em;color:#1e3828">💬 Consensus →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -5850,6 +5901,290 @@ def render_genealogy_page(
     )
 
 
+# ─── Phase 47: Consensus Discovery Layer ──────────────────────────────────────────
+
+_CD_JSON_PATH = _REPORTS_DIR / "consensus_discovery.json"
+
+_CD_SECTION_ICON: dict[str, str] = {
+    "issues":              "🔎",
+    "stances":             "💬",
+    "common_ground":       "🤝",
+    "conflict_points":     "⚡",
+    "misunderstandings":   "❓",
+    "consensus_candidates": "🌱",
+}
+_CD_SECTION_LABEL: dict[str, str] = {
+    "issues":              "Issues 論点",
+    "stances":             "Stances 立場",
+    "common_ground":       "Common Ground 一致点",
+    "conflict_points":     "Conflict Points 対立点",
+    "misunderstandings":   "Possible Misunderstandings 誤解の可能性",
+    "consensus_candidates": "Consensus Candidates 合意候補",
+}
+_STANCE_ICON: dict[str, str] = {
+    "support":       "▲",
+    "concern":       "△",
+    "objection":     "▼",
+    "clarification": "◇",
+    "neutral":       "○",
+}
+
+
+def _load_cd() -> dict:
+    """Phase 47 — load consensus_discovery.json or build on-the-fly via importlib."""
+    if _CD_JSON_PATH.exists():
+        try:
+            return json.loads(_CD_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "consensus_discovery",
+            _RUNTIME_DIR / "consensus_discovery.py",
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        return _mod.build_discovery()
+    except Exception:
+        return {"issues": [], "stances": [], "common_ground": [], "conflict_points": [],
+                "misunderstandings": [], "consensus_candidates": [], "proposal_summaries": []}
+
+
+def _render_cd_item(item: dict, section: str) -> str:
+    id_key_map = {
+        "issues":              "issue_id",
+        "stances":             "stance_id",
+        "common_ground":       "common_ground_id",
+        "conflict_points":     "conflict_id",
+        "misunderstandings":   "misunderstanding_id",
+        "consensus_candidates": "candidate_id",
+    }
+    text_key_map = {
+        "issues":              "issue_text",
+        "stances":             "stance_text",
+        "common_ground":       "common_text",
+        "conflict_points":     "conflict_text",
+        "misunderstandings":   "misunderstanding_text",
+        "consensus_candidates": "candidate_text",
+    }
+    iid  = _e(item.get(id_key_map.get(section, ""), ""))
+    text = _e(item.get(text_key_map.get(section, ""), ""))
+    css_cls = section.rstrip("s") if section.endswith("s") else section
+    # special cases
+    if section == "stances":
+        css_cls = "stance"
+    elif section == "conflict_points":
+        css_cls = "conflict"
+    elif section == "consensus_candidates":
+        css_cls = "candidate"
+    elif section == "common_ground":
+        css_cls = "common_ground"
+    elif section == "misunderstandings":
+        css_cls = "misunderstanding"
+    elif section == "issues":
+        css_cls = "issue"
+
+    extra_html = ""
+    if section == "stances":
+        st    = _e(item.get("stance_type", "neutral"))
+        spk   = _e(item.get("speaker_name", ""))
+        sicon = _STANCE_ICON.get(item.get("stance_type", "neutral"), "○")
+        extra_html = (
+            f'<span class="cd-stance-type {_e(item.get("stance_type","neutral"))}">'
+            f'{sicon} {st}</span>'
+            f'<span class="cd-speaker">{spk}</span>'
+        )
+    elif section in ("issues", "conflict_points"):
+        kws = item.get("detected_keywords", [])
+        if kws:
+            extra_html = f'<div class="cd-kw">keywords: {_e(", ".join(kws[:5]))}</div>'
+    elif section == "consensus_candidates":
+        extra_html = '<div class="cd-not-final">⚠ Not final agreement — advisory only</div>'
+        basis = _e(item.get("basis", ""))
+        if basis:
+            extra_html += f'<div class="cd-kw">{basis}</div>'
+    elif section == "misunderstandings":
+        reason = _e(item.get("reason", ""))
+        if reason:
+            extra_html = f'<div class="cd-kw">{reason}</div>'
+
+    src_ids = item.get("source_deliberation_ids", [])
+    src_html = ""
+    if src_ids:
+        src_html = f'<div class="cd-src">source: {_e(", ".join(src_ids))}</div>'
+
+    return (
+        f'<div class="cd-item {css_cls}">'
+        f'<span class="cd-item-id">{iid}</span>'
+        f'{" " + extra_html if section == "stances" else ""}'
+        f'<div class="cd-item-text">{text}</div>'
+        f'{extra_html if section != "stances" else ""}'
+        f'{src_html}'
+        f'</div>'
+    )
+
+
+def _render_cd_proposal_block(
+    ps: dict,
+    data: dict,
+    active_type: str | None = None,
+) -> str:
+    pid   = ps.get("proposal_id", "")
+    gid   = ps.get("globe_id", "")
+    title = _e(ps.get("title", ""))
+    sta   = _e(ps.get("status", ""))
+    nd    = ps.get("deliberation_count", 0)
+
+    section_keys = (
+        [{"issue": "issues", "stance": "stances",
+          "common_ground": "common_ground", "conflict": "conflict_points",
+          "misunderstanding": "misunderstandings", "candidate": "consensus_candidates"
+          }.get(active_type, active_type)]
+        if active_type else
+        ["issues", "stances", "common_ground", "conflict_points",
+         "misunderstandings", "consensus_candidates"]
+    )
+
+    sections_html = ""
+    for key in section_keys:
+        if key is None:
+            continue
+        items = [i for i in data.get(key, []) if i.get("proposal_id") == pid]
+        if not items:
+            continue
+        icon  = _CD_SECTION_ICON.get(key, "·")
+        label = _CD_SECTION_LABEL.get(key, key)
+        cards = "".join(_render_cd_item(i, key) for i in items)
+        sections_html += (
+            f'<div class="cd-section-label">{icon} {label} ({len(items)})</div>'
+            f'{cards}'
+        )
+
+    if not sections_html:
+        return ""
+
+    return (
+        f'<div class="cd-proposal-block">'
+        f'<div class="cd-proposal-header">'
+        f'<span class="cd-proposal-id">{_e(pid)}</span>'
+        f'<span class="cd-proposal-title">{title}</span>'
+        f'<span class="cd-status-badge">{sta}</span>'
+        f'<span style="font-size:0.62rem;color:#1e2828">delib={nd}</span>'
+        f'</div>'
+        f'{sections_html}'
+        f'</div>'
+    )
+
+
+def render_consensus_page(
+    globe_filter:    str = "",
+    proposal_filter: str = "",
+    type_filter:     str = "",
+) -> str:
+    """Phase 47 — Consensus Discovery page."""
+    data = _load_cd()
+    pss  = data.get("proposal_summaries", [])
+    counts = data.get("counts", {})
+
+    # filter proposal summaries
+    shown_pss = pss
+    if globe_filter:
+        shown_pss = [ps for ps in shown_pss if ps.get("globe_id") == globe_filter]
+    if proposal_filter:
+        shown_pss = [ps for ps in shown_pss if ps.get("proposal_id") == proposal_filter]
+
+    # compute total displayed items
+    type_map = {
+        "issue": "issues", "stance": "stances",
+        "common_ground": "common_ground", "conflict": "conflict_points",
+        "misunderstanding": "misunderstandings", "candidate": "consensus_candidates",
+    }
+    active_key = type_map.get(type_filter) if type_filter else None
+
+    # type nav
+    type_nav_items = [
+        ("issue", "🔎 issues"), ("stance", "💬 stances"),
+        ("common_ground", "🤝 common_ground"), ("conflict", "⚡ conflicts"),
+        ("misunderstanding", "❓ misunderstandings"), ("candidate", "🌱 candidates"),
+    ]
+    type_links = " | ".join(
+        f'<a href="/globe/consensus?type={t}">{label}</a>'
+        for t, label in type_nav_items
+    )
+
+    # filter breadcrumb
+    crumb_parts = []
+    if globe_filter:
+        crumb_parts.append(f'globe={_e(globe_filter)} <a href="/globe/consensus">×</a>')
+    if proposal_filter:
+        crumb_parts.append(f'proposal={_e(proposal_filter)} <a href="/globe/consensus">×</a>')
+    if type_filter:
+        crumb_parts.append(f'type={_e(type_filter)} <a href="/globe/consensus">×</a>')
+    filter_html = (
+        f'<div class="cd-filters">絞込: {" / ".join(crumb_parts)}</div>'
+        if crumb_parts else ""
+    )
+
+    total_items = data.get("total_items", 0)
+    counts_html = " · ".join(
+        f'{_CD_SECTION_ICON.get(k,"·")} {k.replace("_"," ")}={v}'
+        for k, v in counts.items() if v > 0
+    )
+    stat_html = (
+        f'<div class="cd-stat-row">'
+        f'<span>proposals: <b>{len(shown_pss)}</b></span>'
+        f'<span>total items: <b>{total_items}</b></span>'
+        f'</div>'
+        f'<div style="font-size:0.68rem;color:#1e2828;margin-bottom:8px">{counts_html}</div>'
+    )
+
+    # render proposal blocks
+    blocks = [_render_cd_proposal_block(ps, data, active_key) for ps in shown_pss]
+    blocks = [b for b in blocks if b]
+    content_html = "".join(blocks) if blocks else '<div class="cd-empty">データなし</div>'
+
+    advisory_phrases = [
+        "Consensus discovery is advisory display only.",
+        "Consensus discovery is not voting.",
+        "Consensus candidate is not final agreement.",
+        "Consensus discovery does not approve execution.",
+        "Human review is required before any real-world action.",
+    ]
+    advisory_html = (
+        '<div class="cd-advisory">'
+        + " · ".join(f'<i>{_e(p)}</i>' for p in advisory_phrases)
+        + "</div>"
+    )
+
+    body = (
+        f'<div class="cd-panel">'
+        f'<h3>💬 Consensus Discovery'
+        f'&nbsp;<small style="font-size:0.7em;color:#1e3828">(Phase 47)</small></h3>'
+        f'<div class="cd-type-nav">{type_links}</div>'
+        f'{filter_html}'
+        f'{stat_html}'
+        f'{content_html}'
+        f'{advisory_html}'
+        f'</div>'
+    )
+
+    scope_label = (
+        f"proposal={proposal_filter}" if proposal_filter
+        else f"globe={globe_filter}" if globe_filter
+        else f"type={type_filter}" if type_filter
+        else "全て"
+    )
+
+    return _page(
+        f"Consensus Discovery — {scope_label}",
+        f'<a href="/globe">Globe</a> › <a href="/globe/consensus">Consensus</a>',
+        f'<h2>💬 Consensus Discovery'
+        f'&nbsp;<small style="font-size:0.65em;color:#1e3828">({len(shown_pss)} proposals · {_e(scope_label)})</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -5887,6 +6222,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 47 — Consensus Discovery Layer (before /globe/<id> match)
+        if path == "/globe/consensus":
+            self._send_html(render_consensus_page(
+                globe_filter=_qs("globe"),
+                proposal_filter=_qs("proposal"),
+                type_filter=_qs("type"),
+            ))
             return
 
         # Phase 46 — Phrase Genealogy View (before /globe/<id> match)

@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Phrase Genealogy View
+# RESUME_STATE.md — Consensus Discovery Layer
 
-> **STATUS: IN PROGRESS (feature/phase-46-phrase-genealogy)**
+> **STATUS: IN PROGRESS (feature/phase-47-consensus-discovery)**
 
-**Phase:** Phrase Genealogy View (Phase 46)
-**Branch:** feature/phase-46-phrase-genealogy
+**Phase:** Consensus Discovery Layer (Phase 47)
+**Branch:** feature/phase-47-consensus-discovery
 **Started:** 2026-06-01
 
 ---
@@ -66,7 +66,33 @@
 - Cross-Directive Signal Aggregation (Phase 43) — PR #38
 - Globe Governance Summary (Phase 44) — PR #39
 - Globe Protocol Phrase Ledger (Phase 45) — PR #40, merged
-- **Globe Phrase Genealogy View (Phase 46)** ← current
+- Globe Phrase Genealogy View (Phase 46) — PR #41, merged
+- **Globe Consensus Discovery Layer (Phase 47)** ← current
+
+---
+
+## New Files (Phase 47)
+
+- `globe/runtime/consensus_discovery.py` — Consensus Discovery builder + CLI (21 items, 5 proposals, 8 deliberations)
+- `globe/reports/consensus_discovery.json` — Generated JSON (issues/stances/common_ground/conflict_points/misunderstandings/candidates)
+- `globe/reports/consensus_discovery.md` — Human-readable Markdown
+
+## Updated Files (Phase 47)
+
+- `globe/runtime/globe_server.py` — Added `_load_cd()`, `_render_cd_item()`, `_render_cd_proposal_block()`, `render_consensus_page()`, Phase 47 CSS; wired `/globe/consensus` route with `?globe=`, `?proposal=`, `?type=` filters; added "💬 Consensus →" to Globe list header; updated docstring to Phase 22–47
+- `globe/spec/GLOBE_SPEC.md` — Phase 47 section (6 item types, HTTP routes, CLI, invariants)
+- `README.md` — Phase 47 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 47)
+
+```
+Consensus discovery is advisory display only.
+Consensus discovery is not voting.
+Consensus candidate is not final agreement.
+Consensus discovery does not approve execution.
+Human review is required before any real-world action.
+```
 
 ---
 
