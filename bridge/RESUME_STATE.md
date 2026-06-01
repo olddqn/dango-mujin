@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Attention-Required Dashboard
+# RESUME_STATE.md — Globe Directive Resolution Timeline
 
-> **STATUS: IN PROGRESS (feature/phase-41-attention-dashboard)**
+> **STATUS: IN PROGRESS (feature/phase-42-resolution-timeline)**
 
-**Phase:** Globe Attention-Required Dashboard (Phase 41)
-**Branch:** feature/phase-41-attention-dashboard
+**Phase:** Globe Directive Resolution Timeline (Phase 42)
+**Branch:** feature/phase-42-resolution-timeline
 **Started:** 2026-06-01
 
 ---
@@ -61,7 +61,33 @@
 - Globe Member Profile View (Phase 38) — PR #33
 - Globe Member Activity Heatmap (Phase 39) — PR #34
 - Globe Member × Directive Participation Map (Phase 40) — PR #35
-- **Globe Attention-Required Dashboard (Phase 41)** ← current commit
+- Globe Attention-Required Dashboard (Phase 41) — PR #36
+- **Globe Directive Resolution Timeline (Phase 42)** ← current commit
+
+---
+
+## New Files (Phase 42)
+
+- `globe/runtime/resolution_timeline.py` — Resolution Timeline builder + CLI (4 items, 6 event types, advisory only)
+- `globe/reports/resolution_timeline.json` — Generated JSON (4 items)
+- `globe/reports/resolution_timeline.md` — Human-readable Markdown
+
+## Updated Files (Phase 42)
+
+- `globe/runtime/globe_server.py` — Added `_load_rt()`, `_render_rt_item()`, `_render_rt_directive_section()`, `render_resolution_timeline_page()`, Phase 42 CSS; wired `/globe/resolution-timeline` route with `?directive=`, `?globe=`, `?status=` query params; added "🕒 Resolution →" to Globe list header; updated docstring to Phase 22–42
+- `globe/spec/GLOBE_SPEC.md` — Phase 42 section (6 event types, HTTP routes, CLI, invariants, protocol phrases)
+- `README.md` — Phase 42 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 42)
+
+```
+Resolution timeline is advisory display only.
+Resolution timeline is not proof of resolution.
+Resolution timeline does not close support.
+Resolution timeline creates no authority.
+Human review is required before any real-world action.
+```
 
 ---
 

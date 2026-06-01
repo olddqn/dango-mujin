@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–41)
+globe_server.py — Globe UI Server (Phase 22–42)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -53,6 +53,10 @@ Routes:
     /globe/attention?directive=<directive_id> → filtered by directive [Phase 41]
     /globe/attention?member=<member_id>       → filtered by member    [Phase 41]
     /globe/attention?type=<attention_type>    → filtered by type      [Phase 41]
+    /globe/resolution-timeline                      → Resolution Timeline         [Phase 42]
+    /globe/resolution-timeline?directive=<id>       → filtered by directive      [Phase 42]
+    /globe/resolution-timeline?globe=<globe_id>     → filtered by globe          [Phase 42]
+    /globe/resolution-timeline?status=<status>      → filtered by status         [Phase 42]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1191,6 +1195,53 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .attn-advisory { font-size: 0.72rem; color: #281820; margin-top: 10px;
                  border-top: 1px solid #1e0e14; padding-top: 8px; }
 .attn-empty { color: #3a2a30; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 42 — Directive Resolution Timeline */
+.rt-panel { background: #090a10; border: 1px solid #141824;
+            border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.rt-panel h3 { font-size: 0.88rem; color: #3a4a60; margin-bottom: 14px;
+               text-transform: uppercase; letter-spacing: 0.04em; }
+.rt-dir-section { margin-bottom: 22px; }
+.rt-dir-header { font-size: 0.84rem; color: #5070a0; margin-bottom: 4px;
+                 padding-bottom: 4px; border-bottom: 1px solid #0e1828; }
+.rt-dir-status { display: inline-block; font-size: 0.66rem; padding: 1px 7px;
+                 border-radius: 9px; margin-left: 6px; font-weight: 600; }
+.rt-dir-status.unresolved      { background: #1a0808; color: #c04040; }
+.rt-dir-status.partially_resolved { background: #201008; color: #c08020; }
+.rt-dir-status.contested       { background: #1a0a00; color: #b06000; }
+.rt-dir-status.objection_pending { background: #280e00; color: #c06820; }
+.rt-dir-status.resolved        { background: #081808; color: #40a060; }
+.rt-dir-meta { font-size: 0.70rem; color: #2a3450; margin-bottom: 8px; }
+.rt-item { border-left: 3px solid #161e30; padding: 7px 12px; margin-bottom: 7px;
+           background: #0b0d16; border-radius: 0 4px 4px 0; }
+.rt-item.objection      { border-left-color: #c06820; }
+.rt-item.rollback_request { border-left-color: #a040c0; }
+.rt-item.voluntary_resolution_signal { border-left-color: #3a7a50; }
+.rt-item.contested_signal { border-left-color: #b06000; }
+.rt-item.unresolved_signal { border-left-color: #c04040; }
+.rt-item.partially_resolved_signal { border-left-color: #c08020; }
+.rt-item-header { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.rt-et-badge { font-size: 0.64rem; padding: 1px 6px; border-radius: 3px;
+               background: #0e1428; color: #3a5880; font-weight: 600; }
+.rt-et-badge.objection      { background: #140800; color: #c06820; }
+.rt-et-badge.rollback_request { background: #100008; color: #a040c0; }
+.rt-et-badge.voluntary_resolution_signal { background: #061208; color: #3a7a50; }
+.rt-et-badge.contested_signal { background: #100800; color: #b06000; }
+.rt-rs-badge { font-size: 0.62rem; padding: 1px 5px; border-radius: 3px;
+               background: #101010; color: #505060; font-style: italic; }
+.rt-actor { font-size: 0.76rem; color: #5070a0; }
+.rt-ts { font-size: 0.68rem; color: #2a3040; }
+.rt-excerpt { font-size: 0.70rem; color: #505060; margin-top: 4px;
+              border-left: 1px solid #1a2030; padding-left: 6px;
+              font-style: italic; }
+.rt-self-reported { font-size: 0.60rem; color: #2a3040; margin-top: 3px; }
+.rt-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0;
+               font-size: 0.72rem; color: #2a3040; }
+.rt-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.rt-filters a { color: #3a5070; margin-right: 8px; }
+.rt-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+               border-top: 1px solid #0e1420; padding-top: 8px; }
+.rt-empty { color: #3a4050; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3580,7 +3631,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a>'
         f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a>'
         f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a>'
-        f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a></h2>'
+        f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a>'
+        f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -4606,6 +4658,234 @@ def render_attention_page(
     )
 
 
+# ─── Phase 42: Directive Resolution Timeline ─────────────────────────────────────
+
+_RT_JSON_PATH = _REPORTS_DIR / "resolution_timeline.json"
+
+_ET_ICON: dict[str, str] = {
+    "voluntary_resolution_signal": "🟢",
+    "objection":                   "⚠️",
+    "rollback_request":            "🔁",
+    "contested_signal":            "⚔️",
+    "unresolved_signal":           "🔴",
+    "partially_resolved_signal":   "🟡",
+}
+
+_RS_LABEL: dict[str, str] = {
+    "unresolved":          "未解決",
+    "partially_resolved":  "部分解決",
+    "contested":           "contested",
+    "objection_pending":   "異議あり",
+    "resolved":            "解決",
+    "paused":              "保留",
+}
+
+
+def _load_rt() -> dict:
+    """Phase 42 — load resolution_timeline.json or build on-the-fly via importlib."""
+    if _RT_JSON_PATH.exists():
+        try:
+            return json.loads(_RT_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "resolution_timeline",
+        _GLOBE_DIR / "runtime" / "resolution_timeline.py",
+    )
+    _mod = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    return _mod.build_timeline()
+
+
+def _render_rt_item(item: dict, globe_id_for_links: str = "") -> str:
+    """Phase 42 — render one resolution timeline item row."""
+    et = item.get("event_type", "")
+    rs = item.get("resolution_status", "") or ""
+    icon = _ET_ICON.get(et, "📌")
+    mid = item.get("member_id", "") or ""
+    actor = item.get("actor_name", "") or mid.removeprefix("member-")
+    ts = (item.get("created_at") or "")[:19]
+    excerpt = _e((item.get("content_excerpt") or "")[:100])
+    src_type = _e(item.get("source_type", ""))
+
+    mem_link = (f'<a href="/globe/members/{_e(mid)}" class="rt-actor">{_e(actor)}</a>'
+                if mid else f'<span class="rt-actor">{_e(actor)}</span>')
+
+    rs_html = ""
+    if rs:
+        rs_html = f'<span class="rt-rs-badge">{_e(rs)}</span>'
+
+    self_reported_html = ""
+    if et == "voluntary_resolution_signal":
+        self_reported_html = (
+            '<div class="rt-self-reported">'
+            '* 自己申告 (self-reported) — proof of resolution ではない'
+            '</div>'
+        )
+
+    return (
+        f'<div class="rt-item {_e(et)}">'
+        f'<div class="rt-item-header">'
+        f'<span>{icon}</span>'
+        f'<span class="rt-et-badge {_e(et)}">{_e(et)}</span>'
+        + rs_html
+        + f'{mem_link}'
+        f'<span class="rt-ts">{ts}</span>'
+        f'<span style="font-size:0.60rem;color:#2a3040">[{src_type}]</span>'
+        f'</div>'
+        + (f'<div class="rt-excerpt">{excerpt}</div>' if excerpt else "")
+        + self_reported_html
+        + f'</div>'
+    )
+
+
+def _render_rt_directive_section(
+    dir_summary: dict,
+    dir_items: list[dict],
+) -> str:
+    """Phase 42 — render one directive's section in the timeline."""
+    did = dir_summary.get("directive_id", "")
+    gid = dir_summary.get("globe_id", "")
+    lrs = dir_summary.get("latest_resolution_status", "") or ""
+    lat = (dir_summary.get("latest_event_at") or "")[:19]
+
+    dir_link = (f'<a href="/globe/{_e(gid)}/directives/{_e(did)}">{_e(did)}</a>'
+                if gid else _e(did))
+    status_badge = (
+        f'<span class="rt-dir-status {_e(lrs)}">'
+        + _e(_RS_LABEL.get(lrs, lrs) or "—")
+        + f'</span>'
+    ) if lrs else ""
+
+    stats_html = (
+        f'<div class="rt-stat-row">'
+        f'<span>vrs: {dir_summary.get("resolution_signal_count",0)}</span>'
+        f'<span>unresolved: {dir_summary.get("unresolved_count",0)}</span>'
+        f'<span>partially_resolved: {dir_summary.get("partially_resolved_count",0)}</span>'
+        f'<span>contested: {dir_summary.get("contested_count",0)}</span>'
+        f'<span>objection: {dir_summary.get("objection_count",0)}</span>'
+        f'<span>rollback: {dir_summary.get("rollback_request_count",0)}</span>'
+        f'<span style="color:#2a3040">latest: {lat}</span>'
+        f'</div>'
+    )
+
+    items_html = "".join(_render_rt_item(i, gid) for i in dir_items)
+    if not items_html:
+        items_html = '<div class="rt-empty">イベントなし</div>'
+
+    return (
+        f'<div class="rt-dir-section">'
+        f'<div class="rt-dir-header">'
+        f'{dir_link}{status_badge}'
+        f'&nbsp;<small style="font-size:0.64rem;color:#2a3450">(globe: {_e(gid)})</small>'
+        f'</div>'
+        + stats_html
+        + items_html
+        + f'</div>'
+    )
+
+
+def render_resolution_timeline_page(
+    directive_filter: str | None = None,
+    globe_filter: str | None = None,
+    status_filter: str | None = None,
+) -> str:
+    """Phase 42 — Directive Resolution Timeline page."""
+    data = _load_rt()
+    all_items: list[dict] = data.get("items", [])
+    all_dirs: list[dict] = data.get("by_directive", [])
+
+    # Apply filters
+    if directive_filter:
+        all_items = [i for i in all_items if i.get("directive_id") == directive_filter]
+        all_dirs = [d for d in all_dirs if d.get("directive_id") == directive_filter]
+    if globe_filter:
+        all_items = [i for i in all_items if i.get("globe_id") == globe_filter]
+        all_dirs = [d for d in all_dirs if d.get("globe_id") == globe_filter]
+    if status_filter:
+        all_items = [
+            i for i in all_items
+            if (i.get("resolution_status") == status_filter
+                or i.get("event_type") == status_filter
+                or (status_filter == "contested" and i.get("event_type") == "contested_signal"))
+        ]
+        # Only keep directives that have remaining items
+        surviving_dids = {i["directive_id"] for i in all_items}
+        all_dirs = [d for d in all_dirs if d["directive_id"] in surviving_dids]
+
+    # Scope label
+    parts = []
+    if directive_filter: parts.append(f"directive={directive_filter}")
+    if globe_filter:     parts.append(f"globe={globe_filter}")
+    if status_filter:    parts.append(f"status={status_filter}")
+    scope_label = " · ".join(parts) if parts else "全て"
+
+    # Status filter links
+    status_links = " | ".join(
+        f'<a href="/globe/resolution-timeline?status={s}">{s}</a>'
+        for s in ("unresolved", "contested", "partially_resolved", "resolved", "paused")
+    )
+    filters_html = (
+        f'<div class="rt-filters">'
+        f'<a href="/globe/resolution-timeline">全て</a> | '
+        + status_links
+        + f'</div>'
+    )
+
+    # Group items by directive
+    by_did: dict[str, list[dict]] = {}
+    for item in all_items:
+        did = item["directive_id"]
+        by_did.setdefault(did, []).append(item)
+
+    # Render directive sections
+    sections = ""
+    for d in all_dirs:
+        did = d["directive_id"]
+        dir_items = by_did.get(did, [])
+        sections += _render_rt_directive_section(d, dir_items)
+
+    if not sections:
+        sections = '<div class="rt-empty">解決タイムライン項目なし (No resolution timeline items)</div>'
+
+    advisory_phrases = data.get("advisory_phrases", [
+        "Resolution timeline is advisory display only.",
+        "Resolution timeline is not proof of resolution.",
+        "Resolution timeline does not close support.",
+        "Resolution timeline creates no authority.",
+        "Human review is required before any real-world action.",
+    ])
+    advisory_html = (
+        f'<div class="rt-advisory">'
+        + " ".join(f'"{_e(p)}"' for p in advisory_phrases)
+        + f'</div>'
+    )
+
+    body = (
+        f'<div class="rt-panel">'
+        f'<h3>🕒 Resolution Timeline'
+        f'&nbsp;<small style="font-size:0.65em;color:#2a3a50">(Phase 42 · {_e(scope_label)})</small></h3>'
+        + filters_html
+        + f'<div class="rt-stat-row" style="margin-bottom:12px">'
+        f'<span>items: {len(all_items)}</span>'
+        f'<span>directives: {len(all_dirs)}</span>'
+        f'</div>'
+        + sections
+        + advisory_html
+        + f'</div>'
+    )
+
+    return _page(
+        "Resolution Timeline",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/resolution-timeline">Resolution Timeline</a>',
+        f'<h2>🕒 Resolution Timeline'
+        f'&nbsp;<small style="font-size:0.7em;color:#2a3a50">({len(all_items)} items)</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -4643,6 +4923,15 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 42 — Directive Resolution Timeline (before /globe/<id> match)
+        if path == "/globe/resolution-timeline":
+            self._send_html(render_resolution_timeline_page(
+                directive_filter=_qs("directive"),
+                globe_filter=_qs("globe"),
+                status_filter=_qs("status"),
+            ))
             return
 
         # Phase 41 — Attention-Required Dashboard (before /globe/<id> match)
