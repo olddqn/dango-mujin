@@ -1966,3 +1966,94 @@ python3 globe/runtime/attention_dashboard.py show-type objection
 - `globe/runtime/attention_dashboard.py` — ダッシュボード構築・CLI
 - `globe/reports/attention_dashboard.json` — 生成済み JSON (7 items)
 - `globe/reports/attention_dashboard.md` — 生成済み Markdown
+
+## Phase 42 — Globe Directive Resolution Timeline（フェーズ42）
+
+フェーズ42では、Directive ごとの voluntary_resolution_signal / objection /
+rollback_request / contested_signal の推移を時系列で表示する
+**Resolution Timeline** を追加しました。
+これは解決証明ではなく、自己申告・異議・未解決シグナルの推移を観察するための advisory view です。
+
+### 不変条件
+
+```python
+TIMELINE_INVARIANTS = {
+    "resolution_timeline_is_advisory_display_only": True,
+    "resolution_timeline_is_not_proof_of_resolution": True,
+    "resolution_timeline_does_not_close_support": True,
+    "resolution_timeline_creates_no_authority": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### event_type 一覧
+
+| event_type | 説明 |
+|---|---|
+|  | 自己申告型解決シグナル（proof ではない） |
+|  | 異議記録 |
+|  | ロールバック要求 |
+|  | VRS と objection が同一 directive に共存 |
+|  | 未解決として明示されたシグナル |
+|  | 部分解決・保留中のシグナル |
+
+### timeline item 構造
+
+```python
+{
+    "timeline_id": "tl-rt-log-003-002",
+    "directive_id": "directive-claim-proposal-002",
+    "globe_id": "globe-001",
+    "member_id": "member-founding-member-003",
+    "actor_name": "founding-member-003",
+    "source_type": "execution_log",
+    "source_id": "log-003",
+    "event_type": "objection",
+    "resolution_status": "",
+    "content_excerpt": "D.R.A.との連携前にコミュニティ内の合意確認が必要と考える",
+    "created_at": "2026-05-30T23:12:26.340959+00:00",
+    "advisory_only": True,
+    "not_proof_of_resolution": True,
+    "does_not_close_support": True,
+    "creates_no_authority": True,
+}
+```
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/resolution_timeline.py summary
+python3 globe/runtime/resolution_timeline.py save
+python3 globe/runtime/resolution_timeline.py show-directive directive-claim-proposal-002
+python3 globe/runtime/resolution_timeline.py show-globe globe-001
+python3 globe/runtime/resolution_timeline.py show-status unresolved
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+|  | 全 timeline items |
+|  | directive でフィルタ |
+|  | globe でフィルタ |
+|  | resolution_status でフィルタ |
+
+### プロトコル句
+
+- "Resolution timeline is advisory display only."
+- "Resolution timeline is not proof of resolution."
+- "Resolution timeline does not close support."
+- "Resolution timeline creates no authority."
+- "Human review is required before any real-world action."
+
+### 集計結果
+
+- 4 items (voluntary_resolution_signal × 2, objection × 1, contested_signal × 1)
+- 2 directives (directive-002: partially_resolved / directive-005: unresolved)
+
+### 生成ファイル
+
+- `globe/runtime/resolution_timeline.py` — タイムライン構築・CLI
+- `globe/reports/resolution_timeline.json` — 生成済み JSON (4 items)
+- `globe/reports/resolution_timeline.md` — 生成済み Markdown

@@ -608,6 +608,44 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 42 — Globe Directive Resolution Timeline
+
+voluntary_resolution_signal / objection / rollback_request / contested_signal の
+推移を directive ごとの時系列として表示する Resolution Timeline。
+解決証明ではなく、自己申告・異議・未解決シグナルの推移を観察するための advisory view。
+
+**不変条件:**
+- Resolution timeline is advisory display only.
+- Resolution timeline is not proof of resolution.
+- Resolution timeline does not close support.
+- Resolution timeline creates no authority.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/resolution_timeline.py summary
+python3 globe/runtime/resolution_timeline.py save
+python3 globe/runtime/resolution_timeline.py show-directive directive-claim-proposal-002
+python3 globe/runtime/resolution_timeline.py show-globe globe-001
+python3 globe/runtime/resolution_timeline.py show-status unresolved
+```
+
+**集計:** 4 items (vrs × 2, objection × 1, contested_signal × 1) / 2 directives
+
+**確認URL:**
+- http://localhost:7422/globe/resolution-timeline
+- http://localhost:7422/globe/resolution-timeline?directive=directive-claim-proposal-002
+- http://localhost:7422/globe/resolution-timeline?globe=globe-001
+- http://localhost:7422/globe/resolution-timeline?status=unresolved
+
+### 生成ファイル
+
+- `globe/runtime/resolution_timeline.py` — タイムライン構築・CLI (4 items)
+- `globe/reports/resolution_timeline.json` — 生成済み JSON
+- `globe/reports/resolution_timeline.md` — 生成済み Markdown
+
+---
+
 ## Phase 41 — Globe Attention-Required Dashboard
 
 objection / rollback_request / unresolved_signal / partially_resolved_signal /
