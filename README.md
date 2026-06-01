@@ -608,6 +608,44 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 46 — Phrase Genealogy View
+
+Protocol Phrase Ledger の各フレーズについて、初出 Phase・引き継ぎ Phase・
+継続性クラス（foundational/repeated/recent/single_phase）・continuity_note を集約した系譜ビュー。
+法的根拠・強制・人間判断の上書きではない。
+
+**不変条件:**
+- Phrase genealogy is advisory display only.
+- Phrase genealogy creates no legal authority.
+- Phrase genealogy is not enforcement.
+- Phrase genealogy does not override human judgment.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/phrase_genealogy.py summary
+python3 globe/runtime/phrase_genealogy.py save
+python3 globe/runtime/phrase_genealogy.py show-type no_authority
+python3 globe/runtime/phrase_genealogy.py show-phase 45
+python3 globe/runtime/phrase_genealogy.py search ranking
+```
+
+**集計:** total_nodes=142, foundational=1, recent=26, single_phase=115
+
+**確認URL:**
+- http://localhost:7422/globe/phrase-genealogy
+- http://localhost:7422/globe/phrase-genealogy?type=no_authority
+- http://localhost:7422/globe/phrase-genealogy?phase=45
+- http://localhost:7422/globe/phrase-genealogy?q=ranking
+
+### 生成ファイル
+
+- `globe/runtime/phrase_genealogy.py` — 系譜ビルダー・CLI (142 nodes)
+- `globe/reports/phrase_genealogy.json` — 生成済み JSON
+- `globe/reports/phrase_genealogy.md` — 生成済み Markdown
+
+---
+
 ## Phase 45 — Protocol Phrase Ledger
 
 Phase 10〜44 で蓄積されたすべてのプロトコル句を横断収集・正規化・重複排除した advisory 台帳。

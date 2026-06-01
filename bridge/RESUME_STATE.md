@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Protocol Phrase Ledger
+# RESUME_STATE.md — Phrase Genealogy View
 
-> **STATUS: COMPLETE (feature/phase-45-protocol-phrase-ledger — PR opened)**
+> **STATUS: IN PROGRESS (feature/phase-46-phrase-genealogy)**
 
-**Phase:** Protocol Phrase Ledger (Phase 45)
-**Branch:** feature/phase-45-protocol-phrase-ledger
+**Phase:** Phrase Genealogy View (Phase 46)
+**Branch:** feature/phase-46-phrase-genealogy
 **Started:** 2026-06-01
 
 ---
@@ -65,7 +65,33 @@
 - Globe Directive Resolution Timeline (Phase 42) — PR #37
 - Cross-Directive Signal Aggregation (Phase 43) — PR #38
 - Globe Governance Summary (Phase 44) — PR #39
-- **Globe Protocol Phrase Ledger (Phase 45)** — PR opened ← current
+- Globe Protocol Phrase Ledger (Phase 45) — PR #40, merged
+- **Globe Phrase Genealogy View (Phase 46)** ← current
+
+---
+
+## New Files (Phase 46)
+
+- `globe/runtime/phrase_genealogy.py` — Phrase genealogy builder + CLI (142 nodes, 4 continuity classes)
+- `globe/reports/phrase_genealogy.json` — Generated JSON (142 nodes, Phase 10–46)
+- `globe/reports/phrase_genealogy.md` — Human-readable Markdown
+
+## Updated Files (Phase 46)
+
+- `globe/runtime/globe_server.py` — Added `_load_gen()`, `_render_gen_card()`, `render_genealogy_page()`, Phase 46 CSS; wired `/globe/phrase-genealogy` route with `?type=`, `?phase=`, `?q=` filters; added "🧬 Genealogy →" to Globe list header; updated docstring to Phase 22–46
+- `globe/spec/GLOBE_SPEC.md` — Phase 46 section (4 continuity classes, genealogy node schema, HTTP routes, CLI, invariants)
+- `README.md` — Phase 46 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 46)
+
+```
+Phrase genealogy is advisory display only.
+Phrase genealogy creates no legal authority.
+Phrase genealogy is not enforcement.
+Phrase genealogy does not override human judgment.
+Human review is required before any real-world action.
+```
 
 ---
 

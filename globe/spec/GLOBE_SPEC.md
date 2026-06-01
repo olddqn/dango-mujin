@@ -2322,5 +2322,101 @@ python3 globe/runtime/protocol_phrase_ledger.py search ranking
 ### 生成ファイル
 
 - `globe/runtime/protocol_phrase_ledger.py` — フレーズ収集・正規化・CLI
-- `globe/reports/protocol_phrase_ledger.json` — 生成済み JSON (138 phrases)
+- `globe/reports/protocol_phrase_ledger.json` — 生成済み JSON (142 phrases)
 - `globe/reports/protocol_phrase_ledger.md` — 生成済み Markdown
+
+---
+
+## Phase 46 — Phrase Genealogy View（フェーズ46）
+
+フェーズ46では、Protocol Phrase Ledger の各フレーズについて
+初出 Phase・引き継ぎ Phase・継続性クラス・continuity_note を集約した
+**Phrase Genealogy View** を追加しました。
+これは原則の系譜観察補助であり、法的根拠・強制・承認・実行ではありません。
+
+### 不変条件
+
+```python
+GENEALOGY_INVARIANTS = {
+    "phrase_genealogy_is_advisory_display_only":       True,
+    "phrase_genealogy_creates_no_legal_authority":     True,
+    "phrase_genealogy_is_not_enforcement":             True,
+    "phrase_genealogy_does_not_override_human_judgment": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### 継続性クラス（continuity_class）
+
+| クラス | 条件 | 意味 |
+|---|---|---|
+| `foundational` | phase_count ≥ 10 | 10 phase 以上継続する基盤原則 |
+| `repeated` | 3 ≤ phase_count < 10 | 複数 phase に引き継がれた反復原則 |
+| `recent` | phase_count < 3 かつ first_phase ≥ 40 | 最新フェーズで導入された新原則 |
+| `single_phase` | phase_count == 1（その他） | 単一 phase に限定された原則 |
+
+### Genealogy Node 構造
+
+```python
+{
+    "genealogy_id":          "gen-phrase-NNNN",
+    "phrase_id":             "phrase-NNNN",
+    "normalized_phrase":     "...",
+    "phrase_text":           "...",
+    "phrase_type":           "no_authority | advisory | ...",
+    "first_phase":           "27",
+    "phases_seen":           ["27", "27b", "30", ...],
+    "phase_count":           18,
+    "source_files":          ["RESUME_STATE.md"],
+    "source_line_hints":     ["RESUME_STATE.md:line 548"],
+    "continuity_class":      "foundational",
+    "continuity_note":       "Foundational principle — present across 18 phases...",
+    "advisory_only":         True,
+    "creates_no_legal_authority": True,
+    "not_enforcement":       True,
+}
+```
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/phrase_genealogy.py summary
+python3 globe/runtime/phrase_genealogy.py save
+python3 globe/runtime/phrase_genealogy.py show-phrase phrase-0054
+python3 globe/runtime/phrase_genealogy.py show-type no_authority
+python3 globe/runtime/phrase_genealogy.py show-phase 45
+python3 globe/runtime/phrase_genealogy.py search ranking
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/phrase-genealogy` | 全系譜ノード一覧 |
+| `/globe/phrase-genealogy?type=no_authority` | phrase_type でフィルタ |
+| `/globe/phrase-genealogy?phase=45` | phase でフィルタ |
+| `/globe/phrase-genealogy?q=ranking` | テキスト検索 |
+
+### 集計結果（Phase 46 生成時）
+
+| continuity_class | 件数 |
+|---|---|
+| foundational | 1 |
+| repeated | 0 |
+| recent | 26 |
+| single_phase | 115 |
+
+### プロトコル句
+
+- "Phrase genealogy is advisory display only."
+- "Phrase genealogy creates no legal authority."
+- "Phrase genealogy is not enforcement."
+- "Phrase genealogy does not override human judgment."
+- "Human review is required before any real-world action."
+
+### 生成ファイル
+
+- `globe/runtime/phrase_genealogy.py` — 系譜ビルダー・CLI
+- `globe/reports/phrase_genealogy.json` — 生成済み JSON (142 nodes)
+- `globe/reports/phrase_genealogy.md` — 生成済み Markdown
