@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–42)
+globe_server.py — Globe UI Server (Phase 22–43)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -57,6 +57,11 @@ Routes:
     /globe/resolution-timeline?directive=<id>       → filtered by directive      [Phase 42]
     /globe/resolution-timeline?globe=<globe_id>     → filtered by globe          [Phase 42]
     /globe/resolution-timeline?status=<status>      → filtered by status         [Phase 42]
+    /globe/signals                               → Cross-Directive Signal Aggregation [Phase 43]
+    /globe/signals?globe=<globe_id>              → filtered by globe                  [Phase 43]
+    /globe/signals?member=<member_id>            → filtered by member                 [Phase 43]
+    /globe/signals?directive=<directive_id>      → filtered by directive              [Phase 43]
+    /globe/signals?status=<status>               → filtered by status                 [Phase 43]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1242,6 +1247,46 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .rt-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                border-top: 1px solid #0e1420; padding-top: 8px; }
 .rt-empty { color: #3a4050; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 43 — Cross-Directive Signal Aggregation */
+.sig-panel { background: #090c12; border: 1px solid #141c2c;
+             border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.sig-panel h3 { font-size: 0.88rem; color: #4058a0; margin-bottom: 14px;
+                text-transform: uppercase; letter-spacing: 0.04em; }
+.sig-section-label { font-size: 0.78rem; color: #3a5080; text-transform: uppercase;
+                     letter-spacing: 0.05em; margin: 14px 0 6px;
+                     border-bottom: 1px solid #0e1828; padding-bottom: 3px; }
+.sig-card { border: 1px solid #162030; border-radius: 5px;
+            padding: 9px 13px; margin-bottom: 7px; background: #0b0e18; }
+.sig-card-header { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.sig-dim-badge { font-size: 0.64rem; padding: 1px 6px; border-radius: 3px;
+                 font-weight: 600; }
+.sig-dim-badge.globe     { background: #081420; color: #2060a0; }
+.sig-dim-badge.directive { background: #081820; color: #2070a8; }
+.sig-dim-badge.member    { background: #080e20; color: #3060a8; }
+.sig-dim-badge.status    { background: #0a0e18; color: #5070b0; }
+.sig-value { font-size: 0.80rem; color: #6080c0; font-family: monospace; }
+.sig-lrs-badge { font-size: 0.63rem; padding: 1px 6px; border-radius: 9px; font-style: italic; }
+.sig-lrs-badge.unresolved      { background: #1a0808; color: #c04040; }
+.sig-lrs-badge.partially_resolved { background: #201008; color: #c08020; }
+.sig-lrs-badge.contested       { background: #1a0a00; color: #b06000; }
+.sig-lrs-badge.objection       { background: #280e00; color: #c06820; }
+.sig-lrs-badge.resolved        { background: #081808; color: #40a060; }
+.sig-lrs-badge.paused          { background: #101018; color: #6060a0; }
+.sig-counts { font-size: 0.68rem; color: #2a3850; margin: 4px 0;
+              display: flex; flex-wrap: wrap; gap: 8px; }
+.sig-count-item { color: #3a5070; }
+.sig-count-item.attn { color: #c06020; }
+.sig-affects { font-size: 0.64rem; color: #243040; margin-top: 3px; }
+.sig-affects a { color: #3a5068; }
+.sig-lat { font-size: 0.64rem; color: #243040; }
+.sig-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.sig-filters a { color: #3a5070; margin-right: 8px; }
+.sig-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
+                border-top: 1px solid #0e1824; padding-top: 8px; }
+.sig-empty { color: #3a4050; font-size: 0.86rem; padding: 6px 0; }
+.sig-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+                font-size: 0.72rem; color: #2a3850; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3632,7 +3677,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a>'
         f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a>'
         f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a>'
-        f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a></h2>'
+        f'&nbsp;<a href="/globe/resolution-timeline" style="font-size:0.65em;color:#2a3a50">🕒 Resolution →</a>'
+        f'&nbsp;<a href="/globe/signals" style="font-size:0.65em;color:#2a3860">📡 Signals →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -4886,6 +4932,238 @@ def render_resolution_timeline_page(
     )
 
 
+# ─── Phase 43: Cross-Directive Signal Aggregation ────────────────────────────────
+
+_SIG_JSON_PATH = _REPORTS_DIR / "cross_directive_signal_aggregation.json"
+
+_LRS_ICON: dict[str, str] = {
+    "unresolved":         "🔴",
+    "partially_resolved": "🟡",
+    "contested":          "⚔️",
+    "objection":          "⚠️",
+    "rollback_request":   "🔁",
+    "resolved":           "🟢",
+    "paused":             "⏸",
+}
+
+_DIM_ICON: dict[str, str] = {
+    "globe":     "🌐",
+    "directive": "📋",
+    "member":    "👤",
+    "status":    "📊",
+}
+
+
+def _load_sig() -> dict:
+    """Phase 43 — load cross_directive_signal_aggregation.json or build on-the-fly."""
+    if _SIG_JSON_PATH.exists():
+        try:
+            return json.loads(_SIG_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "cross_directive_signal_aggregation",
+        _GLOBE_DIR / "runtime" / "cross_directive_signal_aggregation.py",
+    )
+    _mod = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    return _mod.build_aggregation()
+
+
+def _render_sig_card(rec: dict) -> str:
+    """Phase 43 — render one aggregation record card."""
+    dim = rec.get("dimension", "")
+    val = rec.get("dimension_value", "")
+    lrs = rec.get("latest_resolution_status", "") or ""
+    icon = _DIM_ICON.get(dim, "📌")
+    lrs_icon = _LRS_ICON.get(lrs, "")
+    lat = (rec.get("latest_signal_at") or "")[:19]
+
+    # Value as link based on dimension
+    if dim == "globe":
+        val_html = f'<a href="/globe/{_e(val)}" class="sig-value">{_e(val)}</a>'
+    elif dim == "directive":
+        gids = rec.get("affected_globe_ids", [])
+        gid = gids[0] if gids else ""
+        val_html = (
+            f'<a href="/globe/{_e(gid)}/directives/{_e(val)}" class="sig-value">{_e(val)}</a>'
+            if gid else f'<span class="sig-value">{_e(val)}</span>'
+        )
+    elif dim == "member":
+        val_html = f'<a href="/globe/members/{_e(val)}" class="sig-value">{_e(val)}</a>'
+    else:
+        val_html = f'<span class="sig-value">{_e(val)}</span>'
+
+    lrs_badge = (
+        f'<span class="sig-lrs-badge {_e(lrs)}">{lrs_icon} {_e(lrs)}</span>'
+        if lrs else ""
+    )
+
+    # Count chips — highlight attn counts
+    def _chip(label: str, n: int, attn: bool = False) -> str:
+        cls = "sig-count-item attn" if (attn and n > 0) else "sig-count-item"
+        return f'<span class="{cls}">{label}: {n}</span>' if n > 0 else ""
+
+    count_chips = " ".join(filter(None, [
+        _chip("vrs", rec.get("voluntary_resolution_signal_count", 0)),
+        _chip("unresolved", rec.get("unresolved_count", 0), attn=True),
+        _chip("partial", rec.get("partially_resolved_count", 0), attn=True),
+        _chip("contested", rec.get("contested_count", 0), attn=True),
+        _chip("objection", rec.get("objection_count", 0), attn=True),
+        _chip("rollback", rec.get("rollback_request_count", 0), attn=True),
+        _chip("resolved", rec.get("resolved_count", 0)),
+        _chip("paused", rec.get("paused_count", 0)),
+    ]))
+
+    # Affected links
+    def _links(ids: list[str], base: str, prefix: str = "") -> str:
+        parts = []
+        for id_ in ids[:6]:
+            href = f"{base}{_e(id_)}"
+            parts.append(f'<a href="{href}">{_e(id_.removeprefix(prefix))}</a>')
+        return ", ".join(parts) if parts else "—"
+
+    dir_links = _links(rec.get("affected_directive_ids", []), "/globe/resolution-timeline?directive=")
+    mem_links = _links(rec.get("affected_member_ids", []), "/globe/members/")
+    glo_links = _links(rec.get("affected_globe_ids", []), "/globe/")
+
+    return (
+        f'<div class="sig-card">'
+        f'<div class="sig-card-header">'
+        f'<span>{icon}</span>'
+        f'<span class="sig-dim-badge {_e(dim)}">{_e(dim)}</span>'
+        f'{val_html}'
+        f'{lrs_badge}'
+        f'<span style="font-size:0.68rem;color:#2a3850">'
+        f'total: {rec.get("total_signal_count",0)}</span>'
+        f'</div>'
+        + (f'<div class="sig-counts">{count_chips}</div>' if count_chips else "")
+        + f'<div class="sig-affects">'
+        f'dirs: {dir_links} &nbsp;|&nbsp; '
+        f'members: {mem_links} &nbsp;|&nbsp; '
+        f'globes: {glo_links}'
+        f'</div>'
+        + (f'<div class="sig-lat">latest: {lat}</div>' if lat else "")
+        + f'</div>'
+    )
+
+
+def _render_sig_section(label: str, records: list[dict]) -> str:
+    """Phase 43 — render a dimension section."""
+    cards = "".join(_render_sig_card(r) for r in records)
+    if not cards:
+        cards = '<div class="sig-empty">なし</div>'
+    return (
+        f'<div class="sig-section-label">{_e(label)} ({len(records)})</div>'
+        + cards
+    )
+
+
+def render_signals_page(
+    globe_filter: str | None = None,
+    member_filter: str | None = None,
+    directive_filter: str | None = None,
+    status_filter: str | None = None,
+) -> str:
+    """Phase 43 — Cross-Directive Signal Aggregation page."""
+    data = _load_sig()
+
+    # Apply cross-dimension filter
+    def _match_globe(r: dict) -> bool:
+        return not globe_filter or globe_filter in r.get("affected_globe_ids", []) or r.get("dimension_value") == globe_filter
+    def _match_member(r: dict) -> bool:
+        return not member_filter or member_filter in r.get("affected_member_ids", []) or r.get("dimension_value") == member_filter
+    def _match_directive(r: dict) -> bool:
+        return not directive_filter or directive_filter in r.get("affected_directive_ids", []) or r.get("dimension_value") == directive_filter
+    def _match_status(r: dict) -> bool:
+        if not status_filter:
+            return True
+        return (r.get("dimension_value") == status_filter
+                or r.get("latest_resolution_status") == status_filter
+                or r.get("latest_resolution_status", "").startswith(status_filter))
+
+    def _filter(records: list[dict]) -> list[dict]:
+        return [r for r in records
+                if _match_globe(r) and _match_member(r) and _match_directive(r) and _match_status(r)]
+
+    by_globe = _filter(data.get("by_globe", []))
+    by_directive = _filter(data.get("by_directive", []))
+    by_member = _filter(data.get("by_member", []))
+    by_status = _filter(data.get("by_status", []))
+
+    parts = []
+    if globe_filter:     parts.append(f"globe={globe_filter}")
+    if member_filter:    parts.append(f"member={member_filter}")
+    if directive_filter: parts.append(f"directive={directive_filter}")
+    if status_filter:    parts.append(f"status={status_filter}")
+    scope_label = " · ".join(parts) if parts else "全て"
+
+    total_shown = len({r["agg_id"] for r in by_globe + by_directive + by_member + by_status})
+
+    # Status filter links
+    status_links = " | ".join(
+        f'<a href="/globe/signals?status={s}">{_LRS_ICON.get(s,"")} {s}</a>'
+        for s in ("unresolved", "contested", "partially_resolved", "resolved", "paused",
+                  "objection", "rollback_request")
+    )
+    filters_html = (
+        f'<div class="sig-filters">'
+        f'<a href="/globe/signals">全て</a> | '
+        + status_links
+        + f'</div>'
+    )
+
+    stat_html = (
+        f'<div class="sig-stat-row">'
+        f'<span>total_signals: {data.get("total_signals",0)}</span>'
+        f'<span>globes: {data.get("total_globes",0)}</span>'
+        f'<span>directives: {data.get("total_directives",0)}</span>'
+        f'<span>members_with_signals: {data.get("total_members_with_signals",0)}</span>'
+        f'</div>'
+    )
+
+    sections = (
+        _render_sig_section("By Globe", by_globe)
+        + _render_sig_section("By Directive", by_directive)
+        + _render_sig_section("By Member", by_member)
+        + _render_sig_section("By Status", by_status)
+    )
+
+    advisory_phrases = data.get("advisory_phrases", [
+        "Signal aggregation is advisory display only.",
+        "Signal aggregation is not proof of resolution.",
+        "Signal aggregation does not assign responsibility.",
+        "Signal aggregation creates no authority.",
+        "Human review is required before any real-world action.",
+    ])
+    advisory_html = (
+        f'<div class="sig-advisory">'
+        + " ".join(f'"{_e(p)}"' for p in advisory_phrases)
+        + f'</div>'
+    )
+
+    body = (
+        f'<div class="sig-panel">'
+        f'<h3>📡 Signal Aggregation'
+        f'&nbsp;<small style="font-size:0.65em;color:#2a3860">(Phase 43 · {_e(scope_label)})</small></h3>'
+        + filters_html
+        + stat_html
+        + sections
+        + advisory_html
+        + f'</div>'
+    )
+
+    return _page(
+        "Signal Aggregation",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/signals">Signals</a>',
+        f'<h2>📡 Cross-Directive Signal Aggregation'
+        f'&nbsp;<small style="font-size:0.7em;color:#2a3860">({total_shown} records)</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -4923,6 +5201,16 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 43 — Cross-Directive Signal Aggregation (before /globe/<id> match)
+        if path == "/globe/signals":
+            self._send_html(render_signals_page(
+                globe_filter=_qs("globe"),
+                member_filter=_qs("member"),
+                directive_filter=_qs("directive"),
+                status_filter=_qs("status"),
+            ))
             return
 
         # Phase 42 — Directive Resolution Timeline (before /globe/<id> match)

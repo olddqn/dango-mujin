@@ -608,6 +608,46 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 43 — Cross-Directive Signal Aggregation
+
+resolution_status / objection / rollback / attention signal を
+Globe・Directive・Member・Status 単位で横断集計する Signal Aggregation。
+解決証明・優先順位・責任割当ではない状態観察の補助ビュー。
+
+**不変条件:**
+- Signal aggregation is advisory display only.
+- Signal aggregation is not proof of resolution.
+- Signal aggregation does not assign responsibility.
+- Signal aggregation creates no authority.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/cross_directive_signal_aggregation.py summary
+python3 globe/runtime/cross_directive_signal_aggregation.py save
+python3 globe/runtime/cross_directive_signal_aggregation.py show-globe globe-001
+python3 globe/runtime/cross_directive_signal_aggregation.py show-member member-masuo-komori
+python3 globe/runtime/cross_directive_signal_aggregation.py show-directive directive-claim-proposal-002
+python3 globe/runtime/cross_directive_signal_aggregation.py show-status unresolved
+```
+
+**集計:** total_signals=4 / globes=2 / directives=2 / members=3 / status_keys=4
+
+**確認URL:**
+- http://localhost:7422/globe/signals
+- http://localhost:7422/globe/signals?globe=globe-001
+- http://localhost:7422/globe/signals?member=member-masuo-komori
+- http://localhost:7422/globe/signals?directive=directive-claim-proposal-002
+- http://localhost:7422/globe/signals?status=unresolved
+
+### 生成ファイル
+
+- `globe/runtime/cross_directive_signal_aggregation.py` — 集計構築・CLI
+- `globe/reports/cross_directive_signal_aggregation.json` — 生成済み JSON
+- `globe/reports/cross_directive_signal_aggregation.md` — 生成済み Markdown
+
+---
+
 ## Phase 42 — Globe Directive Resolution Timeline
 
 voluntary_resolution_signal / objection / rollback_request / contested_signal の

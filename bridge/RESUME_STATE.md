@@ -1,9 +1,9 @@
-# RESUME_STATE.md — Globe Directive Resolution Timeline
+# RESUME_STATE.md — Cross-Directive Signal Aggregation
 
-> **STATUS: IN PROGRESS (feature/phase-42-resolution-timeline)**
+> **STATUS: IN PROGRESS (feature/phase-43-signal-aggregation)**
 
-**Phase:** Globe Directive Resolution Timeline (Phase 42)
-**Branch:** feature/phase-42-resolution-timeline
+**Phase:** Cross-Directive Signal Aggregation (Phase 43)
+**Branch:** feature/phase-43-signal-aggregation
 **Started:** 2026-06-01
 
 ---
@@ -62,7 +62,33 @@
 - Globe Member Activity Heatmap (Phase 39) — PR #34
 - Globe Member × Directive Participation Map (Phase 40) — PR #35
 - Globe Attention-Required Dashboard (Phase 41) — PR #36
-- **Globe Directive Resolution Timeline (Phase 42)** ← current commit
+- Globe Directive Resolution Timeline (Phase 42) — PR #37
+- **Cross-Directive Signal Aggregation (Phase 43)** ← current commit
+
+---
+
+## New Files (Phase 43)
+
+- `globe/runtime/cross_directive_signal_aggregation.py` — Signal aggregation builder + CLI (4 signals, 4 dimensions, advisory only)
+- `globe/reports/cross_directive_signal_aggregation.json` — Generated JSON (by_globe/directive/member/status)
+- `globe/reports/cross_directive_signal_aggregation.md` — Human-readable Markdown
+
+## Updated Files (Phase 43)
+
+- `globe/runtime/globe_server.py` — Added `_load_sig()`, `_render_sig_card()`, `_render_sig_section()`, `render_signals_page()`, Phase 43 CSS; wired `/globe/signals` route with `?globe=`, `?member=`, `?directive=`, `?status=` query params; added "📡 Signals →" to Globe list header; updated docstring to Phase 22–43
+- `globe/spec/GLOBE_SPEC.md` — Phase 43 section (4 dimensions, HTTP routes, CLI, invariants, protocol phrases)
+- `README.md` — Phase 43 section with invariant quotes and CLI/URL examples
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 43)
+
+```
+Signal aggregation is advisory display only.
+Signal aggregation is not proof of resolution.
+Signal aggregation does not assign responsibility.
+Signal aggregation creates no authority.
+Human review is required before any real-world action.
+```
 
 ---
 
