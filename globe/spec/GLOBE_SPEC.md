@@ -1862,3 +1862,107 @@ python3 globe/runtime/member_directive_map.py show-globe globe-001
 - `globe/runtime/member_directive_map.py` — マップ構築・CLI
 - `globe/reports/member_directive_map.json` — 生成済み JSON (8 entries)
 - `globe/reports/member_directive_map.md` — 生成済み Markdown
+
+## Phase 41 — Globe Attention-Required Dashboard（フェーズ41）
+
+フェーズ41では、objection / rollback_request / unresolved_signal /
+partially_resolved_signal / contested_signal / high_confidence_link /
+needs_attention を一覧表示する **Attention-Required Dashboard** を追加しました。
+これは注意喚起の観察補助であり、優先度スコア・義務付与・責任割当ではありません。
+
+### 不変条件
+
+```python
+DASHBOARD_INVARIANTS = {
+    "attention_dashboard_is_advisory_display_only": True,
+    "attention_item_is_not_priority_score": True,
+    "attention_item_creates_no_obligation": True,
+    "attention_item_does_not_assign_responsibility": True,
+    "human_review_is_required_before_any_real_world_action": True,
+    "authority": "none",
+}
+```
+
+### attention_type 一覧
+
+| attention_type | 説明 |
+|---|---|
+| `objection` | メンバーによる異議 |
+| `rollback_request` | ロールバック要求 |
+| `unresolved_signal` | 未解決の VRS |
+| `partially_resolved_signal` | 部分解決・保留中の VRS |
+| `contested_signal` | VRS と objection が同一 directive に共存 |
+| `high_confidence_link` | 高信頼度の bridge target link |
+| `needs_attention` | その他要注意フラグ |
+
+### データソース
+
+1. `logs/*.jsonl` — objection / rollback_request / VRS エントリ
+2. `bridge_target_links.json` — confidence=high の link candidate
+3. `member_directive_map.json` — has_contested_signal=True エントリ
+4. `contribution_timeline.json` — needs_attention=True の未収録 item
+
+### attention item 構造
+
+```python
+{
+    "attention_id": "attn-objection-002-log-003",
+    "source_type": "log",
+    "source_id": "log-003",
+    "globe_id": "globe-001",
+    "directive_id": "directive-claim-proposal-002",
+    "member_id": "member-founding-member-003",
+    "attention_type": "objection",
+    "title": "⚠️ Objection recorded — founding-member-003",
+    "content_excerpt": "D.R.A.との連携前にコミュニティ内の合意確認が必要と考える",
+    "reason": "Objection by member — human review may be required before proceeding",
+    "created_at": "2026-05-30T23:12:26",
+    "source_path": "globe/logs/directive-claim-proposal-002.jsonl",
+    "advisory_only": True,
+    "not_priority_score": True,
+    "creates_no_obligation": True,
+    "does_not_assign_responsibility": True,
+}
+```
+
+### CLI コマンド
+
+```bash
+python3 globe/runtime/attention_dashboard.py summary
+python3 globe/runtime/attention_dashboard.py save
+python3 globe/runtime/attention_dashboard.py show-globe globe-001
+python3 globe/runtime/attention_dashboard.py show-directive directive-claim-proposal-002
+python3 globe/runtime/attention_dashboard.py show-member member-masuo-komori
+python3 globe/runtime/attention_dashboard.py show-type objection
+```
+
+### HTTP エンドポイント
+
+| URL | 説明 |
+|---|---|
+| `/globe/attention` | 全 attention item |
+| `/globe/attention?globe=globe-001` | globe でフィルタ |
+| `/globe/attention?directive=directive-claim-proposal-002` | directive でフィルタ |
+| `/globe/attention?member=member-masuo-komori` | member でフィルタ |
+| `/globe/attention?type=objection` | attention_type でフィルタ |
+
+### プロトコル句
+
+- "Attention dashboard is advisory display only."
+- "Attention item is not priority score."
+- "Attention item creates no obligation."
+- "Attention item does not assign responsibility."
+- "Human review is required before any real-world action."
+
+### 集計結果
+
+- 7 items total (objection × 1, partially_resolved_signal × 1, unresolved_signal × 1,
+  contested_signal × 1, high_confidence_link × 2, needs_attention × 1)
+- ah_attention_events: 5 (from activity_heatmap)
+- mah_members_with_attn: 3 members
+
+### 生成ファイル
+
+- `globe/runtime/attention_dashboard.py` — ダッシュボード構築・CLI
+- `globe/reports/attention_dashboard.json` — 生成済み JSON (7 items)
+- `globe/reports/attention_dashboard.md` — 生成済み Markdown

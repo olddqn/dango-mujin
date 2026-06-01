@@ -608,6 +608,47 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 41 — Globe Attention-Required Dashboard
+
+objection / rollback_request / unresolved_signal / partially_resolved_signal /
+contested_signal / high_confidence_link / needs_attention を一覧表示する
+注意喚起ダッシュボード。優先度スコア・義務付与・責任割当ではない。
+
+**不変条件:**
+- Attention dashboard is advisory display only.
+- Attention item is not priority score.
+- Attention item creates no obligation.
+- Attention item does not assign responsibility.
+- Human review is required before any real-world action.
+
+**CLI:**
+```bash
+python3 globe/runtime/attention_dashboard.py summary
+python3 globe/runtime/attention_dashboard.py save
+python3 globe/runtime/attention_dashboard.py show-globe globe-001
+python3 globe/runtime/attention_dashboard.py show-directive directive-claim-proposal-002
+python3 globe/runtime/attention_dashboard.py show-member member-masuo-komori
+python3 globe/runtime/attention_dashboard.py show-type objection
+```
+
+**集計:** 7 items (objection × 1, partially_resolved × 1, unresolved × 1,
+contested × 1, high_confidence_link × 2, needs_attention × 1)
+
+**確認URL:**
+- http://localhost:7422/globe/attention
+- http://localhost:7422/globe/attention?globe=globe-001
+- http://localhost:7422/globe/attention?directive=directive-claim-proposal-002
+- http://localhost:7422/globe/attention?member=member-masuo-komori
+- http://localhost:7422/globe/attention?type=objection
+
+### 生成ファイル
+
+- `globe/runtime/attention_dashboard.py` — ダッシュボード構築・CLI (7 items)
+- `globe/reports/attention_dashboard.json` — 生成済み JSON
+- `globe/reports/attention_dashboard.md` — 生成済み Markdown
+
+---
+
 ## Phase 39 — Globe Member Activity Heatmap
 
 Member ごとの活動を 日付 × Globe × activity type の heatmap として表示。

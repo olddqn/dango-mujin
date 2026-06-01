@@ -1,0 +1,222 @@
+{
+  "dashboard_id": "globe-attention-dashboard",
+  "generated_at": "2026-06-01 11:23:50",
+  "phase": "41",
+  "total_items": 7,
+  "type_counts": {
+    "objection": 1,
+    "rollback_request": 0,
+    "unresolved_signal": 1,
+    "partially_resolved_signal": 1,
+    "contested_signal": 1,
+    "high_confidence_link": 2,
+    "needs_attention": 1
+  },
+  "ah_attention_events": 5,
+  "mah_members_with_attn": 3,
+  "phase_phrases": [
+    "Attention dashboard is advisory display only.",
+    "Attention item is not priority score.",
+    "Attention item creates no obligation.",
+    "Attention item does not assign responsibility.",
+    "Human review is required before any real-world action."
+  ],
+  "attention_dashboard_is_advisory_display_only": true,
+  "attention_item_is_not_priority_score": true,
+  "attention_item_creates_no_obligation": true,
+  "attention_item_does_not_assign_responsibility": true,
+  "human_review_is_required_before_any_real_world_action": true,
+  "authority": "none",
+  "items": [
+    {
+      "attention_id": "attn-vrs-005-log-002",
+      "source_type": "execution_log",
+      "source_id": "log-002",
+      "globe_id": "globe-003",
+      "directive_id": "directive-claim-proposal-005",
+      "member_id": "member-jammy-house-steward",
+      "attention_type": "unresolved_signal",
+      "title": "🔴 Unresolved signal — Jammy House Steward",
+      "content_excerpt": "住居アドボカシーは未解決として継続観察する",
+      "reason": "Voluntary resolution signal marked unresolved — does not confirm resolution; human review may be needed",
+      "created_at": "2026-05-31T04:27:33.201255+00:00",
+      "source_path": "globe/logs/directive-claim-proposal-005.jsonl",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-tl-tl-rfb-rfb-004",
+      "source_type": "contribution_timeline",
+      "source_id": "tl-rfb-rfb-004",
+      "globe_id": "globe-003",
+      "directive_id": "directive-claim-proposal-005",
+      "member_id": "member-jammy-house-steward",
+      "attention_type": "needs_attention",
+      "title": "⚠️ 🔗 Feedback Bridge: voluntary resolution signal → both",
+      "content_excerpt": "住居アドボカシーは未解決として継続観察する [voluntary_resolution_signal status='unresolved' with both relief and care keywords — advisory can",
+      "reason": "Flagged needs_attention=True in contribution timeline",
+      "created_at": "2026-05-31T04:27:33.201255+00:00",
+      "source_path": "globe/reports/contribution_timeline.json",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-vrs-002-log-006",
+      "source_type": "execution_log",
+      "source_id": "log-006",
+      "globe_id": "globe-001",
+      "directive_id": "directive-claim-proposal-002",
+      "member_id": "member-masuo-komori",
+      "attention_type": "partially_resolved_signal",
+      "title": "🟡 Partially-resolved signal — Masuo Komori (status: partially_resolved)",
+      "content_excerpt": "D.R.A.連携の前提整理はいったん一区切りとする",
+      "reason": "Voluntary resolution signal not fully resolved — does not confirm resolution; human review may be needed",
+      "created_at": "2026-05-31T04:27:29.210356+00:00",
+      "source_path": "globe/logs/directive-claim-proposal-002.jsonl",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-contested-masuo-komori-002",
+      "source_type": "member_directive_map",
+      "source_id": "map-masuo-komori-002",
+      "globe_id": "globe-001",
+      "directive_id": "directive-claim-proposal-002",
+      "member_id": "member-masuo-komori",
+      "attention_type": "contested_signal",
+      "title": "⚔️ Contested resolution signal — member-masuo-komori",
+      "content_excerpt": "VRS from member-masuo-komori is contested because member-founding-member-003 objected in the same directive",
+      "reason": "A voluntary resolution signal and an objection coexist in the same directive — human review required to determine whether the signal reflects shared understanding",
+      "created_at": "2026-05-31T04:27:29.210356+00:00",
+      "source_path": "globe/reports/member_directive_map.json",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-link-lnk-003",
+      "source_type": "bridge_target_link",
+      "source_id": "lnk-003",
+      "globe_id": "globe-001",
+      "directive_id": "directive-claim-proposal-002",
+      "member_id": "member-bridge-target-linker",
+      "attention_type": "high_confidence_link",
+      "title": "🔗 High-confidence link candidate → relief_case_memory",
+      "content_excerpt": "Shelter hosting was observed to have been accepted. Family housed for 5 days.",
+      "reason": "commons_id match (dra-001 detected in feedback content) + case_type 'shelter_followup' contains matching relief/housing keywords  [case_type: shelter_followup  commons: dra-001  st",
+      "created_at": "2026-05-31T01:00:22.998231+00:00",
+      "source_path": "globe/reports/bridge_target_links.json",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-link-lnk-002",
+      "source_type": "bridge_target_link",
+      "source_id": "lnk-002",
+      "globe_id": "globe-001",
+      "directive_id": "directive-claim-proposal-002",
+      "member_id": "member-bridge-target-linker",
+      "attention_type": "high_confidence_link",
+      "title": "🔗 High-confidence link candidate → relief_case_memory",
+      "content_excerpt": "Supply coordination was observed for displaced family. Basic supplies reached the household.",
+      "reason": "commons_id match (dra-001 detected in feedback content) + case_type 'refugee_relief_followup' contains matching relief/housing keywords  [case_type: refugee_relief_followup  common",
+      "created_at": "2026-05-31T01:00:22.998224+00:00",
+      "source_path": "globe/reports/bridge_target_links.json",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    },
+    {
+      "attention_id": "attn-objection-002-log-003",
+      "source_type": "execution_log",
+      "source_id": "log-003",
+      "globe_id": "globe-001",
+      "directive_id": "directive-claim-proposal-002",
+      "member_id": "member-founding-member-003",
+      "attention_type": "objection",
+      "title": "⚠️ Objection recorded — founding-member-003",
+      "content_excerpt": "D.R.A.との連携前にコミュニティ内の合意確認が必要と考える",
+      "reason": "Objection by member — human review may be required before proceeding",
+      "created_at": "2026-05-30T23:12:26.340959+00:00",
+      "source_path": "globe/logs/directive-claim-proposal-002.jsonl",
+      "advisory_only": true,
+      "not_priority_score": true,
+      "creates_no_obligation": true,
+      "does_not_assign_responsibility": true
+    }
+  ],
+  "by_globe": {
+    "globe-003": [
+      "attn-vrs-005-log-002",
+      "attn-tl-tl-rfb-rfb-004"
+    ],
+    "globe-001": [
+      "attn-vrs-002-log-006",
+      "attn-contested-masuo-komori-002",
+      "attn-link-lnk-003",
+      "attn-link-lnk-002",
+      "attn-objection-002-log-003"
+    ]
+  },
+  "by_directive": {
+    "directive-claim-proposal-005": [
+      "attn-vrs-005-log-002",
+      "attn-tl-tl-rfb-rfb-004"
+    ],
+    "directive-claim-proposal-002": [
+      "attn-vrs-002-log-006",
+      "attn-contested-masuo-komori-002",
+      "attn-link-lnk-003",
+      "attn-link-lnk-002",
+      "attn-objection-002-log-003"
+    ]
+  },
+  "by_member": {
+    "member-jammy-house-steward": [
+      "attn-vrs-005-log-002",
+      "attn-tl-tl-rfb-rfb-004"
+    ],
+    "member-masuo-komori": [
+      "attn-vrs-002-log-006",
+      "attn-contested-masuo-komori-002"
+    ],
+    "member-bridge-target-linker": [
+      "attn-link-lnk-003",
+      "attn-link-lnk-002"
+    ],
+    "member-founding-member-003": [
+      "attn-objection-002-log-003"
+    ]
+  },
+  "by_type": {
+    "unresolved_signal": [
+      "attn-vrs-005-log-002"
+    ],
+    "needs_attention": [
+      "attn-tl-tl-rfb-rfb-004"
+    ],
+    "partially_resolved_signal": [
+      "attn-vrs-002-log-006"
+    ],
+    "contested_signal": [
+      "attn-contested-masuo-komori-002"
+    ],
+    "high_confidence_link": [
+      "attn-link-lnk-003",
+      "attn-link-lnk-002"
+    ],
+    "objection": [
+      "attn-objection-002-log-003"
+    ]
+  }
+}

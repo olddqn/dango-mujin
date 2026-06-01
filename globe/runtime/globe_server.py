@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-globe_server.py — Globe UI Server (Phase 22–40)
+globe_server.py — Globe UI Server (Phase 22–41)
 Dan-Go × GITSEA — Globe Foundation Layer
 
 Local HTTP server that serves the Globe pages.
@@ -48,6 +48,11 @@ Routes:
     /globe/member-directives?member=<id> → Map for one member          [Phase 40]
     /globe/member-directives?directive=<id> → Map for one directive     [Phase 40]
     /globe/member-directives?globe=<id>  → Map filtered by globe       [Phase 40]
+    /globe/attention                          → Attention Dashboard    [Phase 41]
+    /globe/attention?globe=<globe_id>         → filtered by globe     [Phase 41]
+    /globe/attention?directive=<directive_id> → filtered by directive [Phase 41]
+    /globe/attention?member=<member_id>       → filtered by member    [Phase 41]
+    /globe/attention?type=<attention_type>    → filtered by type      [Phase 41]
 
 UI display is advisory only — not proof of execution — creates no legal authority.
 UI display does not approve execution. Objections and rollback requests are preserved.
@@ -1152,6 +1157,40 @@ h3 { font-size: 1rem; color: #8898b0; margin: 28px 0 12px; font-weight: 600;
 .mdm-advisory { font-size: 0.72rem; color: #182030; margin-top: 10px;
                 border-top: 1px solid #0e1420; padding-top: 8px; }
 .mdm-empty { color: #3a4a5a; font-size: 0.86rem; padding: 10px 0; }
+
+/* Phase 41 — Attention-Required Dashboard */
+.attn-panel { background: #0f090a; border: 1px solid #281018;
+              border-radius: 8px; padding: 16px 22px; margin: 18px 0; }
+.attn-panel h3 { font-size: 0.88rem; color: #604050; margin-bottom: 14px;
+                 text-transform: uppercase; letter-spacing: 0.04em; }
+.attn-card { border: 1px solid #201018; border-radius: 6px;
+             padding: 10px 14px; margin-bottom: 10px; background: #130a0c; }
+.attn-card-header { display: flex; align-items: baseline; gap: 8px;
+                    flex-wrap: wrap; margin-bottom: 4px; }
+.attn-type-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 10px;
+                   font-weight: 600; letter-spacing: 0.03em; }
+.attn-type-badge.objection        { background: #280e00; color: #c06820; }
+.attn-type-badge.rollback_request { background: #200a20; color: #a040c0; }
+.attn-type-badge.unresolved_signal { background: #1a0808; color: #c04040; }
+.attn-type-badge.partially_resolved_signal { background: #201008; color: #c08020; }
+.attn-type-badge.contested_signal { background: #1a0a00; color: #b06000; }
+.attn-type-badge.high_confidence_link { background: #081420; color: #2080c0; }
+.attn-type-badge.needs_attention  { background: #101a08; color: #608030; }
+.attn-source-badge { font-size: 0.62rem; padding: 1px 6px; border-radius: 3px;
+                     background: #0e0810; color: #504060; }
+.attn-title { font-size: 0.84rem; color: #a08090; }
+.attn-meta { font-size: 0.70rem; color: #3a2030; line-height: 1.8; margin: 5px 0; }
+.attn-reason { font-size: 0.72rem; color: #806060; font-style: italic; margin: 4px 0; }
+.attn-excerpt { font-size: 0.72rem; color: #503040; background: #0c0810;
+                border-left: 2px solid #280e18; padding: 4px 8px; margin-top: 6px; }
+.attn-stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
+                 font-size: 0.72rem; color: #3a2030; }
+.attn-stat-row .ms-lbl { color: #2a1020; font-size: 0.74rem; }
+.attn-filters { margin-bottom: 12px; font-size: 0.78rem; }
+.attn-filters a { color: #704050; margin-right: 8px; }
+.attn-advisory { font-size: 0.72rem; color: #281820; margin-top: 10px;
+                 border-top: 1px solid #1e0e14; padding-top: 8px; }
+.attn-empty { color: #3a2a30; font-size: 0.86rem; padding: 10px 0; }
 
 footer { text-align: center; font-size: 0.72rem; color: #2a3040;
          padding: 32px 0 16px; }
@@ -3540,7 +3579,8 @@ def render_globe_list() -> str:
         f'&nbsp;<a href="/globe/dependencies" style="font-size:0.65em;color:#2a3a5a">🗺️ Dep →</a>'
         f'&nbsp;<a href="/globe/members" style="font-size:0.65em;color:#2a4a3a">👥 Members →</a>'
         f'&nbsp;<a href="/globe/member-activity" style="font-size:0.65em;color:#2a3a4a">🌡️ Heatmap →</a>'
-        f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a></h2>'
+        f'&nbsp;<a href="/globe/member-directives" style="font-size:0.65em;color:#2a3850">📊 Map →</a>'
+        f'&nbsp;<a href="/globe/attention" style="font-size:0.65em;color:#4a2838">🚨 Attention →</a></h2>'
         + items
         + exec_summary_html
         + cross_phase_html
@@ -4387,6 +4427,185 @@ def render_proposal_detail(globe_id: str, proposal_id: str) -> str | None:
     )
 
 
+# ─── Phase 41: Attention-Required Dashboard ─────────────────────────────────────
+
+_ATTN_JSON_PATH = _REPORTS_DIR / "attention_dashboard.json"
+
+_ATTN_TYPE_ICON: dict[str, str] = {
+    "objection":                 "⚠️",
+    "rollback_request":          "🔁",
+    "unresolved_signal":         "🔴",
+    "partially_resolved_signal": "🟡",
+    "contested_signal":          "⚔️",
+    "high_confidence_link":      "🔗",
+    "needs_attention":           "🚨",
+}
+
+
+def _load_attention() -> dict:
+    """Phase 41 — load attention_dashboard.json or build on-the-fly via importlib."""
+    if _ATTN_JSON_PATH.exists():
+        try:
+            return json.loads(_ATTN_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "attention_dashboard",
+        _GLOBE_DIR / "runtime" / "attention_dashboard.py",
+    )
+    _mod = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    return _mod.build_dashboard()
+
+
+def _render_attn_card(item: dict) -> str:
+    """Phase 41 — render one attention item card."""
+    at = item.get("attention_type", "needs_attention")
+    icon = _ATTN_TYPE_ICON.get(at, "🚨")
+    atid = _e(item.get("attention_id", ""))
+    title = _e(item.get("title", atid))
+    globe_id = item.get("globe_id") or ""
+    dir_id = item.get("directive_id") or ""
+    mem_id = item.get("member_id") or ""
+    src_type = _e(item.get("source_type", ""))
+    src_id = _e(item.get("source_id", ""))
+    reason = _e(item.get("reason", ""))
+    excerpt = _e((item.get("content_excerpt") or "")[:120])
+    created = _e((item.get("created_at") or "")[:19])
+
+    globe_link = (f'<a href="/globe/{_e(globe_id)}">{_e(globe_id)}</a>'
+                  if globe_id else "—")
+    dir_link = (f'<a href="/globe/{_e(globe_id)}/directives/{_e(dir_id)}">{_e(dir_id)}</a>'
+                if dir_id and globe_id else _e(dir_id) if dir_id else "—")
+    mem_link = (f'<a href="/globe/members/{_e(mem_id)}">{_e(mem_id)}</a>'
+                if mem_id else "—")
+
+    return (
+        f'<div class="attn-card">'
+        f'<div class="attn-card-header">'
+        f'<span style="font-size:1.1rem">{icon}</span>'
+        f'<span class="attn-type-badge {at}">{_e(at)}</span>'
+        f'<span class="attn-source-badge">{src_type}</span>'
+        f'<span class="attn-title">{title}</span>'
+        f'</div>'
+        f'<div class="attn-meta">'
+        f'globe: {globe_link} &nbsp;|&nbsp; '
+        f'directive: {dir_link} &nbsp;|&nbsp; '
+        f'member: {mem_link}'
+        f'<br>source_id: <code style="font-size:0.68rem;color:#403040">{src_id}</code>'
+        f' &nbsp; created: <span style="color:#503040">{created}</span>'
+        f'</div>'
+        f'{"<div class=attn-reason>" + reason + "</div>" if reason else ""}'
+        f'{"<div class=attn-excerpt>" + excerpt + "</div>" if excerpt else ""}'
+        f'</div>'
+    )
+
+
+def render_attention_page(
+    globe_filter: str | None = None,
+    directive_filter: str | None = None,
+    member_filter: str | None = None,
+    type_filter: str | None = None,
+) -> str:
+    """Phase 41 — Attention-Required Dashboard page."""
+    data = _load_attention()
+    items: list[dict] = data.get("items", [])
+
+    # Filter
+    if globe_filter:
+        items = [i for i in items if i.get("globe_id") == globe_filter]
+    if directive_filter:
+        items = [i for i in items if i.get("directive_id") == directive_filter]
+    if member_filter:
+        items = [i for i in items if i.get("member_id") == member_filter]
+    if type_filter:
+        items = [i for i in items if i.get("attention_type") == type_filter]
+
+    # Sort: newest first
+    items = sorted(items, key=lambda x: x.get("created_at") or "", reverse=True)
+
+    # Scope label
+    parts = []
+    if globe_filter:     parts.append(f"globe={globe_filter}")
+    if directive_filter: parts.append(f"directive={directive_filter}")
+    if member_filter:    parts.append(f"member={member_filter}")
+    if type_filter:      parts.append(f"type={type_filter}")
+    scope_label = " · ".join(parts) if parts else "全て"
+
+    # Type breakdown
+    by_type: dict[str, int] = {}
+    for i in items:
+        by_type[i.get("attention_type", "?")] = by_type.get(i.get("attention_type", "?"), 0) + 1
+
+    type_links: list[str] = []
+    for at in [
+        "objection", "rollback_request", "unresolved_signal",
+        "partially_resolved_signal", "contested_signal",
+        "high_confidence_link", "needs_attention",
+    ]:
+        icon = _ATTN_TYPE_ICON.get(at, "")
+        type_links.append(f'<a href="/globe/attention?type={_e(at)}">{icon} {_e(at)}</a>')
+
+    filters_html = (
+        f'<div class="attn-filters">'
+        f'<a href="/globe/attention">全て</a> | '
+        + " | ".join(type_links)
+        + f'</div>'
+    )
+
+    # Stats
+    meta = data.get("meta", {})
+    ah_attn = meta.get("ah_attention_events", 0)
+    mah_attn = meta.get("mah_members_with_attn", 0)
+    stat_html = (
+        f'<div class="attn-stat-row">'
+        f'<span><span class="ms-lbl">items:</span> {len(items)}</span>'
+        f'<span><span class="ms-lbl">ah_events:</span> {ah_attn}</span>'
+        f'<span><span class="ms-lbl">members_with_attn:</span> {mah_attn}</span>'
+        f'<span><span class="ms-lbl">types:</span> {", ".join(f"{k}:{v}" for k,v in sorted(by_type.items()))}</span>'
+        f'</div>'
+    )
+
+    # Cards
+    cards = "".join(_render_attn_card(i) for i in items)
+    if not cards:
+        cards = '<div class="attn-empty">注意項目なし (No attention items)</div>'
+
+    advisory_phrases = data.get("advisory_phrases", [
+        "Attention dashboard is advisory display only.",
+        "Attention item is not priority score.",
+        "Attention item creates no obligation.",
+        "Attention item does not assign responsibility.",
+        "Human review is required before any real-world action.",
+    ])
+    advisory_html = (
+        f'<div class="attn-advisory">'
+        + " ".join(f'"{_e(p)}"' for p in advisory_phrases)
+        + f'</div>'
+    )
+
+    body = (
+        f'<div class="attn-panel">'
+        f'<h3>🚨 Attention-Required Dashboard'
+        f'&nbsp;<small style="font-size:0.65em;color:#4a2838">(Phase 41 · {_e(scope_label)})</small></h3>'
+        + filters_html
+        + stat_html
+        + cards
+        + advisory_html
+        + f'</div>'
+    )
+
+    return _page(
+        "Attention Dashboard",
+        f'<a href="/globe">Globe</a> › '
+        f'<a href="/globe/attention">Attention</a>',
+        f'<h2>🚨 Attention Dashboard'
+        f'&nbsp;<small style="font-size:0.7em;color:#4a2838">({len(items)} items)</small></h2>'
+        + body
+    )
+
+
 # ─── HTTP Handler ───────────────────────────────────────────────────────────────
 
 class GlobeHandler(BaseHTTPRequestHandler):
@@ -4424,6 +4643,16 @@ class GlobeHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "":
             self._send_redirect("/globe")
+            return
+
+        # Phase 41 — Attention-Required Dashboard (before /globe/<id> match)
+        if path == "/globe/attention":
+            self._send_html(render_attention_page(
+                globe_filter=_qs("globe"),
+                directive_filter=_qs("directive"),
+                member_filter=_qs("member"),
+                type_filter=_qs("type"),
+            ))
             return
 
         # Phase 40 — Member × Directive Participation Map (before /globe/<id> match)
