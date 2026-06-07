@@ -866,3 +866,23 @@ No Base RPC. No contract calls. stdlib only.
 *Preparedness is not command.*
 *Hint is not allocation.*
 *Dan-Go records preparedness hints; it does not predict, command, or allocate.*
+*Capacity is not commitment.*
+*Ability is not obligation.*
+*Availability is not allocation.*
+*Dan-Go records observable capacity; it does not commit, obligate, or allocate.*
+
+## Phase 50 — Commons Capacity Memory Layer
+
+Dan-Go records observable capacities and availability without creating
+commitment, obligation, or allocation. Distinct from Phase 17 active aid
+offers and Phase 21 capacity-awareness hints, Phase 50 records **latent
+observable ability** ("what this commons can do") independent of any offer.
+
+- `capacity/runtime/capacity_registry.py` — observable capacity records
+- `capacity/runtime/capacity_snapshot.py` — aggregation (no ranking, no totals)
+- `capacity/runtime/capacity_memory_builder.py` — links Phase 16 + 21 + 50 (juxtaposition only)
+- `capacity/runtime/capacity_report.py` — human-readable report
+- `capacity/COMMONS_CAPACITY_SPEC.md`, `CAPACITY_NOT_COMMITMENT.md`, `ABILITY_NOT_OBLIGATION.md`
+
+> Phase numbering: this continues the GITSEA cooperation chain after
+> Phase 21, but takes global number **50** (Phase 22 = Globe Foundation).

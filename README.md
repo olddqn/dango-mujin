@@ -608,6 +608,33 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 50 — Commons Capacity Memory Layer
+
+GITSEA cooperation chain continuation (after Phase 21 Need Forecast). Records
+**observable latent capacity** of commons — *who can help, what can be offered,
+what ability already exists* — distinct from Phase 17 active aid offers and
+Phase 21 capacity-awareness hints. No commitment, obligation, or allocation.
+
+**不変条件 / Invariants:**
+- Capacity is not commitment.
+- Ability is not obligation.
+- Availability is not allocation.
+- authority: none | execution_allowed: false | moves_money: false | advisory: true
+
+**Runtime:**
+```bash
+python3 bridge/gitsea/capacity/runtime/capacity_registry.py --save
+python3 bridge/gitsea/capacity/runtime/capacity_snapshot.py --save
+python3 bridge/gitsea/capacity/runtime/capacity_memory_builder.py --save
+python3 bridge/gitsea/capacity/runtime/capacity_report.py --save
+```
+
+**生成ファイル:** `bridge/gitsea/capacity/examples/capacity-{registry,snapshot,memory,report}.json`
+
+> Phase number is **50** (global counter). "Phase 22" = Globe Foundation Layer (already taken).
+
+---
+
 ## Phase 49 — Deliberation Health Check
 
 各 Proposal の話し合いについて、論点・懸念・一致点・合意候補・未解決条件の
