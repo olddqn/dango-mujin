@@ -1,10 +1,14 @@
-# RESUME_STATE.md — Deliberation Health Check
+# RESUME_STATE.md — Commons Capacity Memory Layer
 
-> **STATUS: IN PROGRESS (feature/phase-49-deliberation-health)**
+> **STATUS: IN PROGRESS (feature/phase-22-capacity-memory)**
 
-**Phase:** Deliberation Health Check (Phase 49)
-**Branch:** feature/phase-49-deliberation-health
-**Started:** 2026-06-01
+**Phase:** Commons Capacity Memory Layer (Phase 50)
+**Branch:** feature/phase-22-capacity-memory
+**Started:** 2026-06-07
+
+> Note: branch name retains "phase-22" for continuity with the original request,
+> but the global phase number is **50** (Phase 22 = Globe Foundation, already taken).
+> This layer continues the GITSEA cooperation chain after Phase 21 (Need Forecast).
 
 ---
 
@@ -69,7 +73,42 @@
 - Globe Phrase Genealogy View (Phase 46) — PR #41, merged
 - Globe Consensus Discovery Layer (Phase 47) — PR #42, merged
 - Globe Deliberation Round Tracker (Phase 48) — PR #43, merged
-- **Globe Deliberation Health Check (Phase 49)** ← current
+- Globe Deliberation Health Check (Phase 49)
+- **Commons Capacity Memory Layer (Phase 50)** ← current
+
+---
+
+## New Files (Phase 50 — Commons Capacity Memory Layer)
+
+- `bridge/gitsea/capacity/runtime/capacity_registry.py` — observable capacity records
+- `bridge/gitsea/capacity/runtime/capacity_snapshot.py` — aggregation (no ranking/totals)
+- `bridge/gitsea/capacity/runtime/capacity_memory_builder.py` — links Phase 16+21+50 (juxtaposition only)
+- `bridge/gitsea/capacity/runtime/capacity_report.py` — human-readable report
+- `bridge/gitsea/capacity/examples/capacity-{registry,snapshot,memory,report}.json` — generated
+- `bridge/gitsea/capacity/COMMONS_CAPACITY_SPEC.md`
+- `bridge/gitsea/capacity/CAPACITY_NOT_COMMITMENT.md`
+- `bridge/gitsea/capacity/ABILITY_NOT_OBLIGATION.md`
+
+## Updated Files (Phase 50)
+
+- `README.md` — Phase 50 section
+- `bridge/gitsea/README.md` — Phase 50 section
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 50)
+
+```
+Capacity is not commitment.
+Ability is not obligation.
+Availability is not allocation.
+```
+
+### Phase Numbering Decision
+
+- Latest existing phase confirmed = Phase 49 (Globe Deliberation Health Check)
+- "Phase 22" already occupied by Globe Foundation Layer — NOT reused
+- Overlap check: Phase 17 (aid offers, `capacity` field) and Phase 21 (capacity-awareness hints) partially overlap; Phase 50 records distinct **latent observable ability**, with COMMONS_CAPACITY_SPEC.md documenting non-duplication
+- New global number assigned: **Phase 50**
 
 ---
 

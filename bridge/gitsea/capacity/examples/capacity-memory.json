@@ -1,0 +1,108 @@
+{
+  "record_type": "commons_capacity_memory_set",
+  "memory_set_id": "capacity-memory-set-001",
+  "memory_count": 3,
+  "memories": [
+    {
+      "record_type": "commons_capacity_memory",
+      "memory_id": "capacity-memory-001",
+      "commons_id": "dra-001",
+      "forecast_id": "need-forecast-002",
+      "related_forecast_ids": [
+        "need-forecast-002"
+      ],
+      "capacity_ids": [
+        "capacity-003"
+      ],
+      "capacity_count": 1,
+      "juxtaposition_note": "Observed capacity and anticipated need are recorded side by side for human consideration. Dan-Go does not match them or assign helpers.",
+      "authority": "none",
+      "ability_creates_obligation": false,
+      "memory_matches_capacity_to_need": false,
+      "memory_assigns_helpers": false,
+      "generated_at": "2026-06-07T20:52:02.648827+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "capacity_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "capacity_is_commitment": false,
+      "availability_allocates_resources": false
+    },
+    {
+      "record_type": "commons_capacity_memory",
+      "memory_id": "capacity-memory-002",
+      "commons_id": "jammy-house-001",
+      "forecast_id": "need-forecast-001",
+      "related_forecast_ids": [
+        "need-forecast-001",
+        "need-forecast-003"
+      ],
+      "capacity_ids": [
+        "capacity-001",
+        "capacity-002"
+      ],
+      "capacity_count": 2,
+      "juxtaposition_note": "Observed capacity and anticipated need are recorded side by side for human consideration. Dan-Go does not match them or assign helpers.",
+      "authority": "none",
+      "ability_creates_obligation": false,
+      "memory_matches_capacity_to_need": false,
+      "memory_assigns_helpers": false,
+      "generated_at": "2026-06-07T20:52:02.649137+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "capacity_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "capacity_is_commitment": false,
+      "availability_allocates_resources": false
+    },
+    {
+      "record_type": "commons_capacity_memory",
+      "memory_id": "capacity-memory-003",
+      "commons_id": "yacypherpunks-001",
+      "forecast_id": "need-forecast-004",
+      "related_forecast_ids": [
+        "need-forecast-004"
+      ],
+      "capacity_ids": [
+        "capacity-004"
+      ],
+      "capacity_count": 1,
+      "juxtaposition_note": "Observed capacity and anticipated need are recorded side by side for human consideration. Dan-Go does not match them or assign helpers.",
+      "authority": "none",
+      "ability_creates_obligation": false,
+      "memory_matches_capacity_to_need": false,
+      "memory_assigns_helpers": false,
+      "generated_at": "2026-06-07T20:52:02.649141+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "capacity_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "capacity_is_commitment": false,
+      "availability_allocates_resources": false
+    }
+  ],
+  "authority": "none",
+  "capacity_is_commitment": false,
+  "ability_creates_obligation": false,
+  "availability_allocates_resources": false,
+  "generated_at": "2026-06-07T20:52:02.649142+00:00",
+  "phase": 50,
+  "phase_phrase_1": "Capacity is not commitment.",
+  "phase_phrase_2": "Ability is not obligation.",
+  "phase_phrase_3": "Availability is not allocation."
+}
