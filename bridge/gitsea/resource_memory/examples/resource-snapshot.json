@@ -1,0 +1,39 @@
+{
+  "record_type": "commons_resource_snapshot",
+  "snapshot_id": "resource-snapshot-001",
+  "commons_count": 3,
+  "resource_count": 5,
+  "commons_represented": [
+    "dra-001",
+    "jammy-house-001",
+    "yacypherpunks-001"
+  ],
+  "resource_by_type": {
+    "kitchen_equipment": 1,
+    "relief_supplies": 1,
+    "shared_compute": 1,
+    "translation_books": 1,
+    "vacant_room": 1
+  },
+  "resource_by_observability": {
+    "directly_observed": 1,
+    "documented": 2,
+    "self_reported": 2
+  },
+  "resource_by_commons": {
+    "dra-001": 1,
+    "jammy-house-001": 2,
+    "yacypherpunks-001": 2
+  },
+  "authority": "none",
+  "advisory": true,
+  "resource_is_allocation": false,
+  "possession_creates_obligation": false,
+  "availability_transfers_ownership": false,
+  "snapshot_ranks_commons": false,
+  "generated_at": "2026-06-08T10:03:54.171951+00:00",
+  "phase": 51,
+  "phase_phrase_1": "Resource is not allocation.",
+  "phase_phrase_2": "Possession is not obligation.",
+  "phase_phrase_3": "Availability is not transfer."
+}

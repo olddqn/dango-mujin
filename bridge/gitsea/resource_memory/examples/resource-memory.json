@@ -1,0 +1,119 @@
+{
+  "record_type": "commons_resource_memory_set",
+  "memory_set_id": "resource-memory-set-001",
+  "memory_count": 3,
+  "memories": [
+    {
+      "record_type": "commons_resource_memory",
+      "memory_id": "resource-memory-001",
+      "commons_id": "dra-001",
+      "resource_ids": [
+        "resource-003"
+      ],
+      "resource_count": 1,
+      "related_forecast_ids": [
+        "need-forecast-002"
+      ],
+      "related_capacity_ids": [
+        "capacity-003"
+      ],
+      "juxtaposition_note": "Observed resources are recorded side by side with anticipated need and observed capacity for human consideration. Dan-Go does not match resources to needs, assign helpers, or transfer ownership.",
+      "authority": "none",
+      "possession_creates_obligation": false,
+      "memory_matches_resource_to_need": false,
+      "memory_assigns_helpers": false,
+      "memory_transfers_ownership": false,
+      "generated_at": "2026-06-08T10:03:54.195820+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "resource_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "resource_is_allocation": false,
+      "availability_transfers_ownership": false
+    },
+    {
+      "record_type": "commons_resource_memory",
+      "memory_id": "resource-memory-002",
+      "commons_id": "jammy-house-001",
+      "resource_ids": [
+        "resource-001",
+        "resource-002"
+      ],
+      "resource_count": 2,
+      "related_forecast_ids": [
+        "need-forecast-001",
+        "need-forecast-003"
+      ],
+      "related_capacity_ids": [
+        "capacity-001",
+        "capacity-002"
+      ],
+      "juxtaposition_note": "Observed resources are recorded side by side with anticipated need and observed capacity for human consideration. Dan-Go does not match resources to needs, assign helpers, or transfer ownership.",
+      "authority": "none",
+      "possession_creates_obligation": false,
+      "memory_matches_resource_to_need": false,
+      "memory_assigns_helpers": false,
+      "memory_transfers_ownership": false,
+      "generated_at": "2026-06-08T10:03:54.195935+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "resource_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "resource_is_allocation": false,
+      "availability_transfers_ownership": false
+    },
+    {
+      "record_type": "commons_resource_memory",
+      "memory_id": "resource-memory-003",
+      "commons_id": "yacypherpunks-001",
+      "resource_ids": [
+        "resource-004",
+        "resource-005"
+      ],
+      "resource_count": 2,
+      "related_forecast_ids": [
+        "need-forecast-004"
+      ],
+      "related_capacity_ids": [
+        "capacity-004"
+      ],
+      "juxtaposition_note": "Observed resources are recorded side by side with anticipated need and observed capacity for human consideration. Dan-Go does not match resources to needs, assign helpers, or transfer ownership.",
+      "authority": "none",
+      "possession_creates_obligation": false,
+      "memory_matches_resource_to_need": false,
+      "memory_assigns_helpers": false,
+      "memory_transfers_ownership": false,
+      "generated_at": "2026-06-08T10:03:54.195939+00:00",
+      "execution_allowed": false,
+      "moves_money": false,
+      "credit_issued": false,
+      "hard_enforcement": false,
+      "advisory": true,
+      "resource_memory_only": true,
+      "append_only": true,
+      "contestable": true,
+      "reopenable": true,
+      "resource_is_allocation": false,
+      "availability_transfers_ownership": false
+    }
+  ],
+  "authority": "none",
+  "resource_is_allocation": false,
+  "possession_creates_obligation": false,
+  "availability_transfers_ownership": false,
+  "generated_at": "2026-06-08T10:03:54.195941+00:00",
+  "phase": 51,
+  "phase_phrase_1": "Resource is not allocation.",
+  "phase_phrase_2": "Possession is not obligation.",
+  "phase_phrase_3": "Availability is not transfer."
+}
