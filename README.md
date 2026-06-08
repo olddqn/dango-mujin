@@ -608,6 +608,36 @@ python3 globe/runtime/member_directive_map.py show-directive directive-claim-pro
 
 ---
 
+## Phase 51 — Resource Memory Layer
+
+GITSEA cooperation chain continuation (after Phase 50 Commons Capacity).
+Records **observable resources** of commons — *what resources actually exist,
+what is observable, what may be available* — distinct from Phase 17 active
+aid offers, Phase 21 capacity-awareness hints, and Phase 50 latent capacities.
+No allocation, no obligation, no ownership transfer, no command.
+
+**不変条件 / Invariants:**
+- Resource is not allocation.
+- Possession is not obligation.
+- Availability is not transfer.
+- authority: none | execution_allowed: false | moves_money: false | advisory: true
+
+**Runtime:**
+```bash
+python3 bridge/gitsea/resource_memory/runtime/resource_registry.py --save
+python3 bridge/gitsea/resource_memory/runtime/resource_snapshot.py --save
+python3 bridge/gitsea/resource_memory/runtime/resource_memory_builder.py --save
+python3 bridge/gitsea/resource_memory/runtime/resource_report.py --save
+```
+
+**生成ファイル:** `bridge/gitsea/resource_memory/examples/resource-{registry,snapshot,memory,report}.json`
+
+**Layer distinctions:**
+Phase 17 = active offer · Phase 21 = preparedness hint ·
+Phase 50 = latent capacity · Phase 51 = observable resource
+
+---
+
 ## Phase 50 — Commons Capacity Memory Layer
 
 GITSEA cooperation chain continuation (after Phase 21 Need Forecast). Records

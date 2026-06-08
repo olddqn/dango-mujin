@@ -886,3 +886,26 @@ observable ability** ("what this commons can do") independent of any offer.
 
 > Phase numbering: this continues the GITSEA cooperation chain after
 > Phase 21, but takes global number **50** (Phase 22 = Globe Foundation).
+
+*Resource is not allocation.*
+*Possession is not obligation.*
+*Availability is not transfer.*
+*Dan-Go records observable resources; it does not allocate, transfer, or command.*
+
+## Phase 51 — Resource Memory Layer
+
+Dan-Go records observable resources without creating obligation,
+allocation, ownership transfer, or command. Distinct from Phase 17
+active aid offers, Phase 21 capacity-awareness hints, and Phase 50
+latent capacities, Phase 51 records **observable possession**
+("what this commons holds") with explicit observability provenance.
+
+- `resource_memory/runtime/resource_registry.py` — observable resource records
+- `resource_memory/runtime/resource_snapshot.py` — aggregation (no ranking, no totals)
+- `resource_memory/runtime/resource_memory_builder.py` — links Phase 16 + 21 + 50 + 51 (juxtaposition only)
+- `resource_memory/runtime/resource_report.py` — human-readable report
+- `resource_memory/RESOURCE_MEMORY_SPEC.md`, `RESOURCE_NOT_ALLOCATION.md`, `POSSESSION_NOT_OBLIGATION.md`
+
+> Layer distinctions:
+> Phase 17 = active offer · Phase 21 = preparedness hint ·
+> Phase 50 = latent capacity · Phase 51 = observable resource

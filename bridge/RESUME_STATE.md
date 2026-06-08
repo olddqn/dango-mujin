@@ -1,14 +1,12 @@
-# RESUME_STATE.md — Commons Capacity Memory Layer
+# RESUME_STATE.md — Resource Memory Layer
 
-> **STATUS: IN PROGRESS (feature/phase-22-capacity-memory)**
+> **STATUS: IN PROGRESS (feature/phase-51-resource-memory)**
 
-**Phase:** Commons Capacity Memory Layer (Phase 50)
-**Branch:** feature/phase-22-capacity-memory
-**Started:** 2026-06-07
+**Phase:** Resource Memory Layer (Phase 51)
+**Branch:** feature/phase-51-resource-memory
+**Started:** 2026-06-08
 
-> Note: branch name retains "phase-22" for continuity with the original request,
-> but the global phase number is **50** (Phase 22 = Globe Foundation, already taken).
-> This layer continues the GITSEA cooperation chain after Phase 21 (Need Forecast).
+> Continues the GITSEA cooperation chain after Phase 50 (Commons Capacity Memory).
 
 ---
 
@@ -74,7 +72,45 @@
 - Globe Consensus Discovery Layer (Phase 47) — PR #42, merged
 - Globe Deliberation Round Tracker (Phase 48) — PR #43, merged
 - Globe Deliberation Health Check (Phase 49)
-- **Commons Capacity Memory Layer (Phase 50)** ← current
+- Commons Capacity Memory Layer (Phase 50) — PR #45, merged
+- **Resource Memory Layer (Phase 51)** ← current
+
+---
+
+## New Files (Phase 51 — Resource Memory Layer)
+
+- `bridge/gitsea/resource_memory/runtime/resource_registry.py` — observable resource records
+- `bridge/gitsea/resource_memory/runtime/resource_snapshot.py` — aggregation (no ranking/totals)
+- `bridge/gitsea/resource_memory/runtime/resource_memory_builder.py` — links Phase 16 + 21 + 50 + 51 (juxtaposition only)
+- `bridge/gitsea/resource_memory/runtime/resource_report.py` — human-readable report
+- `bridge/gitsea/resource_memory/examples/resource-{registry,snapshot,memory,report}.json` — generated
+- `bridge/gitsea/resource_memory/RESOURCE_MEMORY_SPEC.md`
+- `bridge/gitsea/resource_memory/RESOURCE_NOT_ALLOCATION.md`
+- `bridge/gitsea/resource_memory/POSSESSION_NOT_OBLIGATION.md`
+
+## Updated Files (Phase 51)
+
+- `README.md` — Phase 51 section
+- `bridge/gitsea/README.md` — Phase 51 section
+- `bridge/RESUME_STATE.md` — this file
+
+### Protocol Phrases (Phase 51)
+
+```
+Resource is not allocation.
+Possession is not obligation.
+Availability is not transfer.
+```
+
+### Layer Distinctness (Phase 17 vs 21 vs 50 vs 51)
+
+- Phase 17 — Mutual Aid Routing — active aid offers (speech acts)
+- Phase 21 — Need Forecast Memory — capacity-awareness hints (forward-looking)
+- Phase 50 — Commons Capacity Memory — latent observable ability ("can do")
+- Phase 51 — Resource Memory — observable possession ("holds")
+
+`resource_memory_builder.py` juxtaposes all four into per-commons memory records
+without matching, assigning, allocating, or transferring.
 
 ---
 
