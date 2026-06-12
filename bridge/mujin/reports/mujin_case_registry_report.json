@@ -1,0 +1,32 @@
+{
+  "record_type": "mujin_case_registry_report",
+  "report_id": "mujin-registry-report-001",
+  "generated_at": "2026-06-12T14:56:29.174855Z",
+  "case_events": 4,
+  "objection_events": 1,
+  "non_mujin_support_events": 1,
+  "notes": [
+    "Counts are event counts in append-only streams, not judgments.",
+    "Withdrawn cases are not failures and are not reported as such.",
+    "Non-Mujin support appears here as equal in dignity, unranked."
+  ],
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "advisory_only_is_moral_immunity": false,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "human_review_required": true,
+  "registration_is_not_proof": true,
+  "withdrawal_is_failure": false,
+  "support_is_debt": false,
+  "closure_attribution_prohibited": true,
+  "protocol_phrases": [
+    "Registration is not proof.",
+    "Withdrawal is not failure.",
+    "Support is not debt.",
+    "advisory_only is not moral immunity."
+  ]
+}
