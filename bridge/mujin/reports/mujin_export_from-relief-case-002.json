@@ -1,0 +1,65 @@
+{
+  "record_type": "mujin_case_draft",
+  "draft_id": "from-relief-case-002",
+  "generated_at": "2026-06-12T15:04:14.304010Z",
+  "created_from": "relief_case",
+  "source_refs": {
+    "relief_case_id": "relief-case-002",
+    "route_id": "aid-route-002",
+    "commons_id": "jammy-house-001"
+  },
+  "consent": {
+    "status": "deferred",
+    "can_consent": false,
+    "obtained_at": null,
+    "confirmation_due": true,
+    "note": "consent must be obtained from the subject before this draft may become a case; a state of being unable to consent is not consent (D-3)"
+  },
+  "discovery_origin": {
+    "how": "export adapter over existing Dan-Go decision records",
+    "by": "bridge.mujin.exporter",
+    "disclosed_to_subject": false
+  },
+  "proposed_needs": [
+    {
+      "need_id": "from-relief-case-002-need-01",
+      "description": "follow-up cooperation around housing_support_followup",
+      "addresses_condition": null,
+      "status": "open",
+      "proposed_only": true
+    }
+  ],
+  "context": {
+    "directive_title": null,
+    "directive_objective": null,
+    "execution_log_entries_seen": 0,
+    "reality_feedback_entries_seen": 0,
+    "relief_case_status": "partial"
+  },
+  "next_step": "human review — then, only with the subject's confirmed consent, register via case_registry.create_mujin_case",
+  "registration_is_not_proof": true,
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "advisory_only_is_moral_immunity": false,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "human_review_required": true,
+  "withdrawal_is_failure": false,
+  "support_is_debt": false,
+  "closure_attribution_prohibited": true,
+  "protocol_phrases": [
+    "Registration is not proof.",
+    "Withdrawal is not failure.",
+    "Support is not debt.",
+    "advisory_only is not moral immunity."
+  ],
+  "advisory_only": true,
+  "subject_objection_path_required": true,
+  "outreach_explanation_required": true,
+  "reach_gap_unresolved": true,
+  "draft_is_not_a_case": true,
+  "draft_creates_no_contact": true
+}

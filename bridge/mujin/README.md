@@ -1,4 +1,4 @@
-# Mujin Platform — Phase A: Data Layer
+# Mujin Platform — Phase A: Data Layer · Phase B: Export Adapter
 
 > **"Registration is not proof."**
 > **"Withdrawal is not failure."**
@@ -13,8 +13,8 @@ reality** — the execution-side counterpart to Dan-Go's cooperation-formation
 protocol. Philosophically inseparable, implementationally loosely coupled
 (ADR-002).
 
-This directory contains the **data layer only** (SPEC §10 Phase A). No UI,
-no export layer, no feedback writer, no automation.
+This directory contains the **data layer** (SPEC §10 Phase A) and the
+**export adapter** (Phase B). No UI, no feedback writer, no automation.
 
 ## Specification & decisions
 
@@ -70,6 +70,7 @@ moral responsibility (ADR-005 D-4).
 | `schemas.py` | Dataclasses: `MujinCase`, `ConsentRecord`, `DeferredConsent`, `Need`, `ContributionLink`, `ProgressLog`, `ObjectionRecord`, `NonMujinSupport` + vocabularies |
 | `store.py` | Append-only JSON/JSONL utilities with Dan-Go write guards |
 | `case_registry.py` | `create_mujin_case`, `withdraw_mujin_case`, `record_objection`, `record_progress`, `record_non_mujin_support` + CLI demo |
+| `exporter.py` | Phase B: read-only adapter over Dan-Go decision data → Mujin Case drafts |
 | `data/` | Append-only event streams (`mujin_cases.jsonl`, `objections.jsonl`, `non_mujin_support.jsonl`) |
 | `examples/` | Safe pseudonymous example snapshots (no PII) |
 | `reports/` | Sample advisory reports |
@@ -129,6 +130,51 @@ withdraw_mujin_case("mujin-case-101")   # reason optional — withdrawal is not 
 
 The demo also **demonstrates refusals**: creating a `scouter` case and
 marking a cannot-consent subject as consenting both raise errors by design.
+
+## Phase B — Export / Import Adapter (`exporter.py`)
+
+Reads Dan-Go decision data **read-only** and builds **Mujin Case drafts**
+for human review. A draft is not a case, not a contact, and not proof.
+
+```bash
+# discover Dan-Go sources and export sample drafts (read-only on Dan-Go)
+python -m bridge.mujin.exporter
+```
+
+Library use:
+
+```python
+from bridge.mujin.exporter import (
+    discover_dango_sources, load_directive, load_execution_log,
+    load_relief_case, build_mujin_case_draft, export_mujin_case_draft,
+)
+
+manifest = discover_dango_sources()            # missing sources skipped safely
+draft = build_mujin_case_draft(
+    draft_id="from-directive-claim-proposal-002",
+    directive_id="directive-claim-proposal-002",   # P1 source (ADR-002)
+)
+export_mujin_case_draft(draft)   # → bridge/mujin/reports/mujin_export_*.json
+```
+
+Export rules:
+
+- **Sources (read-only, priority per DISCOVERY_REPORT §4):**
+  `globe/directives/*.json` (P1), `globe/logs/*.jsonl` (P1),
+  `bridge/gitsea/relief/**` (P2, reference only),
+  `bridge/sutable/reality_feedback.jsonl` (P3, canonical — never written).
+  Missing sources are skipped safely.
+- **Output:** only `bridge/mujin/reports/mujin_export_*.json`, write-once.
+- **Every draft carries** `source_refs`, `advisory_only: true`,
+  `human_review_required: true`, `consent.status: "deferred"`,
+  `registration_is_not_proof: true`, `subject_objection_path_required: true`,
+  `outreach_explanation_required: true`, `reach_gap_unresolved: true`.
+- **An adapter can never manufacture consent.** Drafts with any consent
+  status other than `deferred` are refused. Becoming a case requires human
+  review and the subject's confirmed consent
+  (`case_registry.create_mujin_case`).
+- **Exporting never contacts anyone** (`draft_creates_no_contact: true`).
+  Drafts are review material about *decisions*, not judgments about people.
 
 ## What is NOT here (SPEC §9)
 
