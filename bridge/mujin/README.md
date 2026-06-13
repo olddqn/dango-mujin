@@ -176,6 +176,41 @@ Export rules:
 - **Exporting never contacts anyone** (`draft_creates_no_contact: true`).
   Drafts are review material about *decisions*, not judgments about people.
 
+## Contribution Commons platform (`platform/`)
+
+A locally runnable web app (stdlib only) implementing the commons model:
+
+```
+Need → Contribution → Connection → Reality Feedback
+```
+
+```bash
+python -m bridge.mujin.platform.app        # http://127.0.0.1:8787/
+```
+
+Mujin is not a donation site, charity, or marketplace — it is a
+**Contribution Commons**: rescue-possibility discovery, not price
+discovery. Humans, AI agents, NPOs, NGOs, companies, municipalities, and
+volunteers register as peer Contribution Providers; what is registered is
+capability, not status. Agents declare capability only and can never
+allocate funds, select cases, rank, govern, or evaluate.
+
+Pages: Top / Need / Contribution / Commons View / Proposal View /
+Reality Feedback (negative feedback welcomed) / Objection (ADR-010,
+proxy submission + receipt tracking) / Agent Commons (registry, not a
+marketplace) / Transparency / **TTFR Dashboard** (Time To First Rescue —
+the system's response speed is measured; people never are).
+
+Rules: proposals are generated, never decided (`proposal ≠ decision`,
+always contestable). Lists are registration-order only — no ranking,
+no scores, no priority. Needs without active consent are never shown
+(a representative cannot manufacture consent: proxy registration is
+forced to consent-deferred). All data is append-only JSONL under
+`bridge/mujin/data/`; Dan-Go files are never touched. Promotion of
+platform feedback to the canonical
+`bridge/sutable/reality_feedback.jsonl` goes through the existing Dan-Go
+appender with human review (ADR-001).
+
 ## What is NOT here (SPEC §9)
 
 No automatic discovery, scouting, or outreach. No matching, scoring,
