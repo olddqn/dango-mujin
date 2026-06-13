@@ -251,6 +251,26 @@ adds Voice Count / Voice Categories / Need Candidates Generated / Voices
 Converted To Need / **Voice Response Time** (registration → first gateway
 suggestion) / Regions & Languages Represented.
 
+**Reality Feedback Commons (Phase D-8).** Feedback becomes the *start of
+the next cycle* (`Reality Feedback → Voice → …`), connecting past rescue
+experience to the next rescue — never evaluation. It is not a rating,
+ranking, reputation, trust/performance score, or leaderboard.
+`/feedback` records Related Need/Contribution/Cooperation, Reporter Type
+(Recipient/Contributor/Gateway/Observer), Outcome
+(Positive/Mixed/Negative/Failed/Unknown — Outcome and Story required),
+Story, What Helped / Did Not Help / Is Still Needed; every record
+carries `feedback_is_not_rating / …is_not_ranking /
+negative_feedback_is_welcome / failed_feedback_is_valuable /
+lived_experience_is_not_authority / stories_are_not_proof`.
+`/feedback/list` is registration-order only (no Popular/Trending/Votes/
+Score). `/feedback-paths` turns each "What Is Still Needed" into a
+*Potential New Voice* suggestion (display only; no Voice is auto-created;
+human confirmation required). The proposal engine adds
+`reality_feedback_candidates` as reference material
+(`recommendation_is_not_decision / feedback_is_not_authority /
+experience_is_not_policy`). Dashboard shows raw outcome counts only — no
+ratios, no success rate.
+
 **Cooperation Commons (Phase D-7).** Visualises what cooperation paths
 cooperators could form — **not a Team Builder**; no AI decides who pairs
 with whom. `/cooperation` records possible cooperations (Name,

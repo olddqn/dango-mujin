@@ -57,7 +57,8 @@ NAV = (
     '<a href="/contributions">Contribute</a>'
     '<a href="/cooperation">Cooperate</a><a href="/cooperation-paths">CoopPaths</a>'
     '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
-    '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
+    '<a href="/feedback">Feedback</a><a href="/feedback-paths">FBPaths</a>'
+    '<a href="/objection">Objection</a>'
     '<a href="/transparency">Transparency</a>'
     '<a href="/dashboard">TTFR</a></nav><hr>'
 )
@@ -286,28 +287,76 @@ def render_proposals(q) -> str:
     return page("Proposal View", body)
 
 
+def _fb_outcome(f) -> str:
+    return f.get("outcome") or f.get("result") or "—"
+
+
 def render_feedback(q) -> str:
-    fb = C.list_feedback()
     rows = "".join(
-        f"<tr><td>{esc(f['feedback_id'])}</td><td>{esc(f['ref_id'])}</td><td>{esc(f['result'])}</td>"
-        f"<td>{esc(f['reporter_kind'])}</td><td>{esc(f['content'])}</td></tr>" for f in fb)
+        f"<tr><td>{esc(f['feedback_id'])}</td><td>{esc(_fb_outcome(f))}</td>"
+        f"<td>{esc(f.get('reporter_type') or f.get('reporter_kind') or '—')}</td>"
+        f"<td>{esc(f.get('story') or f.get('content') or '')}</td>"
+        f"<td>{esc(f.get('what_is_still_needed',''))}</td></tr>"
+        for f in C.list_feedback()[-10:])
     body = msg_block(q) + f"""
-<p class="note neg"><b>否定的な報告を歓迎します。</b>「うまくいかなかった」「途中で止まった」「撤回した」——
-それだけがこのシステムが学習できる唯一の方法です。失敗の報告者が不利に扱われることはありません。
-撤回（withdrawn）は失敗ではなく、尊重される選択の記録です。</p>
+<p class="note">Reality Feedback は終点ではなく、<b>次の Voice の入口</b>です。
+目的は評価ではなく、過去の救済経験を次の救済へ接続することです。</p>
+<p class="note neg"><b>否定的・失敗の報告を歓迎します。</b>
+それだけがシステムが学習できる方法です。Reality Feedback は評価・順位・スコアではありません。
+報告者が不利に扱われることはありません。</p>
 <form method="post" action="/feedback">
-<label>対象（need-### / proposal-### / 自由記述）</label><input type="text" name="ref_id" required>
-<label>Result</label><select name="result">{options(C.FEEDBACK_RESULTS)}</select>
-<label>あなたの立場</label><select name="reporter_kind">{options(C.REPORTER_KINDS,
-    {"subject":"subject — 本人","supporter":"supporter — 支援者","third_party":"third_party — 第三者","npo":"npo — NPO/団体"})}</select>
-<label>Name（擬名で構いません）</label><input type="text" name="reporter_name">
-<label>何が起きたか（本人の言葉で）</label><textarea name="content" required></textarea>
+<label>Related Need（任意: need-###）</label><input type="text" name="related_need">
+<label>Related Contribution（任意）</label><input type="text" name="related_contribution">
+<label>Related Cooperation（任意: coop-###）</label><input type="text" name="related_cooperation">
+<label>Reporter Type</label><select name="reporter_type">{options(C.REPORTER_TYPES,
+    {"Recipient":"Recipient — 受け取った本人","Contributor":"Contributor — 協力した人","Gateway":"Gateway — 接続者","Observer":"Observer — 観察者"})}</select>
+<label>Outcome（必須）</label><select name="outcome">{options(C.OUTCOMES)}</select>
+<label>Story（必須・何を経験したか、あなたの言葉で）</label><textarea name="story" required></textarea>
+<label>What Helped</label><textarea name="what_helped"></textarea>
+<label>What Did Not Help</label><textarea name="what_did_not_help"></textarea>
+<label>What Is Still Needed</label><textarea name="what_is_still_needed"></textarea>
 <button>記録する</button>
 </form>
-<h2>記録済み Feedback</h2>
-<table><tr><th>id</th><th>ref</th><th>result</th><th>reporter</th><th>content</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+<h2>最近の Reality Feedback（<a href="/feedback/list">全件</a>）</h2>
+<table><tr><th>id</th><th>outcome</th><th>reporter</th><th>story</th><th>still needed</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
 """
-    return page("Reality Feedback", body)
+    return page("Reality Feedback Commons", body)
+
+
+def render_feedback_list(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(f['feedback_id'])}</td><td>{esc(_fb_outcome(f))}</td>"
+        f"<td>{esc(f.get('reporter_type') or f.get('reporter_kind') or '—')}</td>"
+        f"<td>{esc(f.get('related_need',''))}</td>"
+        f"<td>{esc(f.get('story') or f.get('content') or '')}</td></tr>"
+        for f in C.list_feedback())
+    body = f"""
+<p class="note">登録順のみ。Popular・Trending・Helpful Votes・Like・Score はありません。
+経験は順位付けされません。</p>
+<table><tr><th>id</th><th>outcome</th><th>reporter</th><th>need</th><th>story</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Reality Feedback List", body)
+
+
+def render_feedback_paths(q) -> str:
+    sugg = C.voice_candidates_from_feedback()
+    blocks = ""
+    for s in sugg:
+        blocks += f"""
+<div class="note">
+Outcome: <b>{esc(s['outcome'])}</b>（{esc(s['from_feedback'])}）<br>
+What Helped: {esc(s['what_helped'] or '—')}<br>
+Still Needed: {esc(s['potential_new_voice'])}<br>
+↓<br>
+<b>Potential New Voice:</b> 「{esc(s['potential_new_voice'])}」<br>
+<small class="inv">提案のみ・自動 Voice 作成はしません・人間の確認が必要</small><br>
+<a href="/voice-submit">この経験から新しい Voice を起こす（人間が確認）→</a></div>"""
+    body = f"""
+<p class="note"><b>Reality Feedback Paths</b> — 過去の経験が次の Voice にどう繋がりうるかを可視化します。
+「まだ必要なこと」が、次に誰かが上げる声の種になります。これは提案のみで、自動で Voice にはなりません。</p>
+{blocks or '<p class="note">（まだありません。Reality Feedback に "What Is Still Needed" が書かれると、ここに次の Voice 候補が現れます）</p>'}
+"""
+    return page("Reality Feedback Paths", body)
 
 
 def render_objection(q) -> str:
@@ -846,6 +895,9 @@ def render_transparency(q) -> str:
         "Voice is not priority", "Voice is not ranking",
         "Recording is not intervention",
         "Need Candidate is not a decision", "Human review remains required",
+        "feedback_is_not_rating", "feedback_is_not_ranking",
+        "negative_feedback_is_welcome", "failed_feedback_is_valuable",
+        "lived_experience_is_not_authority", "stories_are_not_proof",
     ]
     plist = "".join(f"<li><code>{esc(p)}</code></li>" for p in principles)
     corr_rows = "".join(
@@ -928,6 +980,13 @@ def render_dashboard(q) -> str:
 <tr><th>Languages Covered</th><td>{esc('・'.join(s['languages_covered']) or '—')}（{len(s['languages_covered'])} 言語）</td></tr>
 <tr><th>Proposal Count</th><td>{s['proposal_count']}</td></tr>
 <tr><th>Reality Feedback Count</th><td>{s['feedback_count']}</td></tr>
+<tr><th>Feedback Outcomes</th><td>{esc('・'.join(f"{k}:{v}" for k, v in sorted(s['outcome_breakdown'].items())) or '—')}（割合・成功率は出しません）</td></tr>
+<tr><th>Positive Count</th><td>{s['outcome_breakdown'].get('Positive', 0)}</td></tr>
+<tr><th>Mixed Count</th><td>{s['outcome_breakdown'].get('Mixed', 0)}</td></tr>
+<tr><th>Negative Count</th><td>{s['outcome_breakdown'].get('Negative', 0)}</td></tr>
+<tr><th>Failed Count</th><td>{s['outcome_breakdown'].get('Failed', 0)}</td></tr>
+<tr><th>Unknown Count</th><td>{s['outcome_breakdown'].get('Unknown', 0)}</td></tr>
+<tr><th>Voice Candidates From Feedback</th><td>{s['voice_candidates_from_feedback']}</td></tr>
 <tr><th>Objection Count</th><td>{s['objection_count']}</td></tr>
 <tr><th>TTFR (Time To First Rescue)</th><td>{ttfr}</td></tr>
 </table>
@@ -948,6 +1007,8 @@ GET_ROUTES = {
     "/gateways/list": render_gateways_list,
     "/solutions": render_solutions,
     "/funding": render_funding,
+    "/feedback/list": render_feedback_list,
+    "/feedback-paths": render_feedback_paths,
     "/voices": render_voices,
     "/voices/list": render_voices_list,
     "/voices/view": render_voice_view,
@@ -1002,11 +1063,16 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
         rec = C.generate_proposal(_f(form, "need_id"))
         return "/proposals", f"{rec['proposal_id']} を生成しました（候補 {rec['candidate_count']} 件・決定ではありません）。"
     if path == "/feedback":
-        rec = C.record_feedback(
-            ref_id=_f(form, "ref_id"), result=_f(form, "result"),
-            reporter_kind=_f(form, "reporter_kind"), reporter_name=_f(form, "reporter_name"),
-            content=_f(form, "content"))
-        return "/feedback", f"{rec['feedback_id']} を記録しました。否定的な報告も等しく歓迎されます。"
+        rec = C.record_reality_feedback(
+            related_need=_f(form, "related_need"),
+            related_contribution=_f(form, "related_contribution"),
+            related_cooperation=_f(form, "related_cooperation"),
+            reporter_type=_f(form, "reporter_type"), outcome=_f(form, "outcome"),
+            story=_f(form, "story"), what_helped=_f(form, "what_helped"),
+            what_did_not_help=_f(form, "what_did_not_help"),
+            what_is_still_needed=_f(form, "what_is_still_needed"))
+        return "/feedback", (f"{rec['feedback_id']} を記録しました（{esc(rec['outcome'])}）。"
+                            "否定的・失敗の報告も等しく価値があります。経験は評価ではありません。")
     if path == "/objection":
         rec = C.record_objection(
             target=_f(form, "target"), channel=_f(form, "channel"),

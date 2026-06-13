@@ -1066,6 +1066,104 @@ def list_cooperation_discussion() -> list[dict[str, Any]]:
     return read_jsonl(COOP_DISCUSSION_JSONL)
 
 
+# ── Reality Feedback Commons (Phase D-8) ─────────────────────────────────────
+# Reality Feedback is not the end of the chain — it is the start of the next
+# one. Its purpose is to connect past rescue experience to the next rescue,
+# NOT to evaluate. It is never a rating, ranking, reputation, trust score,
+# performance score, or any leaderboard. It stores what a person experienced.
+# It does not judge and does not order. Negative and failed feedback are
+# welcome and valuable; lived experience is not authority; stories are not
+# proof.
+
+REPORTER_TYPES = ["Recipient", "Contributor", "Gateway", "Observer"]
+OUTCOMES = ["Positive", "Mixed", "Negative", "Failed", "Unknown"]
+
+REALITY_FEEDBACK_INVARIANTS = {
+    "feedback_is_not_rating": True,
+    "feedback_is_not_ranking": True,
+    "feedback_is_not_authority": True,
+    "negative_feedback_is_welcome": True,
+    "failed_feedback_is_valuable": True,
+    "lived_experience_is_not_authority": True,
+    "stories_are_not_proof": True,
+}
+
+
+def record_reality_feedback(related_need, related_contribution,
+                            related_cooperation, reporter_type, outcome, story,
+                            what_helped, what_did_not_help,
+                            what_is_still_needed) -> dict[str, Any]:
+    """Record what a person experienced. Not a judgment, not an order.
+
+    Required: outcome and story. Negative / Failed outcomes are welcome —
+    they are how the system learns. No ratings, no rankings, no scores."""
+    if reporter_type and reporter_type not in REPORTER_TYPES:
+        raise CommonsError(f"unknown reporter type: {reporter_type!r}")
+    if outcome not in OUTCOMES:
+        raise CommonsError(f"unknown outcome: {outcome!r}")
+    if not story.strip():
+        raise CommonsError("story is required (what was experienced, in their words)")
+    return _post(FEEDBACK_JSONL, "feedback", "reality_feedback_commons", {
+        "related_need": related_need.strip(),
+        "related_contribution": related_contribution.strip(),
+        "related_cooperation": related_cooperation.strip(),
+        "reporter_type": reporter_type or "Observer",
+        "outcome": outcome,
+        "story": story.strip(),
+        "what_helped": what_helped.strip(),
+        "what_did_not_help": what_did_not_help.strip(),
+        "what_is_still_needed": what_is_still_needed.strip(),
+    }, extra=dict(REALITY_FEEDBACK_INVARIANTS))
+
+
+def outcome_breakdown() -> dict[str, int]:
+    """Raw counts by outcome — an observation. Never a rate, never a ratio,
+    never a success rate. Callers must not divide these."""
+    return _count_by(
+        [f for f in list_feedback() if f.get("outcome")], "outcome")
+
+
+def feedback_candidates_for(need_type: str, limit: int = 3) -> list[dict[str, Any]]:
+    """Past reality feedback that may relate to a need of this type.
+
+    Reference material only: recommendation is not decision, feedback is not
+    authority, experience is not policy. Registration order, no ranking."""
+    needs_by_id = {n.get("need_id"): n for n in read_jsonl(NEEDS_JSONL)}
+    out = []
+    for f in list_feedback():
+        if not f.get("outcome"):
+            continue
+        rn = needs_by_id.get(f.get("related_need"))
+        if rn and rn.get("need_type") == need_type:
+            out.append({
+                "feedback_id": f["feedback_id"],
+                "outcome": f["outcome"],
+                "what_helped": f.get("what_helped", ""),
+                "what_is_still_needed": f.get("what_is_still_needed", ""),
+            })
+    return out[:limit]
+
+
+def voice_candidates_from_feedback() -> list[dict[str, Any]]:
+    """Derive 'potential new Voice' suggestions from feedback's
+    what_is_still_needed. SUGGESTION ONLY — no Voice is ever auto-created.
+    Not stored; computed on demand for /feedback-paths."""
+    out = []
+    for f in list_feedback():
+        still = f.get("what_is_still_needed", "")
+        if still:
+            out.append({
+                "from_feedback": f.get("feedback_id"),
+                "outcome": f.get("outcome", ""),
+                "what_helped": f.get("what_helped", ""),
+                "potential_new_voice": still,
+                "is_suggestion": True,
+                "auto_voice_creation": False,
+                "human_confirmation_required": True,
+            })
+    return out
+
+
 # need type -> Contribution Commons types that could help (affinity, not ranking)
 _NEED_TO_CONTRIB = {
     "Translation": {"Translation", "Skill", "AI Agent"},
@@ -1226,6 +1324,10 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
         "candidates": candidates,                # neutral order, never ranked
         "candidate_count": len(candidates),
         "cooperation_suggestion": cooperation_suggestion,  # suggestion only (D-7)
+        "reality_feedback_candidates": feedback_candidates_for(need["need_type"]),  # D-8
+        "recommendation_is_not_decision": True,
+        "feedback_is_not_authority": True,
+        "experience_is_not_policy": True,
         "proposal_is_not_decision": True,
         "matching_is_not_selection": True,
         "matching_is_not_authority": True,
@@ -1351,7 +1453,8 @@ def ttfr_status() -> dict[str, Any]:
     first_need_at = min((n["created_at"] for n in needs), default=None)
     rescues = [
         f for f in list_feedback()
-        if f.get("reporter_kind") == "subject" and f.get("result") in ("positive", "partial")
+        if (f.get("reporter_kind") == "subject" and f.get("result") in ("positive", "partial"))
+        or (f.get("reporter_type") == "Recipient" and f.get("outcome") in ("Positive", "Mixed"))
     ]
     first_rescue_at = min((f["created_at"] for f in rescues), default=None)
     gateways = list_gateways()
@@ -1403,6 +1506,8 @@ def ttfr_status() -> dict[str, Any]:
         "languages_covered": languages,
         "proposal_count": len(list_proposals()),
         "feedback_count": len(list_feedback()),
+        "outcome_breakdown": outcome_breakdown(),
+        "voice_candidates_from_feedback": len(voice_candidates_from_feedback()),
         "objection_count": len(list_objections()),
         "correction_count": len(list_corrections()),
         "first_need_at": first_need_at,
