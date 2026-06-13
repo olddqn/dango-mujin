@@ -49,11 +49,12 @@ small.inv{color:#666}
 """
 
 NAV = (
-    '<nav><a href="/">Top</a><a href="/need">Need</a><a href="/contribute">Contribution</a>'
-    '<a href="/gateways">Gateways</a><a href="/commons">Commons</a>'
-    '<a href="/proposals">Proposals</a>'
+    '<nav><a href="/">Top</a><a href="/need">Need</a>'
+    '<a href="/gateways">Gateways</a><a href="/solutions">Solutions</a>'
+    '<a href="/funding">Funding</a><a href="/discovery">Public Call</a>'
+    '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
-    '<a href="/agents">Agent Commons</a><a href="/transparency">Transparency</a>'
+    '<a href="/transparency">Transparency</a>'
     '<a href="/dashboard">TTFR</a></nav><hr>'
 )
 
@@ -167,8 +168,13 @@ def render_gateways_form(q) -> str:
         f"<tr><td>{esc(g['gateway_id'])}</td><td>{esc(g['name'])}</td><td>{esc(g['org_type'])}</td>"
         f"<td>{esc(g['region'])}</td><td>{esc('・'.join(g['languages']) or '—')}</td>"
         f"<td>{esc('・'.join(g['capabilities']))}</td></tr>"
-        for g in C.list_gateways())
-    body = msg_block(q) + f"""
+        for g in C.active_gateways())
+    corrected = [g for g in C.list_gateways() if g.get("status") == "corrected"]
+    corr_note = (f'<p class="note neg">訂正済みエントリ {len(corrected)} 件は、'
+                 '事実と異なる記載のため一覧から除外されています（履歴と理由は'
+                 '<a href="/transparency">Transparency</a> の Correction Log に保存）。</p>'
+                 if corrected else "")
+    body = msg_block(q) + corr_note + f"""
 <p class="note"><b>Gateway は支援者ではなく、接続者です。</b>
 困っている人と Mujin をつなぐ扉——子ども食堂・教会・寺・病院・学校・自治体窓口・地域団体——を登録します。<br>
 Gateway の登録は認証ではありません（gateway registration is not certification）。
@@ -196,9 +202,10 @@ def render_gateways_list(q) -> str:
         f"<tr><td>{esc(g['name'])}</td><td>{esc(g['region'])}</td>"
         f"<td>{esc('・'.join(g['languages']) or '—')}</td>"
         f"<td>{esc('・'.join(g['capabilities']))}</td></tr>"
-        for g in C.list_gateways())
+        for g in C.active_gateways())
     body = f"""
-<p class="note">表示は登録順のみです。スコア・ランク・評価順位・人気順は存在しません。</p>
+<p class="note">表示は登録順のみです。スコア・ランク・評価順位・人気順は存在しません。
+訂正済みエントリは <a href="/transparency">Transparency</a> の Correction Log を参照してください。</p>"""+f"""
 <table><tr><th>Name</th><th>Region</th><th>Languages</th><th>Capability</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
 <p><a href="/gateways">Gateway を登録する</a></p>
 """
@@ -332,11 +339,176 @@ Capability のみです。Agent は人間の協力者と同列の Contribution P
     return page("Agent Commons", body)
 
 
+def render_solutions(q) -> str:
+    def chk(name, vals):
+        return "".join(f'<label style="display:inline-block;margin-right:1em">'
+                       f'<input type="checkbox" name="{name}" value="{esc(v)}" style="width:auto"> {esc(v)}</label>'
+                       for v in vals)
+    probs = "".join(f"<tr><td>{esc(p['problem_id'])}</td><td>{esc(p['title'])}</td>"
+                    f"<td>{esc(p['need_type'])}</td><td>{esc(p['region'])}</td>"
+                    f"<td>{esc(p['description'])}</td></tr>" for p in C.list_problems())
+    sols = "".join(f"<tr><td>{esc(s['solution_id'])}</td><td>{esc(s['title'])}</td>"
+                   f"<td>{esc(s['category'])}</td><td>{esc(s['region'])}</td>"
+                   f"<td>{esc(s['description'])}</td></tr>" for s in C.list_solutions())
+    ress = "".join(f"<tr><td>{esc(r['resource_id'])}</td><td>{esc(r['name'])}</td>"
+                   f"<td>{esc(r['resource_type'])}</td><td>{esc(r['region'])}</td>"
+                   f"<td>{esc(r['description'])}</td></tr>" for r in C.list_resources())
+    ags = "".join(f"<tr><td>{esc(a['agentpost_id'])}</td><td>{esc(a['name'])}</td>"
+                  f"<td>{esc('・'.join(a['capabilities']))}</td><td>{esc(a.get('region',''))}</td>"
+                  f"<td>{esc(a.get('source_url',''))}</td></tr>" for a in C.list_agent_posts())
+    body = msg_block(q) + f"""
+<p class="note"><b>Solution Commons</b> — 「何を解決したいか」と「何を提供できるか」を接続する場所です。
+listing は推薦ではなく、接続は任意です。</p>
+
+<h2>Problem Post（困りごとの掲示）</h2>
+<form method="post" action="/solutions/problem">
+<label>Title</label><input type="text" name="title" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Region</label><input type="text" name="region">
+<label>Need Type</label><select name="need_type">{options(C.NEED_TYPES)}</select>
+<label>Urgency</label><select name="urgency">{options(C.URGENCY_VALUES)}</select>
+<label>Languages（カンマ区切り）</label><input type="text" name="languages">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Consent Status</label><select name="consent_status">{options(C.CONSENT_STATUSES)}</select>
+<label>Notes</label><input type="text" name="notes">
+<button>掲示する</button>
+</form>
+<table><tr><th>id</th><th>title</th><th>type</th><th>region</th><th>description</th></tr>{probs or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+
+<h2>Solution Post（解決案）</h2>
+<form method="post" action="/solutions/solution">
+<label>Title</label><input type="text" name="title" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Category</label><select name="category">{options(C.SOLUTION_CATEGORIES)}</select>
+<label>Region</label><input type="text" name="region">
+<label>Required Skills</label><input type="text" name="required_skills">
+<label>Required Resources</label><input type="text" name="required_resources">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Notes</label><input type="text" name="notes">
+<button>登録する</button>
+</form>
+<table><tr><th>id</th><th>title</th><th>category</th><th>region</th><th>description</th></tr>{sols or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+
+<h2>Resource Post（提供可能資源）</h2>
+<form method="post" action="/solutions/resource">
+<label>Name</label><input type="text" name="name" required>
+<label>Resource Type</label><select name="resource_type">{options(C.RESOURCE_TYPES)}</select>
+<label>Description</label><textarea name="description"></textarea>
+<label>Languages（カンマ区切り）</label><input type="text" name="languages">
+<label>Region</label><input type="text" name="region">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Notes</label><input type="text" name="notes">
+<button>登録する</button>
+</form>
+<table><tr><th>id</th><th>name</th><th>type</th><th>region</th><th>description</th></tr>{ress or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+
+<h2>Agent Post（Agent Commons — Marketplace ではありません）</h2>
+<p class="note">Agent は能力を登録するだけです。全 Agent に
+<code>proposal_only / cannot_allocate_funds / cannot_rank_people / cannot_select_cases /
+cannot_govern / cannot_override_consent</code> が自動付与されます。</p>
+<form method="post" action="/solutions/agent">
+<label>Agent Name</label><input type="text" name="name" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Capabilities（カンマ区切り）</label><input type="text" name="capabilities" required>
+<label>Languages（カンマ区切り）</label><input type="text" name="languages">
+<label>Region</label><input type="text" name="region">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Source URL（任意）</label><input type="text" name="source_url">
+<button>登録する</button>
+</form>
+<table><tr><th>id</th><th>name</th><th>capabilities</th><th>region</th><th>source</th></tr>{ags or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Solution Commons", body)
+
+
+def render_funding(q) -> str:
+    disc = "".join(f"<li>{esc(d)}</li>" for d in C.FUNDING_DISCLAIMERS)
+    rows = "".join(
+        f"<tr><td>{esc(f['funding_id'])}</td><td>{esc(f['case_title'])}</td>"
+        f"<td>{esc(f['display_name'])}</td><td>{esc(f['wallet_chain'])}</td>"
+        f"<td style='word-break:break-all'>{esc(f['wallet_address'])}</td>"
+        f"<td>{esc(f.get('evidence_url',''))}</td></tr>" for f in C.list_funding())
+    body = msg_block(q) + f"""
+<div class="note neg"><b>必ずお読みください:</b><ul>{disc}</ul></div>
+<p class="note">支援を望む人が、ウォレットアドレス・説明・動画・証拠 URL を掲載できる場所です。
+Mujin は資金を保管せず、掲載は検証でも推薦でもありません。送金は自己責任で、独立に確認してから行ってください。</p>
+<form method="post" action="/funding">
+<label>Display Name（擬名可）</label><input type="text" name="display_name">
+<label>Case Title</label><input type="text" name="case_title" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Region</label><input type="text" name="region">
+<label>Wallet Chain</label><select name="wallet_chain">{options(C.WALLET_CHAINS)}</select>
+<label>Wallet Address</label><input type="text" name="wallet_address" required>
+<label>Accepted Assets</label><input type="text" name="accepted_assets">
+<label>Video URL</label><input type="text" name="video_url">
+<label>Evidence URL</label><input type="text" name="evidence_url">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Notes</label><input type="text" name="notes">
+<button>掲載する</button>
+</form>
+<h2>掲載中（登録順・寄付額やランキングは表示しません）</h2>
+<table><tr><th>id</th><th>case</th><th>name</th><th>chain</th><th>address</th><th>evidence</th></tr>{rows or '<tr><td colspan=6>（まだありません）</td></tr>'}</table>
+"""
+    return page("Crypto Donation Board", body)
+
+
+def render_discovery(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(c['call_id'])}</td><td>{esc(c['title'])}</td>"
+        f"<td>{esc(c['source_type'])}</td><td>{esc(c['region'])}</td>"
+        f"<td>{esc(c.get('source_url',''))}</td></tr>" for c in C.list_public_calls())
+    body = msg_block(q) + f"""
+<p class="note"><b>Public Call for Help Registry</b><br>
+Mujin は人を探しません。人を特定しません。人を分類しません。
+ここは<b>公に表明された助けの求め</b>を記録する場所です。<br>
+このレジストリが答えるのは「<b>誰が助けを求めているか</b>」であり、
+「誰が助けられるべきか」ではありません。後者は談合・同意・Reality Feedback の領分です。</p>
+<p class="note neg">禁止: 私的な監視・私的調査・脆弱性のランク付け・秘密の特定・隠れたプロファイリング・自動ターゲティング。<br>
+<b>これは Saiyan Scouter v1 ではありません。</b>自動接触・自動登録・自動判定はしません。役割は「観察 → 記録 → 談合の材料」のみです。</p>
+<form method="post" action="/discovery">
+<label>Title</label><input type="text" name="title" required>
+<label>Description（公開情報の要約）</label><textarea name="description"></textarea>
+<label>Region</label><input type="text" name="region">
+<label>Source Type</label><select name="source_type">{options(C.DISCOVERY_SOURCE_TYPES)}</select>
+<label>Source URL（公開情報の出典）</label><input type="text" name="source_url">
+<label><input type="checkbox" name="human_reviewed" value="1" style="width:auto"> 人間がレビュー済み（必須）</label>
+<label>Notes</label><input type="text" name="notes">
+<button>記録する</button>
+</form>
+<h2>記録済み（公開の求めのみ・優先順位ではありません）</h2>
+<table><tr><th>id</th><th>title</th><th>source</th><th>region</th><th>url</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Public Call for Help Registry", body)
+
+
 def render_transparency(q) -> str:
     inv = "".join(f"<tr><td><code>{esc(k)}</code></td><td><b>{esc(str(v).lower())}</b></td></tr>"
                   for k, v in C.INVARIANT_PHRASES.items())
+    principles = [
+        "Funding is not control", "Computation is not control",
+        "Listing is not endorsement", "Registration is not certification",
+        "Proposal is not decision", "Gateway is not authority",
+        "Agent is not authority", "Reality Feedback is contestable",
+        "Public call is not consent", "Listing is not verification",
+        "Need is not ranking", "Visibility is not priority",
+        "Observation is not intervention", "Reach Gap remains unresolved",
+    ]
+    plist = "".join(f"<li><code>{esc(p)}</code></li>" for p in principles)
+    corr_rows = "".join(
+        f"<tr><td>{esc(c['record_type'])}</td><td>{esc(c['record_id'])}</td>"
+        f"<td>{esc(c['corrected_statement'])}</td><td>{esc(c['reason'])}</td></tr>"
+        for c in C.list_corrections())
     body = f"""
 <table><tr><th>invariant</th><th>value</th></tr>{inv}</table>
+<h2>Principles</h2><ul>{plist}</ul>
+<div class="note"><b>Example records are illustrative only.</b><br>
+Listing does not imply operational status.<br>
+Listing does not imply verification.</div>
+<h2>Reality Correction Log</h2>
+<p class="note">記録は削除されません（append-only）。事実の訂正は訂正記録の追記として残ります。
+現実は、デモの便宜に優先します。</p>
+<table><tr><th>type</th><th>id</th><th>corrected statement</th><th>reason</th></tr>{corr_rows or '<tr><td colspan=4>（訂正記録はありません）</td></tr>'}</table>
+<h2>Notes</h2>
 <p class="note">
 ・<b>Gateway の登録は認証ではありません</b>（gateway registration is not certification）。
 Gateway は接続者であり、支援者でも審査者でもありません。<br>
@@ -366,8 +538,13 @@ def render_dashboard(q) -> str:
     body = f"""
 <table>
 <tr><th>Need Count</th><td>{s['need_count']}（うち公開 {s['needs_public']}）</td></tr>
+<tr><th>Problem Count</th><td>{s['problem_count']}</td></tr>
+<tr><th>Solution Count</th><td>{s['solution_count']}</td></tr>
+<tr><th>Resource Count</th><td>{s['resource_count']}</td></tr>
 <tr><th>Contribution Count</th><td>{s['contribution_count']}</td></tr>
 <tr><th>Agent Count</th><td>{s['agent_count']}</td></tr>
+<tr><th>Funding Post Count</th><td>{s['funding_post_count']}</td></tr>
+<tr><th>Public Call Count</th><td>{s['public_call_count']}</td></tr>
 <tr><th>Gateway Count</th><td>{s['gateway_count']}</td></tr>
 <tr><th>Active Gateway Count</th><td>{s['active_gateway_count']}</td></tr>
 <tr><th>Regions Covered</th><td>{esc('・'.join(s['regions_covered']) or '—')}（{len(s['regions_covered'])} 地域）</td></tr>
@@ -392,6 +569,9 @@ GET_ROUTES = {
     "/contribute": render_contribute_form,
     "/gateways": render_gateways_form,
     "/gateways/list": render_gateways_list,
+    "/solutions": render_solutions,
+    "/funding": render_funding,
+    "/discovery": render_discovery,
     "/commons": render_commons,
     "/proposals": render_proposals,
     "/feedback": render_feedback,
@@ -454,6 +634,54 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             notes=_f(form, "notes"))
         return "/gateways", (f"{rec['gateway_id']} を登録しました。"
                              "Gateway の登録は認証ではなく、接続の申し出です。")
+    if path == "/solutions/problem":
+        rec = C.post_problem(
+            title=_f(form, "title"), description=_f(form, "description"),
+            region=_f(form, "region"), need_type=_f(form, "need_type"),
+            urgency=_f(form, "urgency"), languages=_f(form, "languages"),
+            contact_method=_f(form, "contact_method"),
+            consent_status=_f(form, "consent_status"), notes=_f(form, "notes"))
+        return "/solutions", f"{rec['problem_id']} を掲示しました。"
+    if path == "/solutions/solution":
+        rec = C.post_solution(
+            title=_f(form, "title"), description=_f(form, "description"),
+            category=_f(form, "category"), region=_f(form, "region"),
+            required_skills=_f(form, "required_skills"),
+            required_resources=_f(form, "required_resources"),
+            contact_method=_f(form, "contact_method"), notes=_f(form, "notes"))
+        return "/solutions", f"{rec['solution_id']} を登録しました（listing は推薦ではありません）。"
+    if path == "/solutions/resource":
+        rec = C.post_resource(
+            name=_f(form, "name"), resource_type=_f(form, "resource_type"),
+            description=_f(form, "description"), languages=_f(form, "languages"),
+            region=_f(form, "region"), contact_method=_f(form, "contact_method"),
+            notes=_f(form, "notes"))
+        return "/solutions", f"{rec['resource_id']} を登録しました。"
+    if path == "/solutions/agent":
+        rec = C.post_agent(
+            name=_f(form, "name"), description=_f(form, "description"),
+            capabilities=_f(form, "capabilities"), languages=_f(form, "languages"),
+            region=_f(form, "region"), contact_method=_f(form, "contact_method"),
+            source_url=_f(form, "source_url"))
+        return "/solutions", f"{rec['agentpost_id']} を登録しました（proposal_only・統治不可）。"
+    if path == "/funding":
+        rec = C.post_funding(
+            display_name=_f(form, "display_name"), case_title=_f(form, "case_title"),
+            description=_f(form, "description"), region=_f(form, "region"),
+            wallet_chain=_f(form, "wallet_chain"), wallet_address=_f(form, "wallet_address"),
+            accepted_assets=_f(form, "accepted_assets"), video_url=_f(form, "video_url"),
+            evidence_url=_f(form, "evidence_url"), contact_method=_f(form, "contact_method"),
+            notes=_f(form, "notes"))
+        return "/funding", (f"{rec['funding_id']} を掲載しました。"
+                            "Mujin は資金を保管しません。掲載は検証でも推薦でもありません。")
+    if path == "/discovery":
+        rec = C.post_public_call(
+            title=_f(form, "title"), description=_f(form, "description"),
+            region=_f(form, "region"), source_type=_f(form, "source_type"),
+            source_url=_f(form, "source_url"),
+            human_reviewed=_f(form, "human_reviewed") == "1", notes=_f(form, "notes"))
+        return "/discovery", (f"{rec['call_id']} を記録しました。"
+                             "掲載は同意でも検証でもありません。観察は介入ではありません。")
     raise C.CommonsError(f"unknown form: {path}")
 
 
@@ -485,7 +713,13 @@ class Handler(BaseHTTPRequestHandler):
         url = urlparse(self.path)
         length = int(self.headers.get("Content-Length", "0"))
         form = parse_qs(self.rfile.read(length).decode("utf-8"))
-        base = {"/proposals/generate": "/commons"}.get(url.path, url.path)
+        base = {
+            "/proposals/generate": "/commons",
+            "/solutions/problem": "/solutions",
+            "/solutions/solution": "/solutions",
+            "/solutions/resource": "/solutions",
+            "/solutions/agent": "/solutions",
+        }.get(url.path, url.path)
         try:
             redirect, ok = handle_post(url.path, form)
             sep = "&" if "?" in redirect else "?"

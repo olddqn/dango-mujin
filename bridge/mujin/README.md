@@ -224,6 +224,28 @@ platform feedback to the canonical
 `bridge/sutable/reality_feedback.jsonl` goes through the existing Dan-Go
 appender with human review (ADR-001).
 
+**Solution Commons & registries (Phase D-2/D-3).** The flow widens to
+`Public Call for Help → Need → Gateway → Solution Commons → Reality
+Feedback`. New pages: **Solutions** (Problem / Solution / Resource /
+Agent posts), **Funding** (Crypto Donation Board — Mujin holds no funds;
+listing is not verification or endorsement; donation creates no debt and
+no control right; send at your own risk), **Public Call for Help
+Registry** (records *publicly expressed* requests — Mujin does not
+search, identify, or classify people; entries are human-reviewed,
+never auto-contacted; *this is not Saiyan Scouter v1*). Agent posts
+auto-carry `proposal_only / cannot_allocate_funds / cannot_rank_people /
+cannot_select_cases / cannot_govern / cannot_override_consent`.
+
+**Reality Correction Layer.** Reality takes precedence over demonstration
+convenience. Records are never deleted; factual corrections are appended
+and logged to `data/correction_log.jsonl` and shown on Transparency. The
+earlier seeded gateways (Jammy House, D.R.A.) were **corrected**: they are
+*not* verified operating support organizations (a future project concept
+and an online community, respectively), are excluded from active gateway
+lists, and remain in append-only history. Example records are
+illustrative only; listing implies neither operational status nor
+verification.
+
 ## What is NOT here (SPEC §9)
 
 No automatic discovery, scouting, or outreach. No matching, scoring,

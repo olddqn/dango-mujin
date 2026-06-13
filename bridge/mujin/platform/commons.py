@@ -45,6 +45,13 @@ GATEWAYS_JSONL      = DATA_DIR / "gateway_registry.jsonl"
 PROPOSALS_JSONL     = DATA_DIR / "proposals.jsonl"
 FEEDBACK_JSONL      = DATA_DIR / "reality_feedback_platform.jsonl"
 OBJECTIONS_JSONL    = DATA_DIR / "objections.jsonl"   # shared with Phase A
+PROBLEM_JSONL       = DATA_DIR / "problem_posts.jsonl"
+SOLUTION_JSONL      = DATA_DIR / "solution_posts.jsonl"
+RESOURCE_JSONL      = DATA_DIR / "resource_posts.jsonl"
+AGENT_POSTS_JSONL   = DATA_DIR / "agent_posts.jsonl"
+FUNDING_JSONL       = DATA_DIR / "funding_posts.jsonl"
+DISCOVERY_JSONL     = DATA_DIR / "discovery_posts.jsonl"
+CORRECTION_JSONL    = DATA_DIR / "correction_log.jsonl"
 
 # ── vocabularies ──────────────────────────────────────────────────────────────
 NEED_TYPES = [
@@ -69,8 +76,47 @@ AGENT_CAPABILITIES = [
 AGENT_CAN = ["探索", "翻訳", "提案", "調査", "分析", "接続候補生成"]
 AGENT_CANNOT = ["資金配分", "ケース選定", "順位付け", "統治", "評価"]
 
-FEEDBACK_RESULTS = ["positive", "negative", "partial", "withdrawn", "unresolved"]
+FEEDBACK_RESULTS = [
+    "positive", "negative", "partial", "withdrawn", "unresolved",
+    "mixed", "failed", "unknown",
+]
 REPORTER_KINDS = ["subject", "supporter", "third_party", "npo"]
+
+# ── solution commons / post-type vocabularies ────────────────────────────────
+RESOURCE_TYPES = [
+    "Human Skill", "Organization", "Translation", "Education",
+    "Research", "Material", "Funding", "Community", "Other",
+]
+SOLUTION_CATEGORIES = [
+    "Funding", "Material", "Education", "Translation", "Human Skill",
+    "AI Agent", "Research", "Community", "Other",
+]
+DISCOVERY_SOURCE_TYPES = [
+    "news_report", "ngo_report", "refugee_report", "disaster_report",
+    "public_appeal", "public_interview", "public_statement",
+    "public_video", "public_social_media",
+]
+WALLET_CHAINS = ["BTC", "ETH", "SOL", "XMR", "Other"]
+
+AGENT_POST_INVARIANTS = {
+    "proposal_only": True,
+    "cannot_allocate_funds": True,
+    "cannot_rank_people": True,
+    "cannot_select_cases": True,
+    "cannot_govern": True,
+    "cannot_override_consent": True,
+}
+
+FUNDING_DISCLAIMERS = [
+    "Mujin does not hold funds",
+    "Listing is not verification",
+    "Listing is not endorsement",
+    "Donation is voluntary",
+    "Donation creates no debt",
+    "Donor has no control right",
+    "Send at your own risk",
+    "Verify independently before sending",
+]
 
 # ── gateways ──────────────────────────────────────────────────────────────────
 # A gateway is a CONNECTOR, not a supporter: an entity through which a person
@@ -278,8 +324,250 @@ def register_gateway(
 
 
 def list_gateways() -> list[dict[str, Any]]:
-    """Gateways in registration order — never ranked, never scored."""
-    return read_jsonl(GATEWAYS_JSONL)
+    """Latest state per gateway id (append-only; corrections supersede).
+
+    Never ranked, never scored. Order is first-registration order.
+    """
+    latest: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+    for rec in read_jsonl(GATEWAYS_JSONL):
+        gid = rec.get("gateway_id")
+        if gid and gid not in latest:
+            order.append(gid)
+        if gid:
+            latest[gid] = rec
+    return [latest[g] for g in order]
+
+
+def active_gateways() -> list[dict[str, Any]]:
+    return [g for g in list_gateways() if g.get("status") == "active"]
+
+
+# ── reality correction layer ─────────────────────────────────────────────────
+# Reality must take precedence over demonstration convenience. Records are
+# never deleted (append-only); corrections are appended and logged.
+
+def record_correction(
+    record_type: str,
+    record_id: str,
+    original_statement: str,
+    corrected_statement: str,
+    reason: str,
+) -> dict[str, Any]:
+    rec = {
+        "record_type": record_type,
+        "record_id": record_id,
+        "original_statement": original_statement,
+        "corrected_statement": corrected_statement,
+        "reason": reason,
+        "timestamp": utc_now_iso(),
+    }
+    return append_jsonl(CORRECTION_JSONL, rec)
+
+
+def correct_gateway(
+    gateway_id: str,
+    operational_status: str,
+    corrected_statement: str,
+    reason: str,
+) -> dict[str, Any]:
+    """Supersede a gateway record with a corrected one (history preserved).
+
+    The corrected record carries status='corrected' so it no longer appears
+    as an active gateway, and records its true operational status and that it
+    is not verified.
+    """
+    current = next((g for g in list_gateways() if g.get("gateway_id") == gateway_id), None)
+    if current is None:
+        raise CommonsError(f"unknown gateway: {gateway_id}")
+    original = (f"{current.get('name')} listed as active {current.get('org_type')} "
+                f"gateway providing {', '.join(current.get('capabilities', []))}")
+    corrected = dict(current)
+    corrected.update({
+        "status": "corrected",
+        "operational_status": operational_status,   # e.g. future_project_concept
+        "verified": False,
+        "verified_as_support_provider": False,
+        "corrected": True,
+        "correction_note": corrected_statement,
+        "corrected_at": utc_now_iso(),
+    })
+    append_jsonl(GATEWAYS_JSONL, corrected)
+    record_correction("gateway", gateway_id, original, corrected_statement, reason)
+    return corrected
+
+
+def list_corrections() -> list[dict[str, Any]]:
+    return read_jsonl(CORRECTION_JSONL)
+
+
+# ── solution commons: problem / solution / resource / agent / funding posts ──
+
+def _post(path, prefix: str, record_type: str, fields: dict[str, Any],
+          extra: dict[str, Any] | None = None) -> dict[str, Any]:
+    record = {
+        "record_type": record_type,
+        f"{prefix}_id": _next_id(prefix, path),
+        **fields,
+        "created_at": utc_now_iso(),
+        **base_invariants(),
+        **INVARIANT_PHRASES,
+        "listing_is_not_endorsement": True,
+    }
+    if extra:
+        record.update(extra)
+    return append_jsonl(path, record)
+
+
+def post_problem(title, description, region, need_type, urgency, languages,
+                 contact_method, consent_status, notes) -> dict[str, Any]:
+    if need_type not in NEED_TYPES:
+        raise CommonsError(f"unknown need type: {need_type!r}")
+    if urgency not in URGENCY_VALUES:
+        raise CommonsError(f"unknown urgency: {urgency!r}")
+    if consent_status not in CONSENT_STATUSES:
+        raise CommonsError(f"unknown consent status: {consent_status!r}")
+    if not title.strip():
+        raise CommonsError("title is required")
+    return _post(PROBLEM_JSONL, "problem", "problem_post", {
+        "title": title.strip(), "description": description.strip(),
+        "region": region.strip(), "need_type": need_type, "urgency": urgency,
+        "languages": [l.strip() for l in languages.split(",") if l.strip()],
+        "contact_method": contact_method.strip(), "consent_status": consent_status,
+        "notes": notes.strip(),
+    })
+
+
+def list_problems() -> list[dict[str, Any]]:
+    return read_jsonl(PROBLEM_JSONL)
+
+
+def post_solution(title, description, category, region, required_skills,
+                  required_resources, contact_method, notes) -> dict[str, Any]:
+    if category not in SOLUTION_CATEGORIES:
+        raise CommonsError(f"unknown category: {category!r}")
+    if not title.strip():
+        raise CommonsError("title is required")
+    return _post(SOLUTION_JSONL, "solution", "solution_post", {
+        "title": title.strip(), "description": description.strip(),
+        "category": category, "region": region.strip(),
+        "required_skills": required_skills.strip(),
+        "required_resources": required_resources.strip(),
+        "contact_method": contact_method.strip(), "notes": notes.strip(),
+    })
+
+
+def list_solutions() -> list[dict[str, Any]]:
+    return read_jsonl(SOLUTION_JSONL)
+
+
+def post_resource(name, resource_type, description, languages, region,
+                  contact_method, notes) -> dict[str, Any]:
+    if resource_type not in RESOURCE_TYPES:
+        raise CommonsError(f"unknown resource type: {resource_type!r}")
+    if not name.strip():
+        raise CommonsError("name is required")
+    return _post(RESOURCE_JSONL, "resource", "resource_post", {
+        "name": name.strip(), "resource_type": resource_type,
+        "description": description.strip(),
+        "languages": [l.strip() for l in languages.split(",") if l.strip()],
+        "region": region.strip(), "contact_method": contact_method.strip(),
+        "notes": notes.strip(),
+    })
+
+
+def list_resources() -> list[dict[str, Any]]:
+    return read_jsonl(RESOURCE_JSONL)
+
+
+def post_agent(name, description, capabilities, languages, region,
+               contact_method, source_url) -> dict[str, Any]:
+    """Agent Commons: an agent registers capability only. The constraints
+    (cannot allocate funds / rank people / select cases / govern / override
+    consent) are auto-attached and not configurable."""
+    if not name.strip():
+        raise CommonsError("agent name is required")
+    caps = [c.strip() for c in capabilities.split(",") if c.strip()]
+    if not caps:
+        raise CommonsError("at least one capability is required")
+    return _post(AGENT_POSTS_JSONL, "agentpost", "agent_post", {
+        "name": name.strip(), "description": description.strip(),
+        "capabilities": caps,
+        "languages": [l.strip() for l in languages.split(",") if l.strip()],
+        "region": region.strip(), "contact_method": contact_method.strip(),
+        "source_url": source_url.strip(),
+    }, extra=dict(AGENT_POST_INVARIANTS))
+
+
+def list_agent_posts() -> list[dict[str, Any]]:
+    return read_jsonl(AGENT_POSTS_JSONL)
+
+
+def post_funding(display_name, case_title, description, region, wallet_chain,
+                 wallet_address, accepted_assets, video_url, evidence_url,
+                 contact_method, notes) -> dict[str, Any]:
+    """Crypto Donation Board. Mujin does not hold funds. A listing is not
+    verification and not endorsement. Donating is voluntary and creates no
+    debt; the donor gains no control right. Send at your own risk."""
+    if wallet_chain not in WALLET_CHAINS:
+        raise CommonsError(f"unknown wallet chain: {wallet_chain!r}")
+    if not case_title.strip():
+        raise CommonsError("case title is required")
+    if not wallet_address.strip():
+        raise CommonsError("wallet address is required")
+    return _post(FUNDING_JSONL, "funding", "funding_post", {
+        "display_name": display_name.strip(), "case_title": case_title.strip(),
+        "description": description.strip(), "region": region.strip(),
+        "wallet_chain": wallet_chain, "wallet_address": wallet_address.strip(),
+        "accepted_assets": accepted_assets.strip(),
+        "video_url": video_url.strip(), "evidence_url": evidence_url.strip(),
+        "contact_method": contact_method.strip(), "notes": notes.strip(),
+    }, extra={
+        "mujin_holds_funds": False,
+        "listing_is_verification": False,
+        "donation_creates_debt": False,
+        "donor_has_control_right": False,
+        "disclaimers": list(FUNDING_DISCLAIMERS),
+    })
+
+
+def list_funding() -> list[dict[str, Any]]:
+    return read_jsonl(FUNDING_JSONL)
+
+
+# ── Public Call for Help Registry (formerly "Discovery") ─────────────────────
+# Mujin does not search for, identify, or classify people. It records
+# PUBLICLY EXPRESSED requests for help. Listing is not consent, not
+# verification, not priority. Observation is not intervention.
+
+def post_public_call(title, description, region, source_type, source_url,
+                     human_reviewed, notes) -> dict[str, Any]:
+    if source_type not in DISCOVERY_SOURCE_TYPES:
+        raise CommonsError(f"unknown source type: {source_type!r}")
+    if not title.strip():
+        raise CommonsError("title is required")
+    if not human_reviewed:
+        raise CommonsError(
+            "a public-call entry must be human-reviewed before listing "
+            "(no automated targeting — this is not Saiyan Scouter v1)")
+    return _post(DISCOVERY_JSONL, "call", "public_call", {
+        "title": title.strip(), "description": description.strip(),
+        "region": region.strip(), "source_type": source_type,
+        "source_url": source_url.strip(), "notes": notes.strip(),
+    }, extra={
+        "public_call_detected": True,
+        "human_reviewed": True,
+        "contact_attempted": False,        # never auto-contact
+        "listing_is_not_verification": True,
+        "listing_is_not_consent": True,
+        "observation_is_not_intervention": True,
+        "answers_question": "Who is asking for help?",
+        "not_question": "Who should be helped?",
+    })
+
+
+def list_public_calls() -> list[dict[str, Any]]:
+    return read_jsonl(DISCOVERY_JSONL)
 
 
 # which gateway capabilities can connect which need type (affinity, not ranking)
@@ -369,6 +657,24 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
                 "provider_kind": "ai_agent",
                 "kind": a["capability"],
             })
+    for r in list_resources():                           # Solution Commons: resources
+        if r.get("resource_type") in kinds | {"Other"} or r.get("resource_type") == need["need_type"]:
+            candidates.append({
+                "candidate_type": "resource_post",
+                "id": r["resource_id"],
+                "name": r["name"],
+                "provider_kind": "resource",
+                "kind": r["resource_type"],
+            })
+    for ap in list_agent_posts():                        # Solution Commons: agent posts
+        if any(c in kinds or c == need["need_type"] for c in ap.get("capabilities", [])):
+            candidates.append({
+                "candidate_type": "agent_post",
+                "id": ap["agentpost_id"],
+                "name": ap["name"],
+                "provider_kind": "ai_agent",
+                "kind": "・".join(ap.get("capabilities", [])),
+            })
 
     gateway_candidates = gateway_candidates_for(need["need_type"])
 
@@ -377,12 +683,14 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
         "proposal_id": _next_id("proposal", PROPOSALS_JSONL),
         "need_id": need_id,
         "need_type": need["need_type"],
-        "connection_path": "Need -> Gateway -> Contribution",
+        "connection_path": "Need -> Gateway -> Solution Commons",
         "gateway_candidates": gateway_candidates,  # connectors, presented first
         "gateway_candidate_count": len(gateway_candidates),
         "candidates": candidates,                # neutral order, never ranked
         "candidate_count": len(candidates),
         "proposal_is_not_decision": True,
+        "listing_is_not_endorsement": True,
+        "connection_is_voluntary": True,
         "no_automatic_connection": True,
         "binds_no_one": True,
         "contestable": True,
@@ -507,21 +815,29 @@ def ttfr_status() -> dict[str, Any]:
     ]
     first_rescue_at = min((f["created_at"] for f in rescues), default=None)
     gateways = list_gateways()
-    active_gateways = [g for g in gateways if g.get("status") == "active"]
-    regions = sorted({g.get("region", "") for g in active_gateways if g.get("region")})
-    languages = sorted({l for g in active_gateways for l in g.get("languages", [])})
+    active = active_gateways()
+    # reach coverage = gateways + resources + public calls, regions/languages observed
+    reach = active + list_resources() + list_public_calls()
+    regions = sorted({r.get("region", "") for r in reach if r.get("region")})
+    languages = sorted({l for r in active + list_resources() for l in r.get("languages", [])})
     return {
         "need_count": len(needs),
         "needs_public": len(list_needs()),
+        "problem_count": len(list_problems()),
+        "solution_count": len(list_solutions()),
+        "resource_count": len(list_resources()),
         "contribution_count": len(list_contributions()),
-        "agent_count": len(list_agents()),
+        "agent_count": len(list_agent_posts()) + len(list_agents()),
+        "funding_post_count": len(list_funding()),
+        "public_call_count": len(list_public_calls()),
         "gateway_count": len(gateways),
-        "active_gateway_count": len(active_gateways),
+        "active_gateway_count": len(active),
         "regions_covered": regions,        # reach coverage, not a score of anyone
         "languages_covered": languages,
         "proposal_count": len(list_proposals()),
         "feedback_count": len(list_feedback()),
         "objection_count": len(list_objections()),
+        "correction_count": len(list_corrections()),
         "first_need_at": first_need_at,
         "first_rescue_at": first_rescue_at,
         "ttfr_achieved": first_rescue_at is not None,
