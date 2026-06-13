@@ -195,11 +195,24 @@ volunteers register as peer Contribution Providers; what is registered is
 capability, not status. Agents declare capability only and can never
 allocate funds, select cases, rank, govern, or evaluate.
 
-Pages: Top / Need / Contribution / Commons View / Proposal View /
-Reality Feedback (negative feedback welcomed) / Objection (ADR-010,
-proxy submission + receipt tracking) / Agent Commons (registry, not a
-marketplace) / Transparency / **TTFR Dashboard** (Time To First Rescue —
-the system's response speed is measured; people never are).
+Pages: Top / Need / Contribution / **Gateway Registry** / Commons View /
+Proposal View / Reality Feedback (negative feedback welcomed) / Objection
+(ADR-010, proxy submission + receipt tracking) / Agent Commons (registry,
+not a marketplace) / Transparency / **TTFR Dashboard** (Time To First
+Rescue — the system's response speed is measured; people never are).
+
+**Gateways (Phase D-1).** A gateway is a *connector, not a supporter* —
+the door through which a person reaches Mujin (community kitchens,
+churches, temples, hospitals, schools, municipal desks, NPOs/NGOs,
+shelters, volunteer groups). Gateways outrank agents in TTFR terms:
+agents add support capacity, but only gateways shrink the Reach Gap.
+Gateway registration is not certification; gateways connect only — no
+case selection, allocation, approval, ranking, or governance. The
+connection path is `Need → Gateway → Contribution`: registering a need
+shows candidate gateways (presentation only, never auto-connected), and
+proposals carry gateway candidates alongside contribution candidates.
+The dashboard adds Gateway Count / Active Gateway Count / Regions
+Covered / Languages Covered — reach coverage only, never a score.
 
 Rules: proposals are generated, never decided (`proposal ≠ decision`,
 always contestable). Lists are registration-order only — no ranking,

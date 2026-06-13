@@ -50,7 +50,8 @@ small.inv{color:#666}
 
 NAV = (
     '<nav><a href="/">Top</a><a href="/need">Need</a><a href="/contribute">Contribution</a>'
-    '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
+    '<a href="/gateways">Gateways</a><a href="/commons">Commons</a>'
+    '<a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
     '<a href="/agents">Agent Commons</a><a href="/transparency">Transparency</a>'
     '<a href="/dashboard">TTFR</a></nav><hr>'
@@ -100,8 +101,29 @@ def render_top(q) -> str:
     return page("Mujin Contribution Commons", body)
 
 
+def _gateway_candidates_block(need_type: str, need_id: str) -> str:
+    """Candidate gateways for a freshly registered need. Presentation only —
+    no automatic connection. Order is registration order (neutral)."""
+    cands = C.gateway_candidates_for(need_type)
+    if not cands:
+        return ('<p class="note">この Need Type に対応する Gateway はまだ登録されていません。'
+                '<a href="/gateways">Gateway の登録</a>が Reach を広げます。</p>')
+    items = "".join(
+        f"<li>{esc(g['name'])}（{esc(g['region'])} / "
+        f"{esc('・'.join(g['languages']) or '—')} / {esc('・'.join(g['matched_capabilities']))} / {esc(g['id'])}）</li>"
+        for g in cands)
+    return (f'<div class="note"><b>{esc(need_id)} の Gateway 候補（接続経路の提示のみ・自動接続はしません）:</b>'
+            f"<ul>{items}</ul>"
+            "<small class='inv'>Gateway は支援者ではなく接続者です。どの扉を使うか・使わないかは本人が決めます。</small></div>")
+
+
 def render_need_form(q) -> str:
-    body = msg_block(q) + f"""
+    gw_block = ""
+    gw_need = q.get("gw", [""])[0]
+    gw_type = q.get("gwtype", [""])[0]
+    if gw_need and gw_type:
+        gw_block = _gateway_candidates_block(gw_type, gw_need)
+    body = msg_block(q) + gw_block + f"""
 <p class="note">登録は証明ではありません。撤回は失敗ではありません。支援は債務ではありません。<br>
 代理登録の場合、本人の同意は代理では成立しません（同意延期として記録され、本人の確認まで公開されません）。</p>
 <form method="post" action="/need">
@@ -134,6 +156,53 @@ def render_contribute_form(q) -> str:
 <button>登録する</button>
 </form>"""
     return page("Contribution Registration", body)
+
+
+def render_gateways_form(q) -> str:
+    caps = "".join(
+        f'<label style="display:inline-block;margin-right:1em">'
+        f'<input type="checkbox" name="capabilities" value="{esc(c)}" style="width:auto"> {esc(c)}</label>'
+        for c in C.GATEWAY_CAPABILITIES)
+    rows = "".join(
+        f"<tr><td>{esc(g['gateway_id'])}</td><td>{esc(g['name'])}</td><td>{esc(g['org_type'])}</td>"
+        f"<td>{esc(g['region'])}</td><td>{esc('・'.join(g['languages']) or '—')}</td>"
+        f"<td>{esc('・'.join(g['capabilities']))}</td></tr>"
+        for g in C.list_gateways())
+    body = msg_block(q) + f"""
+<p class="note"><b>Gateway は支援者ではなく、接続者です。</b>
+困っている人と Mujin をつなぐ扉——子ども食堂・教会・寺・病院・学校・自治体窓口・地域団体——を登録します。<br>
+Gateway の登録は認証ではありません（gateway registration is not certification）。
+Gateway は接続のみを行い、ケースの選定・配分・承認・統治は行いません。<br>
+<small class="inv">TTFR の観点で、Gateway は Agent より優先されます: Agent は支援能力を増やせますが、
+Gateway だけが Reach Gap を縮められます。</small></p>
+<form method="post" action="/gateways">
+<label>Name</label><input type="text" name="name" required>
+<label>Organization Type</label><select name="org_type">{options(C.GATEWAY_ORG_TYPES)}</select>
+<label>Region（市区町村程度）</label><input type="text" name="region">
+<label>Languages（カンマ区切り。例: 日本語, English, Tiếng Việt）</label><input type="text" name="languages">
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Capabilities</label><div>{caps}</div>
+<label>Notes</label><textarea name="notes"></textarea>
+<button>登録する</button>
+</form>
+<h2>登録済み Gateway（登録順・順位なし） — <a href="/gateways/list">一覧ページ</a></h2>
+<table><tr><th>id</th><th>name</th><th>type</th><th>region</th><th>languages</th><th>capabilities</th></tr>{rows or '<tr><td colspan=6>（まだありません）</td></tr>'}</table>
+"""
+    return page("Gateway Registry", body)
+
+
+def render_gateways_list(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(g['name'])}</td><td>{esc(g['region'])}</td>"
+        f"<td>{esc('・'.join(g['languages']) or '—')}</td>"
+        f"<td>{esc('・'.join(g['capabilities']))}</td></tr>"
+        for g in C.list_gateways())
+    body = f"""
+<p class="note">表示は登録順のみです。スコア・ランク・評価順位・人気順は存在しません。</p>
+<table><tr><th>Name</th><th>Region</th><th>Languages</th><th>Capability</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
+<p><a href="/gateways">Gateway を登録する</a></p>
+"""
+    return page("Gateways", body)
 
 
 def render_commons(q) -> str:
@@ -173,13 +242,18 @@ Urgency は本人の言葉であり、並べ替えに使われません。</p>
 def render_proposals(q) -> str:
     blocks = []
     for p in C.list_proposals():
+        gws = "".join(
+            f"<li>{esc(g['name'])}（{esc(g.get('region',''))} / {esc('・'.join(g.get('matched_capabilities',[])))} / {esc(g['id'])}）</li>"
+            for g in p.get("gateway_candidates", [])) or "<li>（Gateway 候補なし）</li>"
         cands = "".join(
             f"<li>{esc(c['name'])}（{esc(c['candidate_type'])} / {esc(c['provider_kind'])} / {esc(c['kind'])} / {esc(c['id'])}）</li>"
             for c in p["candidates"]) or "<li>（候補なし — Contribution の登録を待っています）</li>"
         blocks.append(
             f"<h2 id='{esc(p['proposal_id'])}'>{esc(p['proposal_id'])} — {esc(p['need_id'])}（{esc(p['need_type'])}）</h2>"
-            f"<ul>{cands}</ul>"
-            f"<p><small class='inv'>proposal ≠ decision — この提案は誰も拘束せず、常に"
+            f"<p><small class='inv'>接続経路: Need → Gateway → Contribution</small></p>"
+            f"<b>Gateway 候補（接続経路）:</b><ul>{gws}</ul>"
+            f"<b>Contribution 候補:</b><ul>{cands}</ul>"
+            f"<p><small class='inv'>proposal ≠ decision — この提案は誰も拘束せず、自動接続せず、常に"
             f"<a href='/objection'>異議</a>の対象です。候補は登録順（中立）です。</small></p>")
     body = msg_block(q) + (
         '<p class="note">Proposal は生成されるだけで、決定しません。接続するかどうかは、'
@@ -264,6 +338,8 @@ def render_transparency(q) -> str:
     body = f"""
 <table><tr><th>invariant</th><th>value</th></tr>{inv}</table>
 <p class="note">
+・<b>Gateway の登録は認証ではありません</b>（gateway registration is not certification）。
+Gateway は接続者であり、支援者でも審査者でもありません。<br>
 ・Mujin への登録は「支援を求める行為」であり、支援に値するかの審査結果ではありません。<br>
 ・Mujin を通らない支援（家族・友人・地域）は、Mujin を通る支援と等しく尊厳ある共助です。<br>
 ・advisory only は技術的免責であり、道義的責任を免除しません（憲法第15条）。<br>
@@ -292,13 +368,18 @@ def render_dashboard(q) -> str:
 <tr><th>Need Count</th><td>{s['need_count']}（うち公開 {s['needs_public']}）</td></tr>
 <tr><th>Contribution Count</th><td>{s['contribution_count']}</td></tr>
 <tr><th>Agent Count</th><td>{s['agent_count']}</td></tr>
+<tr><th>Gateway Count</th><td>{s['gateway_count']}</td></tr>
+<tr><th>Active Gateway Count</th><td>{s['active_gateway_count']}</td></tr>
+<tr><th>Regions Covered</th><td>{esc('・'.join(s['regions_covered']) or '—')}（{len(s['regions_covered'])} 地域）</td></tr>
+<tr><th>Languages Covered</th><td>{esc('・'.join(s['languages_covered']) or '—')}（{len(s['languages_covered'])} 言語）</td></tr>
 <tr><th>Proposal Count</th><td>{s['proposal_count']}</td></tr>
 <tr><th>Reality Feedback Count</th><td>{s['feedback_count']}</td></tr>
 <tr><th>Objection Count</th><td>{s['objection_count']}</td></tr>
 <tr><th>TTFR (Time To First Rescue)</th><td>{ttfr}</td></tr>
 </table>
-<p class="note">この dashboard が測るのは<b>システムの応答速度だけ</b>です。
-人の価値・困窮度・貢献度は測定されず、測定可能でもありません（憲法第4条）。</p>
+<p class="note">この dashboard が測るのは<b>システムの応答速度と地域到達性だけ</b>です。
+人の価値・困窮度・貢献度は測定されず、測定可能でもありません（憲法第4条）。
+Regions/Languages Covered は「どこに扉があるか」の観察であり、Gateway の優劣ではありません。</p>
 """
     return page("TTFR Dashboard", body)
 
@@ -309,6 +390,8 @@ GET_ROUTES = {
     "/": render_top,
     "/need": render_need_form,
     "/contribute": render_contribute_form,
+    "/gateways": render_gateways_form,
+    "/gateways/list": render_gateways_list,
     "/commons": render_commons,
     "/proposals": render_proposals,
     "/feedback": render_feedback,
@@ -335,7 +418,8 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
         )
         note = "（同意延期のため、本人の確認まで非公開で保管されます）" \
             if rec["consent_status"] != "active" else ""
-        return "/need", f"{rec['need_id']} を登録しました{note}。登録は証明ではありません。"
+        return (f"/need?gw={rec['need_id']}&gwtype={rec['need_type']}",
+                f"{rec['need_id']} を登録しました{note}。登録は証明ではありません。")
     if path == "/contribute":
         rec = C.register_contribution(
             provider_name=_f(form, "provider_name"), provider_kind=_f(form, "provider_kind"),
@@ -361,6 +445,15 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             name=_f(form, "name"), capability=_f(form, "capability"),
             description=_f(form, "description"))
         return "/agents", f"{rec['agent_id']} を登録しました（capability のみの宣言です）。"
+    if path == "/gateways":
+        rec = C.register_gateway(
+            name=_f(form, "name"), org_type=_f(form, "org_type"),
+            region=_f(form, "region"), languages=_f(form, "languages"),
+            contact_method=_f(form, "contact_method"),
+            capabilities=form.get("capabilities", []),
+            notes=_f(form, "notes"))
+        return "/gateways", (f"{rec['gateway_id']} を登録しました。"
+                             "Gateway の登録は認証ではなく、接続の申し出です。")
     raise C.CommonsError(f"unknown form: {path}")
 
 
@@ -395,7 +488,8 @@ class Handler(BaseHTTPRequestHandler):
         base = {"/proposals/generate": "/commons"}.get(url.path, url.path)
         try:
             redirect, ok = handle_post(url.path, form)
-            self._redirect(f"{redirect}?ok={quote(ok)}")
+            sep = "&" if "?" in redirect else "?"
+            self._redirect(f"{redirect}{sep}ok={quote(ok)}")
         except C.CommonsError as exc:
             self._redirect(f"{base}?err={quote(str(exc))}")
 

@@ -41,6 +41,7 @@ from ..store import DATA_DIR, append_jsonl, read_jsonl, utc_now_iso
 NEEDS_JSONL         = DATA_DIR / "needs.jsonl"
 CONTRIBUTIONS_JSONL = DATA_DIR / "contributions.jsonl"
 AGENTS_JSONL        = DATA_DIR / "agents.jsonl"
+GATEWAYS_JSONL      = DATA_DIR / "gateway_registry.jsonl"
 PROPOSALS_JSONL     = DATA_DIR / "proposals.jsonl"
 FEEDBACK_JSONL      = DATA_DIR / "reality_feedback_platform.jsonl"
 OBJECTIONS_JSONL    = DATA_DIR / "objections.jsonl"   # shared with Phase A
@@ -70,6 +71,20 @@ AGENT_CANNOT = ["資金配分", "ケース選定", "順位付け", "統治", "�
 
 FEEDBACK_RESULTS = ["positive", "negative", "partial", "withdrawn", "unresolved"]
 REPORTER_KINDS = ["subject", "supporter", "third_party", "npo"]
+
+# ── gateways ──────────────────────────────────────────────────────────────────
+# A gateway is a CONNECTOR, not a supporter: an entity through which a person
+# in need reaches Mujin. Gateways outrank agents in TTFR terms: agents can
+# add support capacity, but only gateways can shrink the Reach Gap.
+GATEWAY_ORG_TYPES = [
+    "npo", "ngo", "community_kitchen", "church", "temple", "hospital",
+    "school", "municipality_desk", "volunteer_group", "shelter", "other",
+]
+GATEWAY_CAPABILITIES = [
+    "Food", "Housing", "Translation", "Education", "Employment", "Legal",
+    "Medical", "Refugee Support", "Elder Care", "Child Support",
+    "Emergency Response",
+]
 
 INVARIANT_PHRASES = {
     "advisory_only": True,
@@ -214,6 +229,94 @@ def list_agents() -> list[dict[str, Any]]:
     return read_jsonl(AGENTS_JSONL)
 
 
+# ── gateway registry (connectors, not supporters) ────────────────────────────
+
+def register_gateway(
+    name: str,
+    org_type: str,
+    region: str,
+    languages: str,
+    contact_method: str,
+    capabilities: list[str],
+    notes: str,
+) -> dict[str, Any]:
+    """Register a gateway — an entity that connects people to Mujin.
+
+    Gateway registration is not certification. A gateway holds no authority,
+    selects no cases, allocates nothing, and governs nothing. It is a door,
+    and doors are listed in the order they were registered — never ranked.
+    """
+    if org_type not in GATEWAY_ORG_TYPES:
+        raise CommonsError(f"unknown organization type: {org_type!r}")
+    if not name.strip():
+        raise CommonsError("gateway name is required")
+    caps = [c for c in capabilities if c]
+    bad = [c for c in caps if c not in GATEWAY_CAPABILITIES]
+    if bad:
+        raise CommonsError(f"unknown capabilities: {bad}")
+    if not caps:
+        raise CommonsError("at least one capability is required")
+
+    record = {
+        "record_type": "gateway",
+        "gateway_id": _next_id("gateway", GATEWAYS_JSONL),
+        "name": name.strip(),
+        "org_type": org_type,
+        "region": region.strip(),
+        "languages": [l.strip() for l in languages.split(",") if l.strip()],
+        "contact_method": contact_method.strip(),
+        "capabilities": caps,
+        "notes": notes.strip(),
+        "status": "active",
+        "gateway_is_connector_not_supporter": True,
+        "gateway_registration_is_not_certification": True,
+        "created_at": utc_now_iso(),
+        **base_invariants(),
+        **INVARIANT_PHRASES,
+    }
+    return append_jsonl(GATEWAYS_JSONL, record)
+
+
+def list_gateways() -> list[dict[str, Any]]:
+    """Gateways in registration order — never ranked, never scored."""
+    return read_jsonl(GATEWAYS_JSONL)
+
+
+# which gateway capabilities can connect which need type (affinity, not ranking)
+_NEED_TO_GATEWAY_CAPS = {
+    "Translation": {"Translation", "Refugee Support"},
+    "Housing":     {"Housing", "Refugee Support", "Emergency Response"},
+    "Education":   {"Education", "Child Support"},
+    "Fundraising": {"Emergency Response"},
+    "Legal":       {"Legal", "Refugee Support"},
+    "Medical":     {"Medical", "Elder Care", "Emergency Response"},
+    "Technology":  {"Education", "Employment"},
+    "Resource":    {"Food", "Emergency Response"},
+    "Other":       set(GATEWAY_CAPABILITIES),
+}
+
+
+def gateway_candidates_for(need_type: str) -> list[dict[str, Any]]:
+    """Candidate gateways for a need type. Presentation only — never an
+    automatic connection. Order is registration order (neutral)."""
+    caps = _NEED_TO_GATEWAY_CAPS.get(need_type, {need_type})
+    out = []
+    for g in list_gateways():
+        if g.get("status") != "active":
+            continue
+        matched = sorted(set(g.get("capabilities", [])) & caps)
+        if matched:
+            out.append({
+                "candidate_type": "gateway",
+                "id": g["gateway_id"],
+                "name": g["name"],
+                "region": g.get("region", ""),
+                "languages": g.get("languages", []),
+                "matched_capabilities": matched,
+            })
+    return out
+
+
 # ── proposal engine (proposal != decision) ───────────────────────────────────
 
 # which contribution kinds can serve which need type (affinity, not ranking)
@@ -267,14 +370,20 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
                 "kind": a["capability"],
             })
 
+    gateway_candidates = gateway_candidates_for(need["need_type"])
+
     record = {
         "record_type": "proposal",
         "proposal_id": _next_id("proposal", PROPOSALS_JSONL),
         "need_id": need_id,
         "need_type": need["need_type"],
+        "connection_path": "Need -> Gateway -> Contribution",
+        "gateway_candidates": gateway_candidates,  # connectors, presented first
+        "gateway_candidate_count": len(gateway_candidates),
         "candidates": candidates,                # neutral order, never ranked
         "candidate_count": len(candidates),
         "proposal_is_not_decision": True,
+        "no_automatic_connection": True,
         "binds_no_one": True,
         "contestable": True,
         "generated_at": utc_now_iso(),
@@ -397,11 +506,19 @@ def ttfr_status() -> dict[str, Any]:
         if f.get("reporter_kind") == "subject" and f.get("result") in ("positive", "partial")
     ]
     first_rescue_at = min((f["created_at"] for f in rescues), default=None)
+    gateways = list_gateways()
+    active_gateways = [g for g in gateways if g.get("status") == "active"]
+    regions = sorted({g.get("region", "") for g in active_gateways if g.get("region")})
+    languages = sorted({l for g in active_gateways for l in g.get("languages", [])})
     return {
         "need_count": len(needs),
         "needs_public": len(list_needs()),
         "contribution_count": len(list_contributions()),
         "agent_count": len(list_agents()),
+        "gateway_count": len(gateways),
+        "active_gateway_count": len(active_gateways),
+        "regions_covered": regions,        # reach coverage, not a score of anyone
+        "languages_covered": languages,
         "proposal_count": len(list_proposals()),
         "feedback_count": len(list_feedback()),
         "objection_count": len(list_objections()),
