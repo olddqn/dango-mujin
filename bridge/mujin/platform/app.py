@@ -51,7 +51,7 @@ small.inv{color:#666}
 NAV = (
     '<nav><a href="/">Top</a><a href="/need">Need</a>'
     '<a href="/gateways">Gateways</a><a href="/solutions">Solutions</a>'
-    '<a href="/funding">Funding</a><a href="/discovery">Public Call</a>'
+    '<a href="/funding">Funding</a><a href="/voices">Voices</a>'
     '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
     '<a href="/transparency">Transparency</a>'
@@ -124,10 +124,14 @@ def render_need_form(q) -> str:
     gw_type = q.get("gwtype", [""])[0]
     if gw_need and gw_type:
         gw_block = _gateway_candidates_block(gw_type, gw_need)
-    body = msg_block(q) + gw_block + f"""
+    origin_voice = q.get("origin_voice", [""])[0]
+    ov_field = f'<input type="hidden" name="origin_voice" value="{esc(origin_voice)}">' if origin_voice else ""
+    ov_note = (f'<p class="note">この Need は Voice <b>{esc(origin_voice)}</b> から、'
+               '人間の確認を経て作成されます（自動 Need 化ではありません）。</p>') if origin_voice else ""
+    body = msg_block(q) + gw_block + ov_note + f"""
 <p class="note">登録は証明ではありません。撤回は失敗ではありません。支援は債務ではありません。<br>
 代理登録の場合、本人の同意は代理では成立しません（同意延期として記録され、本人の確認まで公開されません）。</p>
-<form method="post" action="/need">
+<form method="post" action="/need">{ov_field}
 <label>Need Type</label><select name="need_type">{options(C.NEED_TYPES)}</select>
 <label>Description（困りごと。個人を特定する情報は書かないでください）</label>
 <textarea name="description" required></textarea>
@@ -481,6 +485,95 @@ Mujin は人を探しません。人を特定しません。人を分類しま�
     return page("Public Call for Help Registry", body)
 
 
+def render_voices(q) -> str:
+    rows = "".join(
+        f"<tr><td><a href='/voices/view?id={esc(v['voice_id'])}'>{esc(v['voice_id'])}</a></td>"
+        f"<td>{esc(v['title'])}</td><td>{esc(v['voice_category'])}</td>"
+        f"<td>{esc(v['source_type'])}</td><td>{esc(v['region'])}</td>"
+        f"<td>{esc(v['human_reviewer'])}</td></tr>" for v in C.list_voices())
+    body = msg_block(q) + f"""
+<p class="note"><b>Voice Commons</b> — 「助けてくれ」という<b>公開された声</b>を記録し、談合可能な形へ変換する入口です。<br>
+このレジストリが答えるのは「<b>誰が助けを求めているか</b>」であり、「誰が助けられるべきか」ではありません。</p>
+<p class="note neg"><b>これは Saiyan Scouter の復活ではありません。</b>
+発見・監視・脆弱性スコアリング・人間ランキング・救済対象選定ではありません。<br>
+登録できるのは、助けを求めていることが<b>公開情報から確認できる声</b>のみです
+（例: 「助けてください」「避難先がありません」）。AI の推測・第三者の勝手な判断・非公開情報は登録できません。<br>
+禁止: private surveillance / private investigation / vulnerability ranking / hidden profiling /
+psychological scoring / predictive targeting / automated scraping / automated classification。</p>
+<h2>Voice Record の登録</h2>
+<form method="post" action="/voices">
+<label>Title</label><input type="text" name="title" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Source Type</label><select name="source_type">{options(C.VOICE_SOURCE_TYPES)}</select>
+<label>Source URL（公開情報の出典）</label><input type="text" name="source_url">
+<label>Region</label><input type="text" name="region">
+<label>Languages（カンマ区切り）</label><input type="text" name="languages">
+<label>Voice Category</label><select name="voice_category">{options(C.VOICE_CATEGORIES)}</select>
+<label>Original Statement（実際の公開された声・必須）</label><textarea name="original_statement" required></textarea>
+<label>Human Summary</label><textarea name="human_summary"></textarea>
+<label>Human Reviewer（レビューした人間・必須）</label><input type="text" name="human_reviewer" required>
+<label>Notes</label><input type="text" name="notes">
+<button>記録する</button>
+</form>
+<h2>記録済み Voice（登録順・優先順位ではありません） — <a href="/voices/list">一覧</a></h2>
+<table><tr><th>id</th><th>title</th><th>category</th><th>source</th><th>region</th><th>reviewer</th></tr>{rows or '<tr><td colspan=6>（まだありません）</td></tr>'}</table>
+"""
+    return page("Voice Commons", body)
+
+
+def render_voices_list(q) -> str:
+    rows = "".join(
+        f"<tr><td><a href='/voices/view?id={esc(v['voice_id'])}'>{esc(v['voice_id'])}</a></td>"
+        f"<td>{esc(v['title'])}</td><td>{esc(v['voice_category'])}</td>"
+        f"<td>{esc(v['region'])}</td><td>{esc('・'.join(v['languages']) or '—')}</td></tr>"
+        for v in C.list_voices())
+    body = f"""
+<p class="note">登録順のみ。Voice ランキング・困窮度ランキングはありません。
+Voice is not priority. Voice is not ranking.</p>
+<table><tr><th>id</th><th>title</th><th>category</th><th>region</th><th>languages</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Voices", body)
+
+
+def render_voice_view(q) -> str:
+    vid = q.get("id", [""])[0]
+    v = C.get_voice(vid)
+    if v is None:
+        return page("Voice", "<p>その Voice はありません。</p>")
+    cands = [c for c in C.list_need_candidates() if c.get("origin_voice_id") == vid]
+    cand_block = ""
+    for c in cands:
+        cand_block += f"""
+<div class="note"><b>{esc(c['needcand_id'])} — Need Candidate（決定ではありません）</b><br>
+suggested_need_type: <b>{esc(c['suggested_need_type'])}</b><br>
+suggested_region: {esc(c['suggested_region'] or '—')}<br>
+suggested_languages: {esc('・'.join(c['suggested_languages']) or '—')}<br>
+suggested_gateway_types: {esc('・'.join(c['suggested_gateway_types']))}<br>
+suggested_solution_types: {esc('・'.join(c['suggested_solution_types']))}<br>
+<small class="inv">candidate_only · conversion_is_not_decision · human_confirmation_required</small><br>
+<a href="/need?origin_voice={esc(vid)}&need_type={esc(c['suggested_need_type'])}">この候補を人間が確認して Need を作成する →</a></div>"""
+    body = msg_block(q) + f"""
+<p><a href="/voices/list">← 一覧へ</a></p>
+<table>
+<tr><th>Title</th><td>{esc(v['title'])}</td></tr>
+<tr><th>Category</th><td>{esc(v['voice_category'])}</td></tr>
+<tr><th>Source</th><td>{esc(v['source_type'])} — {esc(v['source_url'] or '（URLなし）')}</td></tr>
+<tr><th>Region</th><td>{esc(v['region'])}</td></tr>
+<tr><th>Languages</th><td>{esc('・'.join(v['languages']) or '—')}</td></tr>
+<tr><th>Original Statement</th><td>{esc(v['original_statement'])}</td></tr>
+<tr><th>Human Summary</th><td>{esc(v['human_summary'] or '—')}</td></tr>
+<tr><th>Human Reviewer</th><td>{esc(v['human_reviewer'])}</td></tr>
+</table>
+<p class="note">Voice is not verification · Voice is not consent · Recording is not intervention.</p>
+<form method="post" action="/voices/convert">
+<input type="hidden" name="voice_id" value="{esc(vid)}">
+<button>Need Candidate へ変換する（接続候補の生成のみ・Need 作成ではありません）</button>
+</form>
+{cand_block}
+"""
+    return page(f"Voice {esc(vid)}", body)
+
+
 def render_transparency(q) -> str:
     inv = "".join(f"<tr><td><code>{esc(k)}</code></td><td><b>{esc(str(v).lower())}</b></td></tr>"
                   for k, v in C.INVARIANT_PHRASES.items())
@@ -492,6 +585,10 @@ def render_transparency(q) -> str:
         "Public call is not consent", "Listing is not verification",
         "Need is not ranking", "Visibility is not priority",
         "Observation is not intervention", "Reach Gap remains unresolved",
+        "Voice is not verification", "Voice is not consent",
+        "Voice is not priority", "Voice is not ranking",
+        "Recording is not intervention",
+        "Need Candidate is not a decision", "Human review remains required",
     ]
     plist = "".join(f"<li><code>{esc(p)}</code></li>" for p in principles)
     corr_rows = "".join(
@@ -537,6 +634,13 @@ def render_dashboard(q) -> str:
         ttfr = "未計測（まだ Need が登録されていません。時計は最初の Need から動き始めます）"
     body = f"""
 <table>
+<tr><th>Voice Count</th><td>{s['voice_count']}</td></tr>
+<tr><th>Voice Categories</th><td>{esc('・'.join(s['voice_categories']) or '—')}</td></tr>
+<tr><th>Need Candidates Generated</th><td>{s['need_candidates_generated']}</td></tr>
+<tr><th>Voices Converted To Need</th><td>{s['voices_converted_to_need']}（うち実 Need 化 {s['needs_from_voice']}）</td></tr>
+<tr><th>Voice Response Time (avg)</th><td>{esc(f"{s['voice_response_time_avg_seconds']:.3f} 秒" if s['voice_response_time_avg_seconds'] is not None else '未計測')}（Voice登録→最初のGateway候補生成）</td></tr>
+<tr><th>Regions Represented</th><td>{esc('・'.join(s['regions_represented']) or '—')}</td></tr>
+<tr><th>Languages Represented</th><td>{esc('・'.join(s['languages_represented']) or '—')}</td></tr>
 <tr><th>Need Count</th><td>{s['need_count']}（うち公開 {s['needs_public']}）</td></tr>
 <tr><th>Problem Count</th><td>{s['problem_count']}</td></tr>
 <tr><th>Solution Count</th><td>{s['solution_count']}</td></tr>
@@ -571,6 +675,9 @@ GET_ROUTES = {
     "/gateways/list": render_gateways_list,
     "/solutions": render_solutions,
     "/funding": render_funding,
+    "/voices": render_voices,
+    "/voices/list": render_voices_list,
+    "/voices/view": render_voice_view,
     "/discovery": render_discovery,
     "/commons": render_commons,
     "/proposals": render_proposals,
@@ -595,6 +702,7 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             contact_method=_f(form, "contact_method"),
             consent_status=_f(form, "consent_status"),
             representative=_f(form, "representative") == "1",
+            origin_voice_id=_f(form, "origin_voice"),
         )
         note = "（同意延期のため、本人の確認まで非公開で保管されます）" \
             if rec["consent_status"] != "active" else ""
@@ -674,6 +782,21 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             notes=_f(form, "notes"))
         return "/funding", (f"{rec['funding_id']} を掲載しました。"
                             "Mujin は資金を保管しません。掲載は検証でも推薦でもありません。")
+    if path == "/voices":
+        rec = C.register_voice(
+            title=_f(form, "title"), description=_f(form, "description"),
+            source_type=_f(form, "source_type"), source_url=_f(form, "source_url"),
+            region=_f(form, "region"), languages=_f(form, "languages"),
+            voice_category=_f(form, "voice_category"),
+            original_statement=_f(form, "original_statement"),
+            human_summary=_f(form, "human_summary"),
+            human_reviewer=_f(form, "human_reviewer"), notes=_f(form, "notes"))
+        return "/voices", (f"{rec['voice_id']} を記録しました。"
+                          "Voice は検証でも同意でもありません。記録は介入ではありません。")
+    if path == "/voices/convert":
+        rec = C.convert_voice_to_need_candidate(_f(form, "voice_id"))
+        return (f"/voices/view?id={rec['origin_voice_id']}",
+                f"{rec['needcand_id']} を生成しました（Need Candidate・決定ではありません・人間の確認が必要）。")
     if path == "/discovery":
         rec = C.post_public_call(
             title=_f(form, "title"), description=_f(form, "description"),

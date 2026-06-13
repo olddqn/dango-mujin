@@ -236,6 +236,21 @@ never auto-contacted; *this is not Saiyan Scouter v1*). Agent posts
 auto-carry `proposal_only / cannot_allocate_funds / cannot_rank_people /
 cannot_select_cases / cannot_govern / cannot_override_consent`.
 
+**Voice Commons (Phase D-4).** The entrance widens to `Voice → Need →
+Gateway → Solution Commons → Reality Feedback`. **This is not Saiyan
+Scouter.** Mujin does not search for, surveil, score, rank, or classify
+people. A *Voice* records a call for help that is verifiable from
+**public** information, with a named human reviewer and the original
+public statement required. `/voices/convert` produces a Need
+**Candidate** — never a Need — carrying `candidate_only`,
+`conversion_is_not_decision`, `human_confirmation_required`, with
+suggested need type / gateway types / solution types. No Need is ever
+auto-created; a human confirms a candidate into a Need, which then
+carries `origin_voice_id` for Reality-Feedback traceability. Dashboard
+adds Voice Count / Voice Categories / Need Candidates Generated / Voices
+Converted To Need / **Voice Response Time** (registration → first gateway
+suggestion) / Regions & Languages Represented.
+
 **Reality Correction Layer.** Reality takes precedence over demonstration
 convenience. Records are never deleted; factual corrections are appended
 and logged to `data/correction_log.jsonl` and shown on Transparency. The

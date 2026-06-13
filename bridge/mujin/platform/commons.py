@@ -52,6 +52,8 @@ AGENT_POSTS_JSONL   = DATA_DIR / "agent_posts.jsonl"
 FUNDING_JSONL       = DATA_DIR / "funding_posts.jsonl"
 DISCOVERY_JSONL     = DATA_DIR / "discovery_posts.jsonl"
 CORRECTION_JSONL    = DATA_DIR / "correction_log.jsonl"
+VOICE_JSONL         = DATA_DIR / "voice_records.jsonl"
+NEED_CANDIDATE_JSONL = DATA_DIR / "need_candidates.jsonl"
 
 # ── vocabularies ──────────────────────────────────────────────────────────────
 NEED_TYPES = [
@@ -161,6 +163,7 @@ def register_need(
     contact_method: str,
     consent_status: str,
     representative: bool,
+    origin_voice_id: str = "",
 ) -> dict[str, Any]:
     """Register a need.
 
@@ -191,6 +194,7 @@ def register_need(
         "consent_status": consent_status,
         "representative": representative,
         "confirmation_due": representative or consent_status == "deferred",
+        "origin_voice_id": origin_voice_id.strip(),   # traceable to a Voice (D-4)
         "created_at": utc_now_iso(),
         **base_invariants(),
         **INVARIANT_PHRASES,
@@ -570,6 +574,178 @@ def list_public_calls() -> list[dict[str, Any]]:
     return read_jsonl(DISCOVERY_JSONL)
 
 
+# ── Voice Commons (Public Call → Need-Candidate pipeline) ─────────────────────
+# This is NOT Saiyan Scouter. Mujin does not search for people likely to be in
+# need, does not score vulnerability, does not rank or classify people. A Voice
+# is recorded ONLY when a request for help is verifiable from PUBLIC
+# information ("help us", "we need support", "we have nowhere to flee"). A
+# guess by an AI, a third party's unilateral judgment, or any non-public
+# information is never a Voice. Conversion produces a Need CANDIDATE, never a
+# Need: human confirmation is always required, and no Need is ever auto-created.
+
+VOICE_SOURCE_TYPES = [
+    "public_interview", "news_report", "ngo_report", "refugee_appeal",
+    "disaster_appeal", "community_request", "social_media_post",
+    "video_statement", "other",
+]
+VOICE_CATEGORIES = [
+    "Housing", "Food", "Water", "Medical", "Education", "Translation",
+    "Employment", "Legal", "Safety", "Community", "Other",
+]
+
+# category -> suggested Need type (NEED_TYPES vocabulary)
+_VOICE_TO_NEED = {
+    "Housing": "Housing", "Food": "Resource", "Water": "Resource",
+    "Medical": "Medical", "Education": "Education", "Translation": "Translation",
+    "Employment": "Other", "Legal": "Legal", "Safety": "Other",
+    "Community": "Other", "Other": "Other",
+}
+# category -> suggested Gateway capability types (GATEWAY_CAPABILITIES)
+_VOICE_TO_GATEWAY = {
+    "Housing": ["Housing", "Emergency Response"],
+    "Food": ["Food", "Emergency Response"],
+    "Water": ["Emergency Response", "Medical"],
+    "Medical": ["Medical", "Emergency Response"],
+    "Education": ["Education", "Child Support"],
+    "Translation": ["Translation", "Refugee Support"],
+    "Employment": ["Employment", "Education"],
+    "Legal": ["Legal", "Refugee Support"],
+    "Safety": ["Emergency Response", "Refugee Support"],
+    "Community": ["Food", "Education"],
+    "Other": ["Emergency Response"],
+}
+# source type that implies refugee context -> add refugee-oriented gateways
+_REFUGEE_SOURCES = {"refugee_appeal"}
+# category -> suggested Solution Commons categories (SOLUTION_CATEGORIES)
+_VOICE_TO_SOLUTION = {
+    "Housing": ["Material", "Community", "Funding"],
+    "Food": ["Material", "Community"],
+    "Water": ["Research", "AI Agent", "Community", "Funding"],
+    "Medical": ["Funding", "Human Skill", "Material"],
+    "Education": ["Education", "Human Skill"],
+    "Translation": ["Translation", "AI Agent"],
+    "Employment": ["Education", "Community"],
+    "Legal": ["Human Skill", "Research"],
+    "Safety": ["Community", "Research"],
+    "Community": ["Community", "Research"],
+    "Other": ["Research", "Community"],
+}
+
+
+def register_voice(title, description, source_type, source_url, region,
+                   languages, voice_category, original_statement,
+                   human_summary, human_reviewer, notes) -> dict[str, Any]:
+    """Record a publicly-expressed call for help.
+
+    Requires a named human reviewer: a Voice attests that a request for help
+    is verifiable from public information. It is not surveillance, not
+    vulnerability scoring, not targeting. Recording is not intervention.
+    """
+    if source_type not in VOICE_SOURCE_TYPES:
+        raise CommonsError(f"unknown source type: {source_type!r}")
+    if voice_category not in VOICE_CATEGORIES:
+        raise CommonsError(f"unknown voice category: {voice_category!r}")
+    if not title.strip():
+        raise CommonsError("title is required")
+    if not human_reviewer.strip():
+        raise CommonsError(
+            "a named human reviewer is required (Voice is human-reviewed; "
+            "no automated scraping or classification)")
+    if not original_statement.strip():
+        raise CommonsError(
+            "the original public statement is required (a Voice records an "
+            "actual public call for help, not an inference)")
+    return _post(VOICE_JSONL, "voice", "voice_record", {
+        "title": title.strip(), "description": description.strip(),
+        "source_type": source_type, "source_url": source_url.strip(),
+        "region": region.strip(),
+        "languages": [l.strip() for l in languages.split(",") if l.strip()],
+        "voice_category": voice_category,
+        "original_statement": original_statement.strip(),
+        "human_summary": human_summary.strip(),
+        "human_reviewer": human_reviewer.strip(),
+        "notes": notes.strip(),
+    }, extra={
+        "public_call_detected": True,
+        "human_reviewed": True,
+        "contact_attempted": False,
+        "voice_is_verification": False,
+        "voice_is_consent": False,
+        "voice_is_priority": False,
+        "voice_is_ranking": False,
+        "recording_is_intervention": False,
+        "answers_question": "Who is asking for help?",
+        "not_question": "Who should be helped?",
+    })
+
+
+def list_voices() -> list[dict[str, Any]]:
+    return read_jsonl(VOICE_JSONL)
+
+
+def get_voice(voice_id: str) -> dict[str, Any] | None:
+    return next((v for v in list_voices() if v.get("voice_id") == voice_id), None)
+
+
+def convert_voice_to_need_candidate(voice_id: str) -> dict[str, Any]:
+    """Convert a Voice into a Need CANDIDATE (not a Need).
+
+    Produces suggestions only. No Need is created. Human confirmation is
+    always required before a candidate becomes a Need.
+    """
+    v = get_voice(voice_id)
+    if v is None:
+        raise CommonsError(f"unknown voice: {voice_id}")
+    cat = v.get("voice_category", "Other")
+    gw = list(_VOICE_TO_GATEWAY.get(cat, ["Emergency Response"]))
+    if v.get("source_type") in _REFUGEE_SOURCES:
+        for extra in ("Refugee Support", "Translation", "Legal", "Housing"):
+            if extra not in gw:
+                gw.append(extra)
+    return _post(NEED_CANDIDATE_JSONL, "needcand", "need_candidate", {
+        "origin_voice_id": voice_id,
+        "suggested_need_type": _VOICE_TO_NEED.get(cat, "Other"),
+        "suggested_region": v.get("region", ""),
+        "suggested_languages": v.get("languages", []),
+        "suggested_gateway_types": gw,
+        "suggested_solution_types": list(_VOICE_TO_SOLUTION.get(cat, ["Research", "Community"])),
+        "human_summary": v.get("human_summary", ""),
+    }, extra={
+        "candidate_only": True,
+        "conversion_is_not_decision": True,
+        "human_confirmation_required": True,
+        "need_candidate_is_not_a_decision": True,
+    })
+
+
+def list_need_candidates() -> list[dict[str, Any]]:
+    return read_jsonl(NEED_CANDIDATE_JSONL)
+
+
+def voice_response_times() -> list[dict[str, Any]]:
+    """For each Voice, time from registration to first candidate generation
+    (first gateway suggestion). System speed only — never a person's worth."""
+    from datetime import datetime
+    cands_by_voice: dict[str, str] = {}
+    for c in list_need_candidates():
+        vid = c.get("origin_voice_id")
+        ts = c.get("created_at")
+        if vid and ts and (vid not in cands_by_voice or ts < cands_by_voice[vid]):
+            cands_by_voice[vid] = ts
+    out = []
+    for v in list_voices():
+        vid = v.get("voice_id")
+        first = cands_by_voice.get(vid)
+        delta = None
+        if first:
+            t0 = datetime.fromisoformat(v["created_at"].replace("Z", "+00:00"))
+            t1 = datetime.fromisoformat(first.replace("Z", "+00:00"))
+            delta = (t1 - t0).total_seconds()
+        out.append({"voice_id": vid, "responded": first is not None,
+                    "response_seconds": delta})
+    return out
+
+
 # which gateway capabilities can connect which need type (affinity, not ranking)
 _NEED_TO_GATEWAY_CAPS = {
     "Translation": {"Translation", "Refugee Support"},
@@ -816,11 +992,24 @@ def ttfr_status() -> dict[str, Any]:
     first_rescue_at = min((f["created_at"] for f in rescues), default=None)
     gateways = list_gateways()
     active = active_gateways()
-    # reach coverage = gateways + resources + public calls, regions/languages observed
-    reach = active + list_resources() + list_public_calls()
+    voices = list_voices()
+    candidates = list_need_candidates()
+    converted_voice_ids = {c.get("origin_voice_id") for c in candidates}
+    needs_from_voice = [n for n in needs if n.get("origin_voice_id")]
+    vrt = [r["response_seconds"] for r in voice_response_times() if r["response_seconds"] is not None]
+    # reach coverage = gateways + resources + voices, regions/languages observed
+    reach = active + list_resources() + voices
     regions = sorted({r.get("region", "") for r in reach if r.get("region")})
-    languages = sorted({l for r in active + list_resources() for l in r.get("languages", [])})
+    languages = sorted({l for r in active + list_resources() + voices for l in r.get("languages", [])})
     return {
+        "voice_count": len(voices),
+        "voice_categories": sorted({v.get("voice_category", "") for v in voices if v.get("voice_category")}),
+        "need_candidates_generated": len(candidates),
+        "voices_converted_to_need": len(converted_voice_ids),
+        "needs_from_voice": len(needs_from_voice),
+        "voice_response_time_avg_seconds": (sum(vrt) / len(vrt)) if vrt else None,
+        "regions_represented": regions,
+        "languages_represented": languages,
         "need_count": len(needs),
         "needs_public": len(list_needs()),
         "problem_count": len(list_problems()),
