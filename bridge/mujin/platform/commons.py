@@ -58,6 +58,8 @@ TRANSLATORS_JSONL   = DATA_DIR / "translators.jsonl"
 DISCUSSION_JSONL    = DATA_DIR / "voice_discussion.jsonl"
 CONTRIB_COMMONS_JSONL = DATA_DIR / "contribution_commons.jsonl"
 CONTRIB_DISCUSSION_JSONL = DATA_DIR / "contribution_discussion.jsonl"
+COOPERATION_JSONL   = DATA_DIR / "cooperation_commons.jsonl"
+COOP_DISCUSSION_JSONL = DATA_DIR / "cooperation_discussion.jsonl"
 
 # ── vocabularies ──────────────────────────────────────────────────────────────
 NEED_TYPES = [
@@ -982,6 +984,88 @@ def list_contribution_discussion() -> list[dict[str, Any]]:
     return read_jsonl(CONTRIB_DISCUSSION_JSONL)
 
 
+# ── Cooperation Commons (Phase D-7) ──────────────────────────────────────────
+# Once "help us" and "we want to help" can meet, the next question is what
+# cooperation paths they could form. This is NOT a Team Builder: Mujin never
+# decides who works with whom, never assigns, never commands. It records
+# possible cooperations and proposes combinations. Forming a cooperation is
+# always voluntary and revisable; withdrawal is not failure.
+
+COOPERATION_TYPES = [
+    "Translation Network", "Education Team", "Housing Support", "Legal Support",
+    "Food Support", "Research Group", "AI Agent Group", "Community Support",
+    "Funding Circle", "Mixed", "Other",
+]
+
+COOPERATION_INVARIANTS = {
+    "cooperation_is_not_command": True,
+    "cooperation_is_not_assignment": True,
+    "proposal_is_not_decision": True,
+    "participation_is_voluntary": True,
+    "withdrawal_is_not_failure": True,
+    "cooperation_is_revisable": True,
+    "listing_is_not_endorsement": True,
+    "matching_is_not_authority": True,
+}
+
+_REGION_SEP = [",", "、", "／", "/", ";"]
+
+
+def _split_multi(text: str) -> list[str]:
+    s = text
+    for sep in _REGION_SEP[1:]:
+        s = s.replace(sep, ",")
+    return [t.strip() for t in s.split(",") if t.strip()]
+
+
+def register_cooperation(name, description, participants, coop_type, region,
+                         notes) -> dict[str, Any]:
+    """Record a possible cooperation among participants.
+
+    Recording does not command, assign, or endorse. Participation is
+    voluntary and the cooperation is revisable at any time."""
+    if coop_type not in COOPERATION_TYPES:
+        raise CommonsError(f"unknown cooperation type: {coop_type!r}")
+    if not name.strip():
+        raise CommonsError("name is required")
+    plist = _split_multi(participants)
+    rlist = _split_multi(region)
+    return _post(COOPERATION_JSONL, "coop", "cooperation", {
+        "name": name.strip(),
+        "description": description.strip(),
+        "participants": plist,
+        "participants_count": len(plist),
+        "cooperation_type": coop_type,
+        "regions": rlist,
+        "cross_region": len(rlist) > 1,
+        "notes": notes.strip(),
+    }, extra=dict(COOPERATION_INVARIANTS))
+
+
+def list_cooperations() -> list[dict[str, Any]]:
+    return read_jsonl(COOPERATION_JSONL)
+
+
+def register_cooperation_discussion(ref_id, content, author) -> dict[str, Any]:
+    """Negotiate HOW to cooperate. Append-only. Not a decision, not
+    governance, not an assignment."""
+    if not content.strip():
+        raise CommonsError("discussion content is required")
+    return _post(COOP_DISCUSSION_JSONL, "coopdisc", "cooperation_discussion", {
+        "ref_id": ref_id.strip(),
+        "content": content.strip(),
+        "author": author.strip() or "anon",
+    }, extra={
+        "discussion_is_not_decision": True,
+        "discussion_is_not_governance": True,
+        "discussion_is_not_assignment": True,
+    })
+
+
+def list_cooperation_discussion() -> list[dict[str, Any]]:
+    return read_jsonl(COOP_DISCUSSION_JSONL)
+
+
 # need type -> Contribution Commons types that could help (affinity, not ranking)
 _NEED_TO_CONTRIB = {
     "Translation": {"Translation", "Skill", "AI Agent"},
@@ -1114,6 +1198,23 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
 
     gateway_candidates = gateway_candidates_for(need["need_type"])
 
+    # Possible cooperation = a SUGGESTED grouping of a gateway + contributions.
+    # It is never created, joined, or decided automatically. It only shows what
+    # cooperation could form, so people can negotiate it themselves.
+    members = []
+    if gateway_candidates:
+        g = gateway_candidates[0]
+        members.append(f"{g['name']}（gateway）")
+    for c in candidates[:3]:
+        members.append(f"{c['name']}（{c['kind']}）")
+    cooperation_suggestion = {
+        "members": members,
+        "is_suggestion": True,
+        "auto_created": False,
+        "auto_joined": False,
+        **COOPERATION_INVARIANTS,
+    } if len(members) >= 2 else None
+
     record = {
         "record_type": "proposal",
         "proposal_id": _next_id("proposal", PROPOSALS_JSONL),
@@ -1124,6 +1225,7 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
         "gateway_candidate_count": len(gateway_candidates),
         "candidates": candidates,                # neutral order, never ranked
         "candidate_count": len(candidates),
+        "cooperation_suggestion": cooperation_suggestion,  # suggestion only (D-7)
         "proposal_is_not_decision": True,
         "matching_is_not_selection": True,
         "matching_is_not_authority": True,
@@ -1285,6 +1387,12 @@ def ttfr_status() -> dict[str, Any]:
         "contribution_type_count": len({c.get("contribution_type") for c in list_contribution_commons() if c.get("contribution_type")}),
         "contribution_type_breakdown": _count_by(list_contribution_commons(), "contribution_type"),
         "contribution_discussion_count": len(list_contribution_discussion()),
+        "cooperation_count": len(list_cooperations()),
+        "cooperation_type_count": len({c.get("cooperation_type") for c in list_cooperations() if c.get("cooperation_type")}),
+        "mixed_cooperation_count": sum(1 for c in list_cooperations() if c.get("cooperation_type") == "Mixed"),
+        "cross_region_cooperation_count": sum(1 for c in list_cooperations() if c.get("cross_region")),
+        "cooperation_regions": sorted({r for c in list_cooperations() for r in c.get("regions", [])}),
+        "cooperation_discussion_count": len(list_cooperation_discussion()),
         "agent_count": len(list_agent_posts()) + len(list_agents())
                        + sum(1 for c in list_contribution_commons() if c.get("contribution_type") == "AI Agent"),
         "funding_post_count": len(list_funding()),

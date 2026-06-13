@@ -251,6 +251,24 @@ adds Voice Count / Voice Categories / Need Candidates Generated / Voices
 Converted To Need / **Voice Response Time** (registration → first gateway
 suggestion) / Regions & Languages Represented.
 
+**Cooperation Commons (Phase D-7).** Visualises what cooperation paths
+cooperators could form — **not a Team Builder**; no AI decides who pairs
+with whom. `/cooperation` records possible cooperations (Name,
+Participants, 11 Cooperation Types, multi-Region) carrying
+`cooperation_is_not_command / …is_not_assignment / proposal_is_not_decision
+/ participation_is_voluntary / withdrawal_is_not_failure /
+cooperation_is_revisable / listing_is_not_endorsement /
+matching_is_not_authority`. `/cooperation/list` is list-only (no
+ranking, no Cooperation Score). The proposal engine now includes a
+*Possible Cooperation* suggestion (a grouping of a gateway + contributions,
+`auto_created=false`, `auto_joined=false` — never created, joined, or
+decided automatically). `/cooperation-discussion` negotiates how to
+cooperate (not a decision, not an assignment). `/cooperation-paths`
+visualises routes (display only). Dashboard adds Cooperation Count /
+Type Count / Mixed / Cross-Region / Regions Covered. Mujin connects,
+proposes, and hosts negotiation — it never assigns, commands, or
+allocates.
+
 **Contribution Commons (Phase D-6).** If Voice Commons is the "help us"
 entrance, Contribution Commons is the "we want to help" entrance —
 treated as an *entrance, not a terminus*. `/contributions` registers

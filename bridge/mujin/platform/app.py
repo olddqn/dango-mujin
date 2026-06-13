@@ -54,7 +54,8 @@ NAV = (
     '<a href="/funding">Funding</a><a href="/voices">Voices</a>'
     '<a href="/voice-submit">Submit</a><a href="/voice-sources">Sources</a>'
     '<a href="/translations">Translate</a><a href="/voice-discussion">Discuss</a>'
-    '<a href="/contributions">Contribute</a><a href="/contribution-paths">Paths</a>'
+    '<a href="/contributions">Contribute</a>'
+    '<a href="/cooperation">Cooperate</a><a href="/cooperation-paths">CoopPaths</a>'
     '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
     '<a href="/transparency">Transparency</a>'
@@ -262,11 +263,20 @@ def render_proposals(q) -> str:
         cands = "".join(
             f"<li>{esc(c['name'])}（{esc(c['candidate_type'])} / {esc(c['provider_kind'])} / {esc(c['kind'])} / {esc(c['id'])}）</li>"
             for c in p["candidates"]) or "<li>（候補なし — Contribution の登録を待っています）</li>"
+        coop = p.get("cooperation_suggestion")
+        coop_block = ""
+        if coop:
+            mem = "".join(f"<li>{esc(m)}</li>" for m in coop["members"])
+            coop_block = (f"<b>Possible Cooperation（提案のみ・自動作成も自動参加もしません）:</b>"
+                          f"<ul>{mem}</ul>"
+                          f"<p><small class='inv'>cooperation ≠ command · cooperation ≠ assignment · "
+                          f"participation is voluntary · revisable</small></p>")
         blocks.append(
             f"<h2 id='{esc(p['proposal_id'])}'>{esc(p['proposal_id'])} — {esc(p['need_id'])}（{esc(p['need_type'])}）</h2>"
-            f"<p><small class='inv'>接続経路: Need → Gateway → Contribution</small></p>"
+            f"<p><small class='inv'>接続経路: Need → Gateway → Solution → Contribution → Cooperation</small></p>"
             f"<b>Gateway 候補（接続経路）:</b><ul>{gws}</ul>"
             f"<b>Contribution 候補:</b><ul>{cands}</ul>"
+            f"{coop_block}"
             f"<p><small class='inv'>proposal ≠ decision — この提案は誰も拘束せず、自動接続せず、常に"
             f"<a href='/objection'>異議</a>の対象です。候補は登録順（中立）です。</small></p>")
     body = msg_block(q) + (
@@ -743,6 +753,84 @@ Mujin の役割は配分ではなく接続です。</p>
     return page("Contribution Paths", body)
 
 
+def render_cooperation(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(c['coop_id'])}</td><td>{esc(c['name'])}</td>"
+        f"<td>{esc(c['cooperation_type'])}</td><td>{esc('・'.join(c['regions']) or '—')}</td>"
+        f"<td>{esc(c['participants_count'])}</td><td>{esc(c['description'])}</td></tr>"
+        for c in C.list_cooperations())
+    body = msg_block(q) + f"""
+<p class="note"><b>Cooperation Commons</b> — 協力可能な組み合わせを記録します。
+「助けてくれ」と「助けたい」が出会うだけでなく、協力そのものが形成可能な状態を作ります。</p>
+<p class="note neg"><b>これは Team Builder ではありません。</b>
+AI が誰と誰を組ませるかを決める機能ではありません。Mujin は最後まで接続と提案だけを行います。<br>
+不変条件: cooperation_is_not_command · cooperation_is_not_assignment · proposal_is_not_decision ·
+participation_is_voluntary · withdrawal_is_not_failure · cooperation_is_revisable ·
+listing_is_not_endorsement · matching_is_not_authority。</p>
+<form method="post" action="/cooperation">
+<label>Name</label><input type="text" name="name" required>
+<label>Description</label><textarea name="description"></textarea>
+<label>Participants（カンマ区切り）</label><input type="text" name="participants">
+<label>Cooperation Type</label><select name="coop_type">{options(C.COOPERATION_TYPES)}</select>
+<label>Region（複数可・カンマ区切り）</label><input type="text" name="region">
+<label>Notes</label><input type="text" name="notes">
+<button>記録する</button>
+</form>
+<h2>記録済み — <a href="/cooperation/list">一覧</a></h2>
+<table><tr><th>id</th><th>name</th><th>type</th><th>regions</th><th>participants</th><th>description</th></tr>{rows or '<tr><td colspan=6>（まだありません）</td></tr>'}</table>
+"""
+    return page("Cooperation Commons", body)
+
+
+def render_cooperation_list(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(c['name'])}</td><td>{esc(c['cooperation_type'])}</td>"
+        f"<td>{esc('・'.join(c['regions']) or '—')}</td><td>{esc(c['participants_count'])}</td>"
+        f"<td>{esc(c['description'])}</td></tr>" for c in C.list_cooperations())
+    body = f"""
+<p class="note">登録順のみ。ランキング・人気順・評価・Cooperation Score はありません。
+Participants Count は観察であり、序列ではありません。</p>
+<table><tr><th>Name</th><th>Type</th><th>Region</th><th>Participants Count</th><th>Description</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Cooperation Registry", body)
+
+
+def render_cooperation_discussion(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(d['coopdisc_id'])}</td><td>{esc(d['ref_id'] or '—')}</td>"
+        f"<td>{esc(d['author'])}</td><td>{esc(d['content'])}</td></tr>"
+        for d in C.list_cooperation_discussion())
+    body = msg_block(q) + f"""
+<p class="note"><b>Cooperation Discussion</b> — 協力方法を談合する場所です。
+決定ではありません（discussion_is_not_decision · discussion_is_not_governance ·
+discussion_is_not_assignment）。誰を割り当てるかは決めません。</p>
+<form method="post" action="/cooperation-discussion">
+<label>関連 ID（任意）</label><input type="text" name="ref_id">
+<label>Author（擬名可）</label><input type="text" name="author">
+<label>内容（どう協力できるか）</label><textarea name="content" required></textarea>
+<button>投稿する</button>
+</form>
+<table><tr><th>id</th><th>ref</th><th>author</th><th>content</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
+"""
+    return page("Cooperation Discussion", body)
+
+
+def render_cooperation_paths(q) -> str:
+    paths = [
+        ["Voice", "Translation Network", "Reality Feedback"],
+        ["Voice", "Gateway", "Housing Support Team", "Reality Feedback"],
+        ["Voice", "Funding Circle", "Education Team", "Reality Feedback"],
+    ]
+    blocks = "".join(f'<div class="note">{esc(" → ".join(p))}</div>' for p in paths)
+    body = f"""
+<p class="note"><b>Cooperation Paths</b> — 表示のみ。協力経路の可視化です。
+これらは例示であり、固定の経路でも指示でもありません。Mujin の役割は接続・提案・談合です。</p>
+{blocks}
+<p class="note"><a href="/cooperation-discussion">Cooperation Discussion</a> で協力方法を談合できます。</p>
+"""
+    return page("Cooperation Paths", body)
+
+
 def render_transparency(q) -> str:
     inv = "".join(f"<tr><td><code>{esc(k)}</code></td><td><b>{esc(str(v).lower())}</b></td></tr>"
                   for k, v in C.INVARIANT_PHRASES.items())
@@ -826,6 +914,12 @@ def render_dashboard(q) -> str:
 <tr><th>Funding Contributions</th><td>{s['contribution_type_breakdown'].get('Funding', 0)}</td></tr>
 <tr><th>Community Contributions</th><td>{s['contribution_type_breakdown'].get('Community', 0)}</td></tr>
 <tr><th>Contribution Discussion Count</th><td>{s['contribution_discussion_count']}</td></tr>
+<tr><th>Cooperation Count</th><td>{s['cooperation_count']}</td></tr>
+<tr><th>Cooperation Type Count</th><td>{s['cooperation_type_count']}</td></tr>
+<tr><th>Mixed Cooperation Count</th><td>{s['mixed_cooperation_count']}</td></tr>
+<tr><th>Cross-Region Cooperation Count</th><td>{s['cross_region_cooperation_count']}</td></tr>
+<tr><th>Cooperation Regions Covered</th><td>{esc('・'.join(s['cooperation_regions']) or '—')}</td></tr>
+<tr><th>Cooperation Discussion Count</th><td>{s['cooperation_discussion_count']}</td></tr>
 <tr><th>Funding Post Count</th><td>{s['funding_post_count']}</td></tr>
 <tr><th>Public Call Count</th><td>{s['public_call_count']}</td></tr>
 <tr><th>Gateway Count</th><td>{s['gateway_count']}</td></tr>
@@ -865,6 +959,10 @@ GET_ROUTES = {
     "/contributions/list": render_contributions_list,
     "/contribution-discussion": render_contribution_discussion,
     "/contribution-paths": render_contribution_paths,
+    "/cooperation": render_cooperation,
+    "/cooperation/list": render_cooperation_list,
+    "/cooperation-discussion": render_cooperation_discussion,
+    "/cooperation-paths": render_cooperation_paths,
     "/discovery": render_discovery,
     "/commons": render_commons,
     "/proposals": render_proposals,
@@ -1014,6 +1112,18 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             ref_id=_f(form, "ref_id"), content=_f(form, "content"),
             author=_f(form, "author"))
         return "/contribution-discussion", f"{rec['contribdisc_id']} を投稿しました（決定ではありません）。"
+    if path == "/cooperation":
+        rec = C.register_cooperation(
+            name=_f(form, "name"), description=_f(form, "description"),
+            participants=_f(form, "participants"), coop_type=_f(form, "coop_type"),
+            region=_f(form, "region"), notes=_f(form, "notes"))
+        return "/cooperation", (f"{rec['coop_id']} を記録しました（{esc(rec['cooperation_type'])}・"
+                               "参加は任意・いつでも改定可能）。")
+    if path == "/cooperation-discussion":
+        rec = C.register_cooperation_discussion(
+            ref_id=_f(form, "ref_id"), content=_f(form, "content"),
+            author=_f(form, "author"))
+        return "/cooperation-discussion", f"{rec['coopdisc_id']} を投稿しました（割り当てではありません）。"
     if path == "/discovery":
         rec = C.post_public_call(
             title=_f(form, "title"), description=_f(form, "description"),
