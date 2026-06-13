@@ -251,6 +251,27 @@ adds Voice Count / Voice Categories / Need Candidates Generated / Voices
 Converted To Need / **Voice Response Time** (registration → first gateway
 suggestion) / Regions & Languages Represented.
 
+**Contribution Commons (Phase D-6).** If Voice Commons is the "help us"
+entrance, Contribution Commons is the "we want to help" entrance —
+treated as an *entrance, not a terminus*. `/contributions` registers
+offers across 12 types (Funding / Skill / Translation / Education /
+Infrastructure / AI Agent / Community / Research / Legal / Housing /
+Food / Other); every record carries `contribution_is_not_control /
+funding_is_not_control / skill_is_not_control / agent_is_not_control /
+gateway_is_not_control / listing_is_not_endorsement /
+listing_is_not_certification / participation_is_voluntary /
+withdrawal_is_not_failure`. AI Agent is just one contribution type (not
+special), additionally carrying `agent_is_not_governance /
+…is_not_case_selector / …is_not_funding_authority /
+…is_not_human_replacement`. `/contributions/list` is list-only (no
+ranking, no Top Contributors). `/contribution-discussion` negotiates
+*how* to cooperate (not a decision). `/contribution-paths` visualises
+cooperation routes (display only). The proposal engine now matches
+Contribution Commons offers to needs, carrying `matching_is_not_selection
+/ matching_is_not_authority`. Dashboard adds contribution counts and a
+type breakdown (an observation, sorted alphabetically — never by
+magnitude). Mujin connects; it does not allocate.
+
 **Voice Submission Network (Phase D-5).** Widens the Voice Commons
 entrance, still *not a discovery system*. `/voice-submit` brings an
 already-public call for help into the same voice stream (Source URL,

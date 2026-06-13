@@ -56,6 +56,8 @@ VOICE_JSONL         = DATA_DIR / "voice_records.jsonl"
 NEED_CANDIDATE_JSONL = DATA_DIR / "need_candidates.jsonl"
 TRANSLATORS_JSONL   = DATA_DIR / "translators.jsonl"
 DISCUSSION_JSONL    = DATA_DIR / "voice_discussion.jsonl"
+CONTRIB_COMMONS_JSONL = DATA_DIR / "contribution_commons.jsonl"
+CONTRIB_DISCUSSION_JSONL = DATA_DIR / "contribution_discussion.jsonl"
 
 # ── vocabularies ──────────────────────────────────────────────────────────────
 NEED_TYPES = [
@@ -153,6 +155,17 @@ class CommonsError(Exception):
 
 def _next_id(prefix: str, path) -> str:
     return f"{prefix}-{len(read_jsonl(path)) + 1:03d}"
+
+
+def _count_by(records: list[dict[str, Any]], key: str) -> dict[str, int]:
+    """Count records by a field value. An observation, never a ranking —
+    callers must present it without ordering by magnitude."""
+    out: dict[str, int] = {}
+    for r in records:
+        v = r.get(key)
+        if v:
+            out[v] = out.get(v, 0) + 1
+    return out
 
 
 # ── needs ─────────────────────────────────────────────────────────────────────
@@ -886,6 +899,103 @@ def list_discussion() -> list[dict[str, Any]]:
     return read_jsonl(DISCUSSION_JSONL)
 
 
+# ── Contribution Commons (Phase D-6) ─────────────────────────────────────────
+# If Voice Commons is the entrance for "help us", Contribution Commons is the
+# entrance for "we want to help". Contribution is treated as an ENTRANCE, not a
+# terminus. Mujin connects; it does not allocate. No contribution — of money,
+# skill, an AI agent, a gateway, anything — becomes control, authority, a
+# ranking, or a score. Participation is voluntary; withdrawal is not failure.
+
+CONTRIBUTION_COMMONS_TYPES = [
+    "Funding", "Skill", "Translation", "Education", "Infrastructure",
+    "AI Agent", "Community", "Research", "Legal", "Housing", "Food", "Other",
+]
+
+CONTRIBUTION_INVARIANTS = {
+    "contribution_is_not_control": True,
+    "funding_is_not_control": True,
+    "skill_is_not_control": True,
+    "agent_is_not_control": True,
+    "gateway_is_not_control": True,
+    "listing_is_not_endorsement": True,
+    "listing_is_not_certification": True,
+    "participation_is_voluntary": True,
+    "withdrawal_is_not_failure": True,
+}
+# AI Agent contributions are not special — they are one kind of contribution,
+# and they carry extra refusals so an agent can never become a power.
+AGENT_CONTRIBUTION_INVARIANTS = {
+    "agent_is_not_governance": True,
+    "agent_is_not_case_selector": True,
+    "agent_is_not_funding_authority": True,
+    "agent_is_not_human_replacement": True,
+}
+
+
+def register_contribution_commons(name, ctype, region, contact_method,
+                                  description) -> dict[str, Any]:
+    """Register a 'we want to help' offer. An entrance, not a terminus.
+
+    No contribution is control, authority, endorsement, certification, a
+    ranking, or a score. An AI Agent is simply one contribution type and is
+    not treated specially (beyond carrying extra refusal flags)."""
+    if ctype not in CONTRIBUTION_COMMONS_TYPES:
+        raise CommonsError(f"unknown contribution type: {ctype!r}")
+    for field_name, value in (("name", name), ("region", region),
+                              ("contact method", contact_method),
+                              ("description", description)):
+        if not value.strip():
+            raise CommonsError(f"{field_name} is required")
+    extra = dict(CONTRIBUTION_INVARIANTS)
+    if ctype == "AI Agent":
+        extra.update(AGENT_CONTRIBUTION_INVARIANTS)
+    return _post(CONTRIB_COMMONS_JSONL, "contribcom", "contribution_commons", {
+        "name": name.strip(),                # pseudonym welcome
+        "contribution_type": ctype,
+        "region": region.strip(),
+        "contact_method": contact_method.strip(),
+        "description": description.strip(),
+    }, extra=extra)
+
+
+def list_contribution_commons() -> list[dict[str, Any]]:
+    return read_jsonl(CONTRIB_COMMONS_JSONL)
+
+
+def register_contribution_discussion(ref_id, content, author) -> dict[str, Any]:
+    """People who want to help discussing HOW to cooperate. Append-only.
+    Not a decision, not governance, not case selection."""
+    if not content.strip():
+        raise CommonsError("discussion content is required")
+    return _post(CONTRIB_DISCUSSION_JSONL, "contribdisc", "contribution_discussion", {
+        "ref_id": ref_id.strip(),
+        "content": content.strip(),
+        "author": author.strip() or "anon",
+    }, extra={
+        "discussion_is_not_decision": True,
+        "discussion_is_not_governance": True,
+        "discussion_is_not_case_selection": True,
+    })
+
+
+def list_contribution_discussion() -> list[dict[str, Any]]:
+    return read_jsonl(CONTRIB_DISCUSSION_JSONL)
+
+
+# need type -> Contribution Commons types that could help (affinity, not ranking)
+_NEED_TO_CONTRIB = {
+    "Translation": {"Translation", "Skill", "AI Agent"},
+    "Housing":     {"Housing", "Funding", "Community", "Infrastructure"},
+    "Education":   {"Education", "Skill", "AI Agent", "Community"},
+    "Fundraising": {"Funding", "Community"},
+    "Legal":       {"Legal", "Skill"},
+    "Medical":     {"Skill", "Funding", "Community"},
+    "Technology":  {"Infrastructure", "Skill", "AI Agent", "Research"},
+    "Resource":    {"Food", "Funding", "Community", "Infrastructure"},
+    "Other":       set(CONTRIBUTION_COMMONS_TYPES),
+}
+
+
 # which gateway capabilities can connect which need type (affinity, not ranking)
 _NEED_TO_GATEWAY_CAPS = {
     "Translation": {"Translation", "Refugee Support"},
@@ -991,6 +1101,16 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
                 "provider_kind": "ai_agent",
                 "kind": "・".join(ap.get("capabilities", [])),
             })
+    contrib_types = _NEED_TO_CONTRIB.get(need["need_type"], {need["need_type"]})
+    for cc in list_contribution_commons():               # Contribution Commons (D-6)
+        if cc.get("contribution_type") in contrib_types:
+            candidates.append({
+                "candidate_type": "contribution_commons",
+                "id": cc["contribcom_id"],
+                "name": cc["name"],
+                "provider_kind": "ai_agent" if cc["contribution_type"] == "AI Agent" else "contributor",
+                "kind": cc["contribution_type"],
+            })
 
     gateway_candidates = gateway_candidates_for(need["need_type"])
 
@@ -1005,6 +1125,8 @@ def generate_proposal(need_id: str) -> dict[str, Any]:
         "candidates": candidates,                # neutral order, never ranked
         "candidate_count": len(candidates),
         "proposal_is_not_decision": True,
+        "matching_is_not_selection": True,
+        "matching_is_not_authority": True,
         "listing_is_not_endorsement": True,
         "connection_is_voluntary": True,
         "no_automatic_connection": True,
@@ -1159,7 +1281,12 @@ def ttfr_status() -> dict[str, Any]:
         "solution_count": len(list_solutions()),
         "resource_count": len(list_resources()),
         "contribution_count": len(list_contributions()),
-        "agent_count": len(list_agent_posts()) + len(list_agents()),
+        "contribution_commons_count": len(list_contribution_commons()),
+        "contribution_type_count": len({c.get("contribution_type") for c in list_contribution_commons() if c.get("contribution_type")}),
+        "contribution_type_breakdown": _count_by(list_contribution_commons(), "contribution_type"),
+        "contribution_discussion_count": len(list_contribution_discussion()),
+        "agent_count": len(list_agent_posts()) + len(list_agents())
+                       + sum(1 for c in list_contribution_commons() if c.get("contribution_type") == "AI Agent"),
         "funding_post_count": len(list_funding()),
         "public_call_count": len(list_public_calls()),
         "gateway_count": len(gateways),

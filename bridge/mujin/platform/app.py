@@ -54,6 +54,7 @@ NAV = (
     '<a href="/funding">Funding</a><a href="/voices">Voices</a>'
     '<a href="/voice-submit">Submit</a><a href="/voice-sources">Sources</a>'
     '<a href="/translations">Translate</a><a href="/voice-discussion">Discuss</a>'
+    '<a href="/contributions">Contribute</a><a href="/contribution-paths">Paths</a>'
     '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
     '<a href="/transparency">Transparency</a>'
@@ -661,6 +662,87 @@ discussion_is_not_case_selection）。「誰を助けるか」はここでは決
     return page("Voice Discussion", body)
 
 
+def render_contributions(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(c['contribcom_id'])}</td><td>{esc(c['name'])}</td>"
+        f"<td>{esc(c['contribution_type'])}</td><td>{esc(c['region'])}</td>"
+        f"<td>{esc(c['description'])}</td></tr>" for c in C.list_contribution_commons())
+    body = msg_block(q) + f"""
+<p class="note"><b>Contribution Commons</b> — 「助けたい」の入口です。
+Voice Commons が「助けてくれ」の入口であるのに対し、ここは協力の意思を持ち込む場所です。
+助けたい人・翻訳者・技術者・教育者・AI Agent 提供者・コミュニティ運営者・寄付者も Mujin の利用者です。</p>
+<p class="note neg">いかなる Contribution も統治権・選別権・権威・ランキング・スコアになりません:
+contribution_is_not_control · funding_is_not_control · skill_is_not_control ·
+agent_is_not_control · gateway_is_not_control · listing_is_not_endorsement ·
+listing_is_not_certification · participation_is_voluntary · withdrawal_is_not_failure。<br>
+AI Agent は特別扱いされません（Contribution の一種）。さらに agent_is_not_governance ·
+agent_is_not_case_selector · agent_is_not_funding_authority · agent_is_not_human_replacement を付与。</p>
+<form method="post" action="/contributions">
+<label>Name（擬名可）</label><input type="text" name="name" required>
+<label>Contribution Type</label><select name="ctype">{options(C.CONTRIBUTION_COMMONS_TYPES)}</select>
+<label>Region</label><input type="text" name="region" required>
+<label>Contact Method</label><input type="text" name="contact_method" required>
+<label>Description</label><textarea name="description" required></textarea>
+<button>登録する</button>
+</form>
+<h2>登録済み — <a href="/contributions/list">一覧</a></h2>
+<table><tr><th>id</th><th>name</th><th>type</th><th>region</th><th>description</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Contribution Commons", body)
+
+
+def render_contributions_list(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(c['name'])}</td><td>{esc(c['contribution_type'])}</td>"
+        f"<td>{esc(c['region'])}</td><td>{esc(c['contact_method'])}</td>"
+        f"<td>{esc(c['description'])}</td></tr>" for c in C.list_contribution_commons())
+    body = f"""
+<p class="note">登録順のみ。ランキング・評価・人気順・Top Contributors はありません。
+協力の意思は量で測られません。</p>
+<table><tr><th>Name</th><th>Type</th><th>Region</th><th>Contact</th><th>Description</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Contribution Registry", body)
+
+
+def render_contribution_discussion(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(d['contribdisc_id'])}</td><td>{esc(d['ref_id'] or '—')}</td>"
+        f"<td>{esc(d['author'])}</td><td>{esc(d['content'])}</td></tr>"
+        for d in C.list_contribution_discussion())
+    body = msg_block(q) + f"""
+<p class="note"><b>Contribution Discussion</b> — 助けたい人同士が「どう協力できるか」を話し合う場所です。
+ただし決定ではありません（discussion_is_not_decision · discussion_is_not_governance ·
+discussion_is_not_case_selection）。誰を助けるかも、誰が偉いかも、ここでは決めません。</p>
+<form method="post" action="/contribution-discussion">
+<label>関連 ID（任意）</label><input type="text" name="ref_id">
+<label>Author（擬名可）</label><input type="text" name="author">
+<label>内容（どう協力できるか）</label><textarea name="content" required></textarea>
+<button>投稿する</button>
+</form>
+<table><tr><th>id</th><th>ref</th><th>author</th><th>content</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
+"""
+    return page("Contribution Discussion", body)
+
+
+def render_contribution_paths(q) -> str:
+    paths = [
+        ["Voice", "Translation", "Gateway", "Reality Feedback"],
+        ["Voice", "Funding", "Need", "Reality Feedback"],
+        ["Voice", "AI Agent", "Community", "Reality Feedback"],
+        ["Voice", "Need", "Gateway", "Solution", "Contribution", "Reality Feedback"],
+    ]
+    blocks = "".join(
+        f'<div class="note">{esc(" → ".join(p))}</div>' for p in paths)
+    body = f"""
+<p class="note"><b>Contribution Paths</b> — 表示のみ。協力経路の可視化です。
+誰かを評価するためではなく、「助けてくれ」と「助けたい」がどう出会えるかを示します。</p>
+{blocks}
+<p class="note">これらは例示であり、固定の経路でも推奨順でもありません。
+Mujin の役割は配分ではなく接続です。</p>
+"""
+    return page("Contribution Paths", body)
+
+
 def render_transparency(q) -> str:
     inv = "".join(f"<tr><td><code>{esc(k)}</code></td><td><b>{esc(str(v).lower())}</b></td></tr>"
                   for k, v in C.INVARIANT_PHRASES.items())
@@ -735,8 +817,15 @@ def render_dashboard(q) -> str:
 <tr><th>Problem Count</th><td>{s['problem_count']}</td></tr>
 <tr><th>Solution Count</th><td>{s['solution_count']}</td></tr>
 <tr><th>Resource Count</th><td>{s['resource_count']}</td></tr>
-<tr><th>Contribution Count</th><td>{s['contribution_count']}</td></tr>
-<tr><th>Agent Count</th><td>{s['agent_count']}</td></tr>
+<tr><th>Contribution Count (legacy)</th><td>{s['contribution_count']}</td></tr>
+<tr><th>Contribution Commons Count</th><td>{s['contribution_commons_count']}</td></tr>
+<tr><th>Contribution Type Count</th><td>{s['contribution_type_count']}</td></tr>
+<tr><th>Contribution Types</th><td>{esc('・'.join(f"{k}:{v}" for k, v in sorted(s['contribution_type_breakdown'].items())) or '—')}</td></tr>
+<tr><th>AI Agent Count</th><td>{s['agent_count']}</td></tr>
+<tr><th>Translation Contributions</th><td>{s['contribution_type_breakdown'].get('Translation', 0)}</td></tr>
+<tr><th>Funding Contributions</th><td>{s['contribution_type_breakdown'].get('Funding', 0)}</td></tr>
+<tr><th>Community Contributions</th><td>{s['contribution_type_breakdown'].get('Community', 0)}</td></tr>
+<tr><th>Contribution Discussion Count</th><td>{s['contribution_discussion_count']}</td></tr>
 <tr><th>Funding Post Count</th><td>{s['funding_post_count']}</td></tr>
 <tr><th>Public Call Count</th><td>{s['public_call_count']}</td></tr>
 <tr><th>Gateway Count</th><td>{s['gateway_count']}</td></tr>
@@ -772,6 +861,10 @@ GET_ROUTES = {
     "/voice-sources": render_voice_sources,
     "/translations": render_translations,
     "/voice-discussion": render_voice_discussion,
+    "/contributions": render_contributions,
+    "/contributions/list": render_contributions_list,
+    "/contribution-discussion": render_contribution_discussion,
+    "/contribution-paths": render_contribution_paths,
     "/discovery": render_discovery,
     "/commons": render_commons,
     "/proposals": render_proposals,
@@ -909,6 +1002,18 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
             ref_id=_f(form, "ref_id"), content=_f(form, "content"),
             author=_f(form, "author"))
         return "/voice-discussion", f"{rec['discussion_id']} を投稿しました（談合であり決定ではありません）。"
+    if path == "/contributions":
+        rec = C.register_contribution_commons(
+            name=_f(form, "name"), ctype=_f(form, "ctype"),
+            region=_f(form, "region"), contact_method=_f(form, "contact_method"),
+            description=_f(form, "description"))
+        return "/contributions", (f"{rec['contribcom_id']} を登録しました（{esc(rec['contribution_type'])}）。"
+                                  "貢献は統治権でも序列でもありません。")
+    if path == "/contribution-discussion":
+        rec = C.register_contribution_discussion(
+            ref_id=_f(form, "ref_id"), content=_f(form, "content"),
+            author=_f(form, "author"))
+        return "/contribution-discussion", f"{rec['contribdisc_id']} を投稿しました（決定ではありません）。"
     if path == "/discovery":
         rec = C.post_public_call(
             title=_f(form, "title"), description=_f(form, "description"),
