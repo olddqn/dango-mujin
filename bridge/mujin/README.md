@@ -251,6 +251,23 @@ adds Voice Count / Voice Categories / Need Candidates Generated / Voices
 Converted To Need / **Voice Response Time** (registration → first gateway
 suggestion) / Regions & Languages Represented.
 
+**Voice Submission Network (Phase D-5).** Widens the Voice Commons
+entrance, still *not a discovery system*. `/voice-submit` brings an
+already-public call for help into the same voice stream (Source URL,
+Original Text, and a named Reviewer required; carries
+`voice_is_publicly_expressed / voice_submission_is_not_discovery /
+…is_not_ranking / …is_not_case_selection / requires_source /
+human_review_required / automatic_contact_prohibited /
+consent_still_required`). `/voice-sources` is a list-only Voice Source
+Registry (grouped by source with a Submission Count — an observation,
+never a score; registration order, no ranking). `/translations` is a
+Translation Commons (translator_is_connector / not_authority /
+translation_is_advisory). `/voice-discussion` lets people negotiate
+*how* to help (discussion_is_not_decision / not_governance /
+not_case_selection). The Voice → Need-Candidate path is unchanged
+(`auto_convert=false`, `human_confirmation_required`). Dashboard adds
+Voice Source Count / Translation Count / Discussion Count.
+
 **Reality Correction Layer.** Reality takes precedence over demonstration
 convenience. Records are never deleted; factual corrections are appended
 and logged to `data/correction_log.jsonl` and shown on Transparency. The

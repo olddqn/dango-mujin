@@ -54,6 +54,8 @@ DISCOVERY_JSONL     = DATA_DIR / "discovery_posts.jsonl"
 CORRECTION_JSONL    = DATA_DIR / "correction_log.jsonl"
 VOICE_JSONL         = DATA_DIR / "voice_records.jsonl"
 NEED_CANDIDATE_JSONL = DATA_DIR / "need_candidates.jsonl"
+TRANSLATORS_JSONL   = DATA_DIR / "translators.jsonl"
+DISCUSSION_JSONL    = DATA_DIR / "voice_discussion.jsonl"
 
 # ── vocabularies ──────────────────────────────────────────────────────────────
 NEED_TYPES = [
@@ -746,6 +748,144 @@ def voice_response_times() -> list[dict[str, Any]]:
     return out
 
 
+# ── Voice Submission Network (Phase D-5) ─────────────────────────────────────
+# Widens the Voice Commons entrance with more ways to bring an ALREADY-PUBLIC
+# call for help into Mujin. This is not a discovery system: Mujin does not find
+# people in need, does not score them, does not rank or select cases. It records
+# public voices and makes them negotiable. Who to help is never decided here.
+
+VOICE_SUBMISSION_SOURCE_TYPES = [
+    "News Report", "NGO Report", "Government Report", "Social Media",
+    "Community Notice", "Interview", "Academic Report", "Other",
+]
+
+
+def register_voice_submission(source_url, source_type, original_language, title,
+                              original_text, translation, region, tags,
+                              reviewer) -> dict[str, Any]:
+    """Submit an already-public call for help into the Voice Commons.
+
+    Requires a source, the original text, and a named human reviewer. Records
+    flow into the same voice stream so they convert to Need Candidates and
+    appear in the dashboard. Submission is not discovery, not ranking, not
+    case selection; listing is not endorsement; contact is never automatic;
+    consent is still required before anyone acts.
+    """
+    if source_type not in VOICE_SUBMISSION_SOURCE_TYPES:
+        raise CommonsError(f"unknown source type: {source_type!r}")
+    if not source_url.strip():
+        raise CommonsError("source URL is required (voice_submission_requires_source)")
+    if not original_text.strip():
+        raise CommonsError("original text is required (a real public statement, not an inference)")
+    if not reviewer.strip():
+        raise CommonsError("a named human reviewer is required (human_review_required)")
+    langs = [l.strip() for l in original_language.split(",") if l.strip()]
+    return _post(VOICE_JSONL, "voice", "voice_record", {
+        "title": (title.strip() or original_text.strip()[:60]),
+        "description": "",
+        "source_type": source_type,
+        "source_url": source_url.strip(),
+        "region": region.strip(),
+        "languages": langs,
+        "original_language": original_language.strip(),
+        "voice_category": "Other",        # categorisation is a later human step
+        "original_statement": original_text.strip(),
+        "translation": translation.strip(),
+        "human_summary": "",
+        "human_reviewer": reviewer.strip(),
+        "tags": [t.strip() for t in tags.split(",") if t.strip()],
+        "notes": "",
+        "submission": True,
+    }, extra={
+        "voice_is_publicly_expressed": True,
+        "voice_submission_is_not_discovery": True,
+        "voice_submission_is_not_ranking": True,
+        "voice_submission_is_not_case_selection": True,
+        "voice_submission_requires_source": True,
+        "human_review_required": True,
+        "automatic_contact_prohibited": True,
+        "consent_still_required": True,
+        "public_call_detected": True,
+        "human_reviewed": True,
+        "contact_attempted": False,
+    })
+
+
+def voice_sources() -> list[dict[str, Any]]:
+    """Voice Source Registry — derived from voice records, grouped by source.
+
+    List only. Registration order (first-seen). No ranking, no popularity,
+    no evaluation. Submission Count is an observation, never a score.
+    """
+    agg: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+    for v in list_voices():
+        key = v.get("source_url") or v.get("source_type") or "(unspecified)"
+        if key not in agg:
+            agg[key] = {
+                "source": key,
+                "source_type": v.get("source_type", ""),
+                "region": v.get("region", ""),
+                "languages": set(v.get("languages", [])),
+                "submission_count": 0,
+            }
+            order.append(key)
+        agg[key]["submission_count"] += 1
+        agg[key]["languages"].update(v.get("languages", []))
+    result = []
+    for k in order:
+        e = agg[k]
+        e["languages"] = sorted(e["languages"])
+        result.append(e)
+    return result
+
+
+# ── Translation Commons ───────────────────────────────────────────────────────
+
+def register_translator(language_pair, contact_method, notes) -> dict[str, Any]:
+    """Register someone who can translate public voices.
+
+    A translator is a connector, not an authority. Translation is advisory."""
+    if not language_pair.strip():
+        raise CommonsError("language pair is required (e.g. 'العربية → 日本語')")
+    return _post(TRANSLATORS_JSONL, "translator", "translator", {
+        "language_pair": language_pair.strip(),
+        "contact_method": contact_method.strip(),
+        "notes": notes.strip(),
+    }, extra={
+        "translator_is_connector": True,
+        "translator_is_not_authority": True,
+        "translation_is_advisory": True,
+    })
+
+
+def list_translators() -> list[dict[str, Any]]:
+    return read_jsonl(TRANSLATORS_JSONL)
+
+
+# ── Voice Discussion (negotiate HOW to help; never WHO / never decide) ───────
+
+def register_discussion(ref_id, content, author) -> dict[str, Any]:
+    """A discussion entry about how to help. Append-only.
+
+    Discussion is not decision, not governance, not case selection."""
+    if not content.strip():
+        raise CommonsError("discussion content is required")
+    return _post(DISCUSSION_JSONL, "discussion", "voice_discussion", {
+        "ref_id": ref_id.strip(),        # voice id or free reference
+        "content": content.strip(),
+        "author": author.strip() or "anon",
+    }, extra={
+        "discussion_is_not_decision": True,
+        "discussion_is_not_governance": True,
+        "discussion_is_not_case_selection": True,
+    })
+
+
+def list_discussion() -> list[dict[str, Any]]:
+    return read_jsonl(DISCUSSION_JSONL)
+
+
 # which gateway capabilities can connect which need type (affinity, not ranking)
 _NEED_TO_GATEWAY_CAPS = {
     "Translation": {"Translation", "Refugee Support"},
@@ -1003,6 +1143,9 @@ def ttfr_status() -> dict[str, Any]:
     languages = sorted({l for r in active + list_resources() + voices for l in r.get("languages", [])})
     return {
         "voice_count": len(voices),
+        "voice_source_count": len(voice_sources()),
+        "translation_count": len(list_translators()),
+        "discussion_count": len(list_discussion()),
         "voice_categories": sorted({v.get("voice_category", "") for v in voices if v.get("voice_category")}),
         "need_candidates_generated": len(candidates),
         "voices_converted_to_need": len(converted_voice_ids),

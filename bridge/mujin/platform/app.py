@@ -52,6 +52,8 @@ NAV = (
     '<nav><a href="/">Top</a><a href="/need">Need</a>'
     '<a href="/gateways">Gateways</a><a href="/solutions">Solutions</a>'
     '<a href="/funding">Funding</a><a href="/voices">Voices</a>'
+    '<a href="/voice-submit">Submit</a><a href="/voice-sources">Sources</a>'
+    '<a href="/translations">Translate</a><a href="/voice-discussion">Discuss</a>'
     '<a href="/commons">Commons</a><a href="/proposals">Proposals</a>'
     '<a href="/feedback">Reality Feedback</a><a href="/objection">Objection</a>'
     '<a href="/transparency">Transparency</a>'
@@ -574,6 +576,91 @@ suggested_solution_types: {esc('・'.join(c['suggested_solution_types']))}<br>
     return page(f"Voice {esc(vid)}", body)
 
 
+def render_voice_submit(q) -> str:
+    rows = "".join(
+        f"<tr><td><a href='/voices/view?id={esc(v['voice_id'])}'>{esc(v['voice_id'])}</a></td>"
+        f"<td>{esc(v['title'])}</td><td>{esc(v['source_type'])}</td>"
+        f"<td>{esc(v['region'])}</td><td>{esc(v['human_reviewer'])}</td></tr>"
+        for v in C.list_voices() if v.get("submission"))
+    body = msg_block(q) + f"""
+<p class="note"><b>Voice Submission</b> — すでに公開されている助けの声を Mujin に持ち込む入口です。
+これは Discovery System ではありません。Mujin は誰を助けるべきかを決めません。
+公開された声を記録し、談合可能な状態にします。</p>
+<p class="note neg">不変条件: voice_is_publicly_expressed · voice_submission_is_not_discovery ·
+voice_submission_is_not_ranking · voice_submission_is_not_case_selection ·
+voice_submission_requires_source · listing_is_not_endorsement · human_review_required ·
+automatic_contact_prohibited · consent_still_required</p>
+<form method="post" action="/voice-submit">
+<label>Source URL（必須）</label><input type="text" name="source_url" required>
+<label>Source Type</label><select name="source_type">{options(C.VOICE_SUBMISSION_SOURCE_TYPES)}</select>
+<label>Original Language（カンマ区切り可）</label><input type="text" name="original_language">
+<label>Title</label><input type="text" name="title">
+<label>Original Text（実際の公開された声・必須）</label><textarea name="original_text" required></textarea>
+<label>Translation（任意・advisory）</label><textarea name="translation"></textarea>
+<label>Region</label><input type="text" name="region">
+<label>Tags（カンマ区切り）</label><input type="text" name="tags">
+<label>Reviewer（レビューした人間・必須）</label><input type="text" name="reviewer" required>
+<button>提出する</button>
+</form>
+<h2>提出済み Voice（登録順）</h2>
+<table><tr><th>id</th><th>title</th><th>source type</th><th>region</th><th>reviewer</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Voice Submission", body)
+
+
+def render_voice_sources(q) -> str:
+    rows = "".join(
+        f"<tr><td style='word-break:break-all'>{esc(s['source'])}</td><td>{esc(s['region'])}</td>"
+        f"<td>{esc(s['source_type'])}</td><td>{esc('・'.join(s['languages']) or '—')}</td>"
+        f"<td>{esc(s['submission_count'])}</td></tr>" for s in C.voice_sources())
+    body = f"""
+<p class="note"><b>Voice Source Registry</b> — 一覧表示のみ。登録順です。
+順位付け・人気順・評価はありません。Submission Count は観察であり、スコアではありません。</p>
+<table><tr><th>Source</th><th>Region</th><th>Type</th><th>Language</th><th>Submission Count</th></tr>{rows or '<tr><td colspan=5>（まだありません）</td></tr>'}</table>
+"""
+    return page("Voice Source Registry", body)
+
+
+def render_translations(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(t['translator_id'])}</td><td>{esc(t['language_pair'])}</td>"
+        f"<td>{esc(t['contact_method'])}</td><td>{esc(t['notes'])}</td></tr>"
+        for t in C.list_translators())
+    body = msg_block(q) + f"""
+<p class="note"><b>Translation Commons</b> — 公開された声を翻訳できる人を募集します。
+翻訳者は接続者であり、権威ではありません（translator_is_connector · translator_is_not_authority ·
+translation_is_advisory）。</p>
+<form method="post" action="/translations">
+<label>Language Pair（例: العربية → 日本語）</label><input type="text" name="language_pair" required>
+<label>Contact Method</label><input type="text" name="contact_method">
+<label>Notes</label><textarea name="notes"></textarea>
+<button>登録する</button>
+</form>
+<table><tr><th>id</th><th>language pair</th><th>contact</th><th>notes</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
+"""
+    return page("Translation Commons", body)
+
+
+def render_voice_discussion(q) -> str:
+    rows = "".join(
+        f"<tr><td>{esc(d['discussion_id'])}</td><td>{esc(d['ref_id'] or '—')}</td>"
+        f"<td>{esc(d['author'])}</td><td>{esc(d['content'])}</td></tr>"
+        for d in C.list_discussion())
+    body = msg_block(q) + f"""
+<p class="note"><b>Voice Discussion</b> — 「どう助けるか」を談合できる場所です。
+ただしこれは決定ではありません（discussion_is_not_decision · discussion_is_not_governance ·
+discussion_is_not_case_selection）。「誰を助けるか」はここでは決めません。</p>
+<form method="post" action="/voice-discussion">
+<label>関連 Voice ID（任意: voice-### / 自由記述）</label><input type="text" name="ref_id">
+<label>Author（擬名可）</label><input type="text" name="author">
+<label>内容（どう助けられるか）</label><textarea name="content" required></textarea>
+<button>投稿する</button>
+</form>
+<table><tr><th>id</th><th>ref</th><th>author</th><th>content</th></tr>{rows or '<tr><td colspan=4>（まだありません）</td></tr>'}</table>
+"""
+    return page("Voice Discussion", body)
+
+
 def render_transparency(q) -> str:
     inv = "".join(f"<tr><td><code>{esc(k)}</code></td><td><b>{esc(str(v).lower())}</b></td></tr>"
                   for k, v in C.INVARIANT_PHRASES.items())
@@ -635,6 +722,9 @@ def render_dashboard(q) -> str:
     body = f"""
 <table>
 <tr><th>Voice Count</th><td>{s['voice_count']}</td></tr>
+<tr><th>Voice Source Count</th><td>{s['voice_source_count']}</td></tr>
+<tr><th>Translation Count</th><td>{s['translation_count']}</td></tr>
+<tr><th>Discussion Count</th><td>{s['discussion_count']}</td></tr>
 <tr><th>Voice Categories</th><td>{esc('・'.join(s['voice_categories']) or '—')}</td></tr>
 <tr><th>Need Candidates Generated</th><td>{s['need_candidates_generated']}</td></tr>
 <tr><th>Voices Converted To Need</th><td>{s['voices_converted_to_need']}（うち実 Need 化 {s['needs_from_voice']}）</td></tr>
@@ -678,6 +768,10 @@ GET_ROUTES = {
     "/voices": render_voices,
     "/voices/list": render_voices_list,
     "/voices/view": render_voice_view,
+    "/voice-submit": render_voice_submit,
+    "/voice-sources": render_voice_sources,
+    "/translations": render_translations,
+    "/voice-discussion": render_voice_discussion,
     "/discovery": render_discovery,
     "/commons": render_commons,
     "/proposals": render_proposals,
@@ -797,6 +891,24 @@ def handle_post(path: str, form: dict[str, list[str]]) -> tuple[str, str]:
         rec = C.convert_voice_to_need_candidate(_f(form, "voice_id"))
         return (f"/voices/view?id={rec['origin_voice_id']}",
                 f"{rec['needcand_id']} を生成しました（Need Candidate・決定ではありません・人間の確認が必要）。")
+    if path == "/voice-submit":
+        rec = C.register_voice_submission(
+            source_url=_f(form, "source_url"), source_type=_f(form, "source_type"),
+            original_language=_f(form, "original_language"), title=_f(form, "title"),
+            original_text=_f(form, "original_text"), translation=_f(form, "translation"),
+            region=_f(form, "region"), tags=_f(form, "tags"), reviewer=_f(form, "reviewer"))
+        return "/voice-submit", (f"{rec['voice_id']} を提出しました。"
+                                "公開された声の記録です。検証でも同意でもありません。")
+    if path == "/translations":
+        rec = C.register_translator(
+            language_pair=_f(form, "language_pair"),
+            contact_method=_f(form, "contact_method"), notes=_f(form, "notes"))
+        return "/translations", f"{rec['translator_id']} を登録しました（翻訳は advisory です）。"
+    if path == "/voice-discussion":
+        rec = C.register_discussion(
+            ref_id=_f(form, "ref_id"), content=_f(form, "content"),
+            author=_f(form, "author"))
+        return "/voice-discussion", f"{rec['discussion_id']} を投稿しました（談合であり決定ではありません）。"
     if path == "/discovery":
         rec = C.post_public_call(
             title=_f(form, "title"), description=_f(form, "description"),
