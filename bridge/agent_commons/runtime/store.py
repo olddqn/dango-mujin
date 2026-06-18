@@ -30,6 +30,7 @@ AGENT_COMMONS_DIR = Path(__file__).resolve().parent.parent      # bridge/agent_c
 REPO_ROOT         = AGENT_COMMONS_DIR.parents[1]                 # repo root
 DATA_DIR          = AGENT_COMMONS_DIR / "data"
 REPORTS_DIR       = AGENT_COMMONS_DIR / "reports"
+MEMORY_DIR        = AGENT_COMMONS_DIR / "memory"
 
 # read-only source (Mujin) — never written from this layer
 MUJIN_VOICE_RECORDS = REPO_ROOT / "bridge" / "mujin" / "data" / "voice_records.jsonl"
@@ -41,6 +42,12 @@ AGENT_REGISTRY_JSONL = DATA_DIR / "agent_registry.jsonl"
 AGENT_RESULTS_JSONL  = DATA_DIR / "agent_results.jsonl"   # empty this phase (no execution)
 
 REPORT_MD = REPORTS_DIR / "agent_commons_report.md"
+
+# Hermes Reflective Memory (H-2.5)
+REFLECTION_JSONL = MEMORY_DIR / "reflection_records.jsonl"
+LEARNING_JSONL   = MEMORY_DIR / "learning_records.jsonl"
+PATTERN_JSONL    = MEMORY_DIR / "pattern_records.jsonl"
+MEMORY_REPORT_MD = REPORTS_DIR / "hermes_memory_report.md"
 
 # paths this layer must never write to
 _FORBIDDEN_WRITE_PARTS = (
