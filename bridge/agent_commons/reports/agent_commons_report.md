@@ -1,6 +1,6 @@
 # Agent Commons Report
 
-- Generated: 2026-06-18T19:52:35.417965Z
+- Generated: 2026-06-18T20:29:53.170867Z
 - Layer: `bridge/agent_commons/` (advisory only · authority none · AI proposes, human decides)
 
 ## Counts
@@ -11,6 +11,11 @@
 | Task Candidate Count | 25 |
 | Agent Registry Count | 7 |
 | Agent Results Count | 0 (no execution this phase) |
+| Evidence Candidate Count | 1 |
+| Evidence Coverage | 1/1 |
+| Patterns With Evidence | 1 |
+| Patterns Without Evidence | 0 |
+| Human Reviewed Evidence Count | 0 (AI-gathered; human review pending by design) |
 
 ## Hermes Review Results
 - Reviewer of Record: human (Hermes only flags; it does not decide)
@@ -18,6 +23,7 @@
   - no Need defined / approved / rejected
   - no Task auto-assigned to an agent
   - all agents carry refusal flags; no real connection / execution
+  - evidence candidates: not fact, not proof, no need definition
   - no auto-approval / auto-execution / auto-needification
 - Passed: **True**
 

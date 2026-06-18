@@ -46,6 +46,8 @@ def build_report() -> Path:
     agents = read_jsonl(AGENT_REGISTRY_JSONL)
     results = read_jsonl(AGENT_RESULTS_JSONL)
     review = run_review()
+    from .evidence_builder import coverage as _ev_coverage
+    cov = _ev_coverage()
 
     dango_hash = _dir_hash(REPO_ROOT, ["globe", "bridge/gitsea", "bridge/sutable"])
     mujin_hash = _dir_hash(REPO_ROOT, ["bridge/mujin"])
@@ -66,6 +68,11 @@ def build_report() -> Path:
 | Task Candidate Count | {len(tasks)} |
 | Agent Registry Count | {len(agents)} |
 | Agent Results Count | {len(results)} (no execution this phase) |
+| Evidence Candidate Count | {cov['evidence_count']} |
+| Evidence Coverage | {cov['evidence_coverage']} |
+| Patterns With Evidence | {cov['patterns_with_evidence']} |
+| Patterns Without Evidence | {cov['patterns_without_evidence']} |
+| Human Reviewed Evidence Count | {cov['human_reviewed_evidence_count']} (AI-gathered; human review pending by design) |
 
 ## Hermes Review Results
 - Reviewer of Record: {review['reviewer_of_record']}

@@ -47,6 +47,7 @@ REPORT_MD = REPORTS_DIR / "agent_commons_report.md"
 REFLECTION_JSONL = MEMORY_DIR / "reflection_records.jsonl"
 LEARNING_JSONL   = MEMORY_DIR / "learning_records.jsonl"
 PATTERN_JSONL    = MEMORY_DIR / "pattern_records.jsonl"
+EVIDENCE_JSONL   = MEMORY_DIR / "evidence_candidates.jsonl"   # H-3.5
 MEMORY_REPORT_MD = REPORTS_DIR / "hermes_memory_report.md"
 
 # paths this layer must never write to

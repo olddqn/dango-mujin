@@ -66,8 +66,14 @@ def run_review() -> dict[str, Any]:
         if a.get("execution_enabled") is not False:
             violations.append(f"{a.get('agent_id')}: execution_enabled not false")
 
-    # 4. global auto-action guard (no record enables auto anything)
-    for rec in obs + tasks + agents:
+    # 4. evidence candidates (H-3.5): no need def; required refusal flags
+    from .evidence_builder import check_invariants as _ev_check
+    from .store import read_jsonl as _rj, EVIDENCE_JSONL as _EV
+    evidence = _rj(_EV)
+    violations += _ev_check()
+
+    # 5. global auto-action guard (no record enables auto anything)
+    for rec in obs + tasks + agents + evidence:
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
@@ -77,10 +83,12 @@ def run_review() -> dict[str, Any]:
         "observation_count": len(obs),
         "task_candidate_count": len(tasks),
         "agent_count": len(agents),
+        "evidence_count": len(evidence),
         "checks": [
             "no Need defined / approved / rejected",
             "no Task auto-assigned to an agent",
             "all agents carry refusal flags; no real connection / execution",
+            "evidence candidates: not fact, not proof, no need definition",
             "no auto-approval / auto-execution / auto-needification",
         ],
         "violations": violations,
