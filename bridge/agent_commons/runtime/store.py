@@ -57,6 +57,9 @@ COOP_EVIDENCE_JSONL   = MEMORY_DIR / "cooperation_evidence_candidates.jsonl"
 MEMORY_REPORT_MD = REPORTS_DIR / "hermes_memory_report.md"
 INFERENCE_BOUNDARY_REPORT_MD = REPORTS_DIR / "inference_boundary_report.md"  # H-4
 COOP_MEMORY_REPORT_MD = REPORTS_DIR / "cooperation_memory_report.md"  # H-5
+# Decision Boundary Memory (H-6) — data/ + reports/ per spec
+DECISION_BOUNDARY_JSONL = DATA_DIR / "decision_boundaries.jsonl"
+DECISION_BOUNDARY_REPORT_MD = REPORTS_DIR / "decision_boundary_report.md"
 
 # read-only input from the human review (X-3.5)
 NEED_DEFINITION_REVIEW_MD = REPO_ROOT / "docs" / "NEED_DEFINITION_REVIEW.md"

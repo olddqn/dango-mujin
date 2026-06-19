@@ -85,8 +85,16 @@ def run_review() -> dict[str, Any]:
     cooperation = _coop_all()
     violations += _coop_check()
 
+    # 4d. decision boundaries (H-6): record where a candidate became a decision;
+    #     the record itself never decides
+    from .decision_boundary_builder import check_invariants as _db_check
+    from .store import DECISION_BOUNDARY_JSONL as _DB
+    decision_boundaries = _rj(_DB)
+    violations += _db_check()
+
     # 5. global auto-action guard (no record enables auto anything)
-    for rec in obs + tasks + agents + evidence + boundaries + cooperation:
+    for rec in (obs + tasks + agents + evidence + boundaries + cooperation
+                + decision_boundaries):
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
