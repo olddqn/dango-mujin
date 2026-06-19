@@ -78,8 +78,15 @@ def run_review() -> dict[str, Any]:
     boundaries = _rj(_IB)
     violations += _ib_check()
 
+    # 4c. cooperation memory (H-5): possibility only; no actor named/ranked;
+    #     no forbidden governance terms (best/recommended/priority gateway etc.)
+    from .cooperation_evidence_builder import (
+        check_invariants as _coop_check, _all_cooperation_records as _coop_all)
+    cooperation = _coop_all()
+    violations += _coop_check()
+
     # 5. global auto-action guard (no record enables auto anything)
-    for rec in obs + tasks + agents + evidence + boundaries:
+    for rec in obs + tasks + agents + evidence + boundaries + cooperation:
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
@@ -91,12 +98,15 @@ def run_review() -> dict[str, Any]:
         "agent_count": len(agents),
         "evidence_count": len(evidence),
         "inference_boundary_count": len(boundaries),
+        "cooperation_record_count": len(cooperation),
         "checks": [
             "no Need defined / approved / rejected",
             "no Task auto-assigned to an agent",
             "all agents carry refusal flags; no real connection / execution",
             "evidence candidates: not fact, not proof, no need definition",
             "inference boundaries: record where inference begins, define no need",
+            "cooperation memory: possibility only; no actor named/ranked; no "
+            "best/recommended/priority/optimal gateway",
             "no auto-approval / auto-execution / auto-needification",
         ],
         "violations": violations,
