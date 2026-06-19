@@ -68,12 +68,18 @@ def run_review() -> dict[str, Any]:
 
     # 4. evidence candidates (H-3.5): no need def; required refusal flags
     from .evidence_builder import check_invariants as _ev_check
-    from .store import read_jsonl as _rj, EVIDENCE_JSONL as _EV
+    from .store import (read_jsonl as _rj, EVIDENCE_JSONL as _EV,
+                        INFERENCE_BOUNDARY_JSONL as _IB)
     evidence = _rj(_EV)
     violations += _ev_check()
 
+    # 4b. inference boundaries (H-4): records where inference began; no need def
+    from .inference_boundary_builder import check_invariants as _ib_check
+    boundaries = _rj(_IB)
+    violations += _ib_check()
+
     # 5. global auto-action guard (no record enables auto anything)
-    for rec in obs + tasks + agents + evidence:
+    for rec in obs + tasks + agents + evidence + boundaries:
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
@@ -84,11 +90,13 @@ def run_review() -> dict[str, Any]:
         "task_candidate_count": len(tasks),
         "agent_count": len(agents),
         "evidence_count": len(evidence),
+        "inference_boundary_count": len(boundaries),
         "checks": [
             "no Need defined / approved / rejected",
             "no Task auto-assigned to an agent",
             "all agents carry refusal flags; no real connection / execution",
             "evidence candidates: not fact, not proof, no need definition",
+            "inference boundaries: record where inference begins, define no need",
             "no auto-approval / auto-execution / auto-needification",
         ],
         "violations": violations,

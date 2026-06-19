@@ -48,7 +48,12 @@ REFLECTION_JSONL = MEMORY_DIR / "reflection_records.jsonl"
 LEARNING_JSONL   = MEMORY_DIR / "learning_records.jsonl"
 PATTERN_JSONL    = MEMORY_DIR / "pattern_records.jsonl"
 EVIDENCE_JSONL   = MEMORY_DIR / "evidence_candidates.jsonl"   # H-3.5
+INFERENCE_BOUNDARY_JSONL = MEMORY_DIR / "inference_boundary_records.jsonl"  # H-4
 MEMORY_REPORT_MD = REPORTS_DIR / "hermes_memory_report.md"
+INFERENCE_BOUNDARY_REPORT_MD = REPORTS_DIR / "inference_boundary_report.md"  # H-4
+
+# read-only input from the human review (X-3.5)
+NEED_DEFINITION_REVIEW_MD = REPO_ROOT / "docs" / "NEED_DEFINITION_REVIEW.md"
 
 # paths this layer must never write to
 _FORBIDDEN_WRITE_PARTS = (
