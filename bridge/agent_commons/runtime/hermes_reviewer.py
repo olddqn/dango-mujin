@@ -92,9 +92,42 @@ def run_review() -> dict[str, Any]:
     decision_boundaries = _rj(_DB)
     violations += _db_check()
 
+    # 4e. findability (F-1): record that an actor discovered Mujin; never
+    #     outreach / recruitment / acquisition / growth; no channel ranked
+    from .findability_evidence_builder import (
+        check_invariants as _find_check,
+        _all_findability_records as _find_all)
+    findability = _find_all()
+    violations += _find_check()
+
+    # 4f. findability surfaces (F-1.5): record WHERE Mujin is findable; never
+    #     outreach / growth / marketing / acquisition; no surface ranked
+    from .findability_surface_evidence_builder import (
+        check_invariants as _surf_check,
+        _all_surface_records as _surf_all)
+    surfaces = _surf_all()
+    violations += _surf_check()
+
+    # 4g. discoverable objects (F-1.7): record the surface→object mapping; never
+    #     marketing / growth / recruitment; no object ranked or inferred
+    from .discoverable_object_evidence_builder import (
+        check_invariants as _obj_check,
+        _all_object_records as _obj_all)
+    objects = _obj_all()
+    violations += _obj_check()
+
+    # 4h. discovery memory (F-2): record who discovered what, where (verified
+    #     only); never growth/marketing/recruitment/recommendation; no surface
+    #     or actor ranked; no invented discoverer
+    from .discovery_evidence_builder import (
+        check_invariants as _disc_check,
+        _all_discovery_records as _disc_all)
+    discovery = _disc_all()
+    violations += _disc_check()
+
     # 5. global auto-action guard (no record enables auto anything)
     for rec in (obs + tasks + agents + evidence + boundaries + cooperation
-                + decision_boundaries):
+                + decision_boundaries + findability + surfaces + objects + discovery):
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
@@ -115,6 +148,14 @@ def run_review() -> dict[str, Any]:
             "inference boundaries: record where inference begins, define no need",
             "cooperation memory: possibility only; no actor named/ranked; no "
             "best/recommended/priority/optimal gateway",
+            "findability: records discovery only; no outreach/recruitment/"
+            "acquisition/growth; no channel ranked or recommended",
+            "findability surfaces: records what exists only; no outreach/growth/"
+            "marketing/acquisition; no surface ranked or recommended",
+            "discoverable objects: records surface→object mapping only; no "
+            "marketing/growth/recruitment; no object ranked or inferred",
+            "discovery memory: records verified events only (who/what/where); no "
+            "growth/marketing/recruitment/recommendation; no surface/actor ranked",
             "no auto-approval / auto-execution / auto-needification",
         ],
         "violations": violations,

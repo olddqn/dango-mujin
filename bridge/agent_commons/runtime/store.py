@@ -61,6 +61,49 @@ COOP_MEMORY_REPORT_MD = REPORTS_DIR / "cooperation_memory_report.md"  # H-5
 DECISION_BOUNDARY_JSONL = DATA_DIR / "decision_boundaries.jsonl"
 DECISION_BOUNDARY_REPORT_MD = REPORTS_DIR / "decision_boundary_report.md"
 
+# Findability Observation Layer (F-1) — records that someone discovered Mujin.
+# Findability is NOT Reachability: Mujin never searches, contacts, recruits, or
+# infers a Need. FINDABILITY_EVENT_JSONL is a READ-ONLY input that records the
+# bare fact "an actor discovered Mujin"; it may not exist yet (then count = 0,
+# which is an observation, not a failure). It sits BEFORE Voice in the pipeline.
+FINDABILITY_EVENT_JSONL      = DATA_DIR / "findability_events.jsonl"        # read-only input
+FINDABILITY_REFLECTION_JSONL = DATA_DIR / "findability_reflections.jsonl"
+FINDABILITY_LEARNING_JSONL   = DATA_DIR / "findability_learnings.jsonl"
+FINDABILITY_PATTERN_JSONL    = DATA_DIR / "findability_patterns.jsonl"
+FINDABILITY_EVIDENCE_JSONL   = DATA_DIR / "findability_evidence.jsonl"
+FINDABILITY_REPORT_MD        = REPORTS_DIR / "findability_report.md"
+
+# Findability Surface Review (F-1.5) — observes WHERE Mujin is findable (its
+# public surfaces). Observation of what exists, NOT an SEO/acquisition/marketing
+# /growth analysis. Each surface is verified; unconfirmed surfaces → exists=false.
+FINDABILITY_SURFACE_REFLECTION_JSONL = DATA_DIR / "findability_surface_reflections.jsonl"
+FINDABILITY_SURFACE_LEARNING_JSONL   = DATA_DIR / "findability_surface_learnings.jsonl"
+FINDABILITY_SURFACE_PATTERN_JSONL    = DATA_DIR / "findability_surface_patterns.jsonl"
+FINDABILITY_SURFACE_EVIDENCE_JSONL   = DATA_DIR / "findability_surface_evidence.jsonl"
+FINDABILITY_SURFACE_REPORT_MD        = REPORTS_DIR / "findability_surface_report.md"
+
+# Discoverable Object Review (F-1.7) — observes the Surface → Object mapping:
+# given the surfaces that exist, WHAT can an external actor actually discover.
+# Observation of what is visible, NOT branding/marketing/SEO/growth. Reads F-1.5
+# surfaces read-only; never assumes an object is discoverable.
+DISCOVERABLE_OBJECT_REFLECTION_JSONL = DATA_DIR / "discoverable_object_reflections.jsonl"
+DISCOVERABLE_OBJECT_LEARNING_JSONL   = DATA_DIR / "discoverable_object_learnings.jsonl"
+DISCOVERABLE_OBJECT_PATTERN_JSONL    = DATA_DIR / "discoverable_object_patterns.jsonl"
+DISCOVERABLE_OBJECT_EVIDENCE_JSONL   = DATA_DIR / "discoverable_object_evidence.jsonl"
+DISCOVERABLE_OBJECT_REPORT_MD        = REPORTS_DIR / "discoverable_object_report.md"
+
+# Discovery Event Memory (F-2) — the Discovery layer above F-1/F-1.5/F-1.7.
+# Findability is "can be discovered"; Discovery is "was actually discovered".
+# DISCOVERY_EVENTS_JSONL is a READ-ONLY input of real, verified discovery events;
+# it may be empty (then everything downstream is 0 — recording that no discovery
+# has happened, never fabricating one). Central question: who discovered what, where.
+DISCOVERY_EVENTS_JSONL      = DATA_DIR / "discovery_events.jsonl"        # read-only input
+DISCOVERY_REFLECTIONS_JSONL = DATA_DIR / "discovery_reflections.jsonl"
+DISCOVERY_LEARNINGS_JSONL   = DATA_DIR / "discovery_learnings.jsonl"
+DISCOVERY_PATTERNS_JSONL    = DATA_DIR / "discovery_patterns.jsonl"
+DISCOVERY_EVIDENCE_JSONL    = DATA_DIR / "discovery_evidence.jsonl"
+DISCOVERY_REPORT_MD         = REPORTS_DIR / "discovery_report.md"
+
 # read-only input from the human review (X-3.5)
 NEED_DEFINITION_REVIEW_MD = REPO_ROOT / "docs" / "NEED_DEFINITION_REVIEW.md"
 
