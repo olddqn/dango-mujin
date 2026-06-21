@@ -70,16 +70,27 @@ def run_full_audit() -> dict[str, Any]:
 
 def main() -> None:
     print("=" * 64)
-    print("SHARED EDGE AUDIT")
+    print("SHARED EDGE AUDIT (Voice -> Observed Edge -> Route A | Route B)")
     print("=" * 64)
     r = run_full_audit()
-    print(f"  edge layer violations: {len(r['edge_violations'])}")
+    print(f"  [edge layer] violations: {len(r['edge_violations'])}")
     for v in r["edge_violations"]:
-        print(f"    - {v}")
-    for name, ok, _detail in r["routes"]:
-        print(f"  {'✓' if ok else '✗'} {name}")
+        print(f"      - {v}")
+    for name, ok, detail in r["routes"]:
+        sv = detail.get("static_violations", []) if isinstance(detail, dict) else []
+        dyn = detail.get("dynamic_checks", []) if isinstance(detail, dict) else []
+        print(f"  [{name}] {'PASS ✓' if ok else 'FAIL ✗'}  "
+              f"(static violations: {len(sv)}, dynamic checks: {len(dyn)})")
+        for v in sv:
+            print(f"      - {v}")
+        for n, c in dyn:
+            print(f"      {'✓' if c else '✗'} {n}")
+        if "error" in (detail if isinstance(detail, dict) else {}):
+            print(f"      ! error: {detail['error']}")
     print("-" * 64)
     print("  RESULT:", "PASS ✓" if r["passed"] else "FAIL ✗")
+    print("  Person domain sealed across both routes. No ranking / recommendation /")
+    print("  reach-gap estimation / Saiyan Scouter. Edge records & memory shared.")
 
 
 if __name__ == "__main__":
