@@ -89,16 +89,35 @@ def _patched_modules():
 
     def mnext(prefix, p): return f"{prefix}-{len(mem.get(str(p), [])) + 1:03d}"
 
-    for m in edge_mods + gw_mods:
-        m.append_jsonl = mappend
-        m.read_jsonl = mread
-        m.next_id = mnext
+    all_mods = edge_mods + gw_mods
+    # memory_builder delegates to edge_memory and has no store fns of its own; only
+    # patch modules that actually import them (guard with hasattr).
+    saved = [(m, getattr(m, "append_jsonl", None), getattr(m, "read_jsonl", None),
+              getattr(m, "next_id", None)) for m in all_mods]
+
+    for m in all_mods:
+        if hasattr(m, "append_jsonl"):
+            m.append_jsonl = mappend
+        if hasattr(m, "read_jsonl"):
+            m.read_jsonl = mread
+        if hasattr(m, "next_id"):
+            m.next_id = mnext
+
+    def restore() -> None:  # undo the in-memory patch so no module state leaks
+        for m, a, r, n in saved:
+            if a is not None:
+                m.append_jsonl = a
+            if r is not None:
+                m.read_jsonl = r
+            if n is not None:
+                m.next_id = n
+
     eb, em = edge_mods
-    return (eb, em, *gw_mods), mem
+    return (eb, em, *gw_mods), mem, restore
 
 
 def dynamic_boundary_checks() -> list[tuple[str, bool]]:
-    (eb, em, bb, cb, ap, co, ex, fb, tg, wd, mb), mem = _patched_modules()
+    (eb, em, bb, cb, ap, co, ex, fb, tg, wd, mb), mem, _restore = _patched_modules()
     results: list[tuple[str, bool]] = []
 
     def chk(name, cond): results.append((name, bool(cond)))
@@ -223,6 +242,7 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
         len(inv) == 1 and inv[0]["status"] == "held_clock_inversion"
         and inv[0]["ttfr_g_seconds"] is None)
 
+    _restore()   # undo in-memory patches so the audit leaves no module-state leak
     return results
 
 

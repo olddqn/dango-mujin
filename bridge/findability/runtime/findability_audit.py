@@ -55,8 +55,13 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
         mem.setdefault(str(p), []).append(rec); return rec
 
     def mnext(prefix, p): return f"{prefix}-{len(mem.get(str(p), [])) + 1:03d}"
+    saved = [(m, m.append_jsonl, m.read_jsonl, m.next_id) for m in (eb, em, fb, co, sr)]
     for m in (eb, em, fb, co, sr):
         m.append_jsonl = mappend; m.read_jsonl = mread; m.next_id = mnext
+
+    def restore() -> None:  # undo the in-memory patch so no module state leaks
+        for m, a, r, n in saved:
+            m.append_jsonl = a; m.read_jsonl = r; m.next_id = n
 
     results: list[tuple[str, bool]] = []
 
@@ -93,6 +98,7 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
     chk("Route A episodes recorded in SHARED edge memory, no actor identity (F-19)",
         len(em.list_memory("findability")) == 3
         and all("gateway_ref" not in m for m in em.list_memory("findability")))
+    restore()   # undo in-memory patches so the audit leaves no module-state leak
     return results
 
 
