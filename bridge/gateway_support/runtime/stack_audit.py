@@ -40,7 +40,7 @@ def static_violations() -> list[str]:
     out += withdrawal_builder.check_invariants()
     out += memory_builder.check_invariants()
     # structural scan: no record anywhere may carry a forbidden field
-    from ..store import (read_jsonl, FORBIDDEN_FIELDS,
+    from ..store import (read_jsonl, scan_person_data, FORBIDDEN_FIELDS,
                          VERIFIED_BOTTLENECKS_JSONL, SUPPORT_CANDIDATES_JSONL,
                          APPROVAL_RECORDS_JSONL, GATEWAY_CONSENTS_JSONL,
                          SUPPORT_EXECUTIONS_JSONL, SUPPORT_FEEDBACK_JSONL,
@@ -54,6 +54,8 @@ def static_violations() -> list[str]:
             for f in FORBIDDEN_FIELDS:
                 if f in r:
                     out.append(f"{p.name}: record carries forbidden field {f}")
+            for hit in scan_person_data(r):       # B-6: no person data in persisted records
+                out.append(f"{p.name}: possible person data ({hit})")
     return out
 
 
@@ -178,6 +180,36 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
     mb.build()
     chk("memory integrity: no gateway identity / profiling (F-19)",
         all("gateway_ref" not in m and m["links_no_actor"] for m in mb.list_memory()))
+
+    # B-4: persistence boundary enforces base invariants (pure helper, no write)
+    chk("store enforces base invariants at persistence boundary (B-4)",
+        bool(_store.missing_base_invariants({"record_type": "x"})) and
+        not _store.missing_base_invariants({"record_type": "x", **_store.base_invariants()}))
+
+    # B-6: person-data guard detects email/phone in free text; clean text passes
+    chk("store detects person data in free text (B-6)",
+        bool(_store.scan_person_data({"reason": "contact a@b.com"})) and
+        bool(_store.scan_person_data({"phone": "09012345678"})) and
+        not _store.scan_person_data({"reason": "email confirmation from the gateway",
+                                     "source_url": "https://x.test/a?id=123"}))
+
+    # B-5: type-level learning is non-KPI annotated (no maximization / person-relief accounting)
+    learn = mb.learn_support_pattern_types()
+    chk("memory learning is non-KPI, not person-relief accounting (B-5)",
+        learn.get("not_a_kpi") is True and learn.get("no_maximization") is True
+        and learn.get("not_person_relief_accounting") is True)
+
+    # B-3: TTFR-G clock inversion is held, never persisted as a negative interval
+    mem[str(_store.SUPPORT_EXECUTIONS_JSONL)] = [
+        {"execution_id": "ex-inv", "bottleneck_id": "b", "edge_observed_at": "2026-06-21T00:00:00Z"}]
+    mem[str(_store.SUPPORT_FEEDBACK_JSONL)] = [
+        {"feedback_id": "fb-inv", "execution_id": "ex-inv", "relief_observed": True,
+         "observed_at": "2026-06-20T00:00:00Z"}]
+    mem[str(_store.TTFR_G_RECORDS_JSONL)] = []
+    inv = tg.build()
+    chk("TTFR-G clock inversion held, not negative (B-3)",
+        len(inv) == 1 and inv[0]["status"] == "held_clock_inversion"
+        and inv[0]["ttfr_g_seconds"] is None)
 
     return results
 

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -102,6 +103,40 @@ FORBIDDEN_FIELDS = (
     "combined_metric", "relief_count_kpi",
 )
 
+# Person-data leakage guard (B-6): the gateway-only boundary means raw personal
+# identifiers (of an absent owner or anyone) must never be pasted into free-text
+# fields. Operators describe ("email confirmation from the gateway"), they do not
+# paste addresses/numbers. Email is detected reliably; phone is detected only as a
+# 10+ digit run or an international +NN… pattern, which avoids amounts/dates.
+_EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+_PHONE_RE = re.compile(r"(?<!\d)(?:\+\d[\d \-]{8,}\d|\d{10,})(?!\d)")
+_SCAN_SKIP_KEYS = {"event_hash", "appended_at"}
+
+
+def scan_person_data(record: dict[str, Any]) -> list[str]:
+    """Return free-text fields that look like they contain personal identifiers."""
+    hits: list[str] = []
+    for k, v in record.items():
+        if k in _SCAN_SKIP_KEYS:
+            continue
+        if isinstance(v, str):
+            vals = [v]
+        elif isinstance(v, list):
+            vals = [x for x in v if isinstance(x, str)]
+        else:
+            continue
+        for s in vals:
+            if _EMAIL_RE.search(s):
+                hits.append(f"{k}: email-like pattern")
+            if "url" not in k.lower() and _PHONE_RE.search(s):
+                hits.append(f"{k}: phone-like pattern")
+    return hits
+
+
+def missing_base_invariants(record: dict[str, Any]) -> list[str]:
+    """Base invariants a domain record must carry, with the expected value."""
+    return [k for k, v in base_invariants().items() if record.get(k) != v]
+
 
 def _guard_path(path: Path) -> Path:
     resolved = path.resolve()
@@ -135,12 +170,26 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
 def append_jsonl(path: Path, record: dict[str, Any]) -> dict[str, Any]:
     """Append one record under bridge/gateway_support/ only. Adds hash + ts.
 
-    Refuses to persist a record that carries any structurally forbidden field."""
+    Persistence-boundary enforcement (B-4): every persisted record must (a) carry
+    no structurally forbidden field, (b) carry the full base invariants if it is a
+    domain record (has record_type), and (c) contain no person-data in free text
+    (B-6). This makes a direct append_jsonl bypass unable to write an unflagged,
+    invariant-weakened, or person-data-bearing record. Append-only is preserved."""
     for f in FORBIDDEN_FIELDS:
         if f in record:
             raise GatewaySupportError(
                 f"refusing to persist record with forbidden field {f!r} "
                 "(no ranking/score/recommendation/reputation/owner/ttfr_p/reach-gap)")
+    if "record_type" in record:
+        missing = missing_base_invariants(record)
+        if missing:
+            raise GatewaySupportError(
+                f"refusing to persist domain record missing/weakened base invariants: {missing}")
+    pd = scan_person_data(record)
+    if pd:
+        raise GatewaySupportError(
+            f"refusing to persist record with possible person data: {pd} "
+            "(gateway-only boundary; describe, do not paste personal identifiers)")
     resolved = _guard_path(path)
     resolved.parent.mkdir(parents=True, exist_ok=True)
     stored = dict(record)

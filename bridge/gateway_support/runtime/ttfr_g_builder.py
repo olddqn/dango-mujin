@@ -61,7 +61,10 @@ def build() -> list[dict[str, Any]]:
             continue
         t0 = _parse(e.get("edge_observed_at"))
         t1 = _parse(f.get("observed_at"))
-        secs = (t1 - t0).total_seconds() if (t0 and t1) else None
+        # B-3: a clock inversion (T1 < T0) is held, never persisted as a negative
+        # interval. Valid T1 >= T0 records the non-negative interval as usual.
+        inversion = bool(t0 and t1 and t1 < t0)
+        secs = (t1 - t0).total_seconds() if (t0 and t1 and not inversion) else None
         rec = {
             "record_type": "ttfr_g",
             "ttfr_g_id": next_id("tg", TTFR_G_RECORDS_JSONL),
@@ -71,6 +74,7 @@ def build() -> list[dict[str, Any]]:
             "edge_observed_at": e.get("edge_observed_at"),     # T0
             "relief_observed_at": f.get("observed_at"),        # T1
             "ttfr_g_seconds": secs,
+            "clock_inversion": inversion,
             "measure_owner": "gateway_self_stated",
             # F-17 separation markers (and store FORBIDDEN_FIELDS bars ttfr_p etc.)
             "ttfr_g_not_ttfr_p": True,
@@ -82,7 +86,7 @@ def build() -> list[dict[str, Any]]:
             "no_maximization": True,
             "no_gateway_ranking": True,
             "excludes_owner_info": True,
-            "status": "recorded",
+            "status": "held_clock_inversion" if inversion else "recorded",
             **base_invariants(),
         }
         created.append(append_jsonl(TTFR_G_RECORDS_JSONL, rec))
@@ -105,6 +109,12 @@ def check_invariants() -> list[str]:
                 violations.append(f"{r.get('ttfr_g_id')}: missing/false {f}")
         if r.get("measure_owner") != "gateway_self_stated":
             violations.append(f"{r.get('ttfr_g_id')}: measure_owner is not gateway_self_stated")
+        # B-3: a recorded interval must never be negative; inversions are held.
+        secs = r.get("ttfr_g_seconds")
+        if secs is not None and secs < 0:
+            violations.append(f"{r.get('ttfr_g_id')}: negative ttfr_g_seconds ({secs})")
+        if r.get("status") == "held_clock_inversion" and r.get("ttfr_g_seconds") is not None:
+            violations.append(f"{r.get('ttfr_g_id')}: clock inversion held but seconds persisted")
     return violations
 
 

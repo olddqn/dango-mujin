@@ -76,14 +76,26 @@ def list_memory() -> list[dict[str, Any]]:
     return read_jsonl(SUPPORT_MEMORY_JSONL)
 
 
-def learn_support_pattern_types() -> dict[str, dict[str, int]]:
-    """Type-level aggregate learning ONLY — no gateway, no actor. Counts of
-    support_form types and outcome types across episodes."""
+def learn_support_pattern_types() -> dict[str, Any]:
+    """Type-level aggregate learning ONLY — no gateway, no actor (F-19). Counts of
+    support_form types and outcome types across episodes.
+
+    B-5: these are descriptive TYPE frequencies, not a relief KPI. The
+    relief-bearing outcome ('relief_observed') is one observed-outcome type among
+    others; it must NEVER be turned into a target, rate, ranking, or maximization
+    objective, and TTFR-G is accounted separately (F-17). The flags below mark
+    this intent so downstream code/readers cannot treat the counts as a KPI."""
     mem = list_memory()
     return {
         "by_support_form_type": dict(Counter(m.get("support_form_type") for m in mem)),
         "by_outcome_type": dict(Counter(m.get("outcome_type") for m in mem)),
         "episode_count": len(mem),
+        # B-5 guard annotations (read by report; assert non-KPI semantics)
+        "not_a_kpi": True,
+        "no_maximization": True,
+        "no_ranking": True,
+        "not_person_relief_accounting": True,
+        "ttfr_g_separate_from_ttfr_p": True,
     }
 
 

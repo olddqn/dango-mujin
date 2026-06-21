@@ -1,6 +1,6 @@
 # Gateway Support Runtime Report
 
-- Generated: 2026-06-21T05:46:26.132735Z
+- Generated: 2026-06-21T06:30:49.719600Z
 - Layer: `bridge/gateway_support/` — observation-only Gateway Support (F-9..F-20).
 - AI proposes; humans decide. Authority none. Person Domain sealed.
 
@@ -26,7 +26,7 @@ Withdrawal → Support Memory
 | **TOTAL violations** | | **0** |
 
 ## Type-level learning (no gateway identity)
-- {'by_support_form_type': {}, 'by_outcome_type': {}, 'episode_count': 0}
+- {'by_support_form_type': {}, 'by_outcome_type': {}, 'episode_count': 0, 'not_a_kpi': True, 'no_maximization': True, 'no_ranking': True, 'not_person_relief_accounting': True, 'ttfr_g_separate_from_ttfr_p': True}
 
 ## Preserved boundaries
 1. Person Domain sealed (no owner fields; person_domain_sealed on every record).
@@ -45,6 +45,24 @@ Withdrawal → Support Memory
 Person Relief · Need inference · Ranking · Recommendation · Selection ·
 Auto-execution · Cooperation assignment · Gateway profiling/scoring/reputation ·
 Reach Gap estimation.
+
+## Trust boundaries & hygiene
+- **Persistence boundary (B-4):** `store.append_jsonl` rejects any record carrying
+  a forbidden field, any domain record missing its base invariants, and any record
+  with person-data-like free text — so a direct-append bypass cannot write an
+  unflagged or leaky record. Append-only is preserved.
+- **Free-text / person data (B-6):** the gateway-only boundary means raw personal
+  identifiers (email/phone) must never be pasted into free-text fields; describe,
+  do not paste. The store scans for them and refuses.
+- **Relief is not a KPI (B-5):** type-level learning counts (incl. `relief_observed`
+  outcome frequency) are descriptive only — never a target, rate, ranking, or
+  maximization objective. TTFR-G is accounted separately from any person relief.
+- **TTFR-G integrity (B-3):** clock inversions (relief before edge) are held
+  (`held_clock_inversion`), never persisted as a negative interval.
+- **Operator trust boundary:** verification conditions and observed relief are
+  human-reviewed assertions (F-11); `verified` status is static until an explicit
+  `verification_lost` withdrawal. A withdrawal voids future support, not a past
+  valid execution (F-18).
 
 ---
 
