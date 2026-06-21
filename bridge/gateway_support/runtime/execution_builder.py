@@ -39,15 +39,15 @@ def _bottleneck(bottleneck_id: str) -> dict[str, Any] | None:
                  if b.get("bottleneck_id") == bottleneck_id), None)
 
 
-def two_keys_present(candidate_id: str) -> tuple[bool, str]:
-    """Return (ok, reason). Execution requires permit ∧ active consent ∧ still
-    verified ∧ not withdrawn (F-18 halt)."""
-    from .withdrawal_builder import is_halted, halt_cause  # local import avoids cycle
+def keys_existed(candidate_id: str) -> tuple[bool, str]:
+    """Historical eligibility check (F-18): the two keys (PERMIT approval ∧ ACTIVE
+    gateway consent) plus a verified bottleneck. It deliberately IGNORES any later
+    withdrawal — a withdrawal voids FUTURE support, not an irreversible PAST
+    execution. Used to audit already-persisted executions, which remain valid even
+    after the support is later halted."""
     cand = _candidate(candidate_id)
     if cand is None:
         return False, "unknown candidate"
-    if is_halted(cand["bottleneck_id"]):
-        return False, f"support halted by withdrawal ({halt_cause(cand['bottleneck_id'])})"
     if candidate_id not in permitted_candidate_ids():
         return False, "no PERMIT approval (key 1 missing)"
     consent = active_consent(cand["bottleneck_id"], cand["support_form"])
@@ -55,8 +55,21 @@ def two_keys_present(candidate_id: str) -> tuple[bool, str]:
         return False, "no ACTIVE gateway consent (key 2 missing)"
     b = _bottleneck(cand["bottleneck_id"])
     if b is None or b.get("status") != "verified":
-        return False, "bottleneck not currently verified"
-    return True, "two keys present and verified"
+        return False, "bottleneck not verified"
+    return True, "keys existed"
+
+
+def two_keys_present(candidate_id: str) -> tuple[bool, str]:
+    """New-execution gate (F-15 ∧ F-18): the two keys must exist AND support must
+    not be halted by a withdrawal. The halt check blocks only NEW executions; it
+    never retroactively invalidates a past execution (see keys_existed)."""
+    from .withdrawal_builder import is_halted, halt_cause  # local import avoids cycle
+    cand = _candidate(candidate_id)
+    if cand is None:
+        return False, "unknown candidate"
+    if is_halted(cand["bottleneck_id"]):
+        return False, f"support halted by withdrawal ({halt_cause(cand['bottleneck_id'])})"
+    return keys_existed(candidate_id)
 
 
 def execute(candidate_id: str, executor: str) -> dict[str, Any]:
@@ -109,10 +122,13 @@ def check_invariants() -> list[str]:
                   "does_not_mutate_ttfr_p"):
             if e.get(f) is not True:
                 violations.append(f"{e.get('execution_id')}: missing/false {f}")
-        # re-verify the two keys still hold for any persisted execution
-        ok, reason = two_keys_present(e.get("candidate_id"))
+        # Audit past executions by HISTORICAL eligibility (keys existed), NOT by the
+        # halt gate: a later withdrawal voids future support, not an already-valid
+        # past execution (F-18). Using two_keys_present here would wrongly flag a
+        # valid past execution once its bottleneck is withdrawn (B-1).
+        ok, reason = keys_existed(e.get("candidate_id"))
         if not ok:
-            violations.append(f"{e.get('execution_id')}: persisted but two keys not present ({reason})")
+            violations.append(f"{e.get('execution_id')}: persisted but keys never existed ({reason})")
     return violations
 
 

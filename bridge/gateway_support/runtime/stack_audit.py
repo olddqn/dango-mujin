@@ -167,6 +167,12 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
         halts = halts and not ex.two_keys_present(c["candidate_id"])[0]
     chk("withdrawal path: any key lost halts support (F-18)", halts)
 
+    # B-1 regression (F-18): a later withdrawal must NOT retroactively invalidate
+    # a past valid execution. A withdrawal is present in `mem` from the loop above,
+    # yet the already-persisted execution must remain valid (0 violations).
+    chk("withdrawal does not invalidate past valid execution (F-18; B-1)",
+        not ex.check_invariants())
+
     # memory integrity: episode-unit, no gateway identity, append-only
     mem[str(_store.WITHDRAWAL_RECORDS_JSONL)] = []
     mb.build()
