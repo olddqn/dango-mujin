@@ -20,3 +20,6 @@ venv/
 
 # OS artifacts
 .DS_Store
+
+# Sealed real/individual voice data — purely local, never tracked, never public (G-3)
+bridge/mujin/data/private/

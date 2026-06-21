@@ -1,0 +1,3 @@
+#!/bin/sh
+# Voice exposure guard: block pushes that would expose real, unconsented voice data.
+python3 bridge/mujin/tools/voice_exposure_guard.py || exit 1

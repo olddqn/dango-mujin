@@ -53,6 +53,13 @@ FUNDING_JSONL       = DATA_DIR / "funding_posts.jsonl"
 DISCOVERY_JSONL     = DATA_DIR / "discovery_posts.jsonl"
 CORRECTION_JSONL    = DATA_DIR / "correction_log.jsonl"
 VOICE_JSONL         = DATA_DIR / "voice_records.jsonl"
+# Voice exposure boundary (G-3): public dashboard reads only consented/public-safe
+# real voices from VOICE_JSONL. Test fixtures and sealed (private) real voices are
+# opt-in for internal/dev use only; private/ is gitignored and never public.
+FIXTURES_DIR         = DATA_DIR / "fixtures"
+PRIVATE_DIR          = DATA_DIR / "private"
+VOICE_FIXTURES_JSONL = FIXTURES_DIR / "voice_records.fixtures.jsonl"
+VOICE_PRIVATE_JSONL  = PRIVATE_DIR  / "voice_records.private.jsonl"
 NEED_CANDIDATE_JSONL = DATA_DIR / "need_candidates.jsonl"
 TRANSLATORS_JSONL   = DATA_DIR / "translators.jsonl"
 DISCUSSION_JSONL    = DATA_DIR / "voice_discussion.jsonl"
@@ -696,12 +703,26 @@ def register_voice(title, description, source_type, source_url, region,
     })
 
 
-def list_voices() -> list[dict[str, Any]]:
-    return read_jsonl(VOICE_JSONL)
+def list_voices(include_fixtures: bool = False,
+                include_private: bool = False) -> list[dict[str, Any]]:
+    """Public dashboard default: consented/public-safe real voices only.
+
+    Test fixtures and sealed (private) real voices are opt-in for internal/dev
+    use; they are never shown by default and private/ is gitignored.
+    """
+    voices = read_jsonl(VOICE_JSONL)
+    if include_fixtures:
+        voices += read_jsonl(VOICE_FIXTURES_JSONL)
+    if include_private:
+        voices += read_jsonl(VOICE_PRIVATE_JSONL)
+    return voices
 
 
 def get_voice(voice_id: str) -> dict[str, Any] | None:
-    return next((v for v in list_voices() if v.get("voice_id") == voice_id), None)
+    # internal lookup resolves across all stores; public display still uses the
+    # default list_voices() (public-only).
+    return next((v for v in list_voices(include_fixtures=True, include_private=True)
+                 if v.get("voice_id") == voice_id), None)
 
 
 def convert_voice_to_need_candidate(voice_id: str) -> dict[str, Any]:
