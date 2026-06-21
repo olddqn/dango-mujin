@@ -125,9 +125,19 @@ def run_review() -> dict[str, Any]:
     discovery = _disc_all()
     violations += _disc_check()
 
+    # 4i. discovery path memory (F-2.5): record the surface→object→event
+    #     relationship for real events; never funnel/growth/marketing/
+    #     acquisition/conversion; no path ranked or recommended
+    from .discovery_path_evidence_builder import (
+        check_invariants as _path_check,
+        _all_path_records as _path_all)
+    discovery_paths = _path_all()
+    violations += _path_check()
+
     # 5. global auto-action guard (no record enables auto anything)
     for rec in (obs + tasks + agents + evidence + boundaries + cooperation
-                + decision_boundaries + findability + surfaces + objects + discovery):
+                + decision_boundaries + findability + surfaces + objects
+                + discovery + discovery_paths):
         for f in ("auto_approval", "auto_execution", "auto_needification",
                   "auto_task_assignment", "execution_allowed"):
             if rec.get(f) is True:
@@ -156,6 +166,8 @@ def run_review() -> dict[str, Any]:
             "marketing/growth/recruitment; no object ranked or inferred",
             "discovery memory: records verified events only (who/what/where); no "
             "growth/marketing/recruitment/recommendation; no surface/actor ranked",
+            "discovery paths: records surface→object→event relationship only; no "
+            "funnel/growth/marketing/acquisition/conversion; no path ranked",
             "no auto-approval / auto-execution / auto-needification",
         ],
         "violations": violations,

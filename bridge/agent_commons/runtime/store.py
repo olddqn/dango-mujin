@@ -104,6 +104,17 @@ DISCOVERY_PATTERNS_JSONL    = DATA_DIR / "discovery_patterns.jsonl"
 DISCOVERY_EVIDENCE_JSONL    = DATA_DIR / "discovery_evidence.jsonl"
 DISCOVERY_REPORT_MD         = REPORTS_DIR / "discovery_report.md"
 
+# Discovery Path Review (F-2.5) — joins Discovery Events (F-2) with verified
+# Surfaces (F-1.5) and Objects (F-1.7) to observe the Surface → Object → Event
+# relationship: when a discovery happened, from which surface was which object
+# found. This is NOT a marketing funnel / growth / SEO / acquisition / conversion
+# analysis. With 0 events the path count is 0 — an observation, not a failure.
+DISCOVERY_PATH_REFLECTIONS_JSONL = DATA_DIR / "discovery_path_reflections.jsonl"
+DISCOVERY_PATH_LEARNINGS_JSONL   = DATA_DIR / "discovery_path_learnings.jsonl"
+DISCOVERY_PATH_PATTERNS_JSONL    = DATA_DIR / "discovery_path_patterns.jsonl"
+DISCOVERY_PATH_EVIDENCE_JSONL    = DATA_DIR / "discovery_path_evidence.jsonl"
+DISCOVERY_PATH_REPORT_MD         = REPORTS_DIR / "discovery_path_report.md"
+
 # read-only input from the human review (X-3.5)
 NEED_DEFINITION_REVIEW_MD = REPO_ROOT / "docs" / "NEED_DEFINITION_REVIEW.md"
 
