@@ -1,0 +1,73 @@
+{
+  "case_id": "mujin-case-demo-001",
+  "created_from": "relief_case",
+  "source_ref": {
+    "relief_case_id": "relief-case-002",
+    "claim_id": "claim-proposal-002"
+  },
+  "discovery_origin": {
+    "how": "phase-18 relief case promotion, human review",
+    "by": "jammy-house-001",
+    "disclosed_to_subject": true
+  },
+  "consent": {
+    "status": "active",
+    "can_consent": true,
+    "obtained_at": "2026-06-12T14:56:29.172137Z",
+    "confirmation_due": false,
+    "last_confirmed_at": "2026-06-12T14:56:29.172137Z",
+    "correction_log": [],
+    "withdrawable": true,
+    "withdrawal_reason": null
+  },
+  "deferred_consent": null,
+  "needs": [
+    {
+      "need_id": "need-001",
+      "description": "coordination help for a housing advocacy conversation",
+      "addresses_condition": "coordination_channel_established_between_orgs",
+      "status": "open"
+    }
+  ],
+  "success_metric": {
+    "set_by": "subject",
+    "description": "the subject defines success as: stable housing conversation continues"
+  },
+  "contribution_links": [],
+  "progress_log": [
+    {
+      "entry_id": "progress-001",
+      "content": "first coordination conversation scheduled by the parties",
+      "actor": "jammy-house-001",
+      "created_at": "2026-06-12T14:56:29.174081Z"
+    }
+  ],
+  "visibility": "participants_only",
+  "status": "open",
+  "closure_note": null,
+  "created_at": "2026-06-12T14:56:29.172137Z",
+  "updated_at": "2026-06-12T14:56:29.174081Z",
+  "record_type": "mujin_case",
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "advisory_only_is_moral_immunity": false,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "human_review_required": true,
+  "registration_is_not_proof": true,
+  "withdrawal_is_failure": false,
+  "support_is_debt": false,
+  "closure_attribution_prohibited": true,
+  "protocol_phrases": [
+    "Registration is not proof.",
+    "Withdrawal is not failure.",
+    "Support is not debt.",
+    "advisory_only is not moral immunity."
+  ],
+  "event_type": "progress_recorded",
+  "appended_at": "2026-06-12T14:56:29.174123Z",
+  "event_hash": "72bcd2a4f337da2fa3b79a0c48c7251b082f1c5dc1337db589e5dd3a491ee9d8"
+}

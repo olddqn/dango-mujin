@@ -1,0 +1,79 @@
+{
+  "record_type": "mujin_case_draft",
+  "draft_id": "from-directive-claim-proposal-002",
+  "generated_at": "2026-06-12T15:04:14.303441Z",
+  "created_from": "direct_application",
+  "source_refs": {
+    "directive_id": "directive-claim-proposal-002",
+    "claim_id": "claim-proposal-002",
+    "globe_id": "globe-001"
+  },
+  "consent": {
+    "status": "deferred",
+    "can_consent": false,
+    "obtained_at": null,
+    "confirmation_due": true,
+    "note": "consent must be obtained from the subject before this draft may become a case; a state of being unable to consent is not consent (D-3)"
+  },
+  "discovery_origin": {
+    "how": "export adapter over existing Dan-Go decision records",
+    "by": "bridge.mujin.exporter",
+    "disclosed_to_subject": false
+  },
+  "proposed_needs": [
+    {
+      "need_id": "from-directive-claim-proposal-002-need-01",
+      "description": "「難民・避難民支援を第零国家の優先課題として位置づける」の実行計画の策定と準備",
+      "addresses_condition": null,
+      "status": "open",
+      "proposed_only": true
+    },
+    {
+      "need_id": "from-directive-claim-proposal-002-need-02",
+      "description": "関係者への情報共有と任意参加意思の確認",
+      "addresses_condition": null,
+      "status": "open",
+      "proposed_only": true
+    },
+    {
+      "need_id": "from-directive-claim-proposal-002-need-03",
+      "description": "熟議ログに基づく未解決論点の整理と記録",
+      "addresses_condition": null,
+      "status": "open",
+      "proposed_only": true
+    }
+  ],
+  "context": {
+    "directive_title": "難民・避難民支援を第零国家の優先課題として位置づける",
+    "directive_objective": "難民・避難民支援を第零国家の中核的優先課題の一つとして正式に位置づける",
+    "execution_log_entries_seen": 6,
+    "reality_feedback_entries_seen": 0,
+    "relief_case_status": null
+  },
+  "next_step": "human review — then, only with the subject's confirmed consent, register via case_registry.create_mujin_case",
+  "registration_is_not_proof": true,
+  "authority": "none",
+  "execution_allowed": false,
+  "moves_money": false,
+  "advisory": true,
+  "advisory_only_is_moral_immunity": false,
+  "append_only": true,
+  "contestable": true,
+  "reopenable": true,
+  "human_review_required": true,
+  "withdrawal_is_failure": false,
+  "support_is_debt": false,
+  "closure_attribution_prohibited": true,
+  "protocol_phrases": [
+    "Registration is not proof.",
+    "Withdrawal is not failure.",
+    "Support is not debt.",
+    "advisory_only is not moral immunity."
+  ],
+  "advisory_only": true,
+  "subject_objection_path_required": true,
+  "outreach_explanation_required": true,
+  "reach_gap_unresolved": true,
+  "draft_is_not_a_case": true,
+  "draft_creates_no_contact": true
+}
