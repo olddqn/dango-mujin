@@ -23,7 +23,7 @@ from ..store import (
     SUPPORT_CANDIDATES_JSONL, append_jsonl, base_invariants, carries_base_invariants,
     next_id, read_jsonl,
 )
-from .bottleneck_builder import list_verified_bottlenecks
+from .verified_bottleneck_builder import list_verified_bottlenecks
 
 
 def make_candidate(bottleneck_id: str, support_form: str) -> dict[str, Any]:

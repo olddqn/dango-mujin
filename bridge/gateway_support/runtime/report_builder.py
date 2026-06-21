@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..store import REPORT_MD, utc_now_iso, write_text
-from .bottleneck_builder import list_verified_bottlenecks, check_invariants as _bn_chk
+from .verified_bottleneck_builder import list_verified_bottlenecks, check_invariants as _bn_chk
 from .support_candidate_builder import list_candidates, check_invariants as _cand_chk
 from .approval_builder import list_approvals, check_invariants as _ap_chk
 from .consent_builder import list_consents, check_invariants as _co_chk

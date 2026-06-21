@@ -26,7 +26,7 @@ import sys
 from typing import Any
 
 from .store import GatewaySupportError
-from .runtime import (bottleneck_builder as bn, support_candidate_builder as sc,
+from .runtime import (verified_bottleneck_builder as bn, support_candidate_builder as sc,
                       approval_builder as ap, consent_builder as co,
                       execution_builder as ex, feedback_builder as fb,
                       ttfr_g_builder as tg, withdrawal_builder as wd,
@@ -77,7 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     # actions (mutating, explicit args)
     a = sub.add_parser("verify-bottleneck", help="record a verified bottleneck (F-11)")
-    a.add_argument("--source-edge", required=True)
+    a.add_argument("--edge-id", required=True, help="a shared Observed Edge id")
     a.add_argument("--gateway-ref", required=True)
     a.add_argument("--public-source-url", required=True)
     a.add_argument("--kind", required=True, help="gateway self-stated bottleneck kind")
@@ -142,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
     # actions
     if cmd == "verify-bottleneck":
         return _run_action(lambda: bn.record_verified_bottleneck(
-            source_edge=args.source_edge, gateway_ref=args.gateway_ref,
+            edge_id=args.edge_id, gateway_ref=args.gateway_ref,
             public_source_url=args.public_source_url, bottleneck_kind=args.kind,
             accepted_support_forms=[f.strip() for f in args.accepted_forms.split(",") if f.strip()],
             verified_by=args.verified_by, self_stated=args.self_stated, public=args.public,

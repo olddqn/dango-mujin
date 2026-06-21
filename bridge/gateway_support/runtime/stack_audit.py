@@ -21,7 +21,8 @@ import importlib
 from typing import Any
 
 from .. import store as _store
-from . import (bottleneck_builder, support_candidate_builder, approval_builder,
+from bridge.edge_runtime.runtime import edge_builder, edge_memory
+from . import (verified_bottleneck_builder, support_candidate_builder, approval_builder,
                consent_builder, execution_builder, feedback_builder, ttfr_g_builder,
                withdrawal_builder, memory_builder)
 
@@ -30,7 +31,7 @@ from . import (bottleneck_builder, support_candidate_builder, approval_builder,
 
 def static_violations() -> list[str]:
     out: list[str] = []
-    out += bottleneck_builder.check_invariants()
+    out += verified_bottleneck_builder.check_invariants()
     out += support_candidate_builder.check_invariants()
     out += approval_builder.check_invariants()
     out += consent_builder.check_invariants()
@@ -38,18 +39,16 @@ def static_violations() -> list[str]:
     out += feedback_builder.check_invariants()
     out += ttfr_g_builder.check_invariants()
     out += withdrawal_builder.check_invariants()
-    out += memory_builder.check_invariants()
-    # structural scan: no record anywhere may carry a forbidden field
+    out += memory_builder.check_invariants()   # delegates to shared edge memory
+    # structural scan: no Route B record may carry a forbidden field or person data
     from ..store import (read_jsonl, scan_person_data, FORBIDDEN_FIELDS,
                          VERIFIED_BOTTLENECKS_JSONL, SUPPORT_CANDIDATES_JSONL,
                          APPROVAL_RECORDS_JSONL, GATEWAY_CONSENTS_JSONL,
                          SUPPORT_EXECUTIONS_JSONL, SUPPORT_FEEDBACK_JSONL,
-                         TTFR_G_RECORDS_JSONL, WITHDRAWAL_RECORDS_JSONL,
-                         SUPPORT_MEMORY_JSONL)
+                         TTFR_G_RECORDS_JSONL, WITHDRAWAL_RECORDS_JSONL)
     for p in (VERIFIED_BOTTLENECKS_JSONL, SUPPORT_CANDIDATES_JSONL,
               APPROVAL_RECORDS_JSONL, GATEWAY_CONSENTS_JSONL, SUPPORT_EXECUTIONS_JSONL,
-              SUPPORT_FEEDBACK_JSONL, TTFR_G_RECORDS_JSONL, WITHDRAWAL_RECORDS_JSONL,
-              SUPPORT_MEMORY_JSONL):
+              SUPPORT_FEEDBACK_JSONL, TTFR_G_RECORDS_JSONL, WITHDRAWAL_RECORDS_JSONL):
         for r in read_jsonl(p):
             for f in FORBIDDEN_FIELDS:
                 if f in r:
@@ -62,9 +61,12 @@ def static_violations() -> list[str]:
 # ── (2) dynamic end-to-end boundary simulation (in-memory, never persisted) ──
 
 def _patched_modules():
-    """Fresh module objects with in-memory persistence (canonical stores untouched)."""
-    mods = [importlib.reload(m) for m in (
-        bottleneck_builder, support_candidate_builder, approval_builder,
+    """Fresh module objects with in-memory persistence (canonical stores untouched).
+    Edge modules are reloaded first so the gateway builders rebind their edge
+    imports (get_edge / edge_memory) to the patched edge runtime."""
+    edge_mods = [importlib.reload(m) for m in (edge_builder, edge_memory)]
+    gw_mods = [importlib.reload(m) for m in (
+        verified_bottleneck_builder, support_candidate_builder, approval_builder,
         consent_builder, execution_builder, feedback_builder, ttfr_g_builder,
         withdrawal_builder, memory_builder)]
     mem: dict[str, list[dict[str, Any]]] = {}
@@ -75,6 +77,10 @@ def _patched_modules():
         for f in _store.FORBIDDEN_FIELDS:
             if f in rec:
                 raise _store.GatewaySupportError(f"forbidden field {f}")
+        if "record_type" in rec and _store.missing_base_invariants(rec):
+            raise _store.GatewaySupportError("missing base invariants")
+        if _store.scan_person_data(rec):
+            raise _store.GatewaySupportError("person data")
         rec = dict(rec)
         rec.setdefault("appended_at", "t")
         rec["event_hash"] = "h"
@@ -83,22 +89,28 @@ def _patched_modules():
 
     def mnext(prefix, p): return f"{prefix}-{len(mem.get(str(p), [])) + 1:03d}"
 
-    for m in mods:
+    for m in edge_mods + gw_mods:
         m.append_jsonl = mappend
         m.read_jsonl = mread
         m.next_id = mnext
-    return mods, mem
+    eb, em = edge_mods
+    return (eb, em, *gw_mods), mem
 
 
 def dynamic_boundary_checks() -> list[tuple[str, bool]]:
-    (bb, cb, ap, co, ex, fb, tg, wd, mb), mem = _patched_modules()
+    (eb, em, bb, cb, ap, co, ex, fb, tg, wd, mb), mem = _patched_modules()
     results: list[tuple[str, bool]] = []
 
     def chk(name, cond): results.append((name, bool(cond)))
 
+    # shared edge: Route B consumes an Observed Edge (not a duplicated edge concept)
+    edge = eb.record_observed_edge("voice-sim", "X")
+    eid = edge["edge_id"]
+    chk("Route B consumes a shared Observed Edge", bool(eid) and not eb.check_invariants())
+
     # candidate boundary: held verification raises; candidates plural/unordered/no-rank; no fabrication
     try:
-        bb.make_verified_bottleneck(source_edge="e", gateway_ref="X",
+        bb.make_verified_bottleneck(edge_id=eid, gateway_ref="X",
             public_source_url="u", bottleneck_kind="k", accepted_support_forms=["a"],
             verified_by="r", self_stated=True, public=True, currently_observable=False,
             inference_free=True)
@@ -107,7 +119,7 @@ def dynamic_boundary_checks() -> list[tuple[str, bool]]:
         held_ok = True
     chk("verification held when condition missing (F-11)", held_ok)
 
-    b = bb.record_verified_bottleneck(source_edge="e", gateway_ref="X",
+    b = bb.record_verified_bottleneck(edge_id=eid, gateway_ref="X",
         public_source_url="https://x.test", bottleneck_kind="funding",
         accepted_support_forms=["a", "b", "c"], verified_by="r",
         self_stated=True, public=True, currently_observable=True, inference_free=True)

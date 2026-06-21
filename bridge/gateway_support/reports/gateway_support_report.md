@@ -1,6 +1,6 @@
 # Gateway Support Runtime Report
 
-- Generated: 2026-06-21T06:30:49.719600Z
+- Generated: 2026-06-21T06:59:33.221878Z
 - Layer: `bridge/gateway_support/` — observation-only Gateway Support (F-9..F-20).
 - AI proposes; humans decide. Authority none. Person Domain sealed.
 
@@ -26,7 +26,7 @@ Withdrawal → Support Memory
 | **TOTAL violations** | | **0** |
 
 ## Type-level learning (no gateway identity)
-- {'by_support_form_type': {}, 'by_outcome_type': {}, 'episode_count': 0, 'not_a_kpi': True, 'no_maximization': True, 'no_ranking': True, 'not_person_relief_accounting': True, 'ttfr_g_separate_from_ttfr_p': True}
+- {'by_episode_kind': {}, 'by_outcome_type': {}, 'by_route': {}, 'episode_count': 0, 'not_a_kpi': True, 'no_maximization': True, 'no_ranking': True, 'not_person_relief_accounting': True}
 
 ## Preserved boundaries
 1. Person Domain sealed (no owner fields; person_domain_sealed on every record).

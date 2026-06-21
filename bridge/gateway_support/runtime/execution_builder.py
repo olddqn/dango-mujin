@@ -24,7 +24,7 @@ from ..store import (
     SUPPORT_EXECUTIONS_JSONL, append_jsonl, base_invariants, carries_base_invariants,
     next_id, read_jsonl, utc_now_iso,
 )
-from .bottleneck_builder import list_verified_bottlenecks
+from .verified_bottleneck_builder import list_verified_bottlenecks
 from .support_candidate_builder import list_candidates
 from .approval_builder import permitted_candidate_ids
 from .consent_builder import active_consent
@@ -87,6 +87,7 @@ def execute(candidate_id: str, executor: str) -> dict[str, Any]:
         "execution_id": next_id("ex", SUPPORT_EXECUTIONS_JSONL),
         "candidate_id": candidate_id,
         "bottleneck_id": cand["bottleneck_id"],
+        "edge_id": b.get("edge_id"),                     # shared Observed Edge
         "consent_id": consent["consent_id"],
         "support_form": cand["support_form"],
         "edge_observed_at": b.get("edge_observed_at"),   # T0 for TTFR-G
