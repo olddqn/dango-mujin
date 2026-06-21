@@ -40,10 +40,14 @@ def _bottleneck(bottleneck_id: str) -> dict[str, Any] | None:
 
 
 def two_keys_present(candidate_id: str) -> tuple[bool, str]:
-    """Return (ok, reason). Execution requires permit ∧ active consent ∧ still verified."""
+    """Return (ok, reason). Execution requires permit ∧ active consent ∧ still
+    verified ∧ not withdrawn (F-18 halt)."""
+    from .withdrawal_builder import is_halted, halt_cause  # local import avoids cycle
     cand = _candidate(candidate_id)
     if cand is None:
         return False, "unknown candidate"
+    if is_halted(cand["bottleneck_id"]):
+        return False, f"support halted by withdrawal ({halt_cause(cand['bottleneck_id'])})"
     if candidate_id not in permitted_candidate_ids():
         return False, "no PERMIT approval (key 1 missing)"
     consent = active_consent(cand["bottleneck_id"], cand["support_form"])
